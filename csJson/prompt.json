@@ -1,0 +1,28 @@
+{
+	"code": 1,
+	"msg": "优惠券列表",
+	"time": "1609147099",
+	"data": [{
+		"id": 3,
+		"name": "立减20元",
+		"type": "cash",
+		"goods_ids": "5,6,9,10,12,13,14,15,18,19,277",
+		"amount": "20.00",
+		"enough": "15.00",
+		"stock": 0,
+		"limit": 3,
+		"gettime": {
+			"start": 1606665600,
+			"end": 1609344000
+		},
+		"usetime": {
+			"start": 1606579200,
+			"end": 1609257600
+		},
+		"description": "",
+		"usetimestart": 1606579200,
+		"usetimeend": 1609257600,
+		"gettimestart": 1606665600,
+		"gettimeend": 1609344000
+	}]
+}

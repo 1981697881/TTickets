@@ -1,0 +1,462 @@
+{
+	"code": 1,
+	"msg": "模板数据",
+	"time": "1609145764",
+	"data": {
+		"home": [{
+			"id": 17947,
+			"type": "search",
+			"category": "home",
+			"name": "搜索",
+			"content": "搜索电影、商品",
+			"decorate_id": 1
+		}, {
+			"id": 17948,
+			"type": "banner",
+			"category": "home",
+			"name": "轮播图",
+			"content": {
+				"name": "",
+				"style": 1,
+				"list": [{
+					"name": "",
+					"bgcolor": "#A72024",
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/343e226d0d2e2d2efcf21f31a678ba46.png",
+					"path": "/pages/goods/list?id=78",
+					"path_name": "商城-商品列表-美妆工具",
+					"path_type": 1
+				}, {
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/5357f44ed7d71cd58996bf5565fdeed7.png",
+					"path": "/pages/goods/list?id=39",
+					"path_type": 1,
+					"name": "",
+					"bgcolor": "#D2BCA6",
+					"path_name": "商城-商品列表-厨房用品"
+				}, {
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/edd52e929057afe1d3240ff060b09e7c.png",
+					"path": "/pages/goods/list?id=8",
+					"path_type": 1,
+					"name": "",
+					"bgcolor": "#82C0F3",
+					"path_name": "商城-商品列表-女装"
+				}]
+			},
+			"decorate_id": 1
+		}, {
+			"id": 17949,
+			"type": "menu",
+			"category": "home",
+			"name": "菜单组",
+			"content": {
+				"name": "",
+				"style": 4,
+				"list": [{
+					"name": "签到有礼",
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/884360099a48d435e23e24091fb7084f.png",
+					"path": "/pages/user/sign/index",
+					"path_name": "通用-签到中心",
+					"path_type": 1
+				}, {
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/ce173c7d81d9521350620e51b0166808.png",
+					"path": "/pages/activity/groupon/list",
+					"name": "品质拼团",
+					"path_name": "活动-今日必拼",
+					"path_type": 1
+				}, {
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/cdc081320a7676753af09dbfad64b0f5.png",
+					"path": "/pages/activity/seckill/list",
+					"name": "限时秒杀",
+					"path_name": "活动-限时秒杀",
+					"path_type": 1
+				}, {
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/c7b17849d22f345b4886d9a7dc6ef72a.png",
+					"path": "/pages/app/coupon/list",
+					"name": "领福利",
+					"path_name": "优惠券-优惠劵中心",
+					"path_type": 1
+				}, {
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/f94b398fe5d6be343b4c2200f7fc3b0a.png",
+					"path": "/pages/goods/list?id=116",
+					"name": "美食酒水",
+					"path_name": "商城-商品列表-数码办公",
+					"path_type": 1
+				}, {
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/6dde00b61b242f8c9ed79c65d3fb0b1d.png",
+					"path": "/pages/index/index",
+					"name": "居家生活",
+					"path_name": "商城-首页",
+					"path_type": 1
+				}, {
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/755895207ed20ab11c141f5f2cf4946e.png",
+					"path": "/pages/goods/list?id=6",
+					"name": "数码家电",
+					"path_name": "商城-商品列表-数码家电",
+					"path_type": 1
+				}, {
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/9cf90a9392c7765bdfc2a5854e1295ff.png",
+					"path": "/pages/goods/list?id=1",
+					"name": "服饰鞋包",
+					"path_name": "商城-商品列表-服饰鞋帽",
+					"path_type": 1
+				}, {
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/8c6f8775b7f0563e95a4d3a0e38aa6cd.png",
+					"path": "/pages/index/category?id=18",
+					"name": "OTO",
+					"path_name": "分类-OTO购买",
+					"path_type": 1
+				}, {
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/2d53856404d09faceb7f07bfd2a0ca2f.png",
+					"path": "/pages/app/coupon/detail?id=4",
+					"name": "优惠券",
+					"path_name": "优惠劵详情-钢丝绳优惠券",
+					"path_type": 1
+				}, {
+					"image": "https://api.7wpp.com/uploads/20200930/fac8e75a7614f91e6329942c0277f194.jpg",
+					"path": "/pages/index/category?id=175",
+					"name": "水果摊",
+					"path_name": "分类-一级分类",
+					"path_type": 1
+				}]
+			},
+			"decorate_id": 1
+		}, {
+			"id": 17950,
+			"type": "coupons",
+			"category": "home",
+			"name": "优惠券",
+			"content": {
+				"ids": "3",
+				"name": ""
+			},
+			"decorate_id": 1
+		}, {
+			"id": 17951,
+			"type": "adv",
+			"category": "home",
+			"name": "广告魔方",
+			"content": {
+				"list": [{
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/0669a6adec3f35d45ec66a082e03774f.png",
+					"name": "",
+					"path": "/pages/app/coupon/list",
+					"path_name": "优惠券-优惠劵中心",
+					"path_type": 1
+				}, {
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/cddb5d90a4241f6235d16368534bc730.png",
+					"name": "",
+					"path": "/pages/activity/groupon/list",
+					"path_name": "活动-今日必拼",
+					"path_type": 1
+				}, {
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/e047d312fb5930de972ae288b9b3bae7.png",
+					"name": "",
+					"path": "/pages/app/score/list",
+					"path_name": "应用-积分商城",
+					"path_type": 1
+				}],
+				"name": "",
+				"style": 3
+			},
+			"decorate_id": 1
+		}, {
+			"id": 17952,
+			"type": "groupon",
+			"category": "home",
+			"name": "拼团",
+			"content": {
+				"id": 126,
+				"name": "超值拼团",
+				"groupon_name": "12.12",
+				"team_num": "2"
+			},
+			"decorate_id": 1
+		}, {
+			"id": 17953,
+			"type": "seckill",
+			"category": "home",
+			"name": "秒杀",
+			"content": {
+				"id": 127,
+				"name": "限时秒杀",
+				"seckill_name": "1212秒杀"
+			},
+			"decorate_id": 1
+		}, {
+			"id": 17954,
+			"type": "title-block",
+			"category": "home",
+			"name": "标题栏",
+			"content": {
+				"name": "为你推荐",
+				"color": "#000000",
+				"image": "http://shopro.7wpp.com/imgs/title1.png"
+			},
+			"decorate_id": 1
+		}, {
+			"id": 17955,
+			"type": "goods-list",
+			"category": "home",
+			"name": "自定义商品",
+			"content": {
+				"ids": "2,3,5,9,10,15",
+				"image": "https://shopro-1253949872.file.myqcloud.com",
+				"name": ""
+			},
+			"decorate_id": 1
+		}],
+		"user": [{
+			"id": 17958,
+			"type": "user",
+			"category": "user",
+			"name": "用户卡片",
+			"content": {
+				"name": "用户卡片",
+				"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/3fd138c2e95f80ecc11eebe312ffce94.png",
+				"style": 2,
+				"color": "#eeeeee"
+			},
+			"decorate_id": 1
+		}, {
+			"id": 17959,
+			"type": "order-card",
+			"category": "user",
+			"name": "订单卡片",
+			"content": [],
+			"decorate_id": 1
+		}, {
+			"id": 17960,
+			"type": "wallet-card",
+			"category": "user",
+			"name": "资产卡片",
+			"content": [],
+			"decorate_id": 1
+		}, {
+			"id": 17961,
+			"type": "grid-list",
+			"category": "user",
+			"name": "宫格列表",
+			"content": {
+				"name": "",
+				"list": [{
+					"name": "商品收藏",
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/a329a448d7cb7fd2ff46a9ab0e9f5ac0.png",
+					"path": "/pages/user/favorite",
+					"path_name": "我的收藏",
+					"path_type": 1
+				}, {
+					"name": "浏览足迹",
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/46db4a0d958fe1a8897f288a569e239f.png",
+					"path": "/pages/user/log",
+					"path_name": "浏览足迹",
+					"path_type": 1
+				}, {
+					"name": "积分商城",
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/ab05b484afd9e2a21977adc79d0c456e.png",
+					"path": "/pages/app/score/list",
+					"path_name": "积分商城",
+					"path_type": 1
+				}, {
+					"name": "邀请好友",
+					"image": "https://api.7wpp.com/uploads/20200929/aefd4bbe4f4ad9243e08448d6fc0b9e8.png",
+					"path": "/pages/public/poster/index?posterType=user",
+					"path_name": "个人海报",
+					"path_type": 1
+				}, {
+					"name": "我的拼团",
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/5d53a6e7f940c5ef925f63c1810c8429.png",
+					"path": "/pages/activity/groupon/my-groupon",
+					"path_name": "我的拼团",
+					"path_type": 1
+				}, {
+					"name": "常见问题",
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/555ef0a1151e83014610b288e53827c2.png",
+					"path": "/pages/public/faq",
+					"path_name": "常见问题",
+					"path_type": 1
+				}, {
+					"name": "系统设置",
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/a37d85ca8d8e7f1ca90874f89f524886.png",
+					"path": "/pages/user/set",
+					"path_name": "系统设置",
+					"path_type": 1
+				}, {
+					"name": "联系客服",
+					"image": "https://api.7wpp.com/uploads/20200929/7aff2a07472660035e99c4f341bdfd85.png",
+					"path": "/pages/public/kefu/index",
+					"path_name": "客服",
+					"path_type": 1
+				}]
+			},
+			"decorate_id": 1
+		}, {
+			"id": 17962,
+			"type": "goods-list",
+			"category": "user",
+			"name": "自定义商品",
+			"content": {
+				"ids": "2,3,5,10",
+				"image": "https://api.7wpp.com",
+				"name": ""
+			},
+			"decorate_id": 1
+		}],
+		"tabbar": [{
+			"id": 17957,
+			"type": "tabbar",
+			"category": "tabbar",
+			"name": "底部导航",
+			"content": {
+				"style": 1,
+				"color": "#000",
+				"activeColor": "#999",
+				"list": [{
+					"name": "首页",
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/c4591c74c27a49bda021257d3c889225.png",
+					"activeImage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/558feb98726495d17128d07694d7ff47.png",
+					"path": "/pages/index/index",
+					"path_name": "商城-首页",
+					"path_type": 1
+				}, {
+					"name": "分类",
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/d6e987bb27013691478ddce7ce700288.png",
+					"activeImage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/f280b7f9ea18db0c80337d1c1cac6075.png",
+					"path": "/pages/index/category?id=276",
+					"path_name": "分类-OTO购买",
+					"path_type": 1
+				}, {
+					"name": "购物车",
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/0ab4659f44404d6d4723c265ccd21f94.png",
+					"activeImage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/5273d6e90fb45e3d9189fba9fcbea47c.png",
+					"path": "/pages/index/cart",
+					"path_name": "商城-购物车",
+					"path_type": 1
+				}, {
+					"name": "我的",
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/406848d5827325fead27224decffd141.png",
+					"activeImage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/8eca666cc43686d292113244b31e0664.png",
+					"path": "/pages/index/user",
+					"path_name": "用户-我的",
+					"path_type": 1
+				}],
+				"isshow": true
+			},
+			"decorate_id": 1
+		}],
+		"popup": [{
+			"id": 17956,
+			"type": "popup",
+			"category": "popup",
+			"name": "弹窗提醒",
+			"content": {
+				"list": [{
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/9136ecddcddf6607184fab689207e7e3.png",
+					"path": "/pages/app/coupon/list",
+					"path_name": "优惠劵中心",
+					"page": ["/pages/index/index"],
+					"page_name": ["商城-首页"],
+					"path_type": 1,
+					"style": 1
+				}]
+			},
+			"decorate_id": 1
+		}],
+		"float-button": [{
+			"id": 17963,
+			"type": "float-button",
+			"category": "float-button",
+			"name": "悬浮按钮",
+			"content": {
+				"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/f6b9c9d20d21df541ac52e9548486e1a.png",
+				"list": [{
+					"name": "客服",
+					"style": 2,
+					"image": "",
+					"btnimage": "https://api.7wpp.com/uploads/20200930/0c3cf0897521ae06fd4da6aec958b68e.png",
+					"path": "/pages/public/kefu/index",
+					"path_name": "客服",
+					"path_type": 1,
+					"page": ["/pages/app/coupon/list", "/pages/app/coupon/detail", "/pages/goods/search", "/pages/index/index",
+						"/pages/index/category", "/pages/index/cart", "/pages/goods/list", "/pages/goods/detail/index",
+						"/pages/public/feedback", "/pages/index/find", "/pages/app/score/list", "/pages/app/live/list",
+						"/pages/activity/groupon/list", "/pages/activity/seckill/list", "/pages/activity/groupon/my-groupon",
+						"/pages/index/user", "/pages/order/list", "/pages/public/forgot", "/pages/public/login",
+						"/pages/public/register", "/pages/user/log", "/pages/user/address/list", "/pages/user/edit-password",
+						"/pages/user/favorite", "/pages/user/info", "/pages/user/edit-phone", "/pages/user/wallet/index",
+						"/pages/user/wallet/bind-bank", "/pages/user/wallet/log", "/pages/user/wallet/score-balance",
+						"/pages/user/wallet/UserDefinedFilling", "/pages/user/wallet/customhistory",
+						"/pages/user/wallet/personalHistory", "/pages/user/wallet/fillingHistory",
+						"/pages/user/wallet/FillInTheForm", "/pages/user/wallet/newsNotice", "/pages/user/wallet/StatisticalReport",
+						"/pages/user/wallet/ProcessApproval", "/pages/user/wallet/approval", "/pages/user/wallet/reject",
+						"/pages/app/merchant/index", "/pages/app/merchant/info", "/pages/user/wallet/history", "/pages/index/view",
+						"/pages/public/richtext", "/pages/public/poster/index", "/pages/public/faq", "/pages/user/sign/index",
+						"/pages/user/set", "/pages/public/kefu/index"
+					]
+				}, {
+					"name": "关注",
+					"style": 1,
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/ff3fba3ef6a402aa770bde5a60e7f49f.png",
+					"btnimage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/875dd6d2b1980dbccbec0895f757cdff.png",
+					"path": "",
+					"path_name": "",
+					"path_type": 1,
+					"page": ["/pages/index/index", "/pages/index/category", "/pages/index/cart", "/pages/index/user",
+						"/pages/goods/list", "/pages/goods/detail/index", "/pages/activity/groupon/list",
+						"/pages/activity/seckill/list", "/pages/activity/groupon/my-groupon", "/pages/app/coupon/list",
+						"/pages/app/coupon/detail", "/pages/app/score/list", "/pages/order/list", "/pages/public/richtext",
+						"/pages/public/feedback", "/pages/public/forgot", "/pages/public/login", "/pages/public/register",
+						"/pages/public/poster/index", "/pages/public/faq", "/pages/user/log", "/pages/user/sign/index",
+						"/pages/user/address/list", "/pages/user/set", "/pages/user/edit-password", "/pages/user/favorite",
+						"/pages/user/info", "/pages/user/edit-phone", "/pages/user/wallet/index", "/pages/user/wallet/bind-bank",
+						"/pages/user/wallet/log", "/pages/user/wallet/score-balance"
+					],
+					"page_name": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17",
+						"18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32"
+					]
+				}, {
+					"name": "购物车",
+					"style": 2,
+					"image": "",
+					"btnimage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/c72f2c4f452d72e4ad82f38c72911ce4.png",
+					"path": "/pages/index/cart",
+					"path_name": "购物车",
+					"path_type": 1,
+					"page": ["/pages/index/index", "/pages/index/category", "/pages/index/cart", "/pages/index/user",
+						"/pages/goods/list", "/pages/goods/detail/index", "/pages/activity/groupon/list",
+						"/pages/activity/seckill/list", "/pages/activity/groupon/my-groupon", "/pages/app/coupon/list",
+						"/pages/app/coupon/detail", "/pages/app/score/list", "/pages/order/list", "/pages/public/richtext",
+						"/pages/public/feedback", "/pages/public/forgot", "/pages/public/login", "/pages/public/register",
+						"/pages/public/poster/index", "/pages/public/faq", "/pages/user/log", "/pages/user/sign/index",
+						"/pages/user/address/list", "/pages/user/set", "/pages/user/edit-password", "/pages/user/favorite",
+						"/pages/user/info", "/pages/user/edit-phone", "/pages/user/wallet/index", "/pages/user/wallet/bind-bank",
+						"/pages/user/wallet/log", "/pages/user/wallet/score-balance"
+					],
+					"page_name": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17",
+						"18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32"
+					]
+				}, {
+					"name": "活动",
+					"style": 2,
+					"image": "",
+					"btnimage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/8153f1d85f462b277d024baf812814a6.png",
+					"path": "/pages/activity/seckill/list",
+					"path_name": "限时秒杀",
+					"path_type": 1,
+					"page": ["/pages/index/index", "/pages/index/category", "/pages/index/cart", "/pages/index/user",
+						"/pages/goods/list", "/pages/goods/detail/index", "/pages/activity/groupon/list",
+						"/pages/activity/seckill/list", "/pages/activity/groupon/my-groupon", "/pages/app/coupon/list",
+						"/pages/app/coupon/detail", "/pages/app/score/list", "/pages/order/list", "/pages/public/richtext",
+						"/pages/public/feedback", "/pages/public/forgot", "/pages/public/login", "/pages/public/register",
+						"/pages/public/poster/index", "/pages/public/faq", "/pages/user/log", "/pages/user/sign/index",
+						"/pages/user/address/list", "/pages/user/set", "/pages/user/edit-password", "/pages/user/favorite",
+						"/pages/user/info", "/pages/user/edit-phone", "/pages/user/wallet/index", "/pages/user/wallet/bind-bank",
+						"/pages/user/wallet/log", "/pages/user/wallet/score-balance"
+					],
+					"page_name": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17",
+						"18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32"
+					]
+				}]
+			},
+			"decorate_id": 1
+		}]
+	}
+}

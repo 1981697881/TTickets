@@ -1,0 +1,27 @@
+{
+	"code": 1,
+	"msg": "初始化数据",
+	"time": "1609212180",
+	"data": {
+		"payment": ["wechat", "alipay", "wallet"],
+		"info": {
+			"name": "WeChat影院",
+			"domain": "https://shopro.7wpp.com",
+			"version": "1.0.7",
+			"logo": "https://api.7wpp.com/uploads/20201207/38c9eb1c83f2f1848693f66cd86933ce.jpg",
+			"copyright": ["", "Copyright 2018-2020"]
+		},
+		"wechat": {
+			"appid": "wx38939920a****244",
+			"autologin": false
+		},
+		"share": {
+			"title": "邀请有礼",
+			"image": "https://api.7wpp.com/uploads/20201218/4be7c944935a0fd6fc890f0214e6c3e0.jpg",
+			"goods_poster_bg": "https://api.7wpp.com/uploads/20201019/ab863760d809b0d0bfdf5eed24fecb61.png",
+			"user_poster_bg": "https://api.7wpp.com/uploads/20200930/000fada6ece566b12ccfc348861fedf6.png",
+			"groupon_poster_bg": "https://api.7wpp.com/uploads/20200930/c65b86f0ffb7f334fe7ca7528d2bb44a.png"
+		},
+		"addons": ["alisms", "epay", "geetest", "kefu", "loginbg", "nkeditor", "shopro", "summernote", "wxo"]
+	}
+}
