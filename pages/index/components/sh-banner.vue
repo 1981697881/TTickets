@@ -4,7 +4,7 @@
 		<canvas canvas-id="colorThief" class="hide-canvas"></canvas>
 		<swiper class="banner-carousel shopro-selector-rect" circular @change="swiperChange" :autoplay="true">
 			<swiper-item v-for="(item, index) in detail.list" :key="index" class="carousel-item " @tap="routerTo(item.path)">
-				<image class="swiper-image " :src="item.image" mode="widthFix" lazy-load></image>
+				<image class="swiper-image " :src="item.image" mode="scaleToFill" lazy-load></image>
 			</swiper-item>
 		</swiper>
 		<view class="banner-swiper-dots">

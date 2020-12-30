@@ -48,6 +48,7 @@ const actions = {
 		commit
 	}) {
 		return new Promise((resolve, reject) => {
+			resolve('')
 			/* api('dev.asyncLink', {
 				data: ROUTES
 			}).then(res => {

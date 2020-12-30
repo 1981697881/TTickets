@@ -8,7 +8,7 @@
 			"type": "search",
 			"category": "home",
 			"name": "搜索",
-			"content": "搜索电影、商品",
+			"content": "电影演出5折起",
 			"decorate_id": 1
 		}, {
 			"id": 17948,
@@ -20,24 +20,24 @@
 				"style": 1,
 				"list": [{
 					"name": "",
-					"bgcolor": "#A72024",
-					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/343e226d0d2e2d2efcf21f31a678ba46.png",
+					"bgcolor": "#2B4055",
+					"image": "http://139.159.136.187:50080/uploadFiles/image/2102602922.jpg",
 					"path": "/pages/goods/list?id=78",
 					"path_name": "商城-商品列表-美妆工具",
 					"path_type": 1
 				}, {
-					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/5357f44ed7d71cd58996bf5565fdeed7.png",
+					"image": "http://139.159.136.187:50080/uploadFiles/image/4205961149.jpg",
 					"path": "/pages/goods/list?id=39",
 					"path_type": 1,
 					"name": "",
-					"bgcolor": "#D2BCA6",
+					"bgcolor": "#5B3626",
 					"path_name": "商城-商品列表-厨房用品"
 				}, {
-					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/edd52e929057afe1d3240ff060b09e7c.png",
+					"image": "http://139.159.136.187:50080/uploadFiles/image/4100127922.jpg",
 					"path": "/pages/goods/list?id=8",
 					"path_type": 1,
 					"name": "",
-					"bgcolor": "#82C0F3",
+					"bgcolor": "#5C92C1",
 					"path_name": "商城-商品列表-女装"
 				}]
 			},
@@ -51,7 +51,7 @@
 				"name": "",
 				"style": 4,
 				"list": [{
-					"name": "签到有礼",
+					"name": "电影/影院",
 					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/884360099a48d435e23e24091fb7084f.png",
 					"path": "/pages/user/sign/index",
 					"path_name": "通用-签到中心",
@@ -59,13 +59,13 @@
 				}, {
 					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/ce173c7d81d9521350620e51b0166808.png",
 					"path": "/pages/activity/groupon/list",
-					"name": "品质拼团",
+					"name": "小吃/商品",
 					"path_name": "活动-今日必拼",
 					"path_type": 1
 				}, {
 					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/cdc081320a7676753af09dbfad64b0f5.png",
 					"path": "/pages/activity/seckill/list",
-					"name": "限时秒杀",
+					"name": "电影资讯",
 					"path_name": "活动-限时秒杀",
 					"path_type": 1
 				}, {
@@ -73,48 +73,6 @@
 					"path": "/pages/app/coupon/list",
 					"name": "领福利",
 					"path_name": "优惠券-优惠劵中心",
-					"path_type": 1
-				}, {
-					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/f94b398fe5d6be343b4c2200f7fc3b0a.png",
-					"path": "/pages/goods/list?id=116",
-					"name": "美食酒水",
-					"path_name": "商城-商品列表-数码办公",
-					"path_type": 1
-				}, {
-					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/6dde00b61b242f8c9ed79c65d3fb0b1d.png",
-					"path": "/pages/index/index",
-					"name": "居家生活",
-					"path_name": "商城-首页",
-					"path_type": 1
-				}, {
-					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/755895207ed20ab11c141f5f2cf4946e.png",
-					"path": "/pages/goods/list?id=6",
-					"name": "数码家电",
-					"path_name": "商城-商品列表-数码家电",
-					"path_type": 1
-				}, {
-					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/9cf90a9392c7765bdfc2a5854e1295ff.png",
-					"path": "/pages/goods/list?id=1",
-					"name": "服饰鞋包",
-					"path_name": "商城-商品列表-服饰鞋帽",
-					"path_type": 1
-				}, {
-					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/8c6f8775b7f0563e95a4d3a0e38aa6cd.png",
-					"path": "/pages/index/category?id=18",
-					"name": "OTO",
-					"path_name": "分类-OTO购买",
-					"path_type": 1
-				}, {
-					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/2d53856404d09faceb7f07bfd2a0ca2f.png",
-					"path": "/pages/app/coupon/detail?id=4",
-					"name": "优惠券",
-					"path_name": "优惠劵详情-钢丝绳优惠券",
-					"path_type": 1
-				}, {
-					"image": "https://api.7wpp.com/uploads/20200930/fac8e75a7614f91e6329942c0277f194.jpg",
-					"path": "/pages/index/category?id=175",
-					"name": "水果摊",
-					"path_name": "分类-一级分类",
 					"path_type": 1
 				}]
 			},
@@ -162,10 +120,10 @@
 			"id": 17952,
 			"type": "groupon",
 			"category": "home",
-			"name": "拼团",
+			"name": "热映影片",
 			"content": {
 				"id": 126,
-				"name": "超值拼团",
+				"name": "热映影片",
 				"groupon_name": "12.12",
 				"team_num": "2"
 			},
@@ -176,8 +134,8 @@
 			"category": "home",
 			"name": "秒杀",
 			"content": {
-				"id": 127,
-				"name": "限时秒杀",
+				"id": 126,
+				"name": "限时抢购",
 				"seckill_name": "1212秒杀"
 			},
 			"decorate_id": 1
@@ -187,7 +145,7 @@
 			"category": "home",
 			"name": "标题栏",
 			"content": {
-				"name": "为你推荐",
+				"name": "猜你喜欢",
 				"color": "#000000",
 				"image": "http://shopro.7wpp.com/imgs/title1.png"
 			},
@@ -317,14 +275,14 @@
 					"path_name": "商城-首页",
 					"path_type": 1
 				}, {
-					"name": "分类",
+					"name": "商品",
 					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/d6e987bb27013691478ddce7ce700288.png",
 					"activeImage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/f280b7f9ea18db0c80337d1c1cac6075.png",
 					"path": "/pages/index/category?id=276",
-					"path_name": "分类-OTO购买",
+					"path_name": "商品-OTO购买",
 					"path_type": 1
 				}, {
-					"name": "购物车",
+					"name": "票夹",
 					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/0ab4659f44404d6d4723c265ccd21f94.png",
 					"activeImage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/5273d6e90fb45e3d9189fba9fcbea47c.png",
 					"path": "/pages/index/cart",

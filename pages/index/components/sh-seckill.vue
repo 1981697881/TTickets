@@ -42,6 +42,7 @@
 
 <script>
 import shActivityGoods from './sh-activity-goods.vue';
+import seckill from '@/csJson/seckill.json';
 export default {
 	components: {
 		shActivityGoods
@@ -104,7 +105,18 @@ export default {
 		// 获取秒杀商品
 		getSeckillGoodsList() {
 			let that = this;
-			that.$api('goods.activity', {
+			let res = seckill
+			if (res.code === 1) {
+				let arr = that.sortData(res.data.goods.data, 4);
+				that.goodsList = arr;
+				let nowTime = new Date().getTime();
+				let endTime = res.data.endtime * 1000;
+				let t = endTime - nowTime;
+				that.countDown(t / 1000);
+			} else {
+				that.showActivity = false;
+			}
+			/* that.$api('goods.activity', {
 				activity_id: that.detail.id
 			}).then(res => {
 				if (res.code === 1) {
@@ -117,7 +129,7 @@ export default {
 				} else {
 					that.showActivity = false;
 				}
-			});
+			}); */
 		}
 	}
 };
@@ -129,7 +141,7 @@ export default {
 .swiper-box,
 .carousel {
 	width: 700rpx;
-	height: 240upx;
+	height: 280upx;
 	position: relative;
 	border-radius: 20rpx;
 

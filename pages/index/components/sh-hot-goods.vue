@@ -98,7 +98,7 @@ export default {
 		width: 710rpx;
 		.goods-item {
 			margin-right: 20rpx;
-			margin-bottom: 20rpx;
+			margin-bottom: 120rpx;
 			width: 345rpx;
 			box-shadow: 0px 0px 10rpx 4rpx rgba(199, 199, 199, 0.22);
 			border-radius: 20rpx;

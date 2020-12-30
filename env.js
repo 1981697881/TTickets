@@ -10,8 +10,8 @@ let protocol = window.location.protocol;
 // #endif
 // https://api.7wpp.com
 const ENV_BASE_URL = {
-	development: '', //开发环境
-	production: '', //生产环境
+	development: 'https://api.7wpp.com', //开发环境
+	production: 'https://api.7wpp.com', //生产环境
 }
 const ENV_API_URL = {
 	development: `${ENV_BASE_URL.development}/addons/shopro/`, //开发环境

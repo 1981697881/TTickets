@@ -66,6 +66,7 @@ export default {
 		}
 	},
 	onLaunch: async function(options) {
+		
 		if (options.query.mode === 'save') {
 			//截图模式
 			uni.setStorageSync('screenShot', true);
@@ -82,8 +83,10 @@ export default {
 		let init = await this.getAppInit(options);
 		await this.autoLogin(init.data);
 		await this.getRoutes();
+		
 	},
 	onShow: function() {
+		
 		this.$store.commit('CART_NUM');
 	},
 	onHide: function() {}

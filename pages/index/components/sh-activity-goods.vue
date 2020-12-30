@@ -1,8 +1,9 @@
 <template>
 	<view class="min-goods" @tap="jump('/pages/goods/detail/index', { id: detail.id })">
 		<view class="img-box">
-			<view class="tag" v-if="detail.activity_type === 'groupon'">{{ detail.activity.rules.team_num }}人团</view>
-			<image class="img" :src="detail.image" mode="widthFix"></image>
+			<view class="tag" v-if="detail.activity_type === 'groupon'">2D IMAX</view>
+			<view class="tagb" v-if="detail.activity_type === 'groupon'">评分 <text>{{ detail.activity.rules.team_num }}.0</text></view>
+			<image class="img" :src="detail.image" mode="scaleToFill"></image>
 		</view>
 		<view class="price-box">
 			<view class="y-f">
@@ -39,25 +40,39 @@ export default {
 	background: #fff;
 	.img-box {
 		width: 152rpx;
-		height: 152rpx;
+		height: 200rpx;
 		overflow: hidden;
 		position: relative;
 		.tag {
 			position: absolute;
 			left: 0;
+			top: 0rpx;
+			z-index: 2;
+			line-height: 30rpx;
+			background: linear-gradient(132deg, rgba(28, 28, 28, 1), rgba(54, 54, 54, 1), rgba(236, 190, 96, 1));
+			border-radius: 0px 18rpx 18rpx 0px;
+			padding: 0 10rpx;
+			font-size: 18rpx;
+			font-family: PingFang SC;
+			color: white;
+		}
+		.tagb {
+			position: absolute;
+			left: 0;
 			bottom: 0rpx;
 			z-index: 2;
 			line-height: 35rpx;
-			background: linear-gradient(132deg, rgba(243, 223, 177, 1), rgba(243, 223, 177, 1), rgba(236, 190, 96, 1));
 			border-radius: 0px 18rpx 18rpx 0px;
 			padding: 0 10rpx;
-			font-size: 24rpx;
+			font-size: 20rpx;
 			font-family: PingFang SC;
-			font-weight: bold;
-			color: rgba(120, 79, 6, 1);
+			color: white;
+			
 		}
 		.img {
 			width: 100%;
+			height: 100%;
+			border-radius: 10rpx;
 			background-color: #ccc;
 		}
 	}
@@ -76,6 +91,10 @@ export default {
 			color: rgba(153, 153, 153, 1);
 			margin-left: 14rpx;
 		}
+	}
+	.tagb text{
+		font-size: 22rpx;
+		font-weight: bold;
 	}
 	.title {
 		font-size: 26rpx;

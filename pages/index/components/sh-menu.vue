@@ -1,9 +1,9 @@
 <template>
 	<!-- 产品分类导航 -->
-	<view class="menu-category-box mb10" v-if="carousel.length" :style="detail.list.length <= menu ? `height:200rpx` : `height:360rpx`">
+	<view class="menu-category-box mb10" v-if="carousel.length" style="height:200rpx">
 		<swiper
 			class="menu-swiper-box"
-			:style="detail.list.length <= menu ? `height:160rpx` : `height:320rpx`"
+			style="height:160rpx"
 			@change="onSwiper"
 			circular
 			:autoplay="false"
@@ -49,7 +49,7 @@ export default {
 	computed: {
 		carousel() {
 			if (this.detail.list) {
-				let data = this.sortData(this.detail.list, this.menu * 2);
+				let data = this.sortData(this.detail.list, this.menu);
 				return data;
 			}
 		}

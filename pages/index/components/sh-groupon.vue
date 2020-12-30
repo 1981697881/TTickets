@@ -5,7 +5,7 @@
 			<text class="title">{{ detail.name }}</text>
 			<view class="group-people x-f">
 				<!-- <view class="head-box x-f"><image v-for="i in 3" class="head-img" src="" mode="" :key="i"></image></view> -->
-				<text class="tip">更多</text>
+				<text class="tip">全部</text>
 				<text class="cuIcon-right"></text>
 			</view>
 		</view>
@@ -97,7 +97,7 @@ export default {
 .swiper-box,
 .carousel {
 	width: 700rpx;
-	height: 240upx;
+	height: 280upx;
 	position: relative;
 	border-radius: 20rpx;
 
