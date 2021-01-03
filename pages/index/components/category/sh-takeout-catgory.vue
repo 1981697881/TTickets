@@ -23,7 +23,7 @@
 					<view class="right" v-if="categoryData.length">
 						<view class="item-list" v-for="(item, index1) in categoryData" :key="index1" :id="`right_${index1}`">
 							<view class="type-box y-c">
-								<image class="type-img" v-if="item.image" :src="item.image" lazy-load></image>
+								<image mode="scaleToFill" class="type-img" v-if="item.image" :src="item.image" lazy-load></image>
 								<text class="type-title">{{ item.name }}</text>
 							</view>
 							<view class="item-box">

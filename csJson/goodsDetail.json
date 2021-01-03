@@ -9,7 +9,7 @@
 		"subtitle": "测试规格商品3",
 		"weigh": 999,
 		"category_ids": "277",
-		"image": "https://api.7wpp.com/uploads/20201214/8df9c7e22843754ddae86684be1eea9d.jpg",
+		"image": "http://139.159.136.187:50080/uploadFiles/image/d2383481aaba29c04f737eb387b5cebc.jpeg",
 		"images": ["https://api.7wpp.com/uploads/20201216/970b3a1c20ea6ef2323a555ad2ec35bf.png"],
 		"params": [],
 		"content": "测试规格商品测试规格商品",

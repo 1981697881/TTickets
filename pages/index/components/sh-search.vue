@@ -1,5 +1,9 @@
 <template>
 	<view class="search x-c" :style="{ 'background-color': bgcolor }" :class="{ active: bgcolor }">
+		<view class="action text-white">
+			<text>广州</text>
+			<text class="cuIcon-triangledownfill"></text>
+		</view>
 		<view class="search-box x-c shopro-selector-rect" @tap="jump('/pages/goods/list', { keywords: detail.content })">
 			<text class="cuIcon-search"></text>
 			<text class="search-val">{{ detail.content || '暂无数据' }}</text>
@@ -48,7 +52,7 @@ export default {
 
 .search-box {
 	height: 64rpx;
-	width: 710rpx;
+	width: 600rpx;
 	background: #f5f5f5;
 	border-radius: 10rpx;
 

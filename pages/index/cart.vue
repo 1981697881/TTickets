@@ -78,7 +78,7 @@ export default {
 			isTool: false,
 			emptyData: {
 				img: '/static/imgs/empty/emptyCart.png',
-				tip: '购物车空空如也,快去逛逛吧~'
+				tip: '空空如也,快去逛逛吧~'
 			}
 		};
 	},

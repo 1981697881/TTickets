@@ -1,0 +1,100 @@
+{
+	"code": 1,
+	"msg": "积分商城列表",
+	"time": "1609661530",
+	"data": {
+		"total": 3,
+		"per_page": 10,
+		"current_page": 1,
+		"last_page": 1,
+		"data": [{
+			"id": 3,
+			"type": "normal",
+			"title": "日本原装进口花王玫瑰果香洗衣液含天然酵素柔顺剂无荧光剂820g",
+			"subtitle": "柔顺剂",
+			"weigh": 0,
+			"category_ids": "277",
+			"image": "https://api.7wpp.com/uploads/20200930/fac8e75a7614f91e6329942c0277f194.jpg",
+			"images": ["https://api.7wpp.com/uploads/20200930/12bb836223415a7acd8c39dbdff1af3b.jpg",
+				"https://api.7wpp.com/uploads/20200930/5466a9d716a903c0b98c00cba6ca58db.jpg"
+			],
+			"params": [{
+				"title": "净重",
+				"content": "5KG"
+			}, {
+				"title": "贮存方式",
+				"content": "阴凉处放置"
+			}, {
+				"title": "用途",
+				"content": "喝"
+			}],
+			"content": "<img style=\"width: 100%;!important\" src=\"https://api.7wpp.com/uploads/20200930/fac8e75a7614f91e6329942c0277f194.jpg\" alt=\"\" />",
+			"price": "11+1.00",
+			"original_price": "10.00",
+			"is_sku": 0,
+			"likes": 0,
+			"views": 19968,
+			"sales": 3,
+			"show_sales": 1586,
+			"service_ids": "4,3,2,1",
+			"dispatch_type": "express",
+			"dispatch_ids": "1",
+			"deletetime": null,
+			"stock": 97,
+			"score_goods_sku_price": [{
+				"id": 64,
+				"sku_price_id": 3,
+				"goods_id": 3,
+				"status": "up",
+				"stock": 97,
+				"sales": 3,
+				"price": "1.00",
+				"score": 11
+			}],
+			"dispatch_type_arr": ["express"]
+		}, {
+			"id": 10,
+			"type": "normal",
+			"title": "抱枕毯三合一沙发小盖毯暖手抱枕被子两用办公室学生床头靠垫午睡枕空调被腰靠趴睡枕午休枕坐垫腰枕 ",
+			"subtitle": "三合一沙发小盖毯",
+			"weigh": 0,
+			"category_ids": "13,14,15",
+			"image": "https://api.7wpp.com/uploads/20200930/78d480fa1025394b9be24ef5eef17489.png",
+			"images": ["https://api.7wpp.com/uploads/20200930/78d480fa1025394b9be24ef5eef17489.png"],
+			"params": [],
+			"content": "<img style=\"width: 100%;!important\" src=\"https://api.7wpp.com/uploads/20200930/77d2b1b8f666e27c3f2970e0861b1fb3.png\" alt=\"\" />",
+			"price": 10,
+			"original_price": "20.00",
+			"is_sku": 1,
+			"likes": 0,
+			"views": 7278,
+			"sales": 2,
+			"show_sales": 1569,
+			"service_ids": "4,3,2,1",
+			"dispatch_type": "selfetch",
+			"dispatch_ids": "4",
+			"deletetime": null,
+			"stock": 18,
+			"score_goods_sku_price": [{
+				"id": 67,
+				"sku_price_id": 164,
+				"goods_id": 10,
+				"status": "up",
+				"stock": 8,
+				"sales": 2,
+				"price": "0.00",
+				"score": 10
+			}, {
+				"id": 68,
+				"sku_price_id": 165,
+				"goods_id": 10,
+				"status": "up",
+				"stock": 10,
+				"sales": 0,
+				"price": "2.00",
+				"score": 20
+			}],
+			"dispatch_type_arr": ["selfetch"]
+		}]
+	}
+}

@@ -2,22 +2,10 @@
 	<view class="wrap-box">
 		<view class="user-box">
 			<block v-if="template.length" v-for="(item, index) in template" :key="index">
-				<!-- 搜索 -->
-				<sh-search v-if="item.type === 'search'" :detail="item" :bgcolor="bgcolor"></sh-search>
 				<!-- 轮播 -->
 				<sh-banner v-if="item.type === 'banner'" :detail="item.content" @getbgcolor="getbgcolor"></sh-banner>
 				<!-- 菜单 -->
 				<sh-menu v-if="item.type === 'menu'" :detail="item.content" :menu="item.content.style" :imgW="94"></sh-menu>
-				<!-- 推荐商品 -->
-				<sh-hot-goods v-if="item.type === 'goods-list' || item.type === 'goods-group'" :detail="item.content"></sh-hot-goods>
-				<!-- 广告魔方 -->
-				<sh-adv v-if="item.type === 'adv'" :detail="item.content"></sh-adv>
-				<!-- 优惠券 -->
-				<sh-coupon v-if="item.type === 'coupons'" :detail="item.content"></sh-coupon>
-				<!-- 秒杀 -->
-				<sh-seckill v-if="item.type === 'seckill'" :detail="item.content"></sh-seckill>
-				<!-- 拼团 -->
-				<sh-groupon v-if="item.type === 'groupon'" :detail="item.content"></sh-groupon>
 				<!-- 个人信息 -->
 				<sh-userinfo v-if="item.type === 'user'" :detail="item.content"></sh-userinfo>
 				<!-- 订单卡片 -->
@@ -28,10 +16,6 @@
 				<sh-wallet v-if="item.type === 'wallet-card'" :detail="item.content"></sh-wallet>
 				<!-- 九宫格列表 -->
 				<sh-grid v-if="item.type === 'grid-list'" :detail="item.content"></sh-grid>
-				<!-- 富文本 -->
-				<sh-richtext v-if="item.type === 'rich-text'" :detail="item.content"></sh-richtext>
-				<!-- 功能标题 -->
-				<sh-title-card v-if="item.type === 'title-block'" :detail="item.content"></sh-title-card>
 				<!-- 直播 -->
 				<!-- #ifdef MP-WEIXIN -->
 				<sh-live v-if="item.type === 'live' && HAS_LIVE" :detail="item.content"></sh-live>
@@ -44,7 +28,6 @@
 					<view class="code2">{{ info.copyright[1] }} {{ info.version }}</view>
 				</view>
 			</view>
-
 			<!-- 关注弹窗 -->
 			<shopro-float-btn></shopro-float-btn>
 			<!-- 连续弹窗提醒 -->
@@ -59,7 +42,6 @@
 
 <script>
 import Wechat from '@/common/wechat/wechat';
-
 import shSearch from './components/sh-search.vue';
 import shBanner from './components/sh-banner.vue';
 import shHotGoods from './components/sh-hot-goods.vue';
@@ -202,7 +184,7 @@ export default {
 }
 
 .foot_box {
-	padding-top: 200rpx;
+	padding-top: 0rpx;
 	padding-bottom: calc(var(--window-bottom) + 30px);
 	margin-bottom: 50rpx;
 }

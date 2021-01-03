@@ -6,7 +6,11 @@
 			<image class="img" :src="detail.image" mode="scaleToFill"></image>
 		</view>
 		<view class="price-box">
-			<view class="y-f">
+			<view class="y-f" v-if="detail.activity_type === 'groupon'">
+				<text class="cr_name">{{ detail.name}}</text>
+				<text class="seckill-current"><button class="cu-btn bg-red round sm">购票</button></text>
+			</view>
+			<view class="y-f" v-else>
 				<text class="seckill-current">￥{{ detail.activity_type === 'groupon' ? detail.groupon_price : detail.price }}</text>
 				<text class="original">￥{{ detail.original_price }}</text>
 			</view>
@@ -90,6 +94,9 @@ export default {
 			text-decoration: line-through;
 			color: rgba(153, 153, 153, 1);
 			margin-left: 14rpx;
+		}
+		.cr_name {
+			font-size: 20rpx;
 		}
 	}
 	.tagb text{

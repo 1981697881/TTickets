@@ -28,6 +28,7 @@
 
 <script>
 import shScoreGoods from './children/sh-score-goods.vue';
+import scoreList from '@/csJson/scoreList.json';
 export default {
 	components: {
 		shScoreGoods
@@ -63,9 +64,21 @@ export default {
 		getScoreShopsList() {
 			let that = this;
 			that.loadStatus = 'loading';
-			that.$api('score.list', {
+			let res = scoreList
+			if (res.code == 1) {
+				that.isLoading = false;
+				that.scoreList = [...that.scoreList, ...res.data.data];
+				that.lastPage = res.data.last_page;
+				if (that.currentPage < res.data.last_page) {
+					that.loadStatus = '';
+				} else {
+					that.loadStatus = 'over';
+				}
+			}
+			/* that.$api('score.list', {
 				page: that.currentPage
 			}).then(res => {
+				console.log(JSON.stringify(res))
 				if (res.code == 1) {
 					that.isLoading = false;
 					that.scoreList = [...that.scoreList, ...res.data.data];
@@ -76,7 +89,7 @@ export default {
 						that.loadStatus = 'over';
 					}
 				}
-			});
+			}); */
 		}
 	}
 };

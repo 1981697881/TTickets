@@ -23,7 +23,7 @@
 						<!-- 推荐商品 -->
 						<sh-hot-goods v-if="item.type === 'goods-list' || item.type === 'goods-group'" :detail="item.content"></sh-hot-goods>
 						<!-- 广告魔方 -->
-						<sh-adv v-if="item.type === 'adv'" :detail="item.content"></sh-adv>
+						<!-- <sh-adv v-if="item.type === 'adv'" :detail="item.content"></sh-adv> -->
 						<!-- 优惠券 -->
 						<sh-coupon v-if="item.type === 'coupons'" :detail="item.content"></sh-coupon>
 						<!-- 秒杀 -->

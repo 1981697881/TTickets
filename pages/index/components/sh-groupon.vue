@@ -97,7 +97,7 @@ export default {
 .swiper-box,
 .carousel {
 	width: 700rpx;
-	height: 280upx;
+	height: 300upx;
 	position: relative;
 	border-radius: 20rpx;
 

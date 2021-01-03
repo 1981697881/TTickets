@@ -42,7 +42,7 @@
 			"path": "pages/index/cart",
 			"name": "cart",
 			"style": {
-				"navigationBarTitleText": "购物车"
+				"navigationBarTitleText": "订单"
 
 			},
 			"meta": {
