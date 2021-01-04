@@ -84,6 +84,7 @@ export default {
 	methods: {
 		// 切换tabbar
 		switchTabbar(tab, index) {
+			console.log(tab)
 			this.$tools.routerTo(tab.path, {}, true);
 		}
 	}

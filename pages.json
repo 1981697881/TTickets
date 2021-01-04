@@ -39,10 +39,23 @@
 			}
 		},
 		{
+			"path": "pages/index/wallet",
+			"name": "wallet",
+			"style": {
+				"navigationBarTitleText": "票夹"
+
+			},
+			"meta": {
+				"auth": false,
+				"async": true,
+				"title": "票夹",
+				"group": "订单"
+			}
+		},{
 			"path": "pages/index/cart",
 			"name": "cart",
 			"style": {
-				"navigationBarTitleText": "订单"
+				"navigationBarTitleText": "购物车"
 
 			},
 			"meta": {

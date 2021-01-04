@@ -86,7 +86,6 @@ export default {
 		
 	},
 	onShow: function() {
-		
 		this.$store.commit('CART_NUM');
 	},
 	onHide: function() {}

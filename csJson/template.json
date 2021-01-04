@@ -265,11 +265,18 @@
 					"path_name": "商品-OTO购买",
 					"path_type": 1
 				}, {
-					"name": "订单",
+					"name": "购物车",
 					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/0ab4659f44404d6d4723c265ccd21f94.png",
 					"activeImage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/5273d6e90fb45e3d9189fba9fcbea47c.png",
 					"path": "/pages/index/cart",
 					"path_name": "商城-购物车",
+					"path_type": 1
+				},{
+					"name": "票夹",
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/0ab4659f44404d6d4723c265ccd21f94.png",
+					"activeImage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/5273d6e90fb45e3d9189fba9fcbea47c.png",
+					"path": "/pages/index/wallet",
+					"path_name": "订单-票夹",
 					"path_type": 1
 				}, {
 					"name": "我的",

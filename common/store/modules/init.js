@@ -52,7 +52,6 @@ const actions = {
 			/* api('dev.asyncLink', {
 				data: ROUTES
 			}).then(res => {
-				console.log(res)
 				commit('PAGE_ROUTES', res.data);
 				resolve(res)
 			}).catch(e => {
