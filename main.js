@@ -22,7 +22,8 @@ Vue.prototype.$store = store;
 Vue.prototype.$api = api;
 Vue.prototype.$tools = tools;
 Vue.prototype.$API_URL = API_URL;
-
+//状态栏高度
+Vue.prototype.statusBarHeight = uni.getSystemInfoSync().statusBarHeight;
 Vue.component('cu-custom', cuCustom);
 Vue.config.productionTip = false;
 App.mpType = 'app';

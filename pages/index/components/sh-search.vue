@@ -1,6 +1,6 @@
 <template>
 	<view class="search x-c" :style="{ 'background-color': bgcolor }" :class="{ active: bgcolor }">
-		<view class="action text-white">
+		<view class="action text-white" @tap="jump('/pages/location/list', { keywords: detail.content })">
 			<text>广州</text>
 			<text class="cuIcon-triangledownfill"></text>
 		</view>

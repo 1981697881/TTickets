@@ -307,6 +307,26 @@
 			]
 		},
 		{
+			"root": "pages/location",
+			"pages": [
+				// 定位------start
+				{
+					"path": "list",
+					"style": {
+						"navigationBarTitleText": "定位",
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"auth": false,
+						"async": true,
+						"title": "定位",
+						"group": "位置信息"
+					}
+				}
+				// 定位------end
+			]
+		},
+		{
 			"root": "pages/order",
 			"pages": [
 				// 订单order------start
