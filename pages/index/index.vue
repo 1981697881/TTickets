@@ -163,6 +163,7 @@ export default {
 	computed: {
 		...mapState({
 			initData: state => state.init.initData,
+			city: state => state.init.city,
 			template: state => state.init.templateData?.home,
 			hasTemplate: state => state.init.hasTemplate,
 			cartNum: state => state.cart.cartNum,
@@ -200,7 +201,6 @@ export default {
 	},
 	onShow() {
 		this.$store.commit('CART_NUM', this.cartNum);
-
 		// #ifndef MP-WEIXIN
 		if (this.info && this.info.name) {
 			uni.setNavigationBarTitle({
@@ -211,10 +211,10 @@ export default {
 	},
 	methods: {
 		...mapMutations(['CART_NUM']),
-		...mapActions(['getAppInit', 'getTemplate']),
+		...mapActions(['getAppInit', 'getTemplate', 'getLocation']),
 		// 初始化
 		init() {
-			return Promise.all([this.getAppInit(), this.getTemplate()]).then(() => {
+			return Promise.all([this.getAppInit(), this.getTemplate(), this.getLocation()]).then(() => {
 				uni.stopPullDownRefresh();
 			});
 		},

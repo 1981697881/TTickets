@@ -1,4 +1,5 @@
 export const INIT_DATA = 'INIT_DATA' //初始化数据
+export const LOC_CITY = 'LOC_CITY' //当前定位城市
 export const PAGE_ROUTES = 'PAGE_ROUTES'//路由表
 export const TEMPLATE_DATA = 'TEMPLATE_DATA'//模板信息
 

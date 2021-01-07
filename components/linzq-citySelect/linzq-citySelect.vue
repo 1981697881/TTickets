@@ -14,7 +14,7 @@
 						当前定位
 					</view>
 					<view class="dingwei_city">
-						<view class="dingwei_city_one">
+						<view class="dingwei_city_one" @click="back_city()">
 							{{position}}
 						</view>
 						<view class="dingweis_div" @click="getWarpweft">
@@ -23,7 +23,6 @@
 						</view>
 					</view>
 				</view>
-
 				<!-- 最近模块 -->
 				<view class="dingwei" v-if="Visit.length>=0">
 					<view class="dingwei_Tips">
@@ -190,7 +189,8 @@
 				}
 			},
 
-			back_city(item) {
+			back_city(item = {'cityName': this.position}) {
+				console.log(item)
 				if (item) {
 					this.$emit('back_city', item);
 					//unshift 把数据插入到首位，与push相反
@@ -252,6 +252,7 @@
 					url: getAddressUrl,
 					success: result => {
 						let Res_Data = result.data.result;
+						console.log(Res_Data)
 						_this.position = Res_Data.address_component.city.replace('市','')
 					}
 				});
