@@ -7,7 +7,7 @@ import store from '@/common/store';
 export default {
 	methods: {
 		//应用初始化,获取模板,获取页面路由,获取用户信息,保存用户Token并返回初始进入页面
-		...mapActions(['getAppInit', 'getTemplate', 'getRoutes', 'getUserInfo', 'setTokenAndBack']),
+		...mapActions(['getAppInit', 'getTemplate', 'getRoutes', 'getUserInfo', 'setTokenAndBack', 'getLocation']),
 		// 获取系统栏高度
 		async setAppInfo() {
 			let that = this;
@@ -63,27 +63,44 @@ export default {
 				wechat.login();
 				// #endif
 			}
+		},
+		async getAppLocal() {
+			return new Promise((resolve, reject) => {
+				let coords = {};
+				uni.getLocation({
+					type: 'wgs84',
+					geocode: true,
+					success: function(res) {
+						coords.longitude = res.longitude;
+						coords.latitude = res.latitude;
+						resolve(coords);
+					}
+				});
+			})
 		}
 	},
 	onLaunch: async function(options) {
-		
+		//获取坐标
+
+		console.log(1);
 		if (options.query.mode === 'save') {
 			//截图模式
 			uni.setStorageSync('screenShot', true);
 			uni.setStorageSync('shop_id', options.query.shop_id);
 		}
 		// #ifdef MP-WEIXIN
-		if(options.scene !== 1154) {
+		if (options.scene !== 1154) {
 			var wechat = new Wechat();
-			wechat.checkMiniProgramUpdate();	
+			wechat.checkMiniProgramUpdate();
 		}
 		// #endif
 		await this.setAppInfo();
+		let local = await this.getAppLocal();
+		await this.getLocation(local);
 		await this.getTemplate(options);
 		let init = await this.getAppInit(options);
 		await this.autoLogin(init.data);
 		await this.getRoutes();
-		
 	},
 	onShow: function() {
 		this.$store.commit('CART_NUM');

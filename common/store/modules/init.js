@@ -21,11 +21,11 @@ const state = {
 }
 
 const actions = {
+	//获取定位
 	getLocation({
-		commit
+		commit 
 	}, options) {
 		return new Promise((resolve, reject) => {
-			 console.log(12313)
 			 let URL = 'https://apis.map.qq.com/ws/geocoder/v1/?location=';
 			 let key = 'OKYBZ-EF4AJ-OJFFM-KJOVL-GFN5S-4MBY3'; //你申请的开发者密钥（Key）  一般放在后台获取过来
 			 let getAddressUrl = URL + options.latitude + ',' + options.longitude + `&key=${key}`;
@@ -37,17 +37,6 @@ const actions = {
 			 		 resolve(Res_Data)
 			 	}
 			 });
-			 //初始化请求
-			/* api('init').then(res => {
-				commit('INIT_DATA', res.data);
-				uni.setStorageSync('sysInfo', res.data.info);
-				uni.setStorageSync('shareInfo', res.data.share);
-				uni.setStorageSync('addons', res.data.addons)
-				console.log(JSON.stringify(res))
-				resolve(res)
-			}).catch(e => {
-				reject(e)
-			}) */
 		})
 	},
 	getAppInit({

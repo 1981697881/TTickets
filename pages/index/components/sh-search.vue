@@ -1,7 +1,7 @@
 <template>
 	<view class="search x-c" :style="{ 'background-color': bgcolor }" :class="{ active: bgcolor }">
-		<view class="action text-white" @tap="jump('/pages/location/list', { keywords: detail.content })">
-			<text>广州</text>
+		<view class="action text-white" @tap="jump('/pages/location/list', city)">
+			<text>{{city.cityName}}</text>
 			<text class="cuIcon-triangledownfill"></text>
 		</view>
 		<view class="search-box x-c shopro-selector-rect" @tap="jump('/pages/goods/list', { keywords: detail.content })">
@@ -12,6 +12,7 @@
 </template>
 
 <script>
+	import { mapState } from 'vuex';
 export default {
 	components: {},
 	data() {
@@ -27,8 +28,16 @@ export default {
 			default: '#FFFFFF'
 		}
 	},
-	computed: {},
-	methods: {
+	computed: {
+		...mapState({
+			city: state => state.init.city
+		})
+	},
+	onLoad(){
+		console.log(123)
+		console.log(this.city)
+	},
+	methods: { 
 		jump(path, params) {
 			this.$Router.push({
 				path: path,
