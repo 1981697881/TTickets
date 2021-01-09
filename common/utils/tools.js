@@ -277,8 +277,34 @@ export default {
 		str += '前';
 		return str;
 	},
-
-
+	// 获取时间区间
+	// 查询前后三天日期
+	getDayList(date, day) {
+		let today = new Date();
+		let targetday_milliseconds = today.getTime() + 1000 * 60 * 60 * 24 * day;
+		today.setTime(targetday_milliseconds); //注意，这行是关键代码
+		let tYear = today.getFullYear();
+		let tMonth = today.getMonth();
+		let tDate = today.getDate();
+		let getDay = today.getDay();
+		tMonth = this.doHandleMonth(tMonth + 1);
+		tDate = this.doHandleMonth(tDate);
+		let weeks = new Array('周日', '周一', '周二', '周三', '周四', '周五', '周六');
+		let week = weeks[getDay];
+		return {
+			day: tDate,
+			week: week,
+			date: tMonth + '-' + tDate
+		};
+	},
+	//格式化时间 单位数补0
+	doHandleMonth(month) {
+		let m = month;
+		if (month.toString().length == 1) {
+			m = '0' + month;
+		}
+		return m;
+	},
 	/**提示框
 	 *title(标题)
 	 *icon(图标):  success，loading，none

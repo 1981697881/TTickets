@@ -36,7 +36,6 @@ export default {
 		};
 	},
 	onLoad(){
-		console.log(this.$Route.query)
 	},
 	computed: {},
 	mounted() {

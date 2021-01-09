@@ -34,8 +34,6 @@ export default {
 		})
 	},
 	onLoad(){
-		console.log(123)
-		console.log(this.city)
 	},
 	methods: { 
 		jump(path, params) {

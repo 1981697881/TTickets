@@ -263,6 +263,39 @@
 			]
 		},
 		{
+			"root": "pages/cinema",
+			"pages": [
+				// 影院------start
+				{
+					"path": "circuit/list",
+					"style": {
+						"navigationBarTitleText": "影院",
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"auth": false,
+						"async": true,
+						"title": "影院",
+						"group": "影院"
+					}
+				},
+				{
+					"path": "movie/list",
+					"style": {
+						"navigationBarTitleText": "选座位"
+					},
+					"meta": {
+						"auth": false,
+						"async": true,
+						"title": "选座位",
+						"group": "影院院线"
+					}
+				}
+				// 影院------end
+		
+			]
+		},
+		{
 			"root": "pages/goods",
 			"pages": [
 				// 商品goods------start

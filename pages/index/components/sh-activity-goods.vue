@@ -1,12 +1,12 @@
 <template>
-	<view class="min-goods" @tap="jump('/pages/goods/detail/index', { id: detail.id })">
-		<view class="img-box">
+	<view class="min-goods">
+		<view class="img-box" @tap="jump('/pages/goods/detail/index', { id: detail.id })">
 			<view class="tag" v-if="detail.activity_type === 'groupon'">2D IMAX</view>
 			<view class="tagb" v-if="detail.activity_type === 'groupon'">评分 <text>{{ detail.activity.rules.team_num }}.0</text></view>
 			<image class="img" :src="detail.image" mode="scaleToFill"></image>
 		</view>
 		<view class="price-box">
-			<view class="y-f" v-if="detail.activity_type === 'groupon'">
+			<view class="y-f" @tap="jump('/pages/cinema/circuit/list', { id: detail.id })" v-if="detail.activity_type === 'groupon'">
 				<text class="cr_name">{{ detail.name}}</text>
 				<text class="seckill-current"><button class="cu-btn bg-red round sm">购票</button></text>
 			</view>
