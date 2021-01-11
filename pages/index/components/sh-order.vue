@@ -48,12 +48,12 @@ export default {
 				// 	img: 'http://shopro.7wpp.com/imgs/user/tab22.png',
 				// 	type: 'nosend'
 				// },
-				{
+				/* {
 					id: 3,
 					title: '待收货',
 					img: 'http://shopro.7wpp.com/imgs/user/tab33.png',
 					type: 'noget'
-				},
+				}, */
 				{
 					id: 4,
 					title: '待评价',

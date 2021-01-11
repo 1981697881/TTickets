@@ -22,19 +22,19 @@
 					"name": "",
 					"bgcolor": "#2B4055",
 					"image": "http://139.159.136.187:50080/uploadFiles/image/2102602922.jpg",
-					"path": "/pages/goods/list?id=78",
+					"path": "/pages/cinema/circuit/list?id=78",
 					"path_name": "商城-商品列表-美妆工具",
 					"path_type": 1
 				}, {
 					"image": "http://139.159.136.187:50080/uploadFiles/image/4205961149.jpg",
-					"path": "/pages/goods/list?id=39",
+					"path": "/pages/cinema/circuit/list?id=39",
 					"path_type": 1,
 					"name": "",
 					"bgcolor": "#5B3626",
 					"path_name": "商城-商品列表-厨房用品"
 				}, {
 					"image": "http://139.159.136.187:50080/uploadFiles/image/4100127922.jpg",
-					"path": "/pages/goods/list?id=8",
+					"path": "/pages/cinema/circuit/list?id=8",
 					"path_type": 1,
 					"name": "",
 					"bgcolor": "#5C92C1",

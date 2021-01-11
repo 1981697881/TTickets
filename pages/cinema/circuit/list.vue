@@ -20,7 +20,7 @@
 							<view class="text-white cir_detail">
 								<view class="text-cut de_name">{{ item.name }}</view>
 								<view class="de_pin">评分{{ item.score }}  |  10.1万人想看</view>
-								<view class="text-orange de_info">{{ item.time }}  |  剧情</view>
+								<view class="text-orange de_info">{{ item.time }}  |  {{ item.genre }}</view>
 								<view class="text-orange de_info">导演：{{ item.direct }}</view>
 								<view class="text-orange de_info">主演：{{ item.starring }}</view>
 							</view>
@@ -72,37 +72,40 @@ export default {
 		return {
 			cardCur: 0,
 			circuit: '',
-			swiperList: [
+			swiperList: [ 
 				{
 					id: 0,
-					name: '测试01',
-					score: '9.0',
+					name: '百鸟朝凤',
+					score: '8.0',
 					scrn: 'screen',
-					time: '120分钟',
-					direct: 'A导演',
-					starring: '王宝强',
+					genre: '剧情',
+					time: '103分钟',
+					direct: '吴天明',
+					starring: '陶泽如 李岷城 嵇波',
 					type: 'group',
-					url: 'https://ossweb-img.qq.com/images/lol/web201310/skin/big84000.jpg'
+					url: 'http://139.159.136.187:50080/uploadFiles/image/d02494f7a0c24790f2d10b4d5fc4b613.jpg'
 				},
 				{
 					id: 1,
-					name: '测试1',
-					score: '9.0',
-					time: '120分钟',
-					direct: 'A导演',
-					starring: '王宝强',
+					name: '流浪地球',
+					score: '7.0',
+					time: '125 分钟',
+					direct: '郭帆',
+					genre: '科幻',
+					starring: '吴京 屈楚萧 赵今麦',
 					type: 'group',
-					url: 'https://ossweb-img.qq.com/images/lol/web201310/skin/big37006.jpg'
+					url: 'http://139.159.136.187:50080/uploadFiles/image/75932d4f57e9ad2f1af692bc4c8ab470.jpeg'
 				},
 				{
 					id: 2,
-					name: '测试2',
-					score: '9.0',
-					time: '120分钟',
-					direct: 'A导演',
-					starring: '王宝强',
+					name: '我不是药神',
+					score: '8.1',
+					time: '116 分钟',
+					genre: '剧情',
+					direct: '文牧野',
+					starring: '徐峥 周一围 王传君',
 					type: 'group',
-					url: 'https://ossweb-img.qq.com/images/lol/web201310/skin/big39000.jpg'
+					url: 'http://139.159.136.187:50080/uploadFiles/image/340beba0ae805c0f9e8ad5928b0e2fdf.jpeg'
 				}
 			],
 			dotStyle: false,

@@ -17,7 +17,6 @@ import {
 	RouterMount
 } from 'uni-simple-router'
 import api from '@/common/request/index'
-
 Vue.prototype.$store = store;
 Vue.prototype.$api = api;
 Vue.prototype.$tools = tools;

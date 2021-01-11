@@ -28,7 +28,7 @@
 				<swiper-item v-for="(goods, swindex) in goodsList" :key="swindex" class="carousel-item">
 					<view class="min-goods" @tap="jump('/pages/cinema/movie/list', { id: detail.id })">
 						<view class="price-box">
-							<view class="y-f text-white">
+							<view class="y-f text-black">
 								<text class="text-xl seckill-current">15:35</text>
 								<text class="text-xs seckill-current">国语 2D</text>
 								<text class="text-xl original text-red">￥{{ detail.original_price }}</text>
@@ -202,7 +202,7 @@ export default {
 		line-height: 35rpx;
 		margin-top: 0;
 		border-radius: 10rpx;
-		background: #696969;
+		border:1px solid #696969;
 		.price-box {
 			width: 100%;
 			margin-top: 10rpx;
