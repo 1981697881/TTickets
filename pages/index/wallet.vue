@@ -1,55 +1,46 @@
 <template>
 	<view class="page_box">
-		<view class="head_box" v-if="cartList.length">
-			<view class="safety-box x-f" v-if="false">
-				<text class="cuIcon-safe"></text>
-				<text>无忧退换，让你的购物体验简单省心</text>
-			</view>
-			<view class="tip-box x-f" v-if="false">
-				<text class="tag">全场满额减</text>
-				再购154.10元立享每满400元减20元 >
-			</view>
-			<view class="tool-box x-bc">
-				<view class="count-box">
-					共
-					<text class="all-num">{{ cartList.length }}</text>
-					件商品
+		<view class="head_box">
+			<view class="tab-box x-f">
+				<view class="tab-item" @tap="onTab(tab.id)" :class="{ 'tab-active': tabCurrent === tab.id }" v-for="tab in tabList" :key="tab.id">
+					<text class="tab-title">{{ tab.title }}</text>
+					<text v-show="tabCurrent === tab.id" class="tab-triangle"></text>
 				</view>
-				<button class="cu-btn set-btn" @tap="onSet">{{ isTool ? '完成' : '编辑' }}</button>
 			</view>
 		</view>
 		<view class="content_box">
-			<checkbox-group class="block" v-if="cartList.length">
-				<view class="collect-list x-start" v-for="(g, index) in cartList" :key="index">
-					<view class="x-c" style="height: 200rpx;" @tap="onSel(index, g.checked)">
-						<checkbox :checked="g.checked" :class="{ checked: g.checked }" class="goods-radio round orange"></checkbox>
-					</view>
-					<shopro-mini-card :detail="g.goods" :sku="g.sku_price" :type="'sku'">
-						<block slot="goodsBottom">
-							<view class="x-bc price-box">
-								<view class="price">￥{{ g.sku_price.price }}</view>
-								<view class="num-step"><uni-number-box @change="onChangeNum($event, g, index)" :value="g.goods_num" :step="1" :min="0"></uni-number-box></view>
+			<scroll-view scroll-y="true" enable-back-to-top @scrolltolower="loadMore" class="scroll-box">
+				<view class="goods-item" v-for="item in goodsList" :key="item.id">
+					<wallet-list :cardId="item.id" :title="item.title" :subtitle="item.subtitle" :img="item.image" :price="item.price" :originalPrice="item.original_price">
+						<block slot="sell">
+							<view class="x-f">
+								<view class="cu-progress round sm">
+									<view class="progress--color" :style="[{ width: loading ? getProgress(item.sales, item.stock) : '' }]"></view>
+								</view>
+								<view class="progress-text">已抢{{ getProgress(item.sales, item.stock) }}</view>
 							</view>
 						</block>
-					</shopro-mini-card>
+						<block slot="btn">
+							<view class="fot-text">
+								<view class="text-grey">
+									共 <text class="text-black text-bold text-xl padding-xs"> 2 </text> 张
+									</view>
+								<view class="fot-btn">
+								<button class="cu-btn buy-btn" :class="btnType[tabCurrent].color">{{ btnType[tabCurrent].name }}</button>
+								</view>
+							</view>
+						</block>
+					</wallet-list>
 				</view>
-			</checkbox-group>
-			<view class="empty-box x-c" v-else><shopro-empty :emptyData="emptyData"></shopro-empty></view>
+				<!-- 空白 -->
+				<shopro-empty v-if="!goodsList.length && !isLoading" :emptyData="emptyData"></shopro-empty>
+				<!-- 加载更多 -->
+				<view v-if="goodsList.length" class="cu-load text-gray" :class="loadStatus"></view>
+				<!-- loading -->
+				<shopro-load v-model="isLoading"></shopro-load>
+			</scroll-view>
 		</view>
-		<view class="foot_box " v-if="cartList.length">
-			<view class="tools-box x-bc">
-				<label class="check-all x-f" @tap="onAllSel">
-					<radio :checked="allSel" :class="{ checked: allSel }" class="check-all-radio orange"></radio>
-					<text>全选</text>
-					<text>（{{ totalCount.totalNum }}）</text>
-				</label>
-				<view class="x-f">
-					<view class="price" v-if="!isTool">￥{{ totalCount.totalPrice.toFixed(2) }}</view>
-					<button class="cu-btn pay-btn" :disabled="!isSel" v-show="!isTool" @tap="onPay">结算</button>
-					<button class="cu-btn del-btn" v-show="isTool" @tap="goodsDelete">删除</button>
-				</view>
-			</view>
-		</view>
+		<view class="foot_box"></view>
 		<!-- 自定义底部导航 -->
 		<shopro-tabbar></shopro-tabbar>
 		<!-- 关注弹窗 -->
@@ -62,254 +53,214 @@
 </template>
 
 <script>
-import shoproMiniCard from '@/components/shopro-mini-card/shopro-mini-card.vue';
-import uniNumberBox from '@/components/uni-number-box/uni-number-box.vue';
+import walletList from '@/pages/wallet/list.vue';
 import shoproEmpty from '@/components/shopro-empty/shopro-empty.vue';
-import { mapMutations, mapActions, mapState, mapGetters } from 'vuex';
-let timer = null;
+import seckillList from '@/csJson/seckillList.json';
 export default {
 	components: {
-		shoproMiniCard,
-		uniNumberBox,
+		walletList,
 		shoproEmpty
 	},
 	data() {
 		return {
-			isTool: false,
 			emptyData: {
-				img: '/static/imgs/empty/emptyCart.png',
-				tip: '空空如也,快去逛逛吧~'
-			}
+				img: '/static/imgs/empty/empty_goods.png',
+				tip: '暂无可使用票劵，快去逛逛吧~'
+			},
+			isLoading: true,
+			loadStatus: '', //loading,over
+			lastPage: 1,
+			currentPage: 1,
+			tabCurrent: 'ing',
+			goodsList: [],
+			loading: false,
+			btnType: {
+				ended: {
+					name: '评价',
+					color: 'btn-end'
+				},
+				ing: {
+					name: '立即取票',
+					color: 'btn-ing'
+				},
+				nostart: {
+					name: '立即兑换',
+					color: 'btn-nostart'
+				}
+			},
+			tabList: [
+				{
+					id: 'ended',
+					title: '已使用'
+				},
+				{
+					id: 'ing',
+					title: '电影票'
+				},
+				{
+					id: 'nostart',
+					title: '商品'
+				}
+			]
 		};
 	},
-	computed: {
-		...mapState({
-			cartList: ({ cart }) => cart.cartList,
-			allSel: ({ cart }) => cart.allSelected
-		}),
-		...mapGetters(['totalCount', 'isSel'])
-	},
+	computed: {},
 	onLoad() {
-		this.getCartList();
+		setTimeout(() => {
+			this.loading = true;
+		}, 500);
+		this.getGoodsList();
 	},
 	methods: {
-		...mapActions(['getCartList', 'changeCartList']),
-		// 更改商品数
-		async onChangeNum(e, g, index) {
-			if (g.goods_num !== e) {
-				uni.showLoading({
-					mask: true
-				});
-				this.$set(this.cartList[index], 'goods_num', +e);
-				await this.changeCartList({ ids: [g.id], goodsNum: e, art: 'change' });
-				await uni.hideLoading();
+		onTab(id) {
+			this.tabCurrent = id;
+			this.goodsList = [];
+			this.currentPage = 1;
+			this.getGoodsList();
+		},
+		// 百分比
+		getProgress(sales, stock) {
+			let unit = '';
+			if (stock + sales > 0) {
+				let num = (sales / (sales + stock)) * 100;
+				unit = num.toFixed(2) + '%';
+			} else {
+				unit = '0%';
+			}
+			return unit;
+		},
+		// 加载更多
+		loadMore() {
+			if (this.currentPage < this.lastPage) {
+				this.currentPage += 1;
+				this.getGoodsList();
 			}
 		},
-		// 路由跳转
-		jump(path, parmas) {
-			this.$Router.push({
-				path: path,
-				query: parmas
-			});
-		},
-		// 单选
-		onSel(index, flag) {
+		// 秒杀列表
+		getGoodsList() {
 			let that = this;
-			that.$store.commit('selectItem', { index, flag });
-		},
-		// 功能切换
-		onSet() {
-			this.isTool = !this.isTool;
-		},
-		// 全选
-		onAllSel() {
-			let that = this;
-			that.$store.commit('changeAllSellect'); //按钮切换全选。
-			that.$store.commit('getAllSellectCartList', that.allSel); //列表全选
-		},
-		// 结算
-		onPay() {
-			let that = this;
-			let { cartList } = this;
-			if (this.isSel) {
-				let confirmcartList = [];
-				this.cartList.forEach(item => {
-					if (item.checked) {
-						confirmcartList.push({
-							goods_id: item.goods_id,
-							goods_num: item.goods_num,
-							sku_price_id: item.sku_price_id,
-							goods_price: item.sku_price.price
-						});
-					}
-				});
-				that.jump('/pages/order/confirm', { goodsList: JSON.stringify(confirmcartList), from: 'cart' });
-			}
-		},
-		// 删除
-		goodsDelete() {
-			let that = this;
-			let { cartList } = this;
-			let selectedIdsArray = [];
-			cartList.map(item => {
-				if (item.checked) {
-					selectedIdsArray.push(item.id);
+			that.isLoading = true;
+			that.loadStatus = 'loading';
+			let res = seckillList;
+			if (res.code === 1) {
+				that.isLoading = false;
+				that.goodsList = [...that.goodsList, ...res.data.data];
+				that.lastPage = res.data.last_page;
+				if (that.currentPage < res.data.last_page) {
+					that.loadStatus = '';
+				} else {
+					that.loadStatus = 'over';
 				}
-			});
-			this.changeCartList({ ids: selectedIdsArray, art: 'delete' });
+			}
+			/* that.$api('goods.seckillList', {
+				type: that.tabCurrent,
+				page: that.currentPage
+			}).then(res => {
+				console.log(JSON.stringify(res))
+				if (res.code === 1) {
+					that.isLoading = false;
+					that.goodsList = [...that.goodsList, ...res.data.data];
+					that.lastPage = res.data.last_page;
+					if (that.currentPage < res.data.last_page) {
+						that.loadStatus = '';
+					} else {
+						that.loadStatus = 'over';
+					}
+				}
+			}); */
 		}
 	}
 };
 </script>
 
-<style lang="scss">
+<style scoped lang="scss">
 .head_box {
-	.safety-box {
-		height: 80rpx;
-		font-size: 24rpx;
-		padding: 0 30rpx;
-		background: #f7f5f6;
-
-		.cuIcon-safe {
-			font-size: 32rpx;
-			margin-right: 16rpx;
+	background-color: #2b4055;
+}
+.tab-box {
+	overflow: hidden;
+	width: 100%;
+	height: 84rpx;
+	border: 1px solid #f8f8ff;
+	border-radius: 40rpx 40rpx 0 0;
+	.tab-item {
+		flex: 1;
+		line-height: 84rpx;
+		text-align: center;
+		background: #ffffff;
+		font-size: 28rpx;
+		font-family: PingFang SC;
+		font-weight: 500;
+		color: #999999;
+		position: relative;
+		border-right: 1rpx solid #fff;
+		.tab-triangle {
+			position: absolute;
+			z-index: 2;
+			bottom: 0;
+			left: 42%;
+			border-radius: 5rpx;
+			width: 45rpx;
+			height: 10rpx;
+			background: #2b4055;
 		}
 	}
-
-	.tip-box {
-		font-size: 26rpx;
-		color: #999;
-		height: 90rpx;
-		padding: 0 30rpx;
-		background: #fff;
-
-		.tag {
-			border: 1rpx solid rgba(168, 112, 13, 1);
-			border-radius: 2rpx;
-			padding: 0 10rpx;
-			line-height: 40rpx;
-			font-size: 26rpx;
-			color: #a8700d;
-			margin-right: 20rpx;
+	.tab-active {
+		color: #333333;
+	}
+}
+.goods-item {
+	position: relative;
+	margin-bottom: 2rpx;
+	.cu-progress {
+		width: 225rpx;
+		height: 16rpx;
+		.progress--color {
+			background: #e6b873;
 		}
 	}
-
-	.tool-box {
-		height: 90rpx;
-		padding: 0 30rpx;
-		background: #f7f5f6;
-
-		.count-box {
-			font-size: 26rpx;
-			color: #999;
-
-			.all-num {
-				color: #a8700d;
+	.progress-text {
+		color: #999999;
+		font-size: 20rpx;
+		margin-left: 25rpx;
+	}
+	.fot-text{
+		width: 100%;
+		height: 70rpx;
+		line-height: 70rpx;
+		display: flex;
+		.text-grey{
+			width: 50%;
+		}
+		.fot-btn{
+			text-align: right;
+			width: 50%;
+			height: 60rpx;
+			.buy-btn {
+				width: 140rpx;
+				height: 60rpx;
+				border-radius: 30rpx;
+				font-size: 26rpx;
+				font-family: PingFang SC;
+				font-weight: 400;
+				padding: 0;
+			}
+			.btn-end {
+				background: linear-gradient(90deg, #C6E2FF, #B9D3EE);
+				box-shadow: 1px 1px 1px 1px rgba(229, 138, 0, 0.22);
+				color: white;
+			}
+			.btn-nostart {
+				background: linear-gradient(90deg, #FFEC8B, #EEDC82);
+				box-shadow: 1px 1px 1px 1px rgba(229, 138, 0, 0.22);
+				color: #FF8247;
+			}
+			.btn-ing {
+				background: linear-gradient(90deg, #FFF0F5, #FFE4E1);
+				box-shadow: 1px 1px 1px 1px rgba(229, 138, 0, 0.22);
+				color: rgba(238, 99, 99, 1);
 			}
 		}
-
-		.set-btn {
-			background: none;
-			font-size: 26rpx;
-			color: #a8700d;
-		}
-	}
-}
-
-// 空白页
-.empty-box {
-	flex: 1;
-	width: 100%;
-	height: 100%;
-}
-
-.collect-list {
-	padding: 30rpx 20rpx;
-	background: #fff;
-	margin-bottom: 20rpx;
-
-	/deep/ .goods-title {
-		width: 420rpx !important;
-	}
-
-	.tag-box {
-		.tag1 {
-			line-height: 36rpx;
-			padding: 0 8rpx;
-			font-size: 18rpx;
-			color: rgba(#fff, 0.9);
-			background: #f39800;
-			display: inline-block;
-			box-sizing: border-box;
-		}
-
-		.tag2 {
-			line-height: 34rpx;
-			padding: 0 8rpx;
-			font-size: 18rpx;
-			color: rgba(#f39800, 0.9);
-			background: #fff;
-			border-top: 1rpx solid #f39800;
-			border-right: 1rpx solid #f39800;
-			border-bottom: 1rpx solid #f39800;
-			display: inline-block;
-			box-sizing: border-box;
-		}
-	}
-
-	.goods-radio {
-		transform: scale(0.7);
-		margin-right: 20rpx;
-		// background:  #E9B564;
-	}
-
-	.price-box {
-		width: 420rpx;
-
-		.price {
-			color: #e1212b;
-		}
-	}
-}
-
-.tools-box {
-	height: 100rpx;
-	width: 750rpx;
-	padding: 0 20rpx;
-	background: #fff;
-
-	.check-all {
-		font-size: 26rpx;
-
-		.check-all-radio {
-			transform: scale(0.7);
-			color: #e9b564;
-		}
-	}
-
-	.price {
-		color: #e1212b;
-		font-size: 500;
-		margin-right: 30rpx;
-	}
-
-	.pay-btn {
-		width: 200rpx;
-		height: 70rpx;
-		background: linear-gradient(90deg, rgba(233, 180, 97, 1), rgba(238, 204, 137, 1));
-		box-shadow: 0px 7rpx 6rpx 0px rgba(229, 138, 0, 0.22);
-		border-radius: 35rpx;
-		padding: 0;
-		color: rgba(#fff, 0.9);
-	}
-
-	.del-btn {
-		width: 200rpx;
-		height: 70rpx;
-		background: linear-gradient(90deg, rgba(244, 71, 57, 1) 0%, rgba(255, 102, 0, 1) 100%);
-		border-radius: 35rpx;
-		padding: 0;
-		color: rgba(#fff, 0.9);
 	}
 }
 </style>

@@ -5,7 +5,6 @@
 				<view>
 					<view class="fz-34 fw-b pt-20">三体2：黑暗森林</view>
 					<view class="mt-10 fz-28 color-666">2021年1月22日 国语3D</view>
-					<view class="mt-10 fz-28 color-666">2021年1月22日 国语3D</view>
 				</view>
 			</view>
 
@@ -20,24 +19,26 @@
 					@change="onMove"
 					@scale="onScale"
 				>
+				
 					<view
 						class="thumbnail"
 						v-show="thumbnailShow"
-						:style="{ transform: 'scale(' + seatScale + ')'}"
+						:style="'left: ' + (10 - moveX / scale) + 'px;'"
 					>
 						<!--红色外框开始-->
-						<!-- <view class="thumbnail-border" :style="{ transform: 'scale(' + scalereciprocal + ')', top: topthumbnail + 'rpx', left: leftthumbnail + 'rpx' }"></view> -->
-						<view v-for="(item, index) in seatArray" :key="index">
+						<view class="thumbnail-border" :style="{ transform: 'scale(' + scalereciprocal + ')', top: topthumbnail + 'rpx', left: leftthumbnail + 'rpx' }"></view>
+						<view  v-for="(item, index) in seatArray" :key="index" :style="'width:' + boxWidth/2 + 'rpx;height:' + seatSize/2 + 'rpx'">
 							<view
 								v-for="(seat, col) in item"
 								:key="col"
 								class="thumbnailSeatClass"
-								:style="{height:seatSize +'px',width:seatSize +'px',background: thumbnailBackgroud(seat)}"
+								:style="{height:seatSize/5 +'rpx',width:seatSize/5 +'rpx',background: thumbnailBackgroud(seat)}"
 								@click="handleChooseSeat(index, col)"
 							>
 							</view>
 						</view>
 					</view>
+					
 					<view class="Stage dp-f jc-c ai-c fz-22 color-333">5号厅</view>
 					<view style="width: 100rpx;height: 30rpx;" class="m-0-a mt-48 dp-f jc-c ai-c fz-20 color-999 b-1 br-5">银幕中央</view>
 					<view class="pt-f pa-v-2 b-d-1" :style="'height:' + seatRow * (20 + seatSize * pxNum) + 'rpx;top:165rpx;width:0'"></view>
@@ -118,8 +119,9 @@ export default {
 	data() {
 		return {
 			//缩略图是否显示
+			topthumbnail: 0, // 单位rem
+			leftthumbnail: 0, // 单位rem
 			thumbnailShow: true,
-			seatScale: 2,
 			scaleMin: 1, //h5端为解决1无法缩小问题，设为0.95
 			boxWidth: 400, //屏幕宽度px
 			space: ' ', //空格
@@ -163,14 +165,20 @@ export default {
 		this.initData();
 	},
 	methods: {
+		 // 根据影厅的大小缩放比例(需要把影厅全部显示出来)
+		    seatScale: function () {
+		      let seatScaleX = 1
+		      let seatScaleY = 1
+		      seatScaleX = this.seatAreaWidthRem / this.seatBoxWidth
+		      seatScaleY = this.seatAreaHeightRem / this.seatBoxHeight
+		      return seatScaleX < seatScaleY ? seatScaleX : seatScaleY
+		    },
 		thumbnailBackgroud: function(seatItem) {
-			if (seatItem.nowIcon === seatItem.selectedIcon) {
+			if (seatItem.type === 1) {
 				return 'green';
-			} else if (seatItem.nowIcon === seatItem.soldedIcon) {
+			} else if (seatItem.type === 2) {
 				return 'red';
-			} else if (seatItem.nowIcon === seatItem.fixIcon) {
-				return 'red';
-			} else {
+			} else if (seatItem.type === 0){
 				return 'white';
 			}
 		},
@@ -207,7 +215,6 @@ export default {
 						ColumnNum: ''
 					})
 				);
-				console.log(seatArray)
 			this.seatArray = seatArray;
 			this.seatSize = this.boxWidth > 0 ? parseInt(parseInt(this.boxWidth, 10) / (this.seatCol + 1), 10) : parseInt(parseInt(414, 10) / (this.seatCol + 1), 10);
 			this.initNonSeatPlace();
@@ -259,6 +266,10 @@ export default {
 				this.showTis = true;
 			}
 		},
+		 // scale的倒数
+		    scalereciprocal: function () {
+		      return 1 / this.scale
+		    },
 		//移动事件
 		onMove: function(e) {
 			this.thumbnailShow = true;
@@ -472,8 +483,8 @@ export default {
 	position: absolute;
 	z-index: 3;
 	top: 0;
-	width: 100rpx;
-	height: 100rpx;
+	width: 125rpx;
+	height: 125rpx;
 	left: 0;
 	background: rgba(0, 0, 0, 0.4);
 	overflow: hidden;
@@ -488,8 +499,8 @@ export default {
 		border: 1px solid red;
 	}
 	.thumbnailSeatClass {
-		position: fixed;
-		z-index: 9999;
+		margin: 1rpx;
+		display: inline-block;
 	}
 }
 .p-all-10 {

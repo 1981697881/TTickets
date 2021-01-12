@@ -42,8 +42,9 @@
 			"path": "pages/index/wallet",
 			"name": "wallet",
 			"style": {
-				"navigationBarTitleText": "票夹"
-
+				"navigationBarTitleText": "票夹",
+				"navigationBarTextStyle":"white",
+				"navigationBarBackgroundColor": "#2B4055"
 			},
 			"meta": {
 				"auth": false,
