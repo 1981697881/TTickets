@@ -9,7 +9,7 @@
 				<!-- 个人信息 -->
 				<sh-userinfo v-if="item.type === 'user'" :detail="item.content"></sh-userinfo>
 				<!-- 订单卡片 -->
-				<sh-order v-if="item.type === 'order-card'" :detail="item.content"></sh-order>
+				<!-- <sh-order v-if="item.type === 'order-card'" :detail="item.content"></sh-order> -->
 				<!-- 功能列表 -->
 				<sh-nav v-if="item.type === 'nav-list'" :detail="item.content"></sh-nav>
 				<!-- 钱包 -->

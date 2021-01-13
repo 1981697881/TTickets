@@ -10,8 +10,8 @@
 		"data": [{
 			"id": 19,
 			"type": "normal",
-			"title": "kkk111",
-			"subtitle": "222",
+			"title": "爆米花",
+			"subtitle": "领取方式：到店兑换",
 			"weigh": 0,
 			"category_ids": "17,33,37,36",
 			"image": "http://139.159.136.187:50080/uploadFiles/image/448b0e700eec459304f9cc7e556b9f24.jpg",
@@ -73,8 +73,8 @@
 		}, {
 			"id": 20,
 			"type": "normal",
-			"title": "O2O商品11111",
-			"subtitle": "222",
+			"title": "我不是药神",
+			"subtitle": "广州WeChat影城广州店",
 			"weigh": 0,
 			"category_ids": "125",
 			"image": "http://139.159.136.187:50080/uploadFiles/image/340beba0ae805c0f9e8ad5928b0e2fdf.jpeg",

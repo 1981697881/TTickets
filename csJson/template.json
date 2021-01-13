@@ -51,7 +51,7 @@
 				"name": "",
 				"style": 4,
 				"list": [{
-					"name": "电影/影院",
+					"name": "电影",
 					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/884360099a48d435e23e24091fb7084f.png",
 					"path": "/pages/user/sign/index",
 					"path_name": "通用-签到中心",
@@ -59,7 +59,7 @@
 				}, {
 					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/ce173c7d81d9521350620e51b0166808.png",
 					"path": "/pages/activity/groupon/list",
-					"name": "小吃/商品",
+					"name": "商品",
 					"path_name": "活动-今日必拼",
 					"path_type": 1
 				}, {

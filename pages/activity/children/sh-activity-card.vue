@@ -56,7 +56,6 @@ export default {
 		height: 200rpx;
 		overflow: hidden;
 		position: relative;
-
 		.img {
 			width: 200rpx;
 			height: 200rpx;

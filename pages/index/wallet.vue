@@ -26,7 +26,9 @@
 									共 <text class="text-black text-bold text-xl padding-xs"> 2 </text> 张
 									</view>
 								<view class="fot-btn">
-								<button class="cu-btn buy-btn" :class="btnType[tabCurrent].color">{{ btnType[tabCurrent].name }}</button>
+								<button v-if="btnType[tabCurrent].color=='btn-end'" @tap.stop="jump('/pages/order/add-comment', {id: item.id})" class="cu-btn buy-btn" :class="btnType[tabCurrent].color">{{ btnType[tabCurrent].name }}</button>
+								<button v-if="btnType[tabCurrent].color=='btn-ing'" @tap.stop="jump('/pages/wallet/detail/index', {id: item.id})" class="cu-btn buy-btn" :class="btnType[tabCurrent].color">{{ btnType[tabCurrent].name }}</button>
+								<button v-if="btnType[tabCurrent].color=='btn-nostart'" @tap.stop="jump('/pages/wallet/detail/index', {id: item.id})" class="cu-btn buy-btn" :class="btnType[tabCurrent].color">{{ btnType[tabCurrent].name }}</button>
 								</view>
 							</view>
 						</block>
@@ -54,12 +56,12 @@
 
 <script>
 import walletList from '@/pages/wallet/list.vue';
-import shoproEmpty from '@/components/shopro-empty/shopro-empty.vue';
+
 import seckillList from '@/csJson/seckillList.json';
 export default {
 	components: {
 		walletList,
-		shoproEmpty
+		
 	},
 	data() {
 		return {
@@ -112,6 +114,12 @@ export default {
 		this.getGoodsList();
 	},
 	methods: {
+		jump(path, parmas) {
+			this.$Router.push({
+				path: path,
+				query: parmas
+			});
+		},
 		onTab(id) {
 			this.tabCurrent = id;
 			this.goodsList = [];

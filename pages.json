@@ -340,6 +340,27 @@
 			]
 		},
 		{
+			"root": "pages/wallet",
+			"pages": [
+				// 票夹------start
+				{
+					"path": "detail/index",
+					"style": {
+						"navigationBarTitleText": "票据详情",
+						"navigationBarBackgroundColor":"#03AFFF",
+						"navigationBarTextStyle":"white"
+					},
+					"meta": {
+						"auth": false,
+						"async": true,
+						"title": "票据详情",
+						"group": "票夹"
+					}
+				}
+				// 票夹------end
+			]
+		},
+		{
 			"root": "pages/location",
 			"pages": [
 				// 定位------start
@@ -438,8 +459,8 @@
 
 					},
 					"meta": {
-						"auth": true,
-						"async": false
+						"auth": false,
+						"async": true
 					}
 				},
 				{

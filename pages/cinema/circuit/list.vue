@@ -122,7 +122,7 @@ export default {
 				keywords: '',
 				page: 1
 			},
-			isLoading: true, //loading和空白页。
+			isLoading: false, //loading和空白页。
 			loadStatus: '', //loading,over
 			lastPage: 1
 		};
@@ -144,7 +144,7 @@ export default {
 			this.listParams.keywords = this.$Route.query.keywords;
 			this.searchVal = this.$Route.query.keywords;
 		}
-		this.getGoodsList();
+		/* this.getGoodsList(); */
 	},
 	methods: {
 		cardSwiper(e) {

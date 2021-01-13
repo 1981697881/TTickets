@@ -57,7 +57,7 @@ export default {
 		}
 	},
 	onLoad() {
-		this.getOrderItemDetail();
+		/* this.getOrderItemDetail(); */
 	},
 	methods: {
 		// 订单详情

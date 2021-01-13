@@ -1,5 +1,5 @@
 <template>
-	<view class="activity-goods-box x-bc" @tap="jump('/pages/goods/detail/index', { id: cardId })">
+	<view class="activity-goods-box x-bc" @tap="jump('/pages/wallet/detail/index', { id: cardId })">
 		<view class="img-box">
 			<slot name="tag"></slot>
 			<image class="img" :src="img" mode="scaleToFill"></image>
@@ -52,8 +52,8 @@ export default {
 
 <style lang="scss">
 .activity-goods-box {
-	margin: 20rpx;
-	box-shadow: 1px 1px 1px 1px #ccc;
+	margin: 30rpx;
+	box-shadow: 1px 2px 2px 2px #f6f6f6;
 	border-radius: 10rpx;
 	background: #fff;
 	flex-wrap: wrap;
@@ -62,6 +62,7 @@ export default {
 		margin-top: 15rpx;
 		display: flex;
 		height: 48rpx;
+		background: #f6f6f6;
 		position: relative;
 		.cir-line {
 			position: absolute;
@@ -75,11 +76,11 @@ export default {
 		}
 		.cir-left {
 			width: 50%;
-			background: radial-gradient(circle at 1% 24rpx, transparent 20rpx, #f5f5f5 0) top left 49% no-repeat;
+			background: radial-gradient(circle at 1% 24rpx, transparent 20rpx, #fff 0) top left 49% no-repeat;
 		}
 		.cir-right {
 			width: 50%;
-			background: radial-gradient(circle at 99% 24rpx, transparent 20rpx, #f5f5f5 0) top right 49% no-repeat;
+			background: radial-gradient(circle at 99% 24rpx, transparent 20rpx, #fff 0) top right 49% no-repeat;
 		}
 	}
 	.fot-content {
@@ -102,7 +103,7 @@ export default {
 	}
 	.goods-right {
 		padding: 20rpx;
-		width: 500rpx;
+		width: 450rpx;
 		min-height: 200rpx;
 		position: relative;
 		align-items: flex-start;
