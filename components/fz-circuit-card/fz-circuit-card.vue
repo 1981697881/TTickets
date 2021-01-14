@@ -1,6 +1,6 @@
 <template>
 	<view class="goods-box" v-if="detail" >
-		<view class="content-box">
+		<view class="content-box" @tap="jump('/pages/cinema/index', { id: detail.id })">
 			<text v-if="isTag && detail.activity" class="tag-star"><text class="lg text-red cuIcon-favorfill"></text></text>
 			<view class="cont_one">
 				<view class="o_name">
@@ -19,7 +19,7 @@
 			</view>
 			<view class="flex flex-wrap">
 				<view class="padding-xs" v-for="(item, tagindex) in ColorList" :key="tagindex" v-if="item.name != 'white'">
-					<view class="cu-tag" :class="'line-' + item.name">{{ item.title }}</view>
+					<view class="cu-tag radius" :class="'line-' + item.name">{{ item.title }}</view>
 				</view>
 			</view>
 		</view>
@@ -198,11 +198,10 @@ export default {
 		width: 190rpx;
 		margin: 20rpx;
 		height: 130rpx;
-		box-shadow: 5px 5px 5px #888888;
+		box-shadow: 1px 1px 1px 1px #888888;
 		line-height: 35rpx;
 		margin-top: 0;
 		border-radius: 10rpx;
-		border:1px solid #696969;
 		.price-box {
 			width: 100%;
 			margin-top: 10rpx;

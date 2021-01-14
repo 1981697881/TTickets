@@ -268,16 +268,30 @@
 			"pages": [
 				// 影院------start
 				{
+					"path": "index",
+					"style": {
+						"navigationBarTitleText": "影城",
+						"navigationBarBackgroundColor": "#060210",
+						"navigationBarTextStyle": "white"
+					},
+					"meta": {
+						"auth": false,
+						"async": true,
+						"title": "影城",
+						"group": "影城"
+					}
+				},
+				{
 					"path": "circuit/list",
 					"style": {
-						"navigationBarTitleText": "影院",
+						"navigationBarTitleText": "电影",
 						"navigationStyle": "custom"
 					},
 					"meta": {
 						"auth": false,
 						"async": true,
-						"title": "影院",
-						"group": "影院"
+						"title": "电影",
+						"group": "电影"
 					}
 				},
 				{

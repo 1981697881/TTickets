@@ -5,7 +5,7 @@
 				<view class="group-wrap">
 					<wallet-head :detail="walletInfo"></wallet-head>
 					<view class="group-box">
-						<wallet-info></wallet-info>
+						<wallet-info :detail="walletInfo"></wallet-info>
 					</view>
 				</view>
 				<!-- loading -->
@@ -31,17 +31,12 @@ export default {
 	},
 	data() {
 		return {
-			emptyData: {
-				img: '/static/imgs/empty/empty_goods.png',
-				tip: '还没票据，去首页看看吧~',
-				path: '/pages/index/index',
-				pathText: '去首页逛逛'
-			},
 			walletInfo: {
 				id: '123',
-				type: 'restEnd', //end 已结束，ing 进行中 restEnd已退款 restIng退款中
-				title: '已退款',
-				butTitle: '2021-01-13 15:30:30 已退款，退款金额 10.0元',
+				type: 'movie', //movie 电影票 goods商品票
+				state: 'ing', //end 已结束，ing 进行中 restEnd已退款 restIng退款中
+				title: '1天后开场',
+				butTitle: '是否购票成功以订单信息为准',
 				circuit: '',
 				endTime: '',
 				ingTime: '',
@@ -103,6 +98,9 @@ export default {
 <style lang="scss">
 .page_box {
 	background-color: #03afff;
+}
+.page_box_shops {
+	background-color: #FF5164;
 }
 .group-box {
 	width: 700rpx;

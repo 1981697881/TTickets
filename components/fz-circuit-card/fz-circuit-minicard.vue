@@ -1,0 +1,121 @@
+<template>
+	<view class="goods-box" v-if="detail">
+		<view class="content-box">
+			<text v-if="isTag && detail.activity" class="tag-star"><text class="lg text-red cuIcon-favorfill"></text></text>
+			<view class="cont_one">
+				<view><text class="text-xl text-bold">14:30</text></view>
+				<view><text class="text-gray">15:40散场</text></view>
+			</view>
+			<view class="cont_two">
+				<view><text class="text-xs text-bold">国语 2D</text></view>
+				<view><text class="text-gray">5号厅</text></view>
+			</view>
+			<view class="cont_three">
+				<view class="o_price text-xxl">39</view>
+				<view class="text-olive text-xs">首单特惠<text class="o_price2">34</text></view>
+			</view>
+			<view class="cont_four"><button class="cu-btn bg-pink round ">购票</button></view>
+		</view>
+	</view>
+</template>
+
+<script>
+export default {
+	name: 'fzCircuitMiniCard',
+	components: {},
+	data() {
+		return {
+			goodsList: [{}, {}, {}, {}],
+			swiperCurrent: 0
+		};
+	},
+	props: {
+		isTag: {
+			type: [Boolean, String],
+			default: false
+		},
+		detail: {
+			type: Object,
+			default: null
+		}
+	},
+	computed: {},
+	methods: {
+		swiperChange(e) {
+			this.swiperCurrent = e.detail.current;
+		},
+		// 路由跳转
+		jump(path, parmas) {
+			this.$Router.push({
+				path: path,
+				query: parmas
+			});
+		}
+	}
+};
+</script>
+
+<style scoped lang="scss">
+.o_price {
+	color: rgba(225, 33, 43, 1);
+	&:before {
+		content: '￥';
+		color: rgba(225, 33, 43, 1);
+		font-size: 26rpx;
+	}
+}
+.o_price2 {
+	&:before {
+		content: '￥';
+		font-size: 26rpx;
+	}
+}
+.goods-box {
+	width: 100%;
+	background: #fff;
+	border-radius: 20rpx;
+	overflow: hidden;
+	.content-box {
+		width: 100%;
+		overflow: hidden;
+		position: relative;
+		padding: 20rpx;
+		display: flex;
+		font-family: PingFang SC;
+		flex-direction: row;
+		.cont_one {
+			width: 200rpx;
+		}
+		.cont_two {
+			padding-top: 8rpx;
+			width: 150rpx;
+		}
+		.cont_three {
+			text-align: right;
+			width: 200rpx;
+		}
+		.cont_four {
+			padding-top: 20rpx;
+			text-align: right;
+			width: 200rpx;
+		}
+		.tag-star {
+			position: absolute;
+			right: 0;
+			top: 0;
+			z-index: 2;
+			width: 0;
+			height: 0;
+			border-top: 60upx solid #ffe4b5;
+			border-left: 60upx solid transparent;
+			text {
+				top: -55upx;
+				left: -32upx;
+				position: absolute;
+				z-index: 999;
+				display: inline-block;
+			}
+		}
+	}
+}
+</style>

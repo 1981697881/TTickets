@@ -1,35 +1,32 @@
 <template>
 	<view class="list-box">
 		<view class="head_box">
-			<view style="position:relative;z-index: 10; background: #fff;">
-				<cu-custom :isBack="true">
-					<block slot="backText"></block>
-					<block slot="content">{{ circuit }}</block>
-				</cu-custom>
-			</view>
-			<swiper class="card-swiper" :class="dotStyle ? 'square-dot' : 'round-dot'" :circular="true" duration="500" @change="cardSwiper">
-				<swiper-item v-for="(item, cindex) in swiperList" :key="cindex" :class="cardCur == cindex ? 'cur' : ''">
-					<view class="swiper-item">
-						<image :src="item.url" mode="aspectFill" v-if="item.type == 'image'"></image>
-						<video :src="item.url" autoplay loop muted :show-play-btn="false" :controls="false" objectFit="cover" v-if="item.type == 'video'"></video>
-						<view class="cir_group" v-if="item.type == 'group'">
-							<view class="cir_logo">
-								<view class="tag" v-if="item.scrn === 'screen'">2D IMAX</view>
-								<image :src="item.url" mode="aspectFill"></image>
-							</view>
-							<view class="text-white cir_detail">
-								<view class="text-cut de_name">{{ item.name }}</view>
-								<view class="de_pin">评分{{ item.score }}  |  10.1万人想看</view>
-								<view class="text-orange de_info">{{ item.time }}  |  {{ item.genre }}</view>
-								<view class="text-orange de_info">导演：{{ item.direct }}</view>
-								<view class="text-orange de_info">主演：{{ item.starring }}</view>
-							</view>
-						</view>
+			<view class="ci-header">
+				<view class="header-info">
+					<view class="text-bold text-xxl padding-top">广州WeChat影院广州店</view>
+					<view class="info-local text-black padding-xs">
+						<view class="local-adr text-cut">白云区太和镇龙归龙岗路1号</view>
+						<view>· 0.1km</view>
 					</view>
-				</swiper-item>
-			</swiper>
+					<view class="text-gray">好评度 88% · 可退票 · 可改签</view>
+				</view>
+				<view class="locate-logo"><image class="logo-img" src="../../static/dingweis.png" mode="aspectFill"></image></view>
+			</view>
+			<ynGallery
+			 :galleryheight="125" 
+			  bkstart="#fff" 
+			  bkend="#fff" 
+			 :imgviewwidth="85" 
+			 :imgviewheight="100" 
+			 :showbadge="true"
+			  badegtype="trian" 
+			  badegwidth="25" 
+			  badegheight="25" 
+			 :showdec="true" 
+			 :images="swiperList" 
+			 @clickimg="onclickimg">
+			</ynGallery>
 			<sh-date></sh-date>
-			<view class="filter-item"><sh-filter @change="onFilter"></sh-filter></view>
 		</view>
 		<view class="content-box">
 			<view class="goods-list x-f">
@@ -54,25 +51,25 @@
 </template>
 
 <script>
-import shFilter from '../children/sh-filter.vue';
-import shDate from '../children/sh-date.vue';
-import fzCircuitCard from '@/components/fz-circuit-card/fz-circuit-card.vue';
+import shDate from './children/sh-date.vue';
+import fzCircuitCard from '@/components/fz-circuit-card/fz-circuit-minicard.vue';
 import shoproEmpty from '@/components/shopro-empty/shopro-empty.vue';
 import { mapMutations, mapActions, mapState } from 'vuex';
 import moreGoodList from '@/csJson/moreGoodList.json';
+import ynGallery from '@/components/YnComponents/ynGallery/ynGallery.vue'
 let timer = null;
 export default {
 	components: {
-		shFilter,
 		shDate,
+		ynGallery,
 		fzCircuitCard,
 		shoproEmpty
 	},
 	data() {
 		return {
-			cardCur: 0,
+			Msg: "0",
 			circuit: '',
-			swiperList: [ 
+			swiperList: [
 				{
 					id: 0,
 					name: '百鸟朝凤',
@@ -82,7 +79,7 @@ export default {
 					time: '103分钟',
 					direct: '吴天明',
 					starring: '陶泽如 李岷城 嵇波',
-					type: 'group',
+					type: 'image',
 					url: 'http://139.159.136.187:50080/uploadFiles/image/d02494f7a0c24790f2d10b4d5fc4b613.jpg'
 				},
 				{
@@ -93,7 +90,7 @@ export default {
 					direct: '郭帆',
 					genre: '科幻',
 					starring: '吴京 屈楚萧 赵今麦',
-					type: 'group',
+					type: 'image',
 					url: 'http://139.159.136.187:50080/uploadFiles/image/75932d4f57e9ad2f1af692bc4c8ab470.jpeg'
 				},
 				{
@@ -104,16 +101,13 @@ export default {
 					genre: '剧情',
 					direct: '文牧野',
 					starring: '徐峥 周一围 王传君',
-					type: 'group',
+					type: 'image',
 					url: 'http://139.159.136.187:50080/uploadFiles/image/340beba0ae805c0f9e8ad5928b0e2fdf.jpeg'
 				}
 			],
-			dotStyle: false,
-			towerStart: 0,
-			direction: '',
 			emptyData: {
 				img: '/static/imgs/empty/empty_goods.png',
-				tip: '当前选择地址附近，没有相关影院~'
+				tip: '当前选择日期,没有可观影影片,选择其他日期试试~'
 			},
 			goodsList: [],
 			searchVal: '',
@@ -136,6 +130,7 @@ export default {
 		}
 	},
 	onLoad() {
+		this.setimgs();
 		this.circuit = this.swiperList[0].name;
 		if (this.$Route.query.id) {
 			this.listParams.category_id = this.$Route.query.id;
@@ -147,9 +142,32 @@ export default {
 		this.getGoodsList();
 	},
 	methods: {
-		cardSwiper(e) {
-			this.circuit = this.swiperList[e.detail.current].name;
-			this.cardCur = e.detail.current;
+		onclickimg(imgviewobj) {
+			if (imgviewobj.index != undefined)
+				this.Msg = `${imgviewobj.index}`;
+		},
+		setimgs() {
+			var imgs=[];
+			for (let i in this.testimgs) {									
+				 let imgobj={
+					  dec:'',                   //图像描述信息
+					  badeg:'',                 //角标文字
+					  badegcolor:'#000000',     //角标颜色
+					  url:'',                   //图源  
+					  dominant:''               //主色  
+				};
+				imgobj.url=this.testimgs[i].url;
+				imgobj.dominant = this.retcolor(); //随机主色
+				imgobj.dec = i; //描述  
+				imgobj.badeg = i; //角标文字
+				imgobj.badegcolor = (i % 2) == 0 ? 'red' : 'LimeGreen'; //角标颜色
+				imgs.push(imgobj)
+			}
+			this.testimgs=imgs;
+		},
+		retcolor() {
+			let color = '#' + ('00000' + (Math.random() * 0x1000000 << 0).toString(16)).substr(-6);
+			return color;
 		},
 		onFilter(e) {
 			this.listParams.order = e;
@@ -218,66 +236,66 @@ export default {
 					}
 				}
 			}); */
-		}
+		},
+		// towerSwiper触摸开始
+		TowerStart(e) {
+			this.towerStart = e.touches[0].pageX
+		},
+		
+		// towerSwiper计算方向
+		TowerMove(e) {
+			this.direction = e.touches[0].pageX - this.towerStart > 0 ? 'right' : 'left'
+		},
+		
+		// towerSwiper计算滚动
+		TowerEnd(e) {
+			let direction = this.direction;
+			let list = this.swiperList;
+			if (direction == 'right') {
+				let mLeft = list[0].mLeft;
+				let zIndex = list[0].zIndex;
+				for (let i = 1; i < this.swiperList.length; i++) {
+					this.swiperList[i - 1].mLeft = this.swiperList[i].mLeft
+					this.swiperList[i - 1].zIndex = this.swiperList[i].zIndex
+				}
+				this.swiperList[list.length - 1].mLeft = mLeft;
+				this.swiperList[list.length - 1].zIndex = zIndex;
+			} else {
+				let mLeft = list[list.length - 1].mLeft;
+				let zIndex = list[list.length - 1].zIndex;
+				for (let i = this.swiperList.length - 1; i > 0; i--) {
+					this.swiperList[i].mLeft = this.swiperList[i - 1].mLeft
+					this.swiperList[i].zIndex = this.swiperList[i - 1].zIndex
+				}
+				this.swiperList[0].mLeft = mLeft;
+				this.swiperList[0].zIndex = zIndex;
+			}
+			this.direction = ""
+			this.swiperList = this.swiperList
+		},
 	}
 };
 </script>
 
 <style lang="scss">
-.card-swiper {
+/* .tower-swiper {
 	height: 350upx !important;
 }
-.card-swiper uni-swiper-item {
+.tower-swiper uni-swiper-item {
 	padding: 5px 0 15px !important;
-}
-.cir_group {
-	width: 100%;
-	height: 100%;
-	background-color: red; /* 对于不支持渐变的浏览器*/
-	background-image: linear-gradient(#2B4055, #5C92C1, #2B4055); /* 标准语法(必须是最后一个) */
-	display: flex;
-	.cir_logo {
-		display: inline-flex;
-		width: 40%;
-		padding: 20rpx;
-		image {
-			border-radius: 15rpx;
-			width: 100%;
-		}
-		.tag {
-			position: absolute;
-			left: 35rpx;
-			top: 35rpx;
-			z-index: 2;
-			line-height: 30rpx;
-			background: linear-gradient(132deg, rgba(28, 28, 28, 1), rgba(54, 54, 54, 1), rgba(236, 190, 96, 1));
-			border-radius: 0px 18rpx 18rpx 0px;
-			padding: 0 10rpx;
-			font-size: 18rpx;
-			font-family: PingFang SC;
-			color: white;
-		}
-	}
-	.cir_detail {
-		width: 60%;
-		padding: 20rpx;
-		padding-left: 0;
-		font-family: PingFang SC;
-		display: inline-block;
-		.de_name {
-			width: 100%;
-			font-size: 40rpx;
-			line-height: 60rpx;
-		}
-		.de_pin {
-			line-height: 40rpx;
-			width: 100%;
-		}
-		.de_info {
-			line-height: 40rpx;
-			width: 100%;
-		}
-	}
+} */
+.tag {
+	position: absolute;
+	left: 35rpx;
+	top: 35rpx;
+	z-index: 2;
+	line-height: 30rpx;
+	background: linear-gradient(132deg, rgba(28, 28, 28, 1), rgba(54, 54, 54, 1), rgba(236, 190, 96, 1));
+	border-radius: 0px 18rpx 18rpx 0px;
+	padding: 0 10rpx;
+	font-size: 18rpx;
+	font-family: PingFang SC;
+	color: white;
 }
 .tower-swiper .tower-item {
 	transform: scale(calc(0.5 + var(--index) / 10));
@@ -289,29 +307,34 @@ export default {
 	position: sticky;
 	top: 0;
 	z-index: 998;
-	background: #fff;
+	background: linear-gradient(#060210, #fff 20%);
+	.ci-header {
+		margin: 20rpx;
+		background: #fff;
+		box-shadow: 1px 0px 1px 0px #ccc;
+		border-radius: 10rpx;
+		display: inline-flex;
+		.header-info {
+			padding: 20rpx;
+			width: 600rpx;
+			.info-local {
+				display: inline-flex;
+				.local-adr {
+					width: 430rpx;
+				}
+			}
+		}
+		.locate-logo {
+			padding: 18rpx;
+			.logo-img {
+				top: 30%;
+				width: 80rpx;
+				height: 80rpx;
+			}
+		}
+	}
 }
 
-.search-box {
-	width: 661rpx;
-	height: 60rpx;
-	background: rgba(245, 245, 245, 1);
-	border-radius: 30rpx;
-	padding: 0 30rpx;
-	// #ifdef MP
-	width: 450rpx;
-
-	// #endif
-	.search {
-		text-align: center;
-		font-size: 28rpx;
-	}
-
-	.cuIcon-roundclosefill {
-		color: #d5a65a;
-		padding: 0 10rpx;
-	}
-}
 .list-box {
 	&:-webkit-scrollbar {
 		width: 0;
