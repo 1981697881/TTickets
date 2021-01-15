@@ -1,5 +1,5 @@
 <template>
-	<view class="list-box">
+	<view class="page_box">
 		<view class="head_box">
 			<view class="ci-header">
 				<view class="header-info">
@@ -13,32 +13,34 @@
 				<view class="locate-logo"><image class="logo-img" src="../../static/dingweis.png" mode="aspectFill"></image></view>
 			</view>
 			<ynGallery
-			 :galleryheight="125" 
-			  bkstart="#fff" 
-			  bkend="#fff" 
-			 :imgviewwidth="85" 
-			 :imgviewheight="100" 
-			 :showbadge="true"
-			  badegtype="trian" 
-			  badegwidth="25" 
-			  badegheight="25" 
-			 :showdec="true" 
-			 :images="swiperList" 
-			 @clickimg="onclickimg">
-			</ynGallery>
+				:galleryheight="125"
+				bkstart="#fff"
+				bkend="#fff"
+				:imgviewwidth="85"
+				:imgviewheight="100"
+				:showbadge="true"
+				badegtype="trian"
+				badegwidth="25"
+				badegheight="25"
+				:showdec="true"
+				:images="swiperList"
+				@clickimg="onclickimg"
+			></ynGallery>
 			<sh-date></sh-date>
 		</view>
-		<view class="content-box">
-			<view class="goods-list x-f">
-				<view class="goods-item" v-for="goods in goodsList" :key="goods.id"><fz-circuit-card :detail="goods" :isTag="true"></fz-circuit-card></view>
+		<scroll-view :style="{ height: headHeight + 'px' }" class="scroll-box" scroll-y enable-back-to-top scroll-with-animation @scrolltolower="loadMore">
+			<view class="content-box">
+				<view class="goods-list x-f">
+					<view class="goods-item" v-for="goods in goodsList" :key="goods.id"><fz-circuit-card :detail="goods" :isTag="true"></fz-circuit-card></view>
+				</view>
+				<!-- 空白页 -->
+				<shopro-empty :isFixed="false" v-if="!goodsList.length && !isLoading" :emptyData="emptyData"></shopro-empty>
+				<!-- 加载更多 -->
+				<view v-if="goodsList.length" class="cu-load text-gray" :class="loadStatus"></view>
+				<!-- load -->
+				<shopro-load v-model="isLoading"></shopro-load>
 			</view>
-			<!-- 空白页 -->
-			<shopro-empty :isFixed="false" v-if="!goodsList.length && !isLoading" :emptyData="emptyData"></shopro-empty>
-			<!-- 加载更多 -->
-			<view v-if="goodsList.length" class="cu-load text-gray" :class="loadStatus"></view>
-			<!-- load -->
-			<shopro-load v-model="isLoading"></shopro-load>
-		</view>
+		</scroll-view>
 		<!-- 自定义底部导航 -->
 		<shopro-tabbar></shopro-tabbar>
 		<!-- 关注弹窗 -->
@@ -56,7 +58,7 @@ import fzCircuitCard from '@/components/fz-circuit-card/fz-circuit-minicard.vue'
 import shoproEmpty from '@/components/shopro-empty/shopro-empty.vue';
 import { mapMutations, mapActions, mapState } from 'vuex';
 import moreGoodList from '@/csJson/moreGoodList.json';
-import ynGallery from '@/components/YnComponents/ynGallery/ynGallery.vue'
+import ynGallery from '@/components/YnComponents/ynGallery/ynGallery.vue';
 let timer = null;
 export default {
 	components: {
@@ -67,7 +69,7 @@ export default {
 	},
 	data() {
 		return {
-			Msg: "0",
+			Msg: '0',
 			circuit: '',
 			swiperList: [
 				{
@@ -109,6 +111,7 @@ export default {
 				img: '/static/imgs/empty/empty_goods.png',
 				tip: '当前选择日期,没有可观影影片,选择其他日期试试~'
 			},
+			headHeight: '0',
 			goodsList: [],
 			searchVal: '',
 			listParams: {
@@ -124,10 +127,14 @@ export default {
 	computed: {},
 	// 触底加载更多
 	onReachBottom() {
+		console.log(111233);
 		if (this.listParams.page < this.lastPage) {
 			this.listParams.page += 1;
 			this.getGoodsList();
 		}
+	},
+	mounted() {
+		this.getScrHeight()
 	},
 	onLoad() {
 		this.setimgs();
@@ -142,31 +149,51 @@ export default {
 		this.getGoodsList();
 	},
 	methods: {
+		getScrHeight() {
+			let me = this
+			uni.getSystemInfo({
+				success: function(res) {
+					// res - 各种参数
+					let info = uni.createSelectorQuery().select('.head_box');
+					info.boundingClientRect(function(data) {
+						//data - 各种参数
+						me.headHeight = res.windowHeight - data.height - 3;
+					}).exec();
+				}
+			});
+		},
+
+		// 加载更多
+		loadMore() {
+			if (this.listParams.page < this.lastPage) {
+				this.listParams.page += 1;
+				this.getGoodsList();
+			}
+		},
 		onclickimg(imgviewobj) {
-			if (imgviewobj.index != undefined)
-				this.Msg = `${imgviewobj.index}`;
+			if (imgviewobj.index != undefined) this.Msg = `${imgviewobj.index}`;
 		},
 		setimgs() {
-			var imgs=[];
-			for (let i in this.testimgs) {									
-				 let imgobj={
-					  dec:'',                   //图像描述信息
-					  badeg:'',                 //角标文字
-					  badegcolor:'#000000',     //角标颜色
-					  url:'',                   //图源  
-					  dominant:''               //主色  
+			var imgs = [];
+			for (let i in this.testimgs) {
+				let imgobj = {
+					dec: '', //图像描述信息
+					badeg: '', //角标文字
+					badegcolor: '#000000', //角标颜色
+					url: '', //图源
+					dominant: '' //主色
 				};
-				imgobj.url=this.testimgs[i].url;
+				imgobj.url = this.testimgs[i].url;
 				imgobj.dominant = this.retcolor(); //随机主色
-				imgobj.dec = i; //描述  
+				imgobj.dec = i; //描述
 				imgobj.badeg = i; //角标文字
-				imgobj.badegcolor = (i % 2) == 0 ? 'red' : 'LimeGreen'; //角标颜色
-				imgs.push(imgobj)
+				imgobj.badegcolor = i % 2 == 0 ? 'red' : 'LimeGreen'; //角标颜色
+				imgs.push(imgobj);
 			}
-			this.testimgs=imgs;
+			this.testimgs = imgs;
 		},
 		retcolor() {
-			let color = '#' + ('00000' + (Math.random() * 0x1000000 << 0).toString(16)).substr(-6);
+			let color = '#' + ('00000' + ((Math.random() * 0x1000000) << 0).toString(16)).substr(-6);
 			return color;
 		},
 		onFilter(e) {
@@ -239,14 +266,14 @@ export default {
 		},
 		// towerSwiper触摸开始
 		TowerStart(e) {
-			this.towerStart = e.touches[0].pageX
+			this.towerStart = e.touches[0].pageX;
 		},
-		
+
 		// towerSwiper计算方向
 		TowerMove(e) {
-			this.direction = e.touches[0].pageX - this.towerStart > 0 ? 'right' : 'left'
+			this.direction = e.touches[0].pageX - this.towerStart > 0 ? 'right' : 'left';
 		},
-		
+
 		// towerSwiper计算滚动
 		TowerEnd(e) {
 			let direction = this.direction;
@@ -255,8 +282,8 @@ export default {
 				let mLeft = list[0].mLeft;
 				let zIndex = list[0].zIndex;
 				for (let i = 1; i < this.swiperList.length; i++) {
-					this.swiperList[i - 1].mLeft = this.swiperList[i].mLeft
-					this.swiperList[i - 1].zIndex = this.swiperList[i].zIndex
+					this.swiperList[i - 1].mLeft = this.swiperList[i].mLeft;
+					this.swiperList[i - 1].zIndex = this.swiperList[i].zIndex;
 				}
 				this.swiperList[list.length - 1].mLeft = mLeft;
 				this.swiperList[list.length - 1].zIndex = zIndex;
@@ -264,15 +291,15 @@ export default {
 				let mLeft = list[list.length - 1].mLeft;
 				let zIndex = list[list.length - 1].zIndex;
 				for (let i = this.swiperList.length - 1; i > 0; i--) {
-					this.swiperList[i].mLeft = this.swiperList[i - 1].mLeft
-					this.swiperList[i].zIndex = this.swiperList[i - 1].zIndex
+					this.swiperList[i].mLeft = this.swiperList[i - 1].mLeft;
+					this.swiperList[i].zIndex = this.swiperList[i - 1].zIndex;
 				}
 				this.swiperList[0].mLeft = mLeft;
 				this.swiperList[0].zIndex = zIndex;
 			}
-			this.direction = ""
-			this.swiperList = this.swiperList
-		},
+			this.direction = '';
+			this.swiperList = this.swiperList;
+		}
 	}
 };
 </script>
@@ -284,6 +311,10 @@ export default {
 .tower-swiper uni-swiper-item {
 	padding: 5px 0 15px !important;
 } */
+.page_box {
+	height: auto;
+	display: inline-block;
+}
 .tag {
 	position: absolute;
 	left: 35rpx;

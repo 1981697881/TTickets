@@ -14,7 +14,7 @@
 				<swiper-item v-for="(goods, index) in goodsList" :key="index" class="carousel-item">
 					<view class="goods-list-box x-f">
 						<block v-for="mgoods in goods" :key="mgoods.id">
-							<sh-activity-goods :detail="mgoods" class="goods-item"><!-- <block slot="titleText">立减￥8.5</block> --></sh-activity-goods>
+							<fz-film-list :detail="mgoods" class="goods-item"><!-- <block slot="titleText">立减￥8.5</block> --></fz-film-list>
 						</block>
 					</view>
 				</swiper-item>
@@ -27,12 +27,12 @@
 </template>
 
 <script>
-import shActivityGoods from './sh-activity-goods.vue';
+import fzFilmList from './fz-film-list.vue';
 import activity from '@/csJson/activity.json';
 export default {
 	name: 'shGroupon',
 	components: {
-		shActivityGoods
+		fzFilmList
 	},
 	data() {
 		return {

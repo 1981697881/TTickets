@@ -1,5 +1,5 @@
 <template>
-	<view class="list-box">
+	<view class="page_box">
 		<view class="head_box">
 			<view style="position:relative;z-index: 10; background: #fff;">
 				<cu-custom :isBack="true">
@@ -19,8 +19,8 @@
 							</view>
 							<view class="text-white cir_detail">
 								<view class="text-cut de_name">{{ item.name }}</view>
-								<view class="de_pin">评分{{ item.score }}  |  10.1万人想看</view>
-								<view class="text-orange de_info">{{ item.time }}  |  {{ item.genre }}</view>
+								<view class="de_pin">评分{{ item.score }} | 10.1万人想看</view>
+								<view class="text-orange de_info">{{ item.time }} | {{ item.genre }}</view>
 								<view class="text-orange de_info">导演：{{ item.direct }}</view>
 								<view class="text-orange de_info">主演：{{ item.starring }}</view>
 							</view>
@@ -31,17 +31,19 @@
 			<sh-date></sh-date>
 			<view class="filter-item"><sh-filter @change="onFilter"></sh-filter></view>
 		</view>
-		<view class="content-box">
-			<view class="goods-list x-f">
-				<view class="goods-item" v-for="goods in goodsList" :key="goods.id"><fz-circuit-card :detail="goods" :isTag="true"></fz-circuit-card></view>
+		<scroll-view :style="{ height: headHeight + 'px' }" class="scroll-box" scroll-y enable-back-to-top scroll-with-animation @scrolltolower="loadMore">
+			<view class="content-box">
+				<view class="goods-list x-f">
+					<view class="goods-item" v-for="goods in goodsList" :key="goods.id"><fz-circuit-card :detail="goods" :isTag="true"></fz-circuit-card></view>
+				</view>
+				<!-- 空白页 -->
+				<shopro-empty :isFixed="false" v-if="!goodsList.length && !isLoading" :emptyData="emptyData"></shopro-empty>
+				<!-- 加载更多 -->
+				<view v-if="goodsList.length" class="cu-load text-gray" :class="loadStatus"></view>
+				<!-- load -->
+				<shopro-load v-model="isLoading"></shopro-load>
 			</view>
-			<!-- 空白页 -->
-			<shopro-empty :isFixed="false" v-if="!goodsList.length && !isLoading" :emptyData="emptyData"></shopro-empty>
-			<!-- 加载更多 -->
-			<view v-if="goodsList.length" class="cu-load text-gray" :class="loadStatus"></view>
-			<!-- load -->
-			<shopro-load v-model="isLoading"></shopro-load>
-		</view>
+		</scroll-view>
 		<!-- 自定义底部导航 -->
 		<shopro-tabbar></shopro-tabbar>
 		<!-- 关注弹窗 -->
@@ -72,7 +74,7 @@ export default {
 		return {
 			cardCur: 0,
 			circuit: '',
-			swiperList: [ 
+			swiperList: [
 				{
 					id: 0,
 					name: '百鸟朝凤',
@@ -117,6 +119,7 @@ export default {
 			},
 			goodsList: [],
 			searchVal: '',
+			headHeight: '0',
 			listParams: {
 				category_id: 0,
 				keywords: '',
@@ -127,6 +130,7 @@ export default {
 			lastPage: 1
 		};
 	},
+
 	computed: {},
 	// 触底加载更多
 	onReachBottom() {
@@ -134,6 +138,9 @@ export default {
 			this.listParams.page += 1;
 			this.getGoodsList();
 		}
+	},
+	mounted() {
+		this.getScrHeight()
 	},
 	onLoad() {
 		this.circuit = this.swiperList[0].name;
@@ -147,6 +154,26 @@ export default {
 		this.getGoodsList();
 	},
 	methods: {
+		// 加载更多
+		loadMore() {
+			if (this.listParams.page < this.lastPage) {
+				this.listParams.page += 1;
+				this.getGoodsList();
+			}
+		},
+		getScrHeight() {
+			let me = this;
+			uni.getSystemInfo({
+				success: function(res) {
+					// res - 各种参数
+					let info = uni.createSelectorQuery().select('.head_box');
+					info.boundingClientRect(function(data) {
+						//data - 各种参数
+						me.headHeight = res.windowHeight - data.height - 3;
+					}).exec();
+				}
+			});
+		},
 		cardSwiper(e) {
 			this.circuit = this.swiperList[e.detail.current].name;
 			this.cardCur = e.detail.current;
@@ -234,7 +261,7 @@ export default {
 	width: 100%;
 	height: 100%;
 	background-color: red; /* 对于不支持渐变的浏览器*/
-	background-image: linear-gradient(#2B4055, #5C92C1, #2B4055); /* 标准语法(必须是最后一个) */
+	background-image: linear-gradient(#2b4055, #5c92c1, #2b4055); /* 标准语法(必须是最后一个) */
 	display: flex;
 	.cir_logo {
 		display: inline-flex;

@@ -1,10 +1,14 @@
 <template>
 	<view class="box">
+		<cu-custom :isBack="true">
+			<block slot="backText"></block>
+			<block slot="content">{{ goodsInfo.title }}</block>
+		</cu-custom>
 		<view class="load-box" v-if="!goodsInfo.price"><shopro-skeletons :type="'detail'"></shopro-skeletons></view>
 		<view class="detail_box shopro-selector" v-else>
 			<view class="detail-content">
 				<view class="goodes_detail_swiper-box">
-					<!-- 拼团滚动提示 -->
+					<!-- 购买滚动提示 -->
 					<sh-groupon-tip v-if="false"></sh-groupon-tip>
 					<!-- 详情轮播 -->
 					<swiper class="carousel" circular @change="swiperChange" :autoplay="true">
@@ -14,58 +18,8 @@
 					</swiper>
 					<view v-if="goodsInfo.images" class="swiper-dots">{{ swiperCurrent + 1 }} / {{ goodsInfo.images.length }}</view>
 				</view>
-
-				<!-- 价格卡片组 -->
-				<sh-price v-if="goodsInfo" :detail="goodsInfo" :type="detailType" @change="getActivityRules"></sh-price>
 				<view class="goods-title more-t">{{ goodsInfo.title }}</view>
 				<view class="sub-title more-t">{{ goodsInfo.subtitle }}</view>
-				<!-- 规格选择 -->
-				<view
-					class="sku-box shopro-selector-rect"
-					@tap="showSku = true"
-					v-if="activityRules.status !== 'waiting' && checkActivity(goodsInfo.activity_type, 'groupon') && goodsInfo.is_sku"
-				>
-					<view class="x-bc">
-						<view class="x-f">
-							<text class="title">规格</text>
-							<text class="tip">{{ currentSkuText || '请选择规格' }}</text>
-						</view>
-						<text class="cuIcon-right"></text>
-					</view>
-				</view>
-				<shopro-sku
-					v-model="showSku"
-					:goodsInfo="goodsInfo"
-					:buyType="goodsInfo.activity_type == 'seckill' || detailType === 'score' ? 'buy' : buyType"
-					:grouponBuyType="grouponBuyType"
-					:goodsType="detailType === 'score' ? 'score' : 'goods'"
-					@changeType="changeType"
-					@getSkuText="getSkuText"
-				></shopro-sku>
-				<!-- 服务 -->
-				<sh-serve v-if="goodsInfo.service.length" v-model="showServe" :serveList="goodsInfo.service"></sh-serve>
-				<!-- 优惠券 -->
-				<sh-coupon
-					v-if="goodsInfo.coupons && goodsInfo.coupons.length && goodsInfo.activity_type !== 'seckill' && goodsInfo.activity_type !== 'groupon' && detailType !== 'score'"
-					:couponList="goodsInfo.coupons"
-				></sh-coupon>
-				<!-- 拼团人-->
-				<sh-groupon
-					v-if="goodsInfo.activity && goodsInfo.activity.type === 'groupon' && goodsInfo.activity.rules.team_card === '1' && detailType !== 'score'"
-					:grouponData="goodsInfo"
-				></sh-groupon>
-				<!-- 拼团玩法 -->
-				<view
-					v-if="goodsInfo.activity && !!goodsInfo.activity.richtext_id && goodsInfo.activity_type !== 'seckill'"
-					class="groupon-play x-bc px20"
-					@tap="jump('/pages/public/richtext', { id: goodsInfo.activity.richtext_id })"
-				>
-					<view class="x-f">
-						<text class="title">玩法</text>
-						<view class="description one-t">{{ goodsInfo.activity.richtext_title || '开团/参团·邀请好友·人满发货（不满退款' }}</view>
-					</view>
-					<text class="cuIcon-right" style="color: #bfbfbf;"></text>
-				</view>
 				<!-- 选项卡 -->
 				<view class="sticky-box">
 					<view class="tab-box x-f">
@@ -100,18 +54,7 @@
 					</view>
 				</view>
 			</view>
-			<!-- 积分商品foot -->
-			<view class="score-foot-box x-f" v-if="!showSku && !showServe && detailType === 'score'">
-				<view class="left x-f">
-					<view class="tools-item y-f" @tap="goHome">
-						<image class="tool-img" src="http://shopro.7wpp.com/imgs/tabbar/tab_home_sel.png" mode=""></image>
-						<text class="tool-title">首页</text>
-					</view>
-				</view>
-				<view class="right">
-					<view class="btn-box x-ac"><button class="cu-btn  seckill-btn" @tap="goPay">立即兑换</button></view>
-				</view>
-			</view>
+			
 			<!-- 其他商品foot -->
 			<view class="detail-foot_box  x-f" v-if="!showSku && !showServe && detailType !== 'score'">
 				<view class="left x-f">
@@ -134,30 +77,9 @@
 				</view>
 				<view class="detail-right">
 					<view class="detail-btn-box x-ac" v-if="!goodsInfo.activity">
-						<button class="cu-btn tool-btn add-btn" @tap="addCart">加入购物车</button>
 						<button class="cu-btn tool-btn pay-btn" @tap="goPay">立即购买</button>
 					</view>
-					<view class="detail-btn-box x-ac" v-if="goodsInfo.activity && goodsInfo.activity.type === 'seckill'">
-						<button class="cu-btn  seckill-btn" v-if="activityRules.status === 'ing'" @tap="goSeckill">立即秒杀</button>
-						<button class="cu-btn  seckilled-btn" v-if="activityRules.status == 'waiting'">暂未开始</button>
-						<button class="cu-btn  seckilled-btn" v-if="activityRules.status == 'end'">已结束</button>
-					</view>
-					<!-- 拼团foot -->
-					<view class="detail-btn-box x-ac" v-if="goodsInfo.activity && goodsInfo.activity.type === 'groupon'">
-						<button class="cu-btn  seckilled-btn" v-if="activityRules.status == 'waiting'">暂未开始</button>
-						<button class="cu-btn  seckilled-btn" v-if="activityRules.status == 'end'">已结束</button>
-						<view class="x-f" v-if="activityRules.status == 'ing'">
-							<button class="cu-btn tool-btn add-btn y-f" @tap="payGroupon" v-if="goodsInfo.activity.rules.is_alone === '1'">
-								<text class="price">￥{{ goodsInfo.price }}</text>
-								<text class="price-title">单独购买</text>
-							</button>
-							<button class="cu-btn tool-btn groupon-btn y-f" :style="goodsInfo.activity.rules.is_alone === '0' ? 'width:400rpx' : ''" @tap="payGroupon('groupon')">
-								<text class="price">￥{{ goodsInfo.groupon_price }}</text>
-								<text class="price-title">我要开团</text>
-							</button>
-						</view>
-					</view>
-				</view>
+`				</view>
 			</view>
 			<!-- 分享组件 -->
 			<shopro-share v-model="showShare" :goodsInfo="goodsInfo" :posterType="'goods'"></shopro-share>
@@ -174,27 +96,17 @@
 		</view>
 	</view>
 </template>
-
-<script>
-import shPrice from './children/sh-price.vue';
-import shServe from './children/sh-serve.vue';
-import shGroupon from './children/sh-groupon.vue';
++<script>
 import shGrouponTip from './children/sh-groupon-tip.vue';
-import shCoupon from './children/sh-coupon.vue';
 import shComment from '../children/sh-comment.vue';
-import shoproSku from '@/components/shopro-sku/shopro-sku.vue';
 import shoproSkeletons from '@/components/shopro-skeletons/shopro-skeletons.vue';
 import shoproEmpty from '@/components/shopro-empty/shopro-empty.vue';
-
 import { mapMutations, mapActions, mapState } from 'vuex';
+import goodsDetail from '@/csJson/goodsDetail.json';
+import evaluate from '@/csJson/evaluate.json';
 export default {
 	components: {
-		shServe,
-		shPrice,
-		shGroupon,
-		shCoupon,
 		shGrouponTip,
-		shoproSku,
 		shComment,
 		shoproSkeletons,
 		shoproEmpty
@@ -285,21 +197,25 @@ export default {
 		onTab(id) {
 			this.tabCurrent = id;
 		},
-		// 积分详情
-		getScoreDetail() {
-			this.$api('score.detail', {
-				id: this.$Route.query.id
-			}).then(res => {
-				console.log(JSON.stringify(res))
-				if (res.code === 1) {
-					this.goodsInfo = res.data;
-				}
-			});
-		},
 		// 商品详情
 		getGoodsDetail() {
 			let that = this;
-			that.$api('goods.detail', {
+			let res = goodsDetail
+			if (res.code === 1) {
+				that.goodsInfo = res.data;
+				that.getCommentList();
+				that.setShareInfo({
+					query: {
+						url: 'goods-' + that.$Route.query.id
+					},
+					title: that.goodsInfo.title,
+					image: that.goodsInfo.image
+				});
+			}
+			if (res.code == 0) {
+				that.$tools.toast(res.msg);
+			}
+			/* that.$api('goods.detail', {
 				id: that.$Route.query.id
 			}).then(res => {
 				if (res.code === 1) {
@@ -316,12 +232,17 @@ export default {
 				if (res.code == 0) {
 					that.$tools.toast(res.msg);
 				}
-			});
+			}); */
 		},
 		// 商品评论
 		getCommentList() {
 			let that = this;
-			that.$api('goods_comment.list', {
+			let res = evaluate
+			if (res.code === 1) {
+				that.commentList = res.data.data;
+				that.commentNum = res.data.total;
+			}
+			/* that.$api('goods_comment.list', {
 				goods_id: that.goodsInfo.id,
 				per_page: 3,
 				type: 'all'
@@ -330,7 +251,7 @@ export default {
 					that.commentList = res.data.data;
 					that.commentNum = res.data.total;
 				}
-			});
+			}); */
 		},
 		// 组件返回的type;
 		changeType(e) {
@@ -344,48 +265,11 @@ export default {
 		onShare() {
 			this.showShare = true;
 		},
-		// 加入购物车
-		addCart() {
-			if (Boolean(uni.getStorageSync('token'))) {
-				this.buyType = 'cart';
-				this.showSku = true;
-			} else {
-				this.$store.commit('LOGIN_TIP', true);
-			}
-		},
 		// 立即购买
 		goPay() {
 			if (Boolean(uni.getStorageSync('token'))) {
 				this.buyType = 'buy';
 				this.showSku = true;
-			} else {
-				this.$store.commit('LOGIN_TIP', true);
-			}
-		},
-		// 拼团购买
-		payGroupon(type) {
-			if (Boolean(uni.getStorageSync('token'))) {
-				if (type === 'groupon') {
-					this.grouponBuyType = 'groupon';
-				} else {
-					this.grouponBuyType = 'alone';
-				}
-				this.buyType = 'buy';
-				this.showSku = true;
-			} else {
-				this.$store.commit('LOGIN_TIP', true);
-			}
-		},
-		// 立即秒杀。
-		goSeckill() {
-			if (Boolean(uni.getStorageSync('token'))) {
-				if (this.activityRules.status !== 'waiting') {
-					this.buyType = 'buy';
-					this.showSku = true;
-					console.log(this.buyType);
-				} else {
-					this.$tools.toast('秒杀暂未开始');
-				}
 			} else {
 				this.$store.commit('LOGIN_TIP', true);
 			}
@@ -458,9 +342,8 @@ export default {
 
 .goodes_detail_swiper-box {
 	width: 750rpx;
-	height: 750rpx;
+	height: 400rpx;
 	position: relative;
-
 	.carousel {
 		width: 750rpx;
 		height: 100%;
@@ -633,108 +516,25 @@ export default {
 		}
 	}
 }
-
-// 推荐商品
-.guess-box {
-	.guess-title {
-		height: 90rpx;
-		font-size: 30rpx;
-		font-family: PingFang SC;
-		font-weight: bold;
-		color: rgba(51, 51, 51, 1);
-		background: #fff;
-		padding: 0 20rpx;
-	}
-
-	.goods-wrap {
-		display: flex;
-		flex-wrap: wrap;
-		padding: 20rpx;
-
-		.goods-item {
-			margin-right: 20rpx;
-			margin-bottom: 20rpx;
-
-			&:nth-child(2n) {
-				margin-right: 0;
-			}
-		}
-	}
-}
-
-// 积分底部栏
-.score-foot-box {
-	height: 110rpx;
-	background: rgba(255, 255, 255, 1);
-	border-top: 1rpx solid rgba(238, 238, 238, 1);
-	width: 100%;
-	position: fixed;
-	bottom: 0;
-	z-index: 999;
-
-	.left,
-	.right {
-		flex: 1;
-	}
-
-	.tools-item {
-		flex: 1;
-		height: 100%;
-
-		.tool-img {
-			width: 46rpx;
-			height: 46rpx;
-		}
-
-		.tool-title {
-			font-size: 22rpx;
-			line-height: 22rpx;
-			padding-top: 8rpx;
-		}
-	}
-
-	.btn-box {
-		flex: 1;
-
-		.seckill-btn {
-			width: 600rpx;
-			height: 80rpx;
-			background: linear-gradient(90deg, rgba(49, 133, 243, 1), rgba(80, 205, 242, 1));
-			box-shadow: 0px 7px 6px 0px rgba(80, 205, 242, 0.2);
-			border-radius: 40rpx;
-			font-size: 30rpx;
-			font-family: PingFang SC;
-			font-weight: 500;
-			color: rgba(255, 255, 255, 1);
-			margin-right: 20rpx;
-		}
-	}
-}
-
 // 底部工具栏
 .detail-foot_box {
-	height: 100rpx;
 	background: rgba(255, 255, 255, 1);
 	border-top: 1rpx solid rgba(238, 238, 238, 1);
 	width: 100%;
 	position: fixed;
 	bottom: 0;
 	z-index: 999;
-
 	.left,
 	.detail-right {
 		flex: 1;
+		text-align: center;
 	}
-
 	.tools-item {
 		flex: 1;
-		height: 100%;
-
 		.tool-img {
 			width: 46rpx;
 			height: 46rpx;
 		}
-
 		.tool-title {
 			font-size: 22rpx;
 			line-height: 22rpx;
@@ -744,17 +544,16 @@ export default {
 
 	.detail-btn-box {
 		flex: 1;
-
+		line-height: 100rpx;
+		
+		display: inline-block;
 		.tool-btn {
 			font-size: 28rpx;
 			font-weight: 500;
 			color: rgba(#fff, 0.9);
 			width: 210rpx;
-			height: 70rpx;
 			border-radius: 35rpx;
 			padding: 0;
-			margin-right: 20rpx;
-
 			.price {
 				font-size: 24rpx;
 				font-weight: bold;

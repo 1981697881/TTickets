@@ -1,0 +1,34 @@
+{
+	"code": 1,
+	"msg": "评价详情",
+	"time": "1610703114",
+	"data": {
+		"total": 1,
+		"per_page": "3",
+		"current_page": 1,
+		"last_page": 1,
+		"data": [{
+			"id": 3,
+			"goods_id": 5,
+			"order_id": 171,
+			"order_item_id": 179,
+			"user_id": 735,
+			"level": 5,
+			"content": "好评",
+			"images": [],
+			"status": "show",
+			"admin_id": 0,
+			"reply_content": null,
+			"replytime": null,
+			"createtime": 1610589453,
+			"updatetime": 1610589453,
+			"deletetime": null,
+			"user": {
+				"id": 735,
+				"nickname": "张鹏***",
+				"avatar": "https://thirdwx.qlogo.cn/mmopen/vi_32/Q0j4TwGTfTLl2HJHKmNjLljFTut01lfmABYiaWFJvLCLQic9liclQmiatcQVJ1d9EwwwAOqYcdqnH9CvwIIcmRLQ6w/132",
+				"url": "/u/735"
+			}
+		}]
+	}
+}

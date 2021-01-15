@@ -305,6 +305,18 @@
 						"title": "选座位",
 						"group": "影院院线"
 					}
+				},
+				{
+					"path": "detail/index",
+					"style": {
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"auth": false,
+						"async": true,
+						"title": "电影简介",
+						"group": "影院院线"
+					}
 				}
 				// 影院------end
 			]

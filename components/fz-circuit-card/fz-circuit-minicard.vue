@@ -1,6 +1,6 @@
 <template>
 	<view class="goods-box" v-if="detail">
-		<view class="content-box">
+		<view class="content-box" @tap="jump('/pages/cinema/movie/list', { id: detail.id })">
 			<text v-if="isTag && detail.activity" class="tag-star"><text class="lg text-red cuIcon-favorfill"></text></text>
 			<view class="cont_one">
 				<view><text class="text-xl text-bold">14:30</text></view>
