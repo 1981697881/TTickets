@@ -13,7 +13,7 @@
 				<view class="locate-logo"><image class="logo-img" src="../../static/dingweis.png" mode="aspectFill"></image></view>
 			</view>
 			<ynGallery
-				:galleryheight="125"
+				:galleryheight="165"
 				bkstart="#fff"
 				bkend="#fff"
 				:imgviewwidth="85"

@@ -23,15 +23,15 @@
 				</view>
 			</view>
 		</view>
-		<view class="swiper-box x-f">
+		<view class="swiper-box x-f" v-if="tabId=='ended'">
 			<swiper class="carousel" @change="swiperChange">
 				<swiper-item v-for="(goods, swindex) in goodsList" :key="swindex" class="carousel-item">
 					<view class="min-goods" @tap="jump('/pages/cinema/movie/list', { id: detail.id })">
 						<view class="price-box">
 							<view class="y-f text-black">
-								<text class="text-xl seckill-current">15:35</text>
-								<text class="text-xs seckill-current">国语 2D</text>
-								<text class="text-xl original text-red">￥{{ detail.original_price }}</text>
+								<text class="text-bold seckill-current">15:35</text>
+								<text class="seckill-lau text-grey">国语 2D</text>
+								<text class="original text-red">￥{{ detail.original_price }}</text>
 							</view>
 						</view>
 						<view class="title"><slot name="titleText"></slot></view>
@@ -83,10 +83,14 @@ export default {
 			type: [Boolean, String],
 			default: false
 		},
+		tabId: '',
 		detail: {
 			type: Object,
 			default: null
 		}
+	},
+	mounted() {
+		console.log(this.tabId)
 	},
 	computed: {},
 	methods: {
@@ -198,26 +202,37 @@ export default {
 		width: 190rpx;
 		margin: 20rpx;
 		height: 130rpx;
-		box-shadow: 1px 1px 1px 1px #888888;
+		background: #F8F8FF;
+		box-shadow: 0px 1px 1px 0px #ccc;
 		line-height: 35rpx;
 		margin-top: 0;
 		border-radius: 10rpx;
 		.price-box {
 			width: 100%;
 			margin-top: 10rpx;
-			.seckill-current {
-				padding-top: 10rpx;
-				font-family: PingFang SC;
-				font-weight: 400;
-			}
-			.original {
-				font-size: 20rpx;
-				font-family: PingFang SC;
-				font-weight: 400;
-				margin-left: 14rpx;
-			}
-			.cr_name {
-				font-size: 20rpx;
+			padding-left: 10rpx;
+			.y-f{
+				.seckill-current {
+					width: 100%;
+					padding-top: 5rpx;
+					font-family: PingFang SC;
+				}.seckill-lau {
+					width: 100%;
+					padding-top: 5rpx;
+					margin-left: -18rpx;
+					-webkit-transform: scale(0.9);
+					font-family: PingFang SC;
+				}
+				.original {
+					width: 100%;
+					margin-left: -18rpx;
+					-webkit-transform: scale(0.9);
+					padding-top: 5rpx;
+					font-family: PingFang SC;
+				}
+				.cr_name {
+					font-size: 20rpx;
+				}
 			}
 		}
 		.tagb text {

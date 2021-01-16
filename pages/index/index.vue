@@ -10,7 +10,7 @@
 						<text class="nav-title shopro-selector-rect">{{ info.name || '影院' }}</text>
 					</block>
 				</cu-custom>
-			</view>
+			</view> 
 			<view class="content_box" style="margin-top: -4rpx;overflow: hidden;">
 				<scroll-view class="scroll-box" scroll-y scroll-with-animation enable-back-to-top>
 					<block v-if="template" v-for="(item, index) in template" :key="index">
@@ -103,7 +103,6 @@ import shGrid from './components/sh-grid.vue';
 import shTitleCard from './components/sh-title-card.vue';
 import shOrder from './components/sh-order.vue';
 import shWallet from './components/sh-wallet.vue';
-
 import shoproNoticeModal from '@/components/shopro-notice-modal/shopro-notice-modal.vue';
 import shoproSkeletons from '@/components/shopro-skeletons/shopro-skeletons.vue';
 // #ifdef MP-WEIXIN

@@ -78,6 +78,7 @@ export default {
 			let that = this;
 			let res = activity
 			let arr = that.sortData(res.data.goods.data, 4);
+			console.log(arr)
 			that.goodsList = arr;
 			/* that.$api('goods.activity', {
 				activity_id: that.detail.id

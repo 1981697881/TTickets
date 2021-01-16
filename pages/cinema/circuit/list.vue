@@ -130,7 +130,6 @@ export default {
 			lastPage: 1
 		};
 	},
-
 	computed: {},
 	// 触底加载更多
 	onReachBottom() {
@@ -273,14 +272,14 @@ export default {
 		}
 		.tag {
 			position: absolute;
-			left: 35rpx;
-			top: 35rpx;
+			left: 10rpx;
+			top: 40rpx;
 			z-index: 2;
 			line-height: 30rpx;
 			background: linear-gradient(132deg, rgba(28, 28, 28, 1), rgba(54, 54, 54, 1), rgba(236, 190, 96, 1));
 			border-radius: 0px 18rpx 18rpx 0px;
 			padding: 0 10rpx;
-			font-size: 18rpx;
+			-webkit-transform: scale(0.8);
 			font-family: PingFang SC;
 			color: white;
 		}

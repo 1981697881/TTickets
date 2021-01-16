@@ -282,6 +282,18 @@
 					}
 				},
 				{
+					"path": "list",
+					"style": {
+						"navigationBarTitleText": "电影"
+					},
+					"meta": {
+						"auth": false,
+						"async": true,
+						"title": "电影",
+						"group": "电影"
+					}
+				},
+				{
 					"path": "circuit/list",
 					"style": {
 						"navigationBarTitleText": "电影",

@@ -1,6 +1,6 @@
 <template>
 	<view class="box">
-		<cu-custom :isBack="true">
+		<cu-custom :isBack="true" bgColor="bg-gray">
 			<block slot="backText"></block>
 			<block slot="content">{{ goodsInfo.title }}</block>
 		</cu-custom>
@@ -10,16 +10,18 @@
 				<view class="goodes_detail_swiper-box">
 					<!-- 购买滚动提示 -->
 					<sh-groupon-tip v-if="false"></sh-groupon-tip>
+					<view class="carousel">
+						<video controls :poster="videoImg" object-fit="fill" class="swiper-image shopro-selector-rect" src="../../../static/testVideo.mp4"></video>
+					</view>
 					<!-- 详情轮播 -->
-					<swiper class="carousel" circular @change="swiperChange" :autoplay="true">
+					<!-- <swiper class="carousel" circular @change="swiperChange">
 						<swiper-item @tap="tools.previewImage(goodsInfo.images, swiperCurrent)" v-for="(img, index) in goodsInfo.images" :key="index" class="carousel-item">
 							<image class="swiper-image shopro-selector-rect" :src="img" mode="aspectFill" lazy-load></image>
 						</swiper-item>
 					</swiper>
-					<view v-if="goodsInfo.images" class="swiper-dots">{{ swiperCurrent + 1 }} / {{ goodsInfo.images.length }}</view>
+					<view v-if="goodsInfo.images" class="swiper-dots">{{ swiperCurrent + 1 }} / {{ goodsInfo.images.length }}</view> -->
 				</view>
-				<view class="goods-title more-t">{{ goodsInfo.title }}</view>
-				<view class="sub-title more-t">{{ goodsInfo.subtitle }}</view>
+				<fz-detail-head :detail="goodsInfo"></fz-detail-head>
 				<!-- 选项卡 -->
 				<view class="sticky-box">
 					<view class="tab-box x-f">
@@ -32,7 +34,17 @@
 						</view>
 					</view>
 					<view class="tab-detail pb20">
-						<view class="rich-box" v-show="tabCurrent === 'tab0'"><uni-parser :html="goodsInfo.content"></uni-parser></view>
+						<view class="rich-box" v-show="tabCurrent === 'tab0'">
+							<view class="box-about">
+								<mote-lines-divide :dt="goodsInfo.title" :line="1" expandText="展开" foldHint="收起"/>
+							</view>
+							<view class="about-unline">
+								<fz-detail-gallery :detail='goodsInfo' type='crew'></fz-detail-gallery>
+							</view>
+							<view class="about-unline">
+								<fz-detail-gallery :detail='goodsInfo' type='still'></fz-detail-gallery>
+							</view>
+						</view>
 						<view class="goods-size" v-if="tabCurrent === 'tab1'">
 							<view class="table-box" v-if="goodsInfo.params && goodsInfo.params.length">
 								<view class="t-tr x-f" v-for="t in goodsInfo.params" :key="t.title">
@@ -54,7 +66,7 @@
 					</view>
 				</view>
 			</view>
-			
+
 			<!-- 其他商品foot -->
 			<view class="detail-foot_box  x-f" v-if="!showSku && !showServe && detailType !== 'score'">
 				<view class="left x-f">
@@ -76,10 +88,8 @@
 					</view>
 				</view>
 				<view class="detail-right">
-					<view class="detail-btn-box x-ac" v-if="!goodsInfo.activity">
-						<button class="cu-btn tool-btn pay-btn" @tap="goPay">立即购买</button>
-					</view>
-`				</view>
+					<view class="detail-btn-box x-ac" v-if="!goodsInfo.activity"><button class="cu-btn tool-btn pay-btn" @tap="jump('/pages/cinema/circuit/list', { goodsId: goodsInfo.id })">立即购买</button></view>
+				</view>
 			</view>
 			<!-- 分享组件 -->
 			<shopro-share v-model="showShare" :goodsInfo="goodsInfo" :posterType="'goods'"></shopro-share>
@@ -96,23 +106,31 @@
 		</view>
 	</view>
 </template>
-+<script>
++
+<script>
+	import MoteLinesDivide from "@/components/mote-lines-divide/mote-lines-divide"
 import shGrouponTip from './children/sh-groupon-tip.vue';
+import fzDetailHead from './children/fz-detail-head.vue';
+import fzDetailGallery from './children/fz-detail-gallery.vue';
 import shComment from '../children/sh-comment.vue';
 import shoproSkeletons from '@/components/shopro-skeletons/shopro-skeletons.vue';
 import shoproEmpty from '@/components/shopro-empty/shopro-empty.vue';
 import { mapMutations, mapActions, mapState } from 'vuex';
-import goodsDetail from '@/csJson/goodsDetail.json';
+import goodsDetail from '@/csJson/goodDetail.json';
 import evaluate from '@/csJson/evaluate.json';
 export default {
 	components: {
 		shGrouponTip,
 		shComment,
+		MoteLinesDivide,
+		fzDetailHead,
+		fzDetailGallery,
 		shoproSkeletons,
 		shoproEmpty
 	},
 	data() {
 		return {
+			videoImg: 'http://139.159.136.187:50080/uploadFiles/image/d02494f7a0c24790f2d10b4d5fc4b613.jpg',
 			currentSkuText: '', //选中规格
 			detailType: '',
 			showShare: false,
@@ -137,15 +155,15 @@ export default {
 			tabList: [
 				{
 					id: 'tab0',
-					title: '商品详情'
+					title: '简介'
 				},
-				{
+				/* {
 					id: 'tab1',
 					title: '规格参数'
-				},
+				}, */
 				{
 					id: 'tab2',
-					title: '用户评价'
+					title: '影评'
 				}
 			]
 		};
@@ -200,7 +218,7 @@ export default {
 		// 商品详情
 		getGoodsDetail() {
 			let that = this;
-			let res = goodsDetail
+			let res = goodsDetail;
 			if (res.code === 1) {
 				that.goodsInfo = res.data;
 				that.getCommentList();
@@ -237,7 +255,7 @@ export default {
 		// 商品评论
 		getCommentList() {
 			let that = this;
-			let res = evaluate
+			let res = evaluate;
 			if (res.code === 1) {
 				that.commentList = res.data.data;
 				that.commentNum = res.data.total;
@@ -294,7 +312,13 @@ export default {
 .box {
 	padding-bottom: 100rpx;
 }
-
+.box-about{
+	padding: 30rpx;
+	border-bottom: 1px solid #F8F8FF;
+}
+.about-unline{
+	padding: 30rpx;
+}
 // 拼团玩法
 .groupon-play {
 	height: 94rpx;
@@ -328,12 +352,12 @@ export default {
 		color: transparent;
 	}
 }
-
 .sticky-box {
 	.tab-box {
 		position: -webkit-sticky;
 		position: sticky;
-		top: 0;
+		top: 2.5rem;
+		border-bottom: 1px solid #F8F8FF;
 		z-index: 99;
 	}
 }
@@ -545,7 +569,7 @@ export default {
 	.detail-btn-box {
 		flex: 1;
 		line-height: 100rpx;
-		
+
 		display: inline-block;
 		.tool-btn {
 			font-size: 28rpx;

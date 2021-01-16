@@ -1,0 +1,144 @@
+{
+	"code": 1,
+	"msg": "商品详情",
+	"time": "1610703033",
+	"data": {
+		"id": 1,
+		"type": "normal",
+		"title": " Canon/佳能1500D 单反相机 18-55mm防抖套机 EOS 入门级 蚂蚁摄影",
+		"subtitle": "佳能爆款单反｜操作简单｜上手快｜新手必备",
+		"weigh": 16,
+		"category_ids": "6,111,115",
+		"image": "http://shopro-1253949872.image.myqcloud.com/uploads/20200429/ea9590d9a47a101b70d4ee4972250ab6.jpg",
+		"images": [{
+			"type": "image",
+			"url": "http://shopro-1253949872.image.myqcloud.com/uploads/20200429/e569b20e1586bcfb9ee4cce01847e083.jpg"
+		}, {
+			"type": "image",
+			"url": "http://shopro-1253949872.image.myqcloud.com/uploads/20200429/1e749e3fae8118a4756a34400f61050e.jpg"
+		}, {
+			"type": "video",
+			"url": "../../../static/testVideo.mp4"
+		}],
+		"params": [{
+			"title": "产品名称：",
+			"content": "Canon/佳能"
+		}, {
+			"title": "像素:",
+			"content": "2410万"
+		}, {
+			"title": "电池类型: ",
+			"content": "锂电池"
+		}],
+		"content": "<p><img src=\"http://shopro-1253949872.image.myqcloud.com/uploads/20200429/1e749e3fae8118a4756a34400f61050e.jpg\" alt=\"\" /></p><p><img src=\"http://shopro-1253949872.image.myqcloud.com/uploads/20200429/9e948d439516e7760efba2be17e06bc7.jpg\" alt=\"\" /></p>",
+		"price": "2899",
+		"original_price": "3799.00",
+		"is_sku": 1,
+		"likes": 425,
+		"views": 552,
+		"sales": 88900,
+		"show_sales": 0,
+		"service_ids": "2,4,1,3",
+		"dispatch_type": "express,selfetch",
+		"dispatch_ids": "1,8",
+		"deletetime": null,
+		"activity": null,
+		"activity_type": null,
+		"sku_price": [{
+			"id": 1,
+			"goods_sku_ids": "2",
+			"goods_id": 1,
+			"weigh": 0,
+			"image": "http://shopro-1253949872.image.myqcloud.com/uploads/20200429/1e749e3fae8118a4756a34400f61050e.jpg",
+			"stock": 87,
+			"sales": 13,
+			"sn": "100",
+			"weight": 1,
+			"price": "29.00",
+			"goods_sku_text": "12",
+			"status": "up",
+			"goods_sku_id_arr": ["2"]
+		}, {
+			"id": 2,
+			"goods_sku_ids": "3",
+			"goods_id": 1,
+			"weigh": 0,
+			"image": "http://shopro-1253949872.image.myqcloud.com/uploads/20200429/e569b20e1586bcfb9ee4cce01847e083.jpg",
+			"stock": 100,
+			"sales": 0,
+			"sn": "100",
+			"weight": 1,
+			"price": "2999.00",
+			"goods_sku_text": "12",
+			"status": "up",
+			"goods_sku_id_arr": ["3"]
+		}],
+		"stock": 187,
+		"favorite": null,
+		"dispatch_type_arr": ["express", "selfetch"],
+		"service": [{
+			"id": 2,
+			"name": "七天退换",
+			"image": "http://api.7wpp.com/uploads/20200222/73d9b9857972e18b70c4f9aa0cb3cbe1.png",
+			"description": "满足相应条件(吊牌缺失，洗涤后不支持)时，消费者可申请“七天无理由退货”"
+		}, {
+			"id": 4,
+			"name": "极速退款",
+			"image": "http://api.7wpp.com/uploads/20200222/57d971eb5984317ee794e531ea0f9207.png",
+			"description": "超快无审核退款流程"
+		}, {
+			"id": 1,
+			"name": "正品保障",
+			"image": "http://api.7wpp.com/uploads/20200222/8ca30cc57e2f0f9bea5b32c0d7a2a9fe.png",
+			"description": "正品保障,假一赔三"
+		}, {
+			"id": 3,
+			"name": "退货保障",
+			"image": "http://api.7wpp.com/uploads/20200222/c7e0b30e543aef9e2a801539228fc972.png",
+			"description": "卖家投保退货运费险"
+		}],
+		"sku": [{
+			"id": 1,
+			"name": "12",
+			"pid": 0,
+			"goods_id": 1,
+			"weigh": 0,
+			"content": [{
+				"id": 2,
+				"name": "12",
+				"pid": 1,
+				"goods_id": 1,
+				"weigh": 0
+			}, {
+				"id": 3,
+				"name": "12",
+				"pid": 1,
+				"goods_id": 1,
+				"weigh": 0
+			}]
+		}],
+		"coupons": [{
+			"id": 1,
+			"name": "10元",
+			"type": "cash",
+			"goods_ids": "0",
+			"amount": "10.00",
+			"enough": "30.00",
+			"stock": 79939,
+			"limit": 1,
+			"gettime": {
+				"start": 1612972800,
+				"end": 1614182400
+			},
+			"usetime": {
+				"start": 1610380800,
+				"end": 1611158400
+			},
+			"description": "",
+			"usetimestart": 1610380800,
+			"usetimeend": 1611158400,
+			"gettimestart": 1612972800,
+			"gettimeend": 1614182400
+		}]
+	}
+}
