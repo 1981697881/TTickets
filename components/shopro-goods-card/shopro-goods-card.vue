@@ -1,7 +1,7 @@
 <template>
-	<view class="goods-box" v-if="detail" @tap="jump('/pages/goods/detail/index', { id: detail.id })">
+	<view class="goods-box" v-if="detail" @tap="jump('/pages/cinema/detail/index', { id: detail.id })">
 		<view class="img-box">
-			<image v-if="isTag && detail.activity" class="tag-img" :src="tagPath[detail.activity.type]" mode=""></image>
+			<!-- <image v-if="isTag && detail.activity" class="tag-img" :src="tagPath[detail.activity.type]" mode=""></image> -->
 			<image class="img" :src="detail.image" lazy-load mode="scaleToFill"></image>
 		</view>
 		<view class="tip one-t">{{ detail.subtitle }}</view>
