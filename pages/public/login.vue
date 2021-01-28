@@ -6,15 +6,14 @@
 		<view class="head-box"><cu-custom :isBack="true"></cu-custom></view>
 		<view class="wrapper">
 			<!-- logo -->
-			<view class="x-c"><image class="logo" :src="sysInfo.logo" mode="widthFix"></image></view>
 			<!-- 登录tab -->
 			<view class="tab-box x-f">
 				<view class="tab-item x-c" @tap="onLoginWay(0)">
-					<text class="tab-title">手机登录</text>
+					<text class="tab-title" :class="loginWay === 0?'tab-title-select':''">手机登录</text>
 					<view class="line-box" v-show="loginWay === 0"><text class="triangle"></text></view>
 				</view>
 				<view class="tab-item x-c" @tap="onLoginWay(1)">
-					<text class="tab-title">密码登录</text>
+					<text class="tab-title" :class="loginWay === 1?'tab-title-select':''">密码登录</text>
 					<view class="line-box" password v-show="loginWay === 1"><text class="triangle"></text></view>
 				</view>
 			</view>
@@ -177,10 +176,7 @@ export default {
 .container {
 	position: relative;
 	width: 100vw;
-	height: 100vh;
 	// overflow: hidden;
-	background: linear-gradient(180deg, rgba(239, 196, 128, 1) 0%, rgba(248, 220, 165, 1) 25%, rgba(255, 255, 255, 1) 98%);
-
 	// titleview
 	.head-box {
 		.cuIcon-back {
@@ -191,8 +187,10 @@ export default {
 
 	// logo
 	.logo {
-		width: 410rpx;
-		height: 120rpx;
+		width: 220rpx;
+		height: 220rpx;
+		border-radius: 50%;
+		box-shadow: 1px 1px 1px 1px #888888;
 	}
 
 	.logo-bg {
@@ -207,34 +205,33 @@ export default {
 	padding-bottom: 40upx;
 	padding-top: 115px;
 	width: 100vw;
-	height: 100vh;
 	top: 0;
-
 	// 登录选项卡
 	.tab-box {
 		margin: 60rpx auto 30rpx;
 		width: 608rpx;
-
 		.tab-item {
 			flex: 1;
 			height: 80rpx;
 			position: relative;
-
 			.tab-title {
 				font-size: 32rpx;
 				font-weight: bold;
-				color: #845708;
+				color: #9f9f9f;
 			}
-
+			.tab-title-select {
+				background-image: -webkit-linear-gradient(90deg, #8732E8, #FD3F25);
+				-webkit-background-clip: text;
+				-webkit-text-fill-color: transparent;
+			}
 			.line-box {
 				position: absolute;
 				width: 300rpx;
 				height: 4rpx;
-				background: rgba(233, 181, 98, 1);
+				background: linear-gradient(90deg, #8631e7, #ff6853);
 				bottom: 0;
 				left: 50%;
 				transform: translateX(-50%);
-
 				.triangle {
 					position: absolute;
 					bottom: 0;
@@ -245,7 +242,7 @@ export default {
 					height: 0;
 					border-width: 10rpx;
 					border-style: solid;
-					border-color: transparent transparent #e9b562 transparent;
+					border-color: transparent transparent #fa5539 transparent;
 				}
 			}
 		}
@@ -264,10 +261,6 @@ export default {
 				font-size: 28rpx;
 			}
 
-			.pl {
-				color: #c8963d;
-			}
-
 			.code-btn {
 				background: none;
 				font-size: 28rpx;
@@ -282,7 +275,7 @@ export default {
 		height: 80upx;
 		border-radius: 40rpx;
 		margin-top: 70upx;
-		background: linear-gradient(90deg, rgba(233, 180, 97, 1), rgba(238, 204, 137, 1));
+		background: linear-gradient(90deg, #b941fb, #5849fc);
 		box-shadow: 0px 7rpx 6rpx 0px rgba(229, 138, 0, 0.22);
 		color: #fff;
 	}

@@ -6,7 +6,6 @@
 		<view class="head-box"><cu-custom :isBack="true"></cu-custom></view>
 		<view class="wrapper">
 			<!-- logo -->
-			<view class="x-c"><image class="logo" :src="sysInfo.logo" mode="widthFix"></image></view>
 			<!-- 表单 -->
 			<view class="login-box y-f">
 				<view class="input-item x-c">
@@ -136,8 +135,6 @@ export default {
 	width: 100vw;
 	height: 100vh;
 	// overflow: hidden;
-	background: linear-gradient(180deg, rgba(239, 196, 128, 1) 0%, rgba(248, 220, 165, 1) 25%, rgba(255, 255, 255, 1) 98%);
-
 	// titleview
 	.head-box {
 		.cuIcon-back {
@@ -169,7 +166,7 @@ export default {
 
 	// 输入
 	.login-box {
-		margin-top: 140rpx;
+		margin-top: 10rpx;
 
 		.input-item {
 			height: 108rpx;
@@ -188,9 +185,7 @@ export default {
 				font-size: 28rpx;
 			}
 
-			.pl {
-				color: #c8963d;
-			}
+			
 
 			.code-btn {
 				background: none;
@@ -211,7 +206,7 @@ export default {
 		height: 80upx;
 		border-radius: 40rpx;
 		margin-top: 70upx;
-		background: linear-gradient(90deg, rgba(233, 180, 97, 1), rgba(238, 204, 137, 1));
+		background: linear-gradient(90deg, #b941fb, #5849fc);
 		box-shadow: 0px 7rpx 6rpx 0px rgba(229, 138, 0, 0.22);
 		color: #fff;
 	}

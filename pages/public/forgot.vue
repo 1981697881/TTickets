@@ -6,7 +6,7 @@
 		<view class="head-box"><cu-custom :isBack="true"></cu-custom></view>
 		<view class="wrapper">
 			<!-- logo -->
-			<view class="x-c"><image class="logo" v-if="initData.info" :src="sysInfo.logo" mode="widthFix"></image></view>
+			<!-- <view class="x-c"><image class="logo" v-if="initData.info" :src="sysInfo.logo" mode="widthFix"></image></view> -->
 			<view class="x-c">
 				<view class="tab-item x-c">
 					<text class="tab-title">忘记密码</text>
@@ -119,8 +119,6 @@ export default {
 	width: 100vw;
 	height: 100vh;
 	// overflow: hidden;
-	background: linear-gradient(180deg, rgba(239, 196, 128, 1) 0%, rgba(248, 220, 165, 1) 25%, rgba(255, 255, 255, 1) 98%);
-
 	// titleview
 	.head-box {
 		.cuIcon-back {
@@ -144,22 +142,22 @@ export default {
 		flex: 1;
 		height: 80rpx;
 		position: relative;
-		margin-top: 80rpx;
+		margin-top: 10rpx;
 		.tab-title {
 			font-size: 32rpx;
 			font-weight: bold;
-			color: #845708;
+			background-image: -webkit-linear-gradient(90deg, #8732E8, #FD3F25);
+			-webkit-background-clip: text;
+			-webkit-text-fill-color: transparent;
 		}
-
 		.line-box {
 			position: absolute;
 			width: 300rpx;
 			height: 4rpx;
-			background: rgba(233, 181, 98, 1);
+			background: linear-gradient(90deg, #8631e7, #ff6853);
 			bottom: 0;
 			left: 50%;
 			transform: translateX(-50%);
-
 			.triangle {
 				position: absolute;
 				bottom: 0;
@@ -170,7 +168,7 @@ export default {
 				height: 0;
 				border-width: 10rpx;
 				border-style: solid;
-				border-color: transparent transparent #e9b562 transparent;
+				border-color: transparent transparent #fa5539 transparent;
 			}
 		}
 	}
@@ -184,10 +182,9 @@ export default {
 	width: 100vw;
 	height: 100vh;
 	top: 0;
-
 	// 输入
 	.login-box {
-		margin-top: 80rpx;
+		margin-top: 10rpx;
 		.input-item {
 			height: 108rpx;
 			border-bottom: 1rpx solid rgba(#d0b17b, 0.3);
@@ -205,9 +202,7 @@ export default {
 				font-size: 28rpx;
 			}
 
-			.pl {
-				color: #c8963d;
-			}
+			
 
 			.code-btn {
 				background: none;
@@ -228,7 +223,7 @@ export default {
 		height: 80upx;
 		border-radius: 40rpx;
 		margin-top: 70upx;
-		background: linear-gradient(90deg, rgba(233, 180, 97, 1), rgba(238, 204, 137, 1));
+		background: linear-gradient(90deg, #b941fb, #5849fc);
 		box-shadow: 0px 7rpx 6rpx 0px rgba(229, 138, 0, 0.22);
 		color: #fff;
 	}
