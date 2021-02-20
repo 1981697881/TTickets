@@ -45,12 +45,12 @@ import wxsdk from '@/common/wechat/sdk';
 // #endif
 import { mapMutations, mapActions, mapState } from 'vuex';
 import shoproShareGuide from '@/components/shopro-share-guide/shopro-share-guide.vue';
-import shoproShare from '@/common/mixins/shopro-share';
+import appShare from '@/common/mixins/app-share';
 export default {
 	components: {
 		shoproShareGuide
 	},
-	mixins: ['shoproShare'],
+	mixins: ['appShare'],
 	data() {
 		return {
 			poster: {},

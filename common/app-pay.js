@@ -1,11 +1,3 @@
-/**
- * ShoproPay v1.0.0
- * @Class ShoproPay
- * @description shopro-pay 1.0.0 统一支付
- * @Author llidongtony
- * @Date 2020-04-09
- * @Email lidongtony@qq.com
- */
 import api from '@/common/request/index'
 import store from '@/common/store'
 import tools from '@/common/utils/tools'
@@ -17,7 +9,7 @@ import Router from '@/common/router';
 
 
 
-export default class ShoproPay {
+export default class AppPay {
 
 
 	//						wxOfficialAccount			wxMiniProgram			App						H5

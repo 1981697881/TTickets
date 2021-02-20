@@ -3,18 +3,18 @@
 	<view class="coupon-category-box mb10 shopro-selector-rect" v-if="detail.ids">
 		<swiper class="coupon-swiper-box" @change="onSwiper" circular :autoplay="true" :interval="5000" :duration="2000">
 			<swiper-item class="swiper-item" v-for="(c, index) in couponList" :key="c.id">
-				<view class="tab-list x-c" @tap="jump('/pages/app/coupon/detail', { id: c.id })"><shopro-coupon :couponData="c" :state="0"></shopro-coupon></view>
+				<view class="tab-list x-c" @tap="jump('/pages/app/coupon/detail', { id: c.id })"><app-coupon :couponData="c" :state="0"></app-coupon></view>
 			</swiper-item>
 		</swiper>
 	</view>
 </template>
 
 <script>
-import shoproCoupon from '@/components/shopro-coupon/shopro-coupon.vue';
+import appCoupon from '@/components/app-coupon/app-coupon.vue';
 import prompt from '@/csJson/prompt.json';
 export default {
 	components: {
-		shoproCoupon
+		appCoupon
 	},
 	data() {
 		return {

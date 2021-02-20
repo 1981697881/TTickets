@@ -19,12 +19,12 @@
 </template>
 
 <script>
-import shoprpCoupon from '@/components/shopro-coupon/shopro-coupon.vue';
+import appCoupon from '@/components/app-coupon/app-coupon.vue';
 import citySelect from '@/components/linzq-citySelect/linzq-citySelect.vue';
 import popupLayer from '@/components/popup-layer/popup-layer.vue';
 export default {
 	components: {
-		shoprpCoupon,
+		appCoupon,
 		citySelect,
 		popupLayer
 	},

@@ -267,9 +267,9 @@ export default {
 			}
 		},
 		 // scale的倒数
-		    scalereciprocal: function () {
-		      return 1 / this.scale
-		    },
+		scalereciprocal: function () {
+	      return 1 / this.scale
+	    },
 		//移动事件
 		onMove: function(e) {
 			this.thumbnailShow = true;

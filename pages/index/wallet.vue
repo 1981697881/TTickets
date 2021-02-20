@@ -53,10 +53,8 @@
 		<shopro-login-modal></shopro-login-modal>
 	</view>
 </template>
-
 <script>
 import walletList from '@/pages/wallet/list.vue';
-
 import seckillList from '@/csJson/seckillList.json';
 export default {
 	components: {

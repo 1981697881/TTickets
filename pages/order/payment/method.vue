@@ -47,7 +47,7 @@
 </template>
 
 <script>
-import ShoproPay from '@/common/shopro-pay';
+import AppPay from '@/common/app-pay';
 import { mapMutations, mapActions, mapState } from 'vuex';
 
 let timer;

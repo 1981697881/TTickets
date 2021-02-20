@@ -37,14 +37,14 @@
 import _app from '@/common/utils/QS-SharePoster/app.js';
 import { getSharePoster } from '@/common/utils/QS-SharePoster/QS-SharePoster.js';
 import { BASE_URL } from '@/env.js';
-import shoproShare from '@/common/mixins/shopro-share';
+import appShare from '@/common/mixins/app-share';
 // #ifdef H5
 import wxsdk from '@/common/wechat/sdk';
 // #endif
 import { mapMutations, mapActions, mapState } from 'vuex';
 export default {
 	components: {},
-	mixins: ['shoproShare'],
+	mixins: ['appShare'],
 	data() {
 		return {
 			poster: {},

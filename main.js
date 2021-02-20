@@ -10,8 +10,8 @@ import {
 } from './env.js'
 
 
-import shoproShare from '@/common/mixins/shopro-share'
-Vue.mixin(shoproShare);
+import appShare from '@/common/mixins/app-share'
+Vue.mixin(appShare);
 
 import {
 	RouterMount

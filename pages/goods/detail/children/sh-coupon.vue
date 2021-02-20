@@ -3,7 +3,7 @@
 	<view class="category-box shopro-selector-rect">
 		<swiper class="swiper-box" @change="onSwiper" circular :autoplay="false" :interval="3000" :duration="1000">
 			<swiper-item v-for="(c, index) in couponList" :key="c.id">
-				<view class="tab-list x-c"><shopro-coupon :couponData="c" :state="0"></shopro-coupon></view>
+				<view class="tab-list x-c"><app-coupon :couponData="c" :state="0"></app-coupon></view>
 			</swiper-item>
 		</swiper>
 		<view class="category-dots">
@@ -13,10 +13,10 @@
 </template>
 
 <script>
-import shoproCoupon from '@/components/shopro-coupon/shopro-coupon.vue';
+import appCoupon from '@/components/app-coupon/app-coupon.vue';
 export default {
 	components: {
-		shoproCoupon
+		appCoupon
 	},
 	data() {
 		return {

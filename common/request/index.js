@@ -1,5 +1,5 @@
 import Request from './request'
-import apiList from './shopro'
+import apiList from './appApi'
 import store from '@/common/store/index.js'
 
 export default function api(url, data = {}) {
