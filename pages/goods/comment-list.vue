@@ -15,23 +15,23 @@
 		</view>
 		<view class="foot_box"></view>
 		<!-- 自定义底部导航 -->
-		<shopro-tabbar></shopro-tabbar>
+		<app-tabbar></app-tabbar>
 		<!-- 关注弹窗 -->
-		<shopro-float-btn></shopro-float-btn>
+		<app-float-btn></app-float-btn>
 		<!-- 连续弹窗提醒 -->
-		<shopro-notice-modal></shopro-notice-modal>
+		<app-notice-modal></app-notice-modal>
 		<!-- 登录提示 -->
-		<shopro-login-modal></shopro-login-modal>
+		<app-login-modal></app-login-modal>
 	</view>
 </template>
 
 <script>
 import shComment from './children/sh-comment.vue';
-import shoproEmpty from '@/components/shopro-empty/shopro-empty.vue';
+import appEmpty from '@/components/app-empty/app-empty.vue';
 export default {
 	components: {
 		shComment,
-		shoproEmpty
+		appEmpty
 	},
 	data() {
 		return {

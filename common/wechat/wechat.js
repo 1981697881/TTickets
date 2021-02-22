@@ -33,7 +33,6 @@ export default class Wechat {
 		throw 'stop';
 	}
 	//临时登录获取OpenId 不入库不绑定用户
-
 	wxOfficialAccountBaseLogin() {
 		let oUrl = window.location.href;
 		//首次进入 没有登录 保存

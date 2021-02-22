@@ -20,16 +20,16 @@
 		</view>
 		<view class="content-two" v-if="detail.style == 2">
 			<view class="content-two__item" v-for="live in liveList" :key="live.id">
-				<shopro-live-card :detail="live" :wh="320">
+				<app-live-card :detail="live" :wh="320">
 					<block slot="liveGoods"><text></text></block>
-				</shopro-live-card>
+				</app-live-card>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
-import shoproLiveCard from '@/components/shopro-live-card/shopro-live-card.vue';
+import appLiveCard from '@/components/app-live-card/app-live-card.vue';
 // #ifdef MP-WEIXIN
 import { HAS_LIVE } from '@/env';
 let livePlayer = null;
@@ -40,7 +40,7 @@ if (HAS_LIVE) {
 let timer = null;
 export default {
 	components: {
-		shoproLiveCard
+		appLiveCard
 	},
 	data() {
 		return {

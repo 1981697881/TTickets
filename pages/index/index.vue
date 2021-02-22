@@ -1,7 +1,7 @@
 <template>
 	<view class="page_box">
 		<!-- 空白页 -->
-		<shopro-empty v-if="!hasTemplate" :emptyData="emptyData"></shopro-empty>
+		<app-empty v-if="!hasTemplate" :emptyData="emptyData"></app-empty>
 		<view v-else class="page_box shopro-selector">
 			<!-- 导航栏 -->
 			<view class="head_box active" :style="{ background: bgcolor }">
@@ -54,19 +54,19 @@
 			<view class="foot_box"></view>
 
 			<!-- 骨架屏 -->
-			<shopro-skeleton :showSkeleton="!template"></shopro-skeleton>
+			<app-skeleton :showSkeleton="!template"></app-skeleton>
 			<!-- 登录提示 -->
-			<shopro-login-modal></shopro-login-modal>
+			<app-login-modal></app-login-modal>
 			<!-- 自定义底部导航 -->
-			<shopro-tabbar></shopro-tabbar>
+			<app-tabbar></app-tabbar>
 			<!-- 关注弹窗 -->
-			<shopro-float-btn></shopro-float-btn>
+			<app-float-btn></app-float-btn>
 			<!-- 连续弹窗提醒 -->
-			<shopro-notice-modal v-if="!showPrivacy && showNoticeModal"></shopro-notice-modal>
+			<app-notice-modal v-if="!showPrivacy && showNoticeModal"></app-notice-modal>
 			<!-- 隐私协议 -->
 			<!-- #ifdef APP-PLUS -->
 			<view class="modal-wrap">
-				<shopro-modal v-model="showPrivacy">
+				<app-modal v-model="showPrivacy">
 					<block slot="modalContent">
 						<view class="service-contract-wrap">
 							<image class="service-head-img" src="/static/imgs/modal/servece_head.png" mode="widthFix"></image>
@@ -80,7 +80,7 @@
 							<view class="btn-box x-c"><button class="cu-btn agree-btn" @tap="Agree">知道了</button></view>
 						</view>
 					</block>
-				</shopro-modal>
+				</app-modal>
 			</view>
 			<!-- #endif -->
 		</view>
@@ -103,8 +103,8 @@ import shGrid from './components/sh-grid.vue';
 import shTitleCard from './components/sh-title-card.vue';
 import shOrder from './components/sh-order.vue';
 import shWallet from './components/sh-wallet.vue';
-import shoproNoticeModal from '@/components/shopro-notice-modal/shopro-notice-modal.vue';
-import shoproSkeletons from '@/components/shopro-skeletons/shopro-skeletons.vue';
+import appNoticeModal from '@/components/app-notice-modal/app-notice-modal.vue';
+import appSkeletons from '@/components/app-skeletons/app-skeletons.vue';
 // #ifdef MP-WEIXIN
 import { HAS_LIVE } from '@/env';
 import shLive from './components/sh-live.vue';
@@ -136,8 +136,8 @@ export default {
 		shGroupon,
 		shRichtext,
 		shNav,
-		shoproNoticeModal,
-		shoproSkeletons,
+		appNoticeModal,
+		appSkeletons,
 		// #ifdef MP-WEIXIN
 		shLive
 		// #endif

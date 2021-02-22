@@ -1,6 +1,6 @@
 <template>
 	<view class="box">
-		<view class="load-box" v-if="!goodsInfo.price"><shopro-skeletons :type="'detail'"></shopro-skeletons></view>
+		<view class="load-box" v-if="!goodsInfo.price"><app-skeletons :type="'detail'"></app-skeletons></view>
 		<view class="detail_box shopro-selector" v-else>
 			<view class="detail-content">
 				<view class="goodes_detail_swiper-box">
@@ -33,7 +33,7 @@
 						<text class="cuIcon-right"></text>
 					</view>
 				</view>
-				<shopro-sku
+				<app-sku
 					v-model="showSku"
 					:goodsInfo="goodsInfo"
 					:buyType="goodsInfo.activity_type == 'seckill' || detailType === 'score' ? 'buy' : buyType"
@@ -41,7 +41,7 @@
 					:goodsType="detailType === 'score' ? 'score' : 'goods'"
 					@changeType="changeType"
 					@getSkuText="getSkuText"
-				></shopro-sku>
+				></app-sku>
 				<!-- 服务 -->
 				<sh-serve v-if="goodsInfo.service.length" v-model="showServe" :serveList="goodsInfo.service"></sh-serve>
 				<!-- 优惠券 -->
@@ -89,7 +89,7 @@
 						</view>
 						<view class="goods-comment" v-if="tabCurrent === 'tab2'">
 							<block v-for="comment in commentList" :key="comment.id"><sh-comment :comment="comment"></sh-comment></block>
-							<view class="empty-box x-c" v-if="!commentList.length"><shopro-empty :isFixed="false" :emptyData="emptyData"></shopro-empty></view>
+							<view class="empty-box x-c" v-if="!commentList.length"><app-empty :isFixed="false" :emptyData="emptyData"></app-empty></view>
 							<view class="more-box x-c" v-if="commentList.length">
 								<button class="cu-btn more-btn x-f" @tap="jump('/pages/goods/comment-list', { goodsId: goodsInfo.id })">
 									查看全部
@@ -162,15 +162,15 @@
 			<!-- 分享组件 -->
 			<app-share v-model="showShare" :goodsInfo="goodsInfo" :posterType="'goods'"></app-share>
 			<!-- 登录提示 -->
-			<shopro-login-modal></shopro-login-modal>
+			<app-login-modal></app-login-modal>
 			<!-- 骨架屏 -->
-			<shopro-skeleton :showSkeleton="false"></shopro-skeleton>
+			<app-skeleton :showSkeleton="false"></app-skeleton>
 			<!-- 自定义底部导航 -->
-			<shopro-tabbar></shopro-tabbar>
+			<app-tabbar></app-tabbar>
 			<!-- 关注弹窗 -->
-			<shopro-float-btn></shopro-float-btn>
+			<app-float-btn></app-float-btn>
 			<!-- 连续弹窗提醒 -->
-			<shopro-notice-modal></shopro-notice-modal>
+			<app-notice-modal></app-notice-modal>
 		</view>
 	</view>
 </template>
@@ -182,9 +182,9 @@ import shGroupon from './children/sh-groupon.vue';
 import shGrouponTip from './children/sh-groupon-tip.vue';
 import shCoupon from './children/sh-coupon.vue';
 import shComment from '../children/sh-comment.vue';
-import shoproSku from '@/components/shopro-sku/shopro-sku.vue';
-import shoproSkeletons from '@/components/shopro-skeletons/shopro-skeletons.vue';
-import shoproEmpty from '@/components/shopro-empty/shopro-empty.vue';
+import appSku from '@/components/app-sku/app-sku.vue';
+import appSkeletons from '@/components/app-skeletons/app-skeletons.vue';
+import appEmpty from '@/components/app-empty/app-empty.vue';
 
 import { mapMutations, mapActions, mapState } from 'vuex';
 export default {
@@ -194,10 +194,10 @@ export default {
 		shGroupon,
 		shCoupon,
 		shGrouponTip,
-		shoproSku,
+		appSku,
 		shComment,
-		shoproSkeletons,
-		shoproEmpty
+		appSkeletons,
+		appEmpty
 	},
 	data() {
 		return {

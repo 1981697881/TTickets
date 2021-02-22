@@ -15,37 +15,37 @@
 		</view>
 		<view class="content-box">
 			<view class="goods-list x-f">
-				<view class="goods-item" v-for="goods in goodsList" :key="goods.id"><shopro-goods-card :detail="goods" :isTag="true"></shopro-goods-card></view>
+				<view class="goods-item" v-for="goods in goodsList" :key="goods.id"><app-goods-card :detail="goods" :isTag="true"></app-goods-card></view>
 			</view>
 			<!-- 空白页 -->
-			<shopro-empty v-if="!goodsList.length && !isLoading" :emptyData="emptyData"></shopro-empty>
+			<app-empty v-if="!goodsList.length && !isLoading" :emptyData="emptyData"></app-empty>
 			<!-- 加载更多 -->
 			<view v-if="goodsList.length" class="cu-load text-gray" :class="loadStatus"></view>
 			<!-- load -->
-			<shopro-load v-model="isLoading"></shopro-load>
+			<app-load v-model="isLoading"></app-load>
 		</view>
 		<!-- 自定义底部导航 -->
-		<shopro-tabbar></shopro-tabbar>
+		<app-tabbar></app-tabbar>
 		<!-- 关注弹窗 -->
-		<shopro-float-btn></shopro-float-btn>
+		<app-float-btn></app-float-btn>
 		<!-- 连续弹窗提醒 -->
-		<shopro-notice-modal></shopro-notice-modal>
+		<app-notice-modal></app-notice-modal>
 		<!-- 登录提示 -->
-		<shopro-login-modal></shopro-login-modal>
+		<app-login-modal></app-login-modal>
 	</view>
 </template>
 
 <script>
 import shFilter from './children/sh-filter.vue';
-import shoproGoodsCard from '@/components/shopro-goods-card/shopro-goods-card.vue';
-import shoproEmpty from '@/components/shopro-empty/shopro-empty.vue';
+import appGoodsCard from '@/components/app-goods-card/app-goods-card.vue';
+import appEmpty from '@/components/app-empty/app-empty.vue';
 import { mapMutations, mapActions, mapState } from 'vuex';
 let timer = null;
 export default {
 	components: {
 		shFilter,
-		shoproGoodsCard,
-		shoproEmpty
+		appGoodsCard,
+		appEmpty
 	},
 	data() {
 		return {

@@ -41,7 +41,7 @@
 				<view class="aftersale-money--num" v-else>未退款</view>
 			</view>
 			<!-- 服务商品 -->
-			<view class="order-shop"><shopro-mini-card :type="'order'" :detail="aftersaleDetail"></shopro-mini-card></view>
+			<view class="order-shop"><app-mini-card :type="'order'" :detail="aftersaleDetail"></app-mini-card></view>
 			<!-- 服务内容 -->
 			<view class="aftersale-content">
 				<view class="aftersale-item x-f">

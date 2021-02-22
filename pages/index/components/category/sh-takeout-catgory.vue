@@ -96,7 +96,7 @@
 								<view class="x-c" style="height: 200rpx;" @tap="onSel(index, g.checked)">
 									<checkbox :checked="g.checked" :class="{ checked: g.checked }" class="goods-radio round orange"></checkbox>
 								</view>
-								<shopro-mini-card :detail="g.goods" :sku="g.sku_price" :type="'sku'">
+								<app-mini-card :detail="g.goods" :sku="g.sku_price" :type="'sku'">
 									<block slot="goodsBottom">
 										<view class="x-bc price-box">
 											<view class="price">￥{{ g.sku_price.price }}</view>
@@ -111,7 +111,7 @@
 											</view>
 										</view>
 									</block>
-								</shopro-mini-card>
+								</app-mini-card>
 							</view>
 						</checkbox-group>
 					</view>

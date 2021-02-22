@@ -29,14 +29,14 @@
 				</view>
 			</view>
 			<!-- 关注弹窗 -->
-			<shopro-float-btn></shopro-float-btn>
+			<app-float-btn></app-float-btn>
 			<!-- 连续弹窗提醒 -->
-			<shopro-notice-modal></shopro-notice-modal>
+			<app-notice-modal></app-notice-modal>
 			<!-- 登录提示 -->
-			<shopro-login-modal></shopro-login-modal>
+			<app-login-modal></app-login-modal>
 		</view>
 		<!-- 自定义底部导航 -->
-		<shopro-tabbar></shopro-tabbar>
+		<app-tabbar></app-tabbar>
 	</view>
 </template>
 
@@ -58,7 +58,7 @@ import shWallet from './components/sh-wallet.vue';
 import shGrid from './components/sh-grid.vue';
 import shTitleCard from './components/sh-title-card.vue';
 
-import shoproNoticeModal from '@/components/shopro-notice-modal/shopro-notice-modal.vue';
+import appNoticeModal from '@/components/app-notice-modal/app-notice-modal.vue';
 import { mapMutations, mapActions, mapState } from 'vuex';
 export default {
 	components: {
@@ -77,7 +77,7 @@ export default {
 		shWallet,
 		shGrid,
 		shTitleCard,
-		shoproNoticeModal
+		appNoticeModal
 	},
 	data() {
 		return {

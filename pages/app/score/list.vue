@@ -7,22 +7,22 @@
 					<view class="goods-list" v-if="goods" v-for="goods in scoreList" :key="goods.id"><sh-score-goods :scoreData="goods"></sh-score-goods></view>
 				</view>
 				<!-- 空白页 -->
-				<shopro-empty v-if="!scoreList.length && !isLoading" :emptyData="emptyData"></shopro-empty>
+				<app-empty v-if="!scoreList.length && !isLoading" :emptyData="emptyData"></app-empty>
 				<!-- 加载更多 -->
 				<view v-if="scoreList.length" class="cu-load text-gray" :class="loadStatus"></view>
 				<!-- load -->
-				<shopro-load v-model="isLoading"></shopro-load>
+				<app-load v-model="isLoading"></app-load>
 			</scroll-view>
 		</view>
 		<view class="foot_box"></view>
 		<!-- 自定义底部导航 -->
-		<shopro-tabbar></shopro-tabbar>
+		<app-tabbar></app-tabbar>
 		<!-- 关注弹窗 -->
-		<shopro-float-btn></shopro-float-btn>
+		<app-float-btn></app-float-btn>
 		<!-- 连续弹窗提醒 -->
-		<shopro-notice-modal></shopro-notice-modal>
+		<app-notice-modal></app-notice-modal>
 		<!-- 登录提示 -->
-		<shopro-login-modal></shopro-login-modal>
+		<app-login-modal></app-login-modal>
 	</view>
 </template>
 

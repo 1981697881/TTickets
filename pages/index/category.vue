@@ -9,13 +9,13 @@
 		<!--直接购买，点餐 -->
 		<sh-takeout-catgory :categoryId="categoryId" v-if="categoryType === 1"></sh-takeout-catgory>
 		<!-- 自定义底部导航 -->
-		<shopro-tabbar v-if="queryObj.id" :queryObj="queryObj"></shopro-tabbar>
+		<app-tabbar v-if="queryObj.id" :queryObj="queryObj"></app-tabbar>
 		<!-- 关注弹窗 -->
-		<shopro-float-btn></shopro-float-btn>
+		<app-float-btn></app-float-btn>
 		<!-- 连续弹窗提醒 -->
-		<shopro-notice-modal></shopro-notice-modal>
+		<app-notice-modal></app-notice-modal>
 		<!-- 登录提示 -->
-		<shopro-login-modal></shopro-login-modal>
+		<app-login-modal></app-login-modal>
 	</view>
 </template>
 

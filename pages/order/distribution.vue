@@ -3,7 +3,7 @@
 		<view class="content_box">
 			<view class="card-wrap" :style="expressType !== 'selfetch' ? 'border-bottom-left-radius:0;border-bottom-right-radius:0;' : ''">
 				<!-- 商品卡片 -->
-				<view class="order-card-box"><shopro-mini-card :detail="itemDetail" :type="'order'"></shopro-mini-card></view>
+				<view class="order-card-box"><app-mini-card :detail="itemDetail" :type="'order'"></app-mini-card></view>
 
 				<!-- 到店自提 -->
 				<view class="y-f mb20 pb20" v-if="expressType == 'selfetch' && itemDetail.status_code !== 'refund_finish' && qrcodeList.length">
@@ -64,7 +64,7 @@
 			</button>
 		</view>
 		<!-- 二维码弹窗 -->
-		<shopro-modal v-model="showQrcode">
+		<app-modal v-model="showQrcode">
 			<block slot="modalContent">
 				<view class="qr-code-modal">
 					<image class="qr-code-img" :src="qrcodepath" mode=""></image>
@@ -72,7 +72,7 @@
 					<button class="cu-btn hide-qrcode" @tap="hideModal">关闭</button>
 				</view>
 			</block>
-		</shopro-modal>
+		</app-modal>
 		<!-- 二维码绘制 -->
 		<view class="hideCanvasView">
 			<canvas class="hideCanvas" canvas-id="qrcode_img" :style="{ width: (poster.width || 1) + 'px', height: (poster.height || 1) + 'px' }"></canvas>

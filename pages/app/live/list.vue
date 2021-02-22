@@ -12,11 +12,11 @@
 			<scroll-view enable-back-to-top scroll-y="true" @scrolltolower="loadMore" class="scroll-box">
 				<uni-waterfall v-model="liveList" ref="uWaterfall">
 					<template v-slot:left="{ leftList }">
-						<view v-for="live in leftList" :key="live.id"><shopro-live-card :detail="live"></shopro-live-card></view>
+						<view v-for="live in leftList" :key="live.id"><app-live-card :detail="live"></app-live-card></view>
 					</template>
 					<template v-slot:right="{ rightList }">
 						<view class="demo-warter" v-for="(item, index) in rightList" :key="index">
-							<view v-for="live in rightList" :key="live.id"><shopro-live-card :detail="live"></shopro-live-card></view>
+							<view v-for="live in rightList" :key="live.id"><app-live-card :detail="live"></app-live-card></view>
 						</view>
 					</template>
 				</uni-waterfall>
@@ -26,22 +26,22 @@
 		</view>
 		<view class="foot_box"></view>
 		<!-- 自定义底部导航 -->
-		<shopro-tabbar></shopro-tabbar>
+		<app-tabbar></app-tabbar>
 		<!-- 关注弹窗 -->
-		<shopro-float-btn></shopro-float-btn>
+		<app-float-btn></app-float-btn>
 		<!-- 连续弹窗提醒 -->
-		<shopro-notice-modal></shopro-notice-modal>
+		<app-notice-modal></app-notice-modal>
 		<!-- 登录提示 -->
-		<shopro-login-modal></shopro-login-modal>
+		<app-login-modal></app-login-modal>
 	</view>
 </template>
 
 <script>
-import shoproLiveCard from '@/components/shopro-live-card/shopro-live-card.vue';
+import appLiveCard from '@/components/app-live-card/app-live-card.vue';
 import uniWaterfall from '@/components/uni-waterfall/uni-waterfall.vue';
 export default {
 	components: {
-		shoproLiveCard,
+		appLiveCard,
 		uniWaterfall
 	},
 	data() {

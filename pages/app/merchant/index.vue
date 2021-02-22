@@ -82,7 +82,7 @@
 				<text class="state">{{ order.status_name }}</text>
 			</view>
 			<view class="goods-order" v-for="item in order.item" :key="item.id">
-				<view class="order-content"><shopro-mini-card :type="'order'" :detail="item"></shopro-mini-card></view>
+				<view class="order-content"><app-mini-card :type="'order'" :detail="item"></app-mini-card></view>
 			</view>
 			<view class="order-bottom x-f">
 				<text class="total-price-title">实付款：</text>
@@ -105,7 +105,7 @@
 			@change="selDate"
 		></uni-calendar>
 		<!-- 输码弹窗 -->
-		<shopro-modal v-model="showInputModal" style="z-index: 88;">
+		<app-modal v-model="showInputModal" style="z-index: 88;">
 			<block slot="modalContent">
 				<view class="modal-box">
 					<view class="modal-head">
@@ -116,7 +116,7 @@
 					<button class="cu-btn post-btn" @tap="onConfirm">核销</button>
 				</view>
 			</block>
-		</shopro-modal>
+		</app-modal>
 	</view>
 </template>
 

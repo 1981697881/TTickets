@@ -29,27 +29,27 @@
 				</view>
 				<view class="coupon-goods" v-if="couponGoods.length">
 					<view class="coupon-goods-title x-f" id="couponGoods">适用商品</view>
-					<view class="goods-list" v-for="goods in couponGoods" :key="goods.id"><shopro-mini-card :detail="goods"></shopro-mini-card></view>
+					<view class="goods-list" v-for="goods in couponGoods" :key="goods.id"><app-mini-card :detail="goods"></app-mini-card></view>
 				</view>
 			</scroll-view>
 		</view>
 		<view class="foot_box"></view>
 		<!-- 自定义底部导航 -->
-		<shopro-tabbar></shopro-tabbar>
+		<app-tabbar></app-tabbar>
 		<!-- 关注弹窗 -->
-		<shopro-float-btn></shopro-float-btn>
+		<app-float-btn></app-float-btn>
 		<!-- 连续弹窗提醒 -->
-		<shopro-notice-modal></shopro-notice-modal>
+		<app-notice-modal></app-notice-modal>
 		<!-- 登录提示 -->
-		<shopro-login-modal></shopro-login-modal>
+		<app-login-modal></app-login-modal>
 	</view>
 </template>
 
 <script>
-import shoproMiniCard from '@/components/shopro-mini-card/shopro-mini-card.vue';
+import appMiniCard from '@/components/app-mini-card/app-mini-card.vue';
 export default {
 	components: {
-		shoproMiniCard
+		appMiniCard
 	},
 	data() {
 		return {

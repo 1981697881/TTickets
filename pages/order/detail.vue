@@ -24,7 +24,7 @@
 				<!-- 订单信息 -->
 				<view class="order-list" v-for="order in orderDetail.item" :key="order.id">
 					<view class="order-card" @tap="jump('/pages/goods/detail/index', { id: order.goods_id })">
-						<shopro-mini-card :type="'order'" :detail="order"></shopro-mini-card>
+						<app-mini-card :type="'order'" :detail="order"></app-mini-card>
 					</view>
 					<!-- 配送方式 -->
 					<view class="express-type-box x-bc">
@@ -156,15 +156,15 @@
 			</view>
 		</view>
 		<!-- 登录提示 -->
-		<shopro-login-modal></shopro-login-modal>
+		<app-login-modal></app-login-modal>
 	</view>
 </template>
 
 <script>
-import shoproMiniCard from '@/components/shopro-mini-card/shopro-mini-card.vue';
+import appMiniCard from '@/components/app-mini-card/app-mini-card.vue';
 export default {
 	components: {
-		shoproMiniCard
+		appMiniCard
 	},
 	data() {
 		return {

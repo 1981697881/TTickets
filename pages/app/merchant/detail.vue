@@ -3,7 +3,7 @@
 		<!-- 订单卡片 -->
 		<view class="card-box">
 			<view class="order-goods-item" v-for="item in orderDetail.item" :key="item.id">
-				<shopro-mini-card :type="'order'" :detail="item"></shopro-mini-card>
+				<app-mini-card :type="'order'" :detail="item"></app-mini-card>
 				<view class="goods-phone card-item">
 					<text class="item-title">预留电话：</text>
 					<text class="item-content">{{ item.ext_arr.dispatch_phone }}</text>

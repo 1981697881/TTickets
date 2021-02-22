@@ -4,7 +4,7 @@
 		<sh-goods-poster v-if="posterType === 'goods'" :goodsId="goodsId" @getShareInfo="getShareInfo"></sh-goods-poster>
 		<sh-groupon-poster v-if="posterType === 'groupon'" :goodsId="goodsId" @getShareInfo="getShareInfo"></sh-groupon-poster>
 		<!-- 登录提示 -->
-		<shopro-login-modal></shopro-login-modal>
+		<app-login-modal></app-login-modal>
 	</view>
 </template>
 

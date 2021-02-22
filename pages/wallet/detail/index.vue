@@ -9,15 +9,15 @@
 					</view>
 				</view>
 				<!-- loading -->
-				<shopro-load v-model="isLoading"></shopro-load>
+				<app-load v-model="isLoading"></app-load>
 			</scroll-view>
 		</view>
 		<!-- 关注弹窗 -->
-		<shopro-float-btn></shopro-float-btn>
+		<app-float-btn></app-float-btn>
 		<!-- 连续弹窗提醒 -->
-		<shopro-notice-modal></shopro-notice-modal>
+		<app-notice-modal></app-notice-modal>
 		<!-- 登录提示 -->
-		<shopro-login-modal></shopro-login-modal>
+		<app-login-modal></app-login-modal>
 	</view>
 </template>
 

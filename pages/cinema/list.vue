@@ -18,17 +18,17 @@
 				<fz-movie-list :tabId="tabCurrent" v-if="tabCurrent=='ing'">
 				</fz-movie-list>
 				<!-- 空白 -->
-				<shopro-empty v-if="!goodsList.length && !isLoading" :emptyData="emptyData"></shopro-empty>
+				<app-empty v-if="!goodsList.length && !isLoading" :emptyData="emptyData"></app-empty>
 		</view>
 		<view class="foot_box"></view>
 		<!-- 自定义底部导航 -->
-		<shopro-tabbar></shopro-tabbar>
+		<app-tabbar></app-tabbar>
 		<!-- 关注弹窗 -->
-		<shopro-float-btn></shopro-float-btn>
+		<app-float-btn></app-float-btn>
 		<!-- 连续弹窗提醒 -->
-		<shopro-notice-modal></shopro-notice-modal>
+		<app-notice-modal></app-notice-modal>
 		<!-- 登录提示 -->
-		<shopro-login-modal></shopro-login-modal>
+		<app-login-modal></app-login-modal>
 	</view>
 </template>
 

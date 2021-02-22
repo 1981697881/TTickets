@@ -1,5 +1,5 @@
 <template>
-	<shopro-modal v-model="showModal" :modalType="'bottom-modal'">
+	<app-modal v-model="showModal" :modalType="'bottom-modal'">
 		<view class="calendar-wrap" slot="modalContent">
 			<view class="u-calendar">
 				<view class="u-calendar__action x-c u-row-center">
@@ -58,7 +58,7 @@
 				</view>
 			</view>
 		</view>
-	</shopro-modal>
+	</app-modal>
 </template>
 <script>
 /**

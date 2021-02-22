@@ -46,7 +46,7 @@
 			</view> -->
 		</view>
 		<view class="foot_box"></view>
-		<shopro-modal v-model="showModal" style="z-index: 88;">
+		<app-modal v-model="showModal" style="z-index: 88;">
 			<block slot="modalContent">
 				<view class="modal-box">
 					<view class="modal-head">
@@ -57,20 +57,20 @@
 					<button class="cu-btn post-btn" @tap="postMoney">提现</button>
 				</view>
 			</block>
-		</shopro-modal>
+		</app-modal>
 		<!-- 自定义底部导航 -->
-		<shopro-tabbar></shopro-tabbar>
+		<app-tabbar></app-tabbar>
 		<!-- 关注弹窗 -->
-		<shopro-float-btn></shopro-float-btn>
+		<app-float-btn></app-float-btn>
 	</view>
 </template>
 
 <script>
-import shoproModal from '@/components/shopro-modal/shopro-modal.vue';
+import appModal from '@/components/app-modal/app-modal.vue';
 import { mapState, mapActions } from 'vuex';
 export default {
 	components: {
-		shoproModal
+		appModal
 	},
 	data() {
 		return {

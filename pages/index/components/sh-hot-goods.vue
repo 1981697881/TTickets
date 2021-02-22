@@ -2,7 +2,7 @@
 	<!-- 为你推荐 -->
 	<view class="hot-goods mx20 mb10" v-if="goodsList.length">
 		<view class="goods-list x-f">
-			<view class="goods-item" v-if="goods.id" v-for="goods in goodsList" :key="goods.id"><shopro-goods-card :detail="goods" :isTag="true"></shopro-goods-card></view>
+			<view class="goods-item" v-if="goods.id" v-for="goods in goodsList" :key="goods.id"><app-goods-card :detail="goods" :isTag="true"></app-goods-card></view>
 		</view>
 		<button v-if="total > perPage" class="cu-btn refresh-btn my20 x-f" @tap.stop="loadMore">
 			<text class="cuIcon-refresh" :class="{ 'refresh-active': isRefresh }"></text>
@@ -12,11 +12,11 @@
 </template>
 
 <script>
-import shoproGoodsCard from '@/components/shopro-goods-card/shopro-goods-card.vue';
+import appGoodsCard from '@/components/app-goods-card/app-goods-card.vue';
 import goods from '@/csJson/goods.json';
 export default {
 	components: {
-		shoproGoodsCard
+		appGoodsCard
 	},
 	data() {
 		return {

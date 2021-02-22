@@ -166,7 +166,7 @@
         "usingComponents" : {
             "subscribe" : "plugin-private://wx2b03c6e691cd7370/components/subscribe/subscribe"
         },
-        "appid" : "",
+        "appid" : "wx08dc2f03038fb9f9",
         "setting" : {
             "urlCheck" : false,
             "es6" : false,

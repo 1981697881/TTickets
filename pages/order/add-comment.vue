@@ -2,7 +2,7 @@
 	<view class="page_box">
 		<view class="head_box"></view>
 		<view class="content_box">
-			<view class="goods-card"><shopro-mini-card :detail="goodsDetail" :type="'order'"></shopro-mini-card></view>
+			<view class="goods-card"><app-mini-card :detail="goodsDetail" :type="'order'"></app-mini-card></view>
 			<view class="form-item">
 				<view class="star-box x-f">
 					<view class="star-title">{{ starTip }}</view>
@@ -25,11 +25,11 @@
 </template>
 
 <script>
-import shoproMiniCard from '@/components/shopro-mini-card/shopro-mini-card.vue';
+import appMiniCard from '@/components/app-mini-card/app-mini-card.vue';
 import shStar from './children/sh-star.vue';
 export default {
 	components: {
-		shoproMiniCard,
+		appMiniCard,
 		shStar
 	},
 	data() {

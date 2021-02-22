@@ -32,7 +32,7 @@
 			<canvas class="hideCanvas" canvas-id="invite_poster" :style="{ width: (poster.width || 1) + 'px', height: (poster.height || 1) + 'px' }"></canvas>
 		</view>
 		<!-- 指引 -->
-		<shopro-share-guide v-model="showShareGuide"></shopro-share-guide>
+		<app-share-guide v-model="showShareGuide"></app-share-guide>
 	</view>
 </template>
 
@@ -44,11 +44,11 @@ import { BASE_URL } from '@/env.js';
 import wxsdk from '@/common/wechat/sdk';
 // #endif
 import { mapMutations, mapActions, mapState } from 'vuex';
-import shoproShareGuide from '@/components/shopro-share-guide/shopro-share-guide.vue';
+import appShareGuide from '@/components/app-share-guide/app-share-guide.vue';
 import appShare from '@/common/mixins/app-share';
 export default {
 	components: {
-		shoproShareGuide
+		appShareGuide
 	},
 	mixins: ['appShare'],
 	data() {

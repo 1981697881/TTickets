@@ -25,7 +25,7 @@
 			<!-- 确认订单商品卡片 -->
 			<view class="goods-list" v-for="g in perGoodsList" :key="g.sku_price_id">
 				<view class="goods-card">
-					<shopro-mini-card :detail="g.detail" :sku="g.detail.current_sku_price" :type="'sku'">
+					<app-mini-card :detail="g.detail" :sku="g.detail.current_sku_price" :type="'sku'">
 						<block slot="goodsBottom">
 							<view class="goods-price x-bc">
 								<view class="">
@@ -35,7 +35,7 @@
 								<text class="goods-num">x{{ g.goods_num }}</text>
 							</view>
 						</block>
-					</shopro-mini-card>
+					</app-mini-card>
 				</view>
 				<!-- 配送方式 -->
 				<view class="logistic item-list x-bc" @tap="onSelExpressType(g)">
@@ -91,9 +91,9 @@
 		<!-- pricker -->
 		<sh-picker-modal v-if="pickerData.couponList" @changeCoupon="changeCoupon" v-model="showPicker" :pickerData="pickerData"></sh-picker-modal>
 		<!-- 登录提示 -->
-		<shopro-login-modal></shopro-login-modal>
+		<app-login-modal></app-login-modal>
 		<!-- 配送方式弹窗 -->
-		<shopro-modal v-model="showExpressType" :modalType="'bottom-modal'">
+		<app-modal v-model="showExpressType" :modalType="'bottom-modal'">
 			<block slot="modalContent">
 				<!-- 配送方式 -->
 				<view class="express-type page_box">
@@ -241,9 +241,9 @@
 					</view>
 				</view>
 			</block>
-		</shopro-modal>
+		</app-modal>
 		<!-- 配送时间弹窗 -->
-		<shopro-modal v-model="showCheckTime" :modalType="'bottom-modal'">
+		<app-modal v-model="showCheckTime" :modalType="'bottom-modal'">
 			<block slot="modalContent">
 				<view class="checkTime-box page_box">
 					<view class="checkTime-head">
@@ -278,12 +278,12 @@
 					<view class=" checkTime-foot x-c"><button class="cu-btn save-btn" @tap="showCheckTime = false">保存并使用</button></view>
 				</view>
 			</block>
-		</shopro-modal>
+		</app-modal>
 	</view>
 </template>
 
 <script>
-import shoproMiniCard from '@/components/shopro-mini-card/shopro-mini-card.vue';
+import appMiniCard from '@/components/app-mini-card/app-mini-card.vue';
 import shPickerModal from './children/sh-picker-modal.vue';
 import { mapMutations, mapActions, mapState } from 'vuex';
 // #ifdef H5
@@ -294,7 +294,7 @@ import wxsdk from '@/common/wechat/sdk'
     // #endif
 export default {
 	components: {
-		shoproMiniCard,
+		appMiniCard,
 		shPickerModal
 	},
 	data() {

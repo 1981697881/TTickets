@@ -16,7 +16,7 @@
 						<text class="state">{{ order.status_name }}</text>
 					</view>
 					<view class="goods-order" v-for="goods in order.item" :key="goods.id">
-						<view class="order-content"><shopro-mini-card :type="'order'" :detail="goods"></shopro-mini-card></view>
+						<view class="order-content"><app-mini-card :type="'order'" :detail="goods"></app-mini-card></view>
 					</view>
 					<view class="order-bottom">
 						<view class="all-msg x-f">
@@ -41,28 +41,28 @@
 					</view>
 				</view>
 				<!-- 空白页 -->
-				<shopro-empty v-if="!orderList.length && !isLoading" :emptyData="emptyData"></shopro-empty>
+				<app-empty v-if="!orderList.length && !isLoading" :emptyData="emptyData"></app-empty>
 				<!-- load -->
-				<shopro-load v-model="isLoading"></shopro-load>
+				<app-load v-model="isLoading"></app-load>
 				<!-- 更多 -->
 				<view v-if="orderList.length" class="cu-load text-gray" :class="loadStatus"></view>
 			</scroll-view>
 		</view>
 		<view class="foot_box"></view>
 		<!-- 自定义底部导航 -->
-		<shopro-tabbar></shopro-tabbar>
+		<app-tabbar></app-tabbar>
 		<!-- 关注弹窗 -->
-		<shopro-float-btn></shopro-float-btn>
+		<app-float-btn></app-float-btn>
 		<!-- 登录提示 -->
-		<shopro-login-modal></shopro-login-modal>
+		<app-login-modal></app-login-modal>
 	</view>
 </template>
 
 <script>
-import shoproMiniCard from '@/components/shopro-mini-card/shopro-mini-card.vue';
+import appMiniCard from '@/components/app-mini-card/app-mini-card.vue';
 export default {
 	components: {
-		shoproMiniCard
+		appMiniCard
 	},
 	data() {
 		return {

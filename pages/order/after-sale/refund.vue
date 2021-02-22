@@ -3,7 +3,7 @@
 		<view class="head_box"></view>
 		<view class="content_box">
 			<view class="goods-box">
-				<shopro-mini-card :type="'order'" :detail="orderItemDetail"><block slot="goodsBottom"></block></shopro-mini-card>
+				<app-mini-card :type="'order'" :detail="orderItemDetail"><block slot="goodsBottom"></block></app-mini-card>
 			</view>
 			<view class="refund-item">
 				<view class="item-title">请选择售后类型</view>
@@ -54,7 +54,7 @@
 			<button class="cu-btn contcat-btn" v-if="addons.includes('kefu')" @tap="onService">联系客服</button>
 			<button class="cu-btn sub-btn" @tap="postAftersale">提交</button>
 		</view>
-		<shopro-modal v-model="showModal" :modalType="'bottom-modal'">
+		<app-modal v-model="showModal" :modalType="'bottom-modal'">
 			<block slot="modalContent">
 				<view class="modal-box page_box">
 					<view class="modal-head head_box x-c">{{ modalDetail.title }}</view>
@@ -69,17 +69,17 @@
 					<view class="modal-foot foot_box x-c"><button class="cu-btn close-btn" @tap="onClose">确定</button></view>
 				</view>
 			</block>
-		</shopro-modal>
+		</app-modal>
 	</view>
 </template>
 
 <script>
-import shoproMiniCard from '@/components/shopro-mini-card/shopro-mini-card.vue';
-import shoproModal from '@/components/shopro-modal/shopro-modal.vue';
+import appMiniCard from '@/components/app-mini-card/app-mini-card.vue';
+import appModal from '@/components/app-modal/app-modal.vue';
 export default {
 	components: {
-		shoproMiniCard,
-		shoproModal
+		appMiniCard,
+		appModal
 	},
 	data() {
 		return {

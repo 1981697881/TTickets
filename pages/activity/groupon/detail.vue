@@ -97,33 +97,33 @@
 		<!-- 邀请好友 -->
 		<app-share v-model="showShare" v-if="grouponDetail.goods" :goodsInfo="grouponDetail" :posterType="'groupon'"></app-share>
 		<!-- sku -->
-		<shopro-sku
+		<app-sku
 			v-model="showSku"
 			v-if="grouponDetail.goods"
 			:grouponId="grouponDetail.id"
 			:goodsInfo="grouponDetail.goods"
 			:buyType="'buy'"
 			:grouponBuyType="'groupon'"
-		></shopro-sku>
+		></app-sku>
 		<!-- 自定义底部导航 -->
-		<shopro-tabbar></shopro-tabbar>
+		<app-tabbar></app-tabbar>
 		<!-- 关注弹窗 -->
-		<shopro-float-btn></shopro-float-btn>
+		<app-float-btn></app-float-btn>
 		<!-- 连续弹窗提醒 -->
-		<shopro-notice-modal></shopro-notice-modal>
+		<app-notice-modal></app-notice-modal>
 		<!-- 登录提示 -->
-		<shopro-login-modal></shopro-login-modal>
+		<app-login-modal></app-login-modal>
 	</view>
 </template>
 
 <script>
 import shActivityCard from '../children/sh-activity-card.vue';
 
-import shoproSku from '@/components/shopro-sku/shopro-sku.vue';
+import appSku from '@/components/app-sku/app-sku.vue';
 export default {
 	components: {
 		shActivityCard,
-		shoproSku
+		appSku
 	},
 	data() {
 		return {

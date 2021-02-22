@@ -4,7 +4,7 @@
 			<block slot="backText"></block>
 			<block slot="content">{{ goodsInfo.title }}</block>
 		</cu-custom>
-		<view class="load-box" v-if="!goodsInfo.price"><shopro-skeletons :type="'detail'"></shopro-skeletons></view>
+		<view class="load-box" v-if="!goodsInfo.price"><app-skeletons :type="'detail'"></app-skeletons></view>
 		<view class="detail_box shopro-selector" v-else>
 			<view class="detail-content">
 				<view class="goodes_detail_swiper-box">
@@ -55,7 +55,7 @@
 						</view>
 						<view class="goods-comment" v-if="tabCurrent === 'tab2'">
 							<block v-for="comment in commentList" :key="comment.id"><sh-comment :comment="comment"></sh-comment></block>
-							<view class="empty-box x-c" v-if="!commentList.length"><shopro-empty :isFixed="false" :emptyData="emptyData"></shopro-empty></view>
+							<view class="empty-box x-c" v-if="!commentList.length"><app-empty :isFixed="false" :emptyData="emptyData"></app-empty></view>
 							<view class="more-box x-c" v-if="commentList.length">
 								<button class="cu-btn more-btn x-f" @tap="jump('/pages/goods/comment-list', { goodsId: goodsInfo.id })">
 									查看全部
@@ -94,15 +94,15 @@
 			<!-- 分享组件 -->
 			<app-share v-model="showShare" :goodsInfo="goodsInfo" :posterType="'goods'"></app-share>
 			<!-- 登录提示 -->
-			<shopro-login-modal></shopro-login-modal>
+			<app-login-modal></app-login-modal>
 			<!-- 骨架屏 -->
-			<shopro-skeleton :showSkeleton="false"></shopro-skeleton>
+			<app-skeleton :showSkeleton="false"></app-skeleton>
 			<!-- 自定义底部导航 -->
-			<shopro-tabbar></shopro-tabbar>
+			<app-tabbar></app-tabbar>
 			<!-- 关注弹窗 -->
-			<shopro-float-btn></shopro-float-btn>
+			<app-float-btn></app-float-btn>
 			<!-- 连续弹窗提醒 -->
-			<shopro-notice-modal></shopro-notice-modal>
+			<app-notice-modal></app-notice-modal>
 		</view>
 	</view>
 </template>
@@ -113,8 +113,8 @@ import shGrouponTip from './children/sh-groupon-tip.vue';
 import fzDetailHead from './children/fz-detail-head.vue';
 import fzDetailGallery from './children/fz-detail-gallery.vue';
 import shComment from '../children/sh-comment.vue';
-import shoproSkeletons from '@/components/shopro-skeletons/shopro-skeletons.vue';
-import shoproEmpty from '@/components/shopro-empty/shopro-empty.vue';
+import appSkeletons from '@/components/app-skeletons/app-skeletons.vue';
+import appEmpty from '@/components/app-empty/app-empty.vue';
 import { mapMutations, mapActions, mapState } from 'vuex';
 import goodsDetail from '@/csJson/goodDetail.json';
 import evaluate from '@/csJson/evaluate.json';
@@ -125,8 +125,8 @@ export default {
 		MoteLinesDivide,
 		fzDetailHead,
 		fzDetailGallery,
-		shoproSkeletons,
-		shoproEmpty
+		appSkeletons,
+		appEmpty
 	},
 	data() {
 		return {

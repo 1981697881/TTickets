@@ -24,17 +24,17 @@
 					<view class="x-c" style="height: 200rpx;" @tap="onSel(index, g.checked)">
 						<checkbox :checked="g.checked" :class="{ checked: g.checked }" class="goods-radio round orange"></checkbox>
 					</view>
-					<shopro-mini-card :detail="g.goods" :sku="g.sku_price" :type="'sku'">
+					<app-mini-card :detail="g.goods" :sku="g.sku_price" :type="'sku'">
 						<block slot="goodsBottom">
 							<view class="x-bc price-box">
 								<view class="price">￥{{ g.sku_price.price }}</view>
 								<view class="num-step"><uni-number-box @change="onChangeNum($event, g, index)" :value="g.goods_num" :step="1" :min="0"></uni-number-box></view>
 							</view>
 						</block>
-					</shopro-mini-card>
+					</app-mini-card>
 				</view>
 			</checkbox-group>
-			<view class="empty-box x-c" v-else><shopro-empty :emptyData="emptyData"></shopro-empty></view>
+			<view class="empty-box x-c" v-else><app-empty :emptyData="emptyData"></app-empty></view>
 		</view>
 		<view class="foot_box " v-if="cartList.length">
 			<view class="tools-box x-bc">
@@ -51,27 +51,27 @@
 			</view>
 		</view>
 		<!-- 自定义底部导航 -->
-		<shopro-tabbar></shopro-tabbar>
+		<app-tabbar></app-tabbar>
 		<!-- 关注弹窗 -->
-		<shopro-float-btn></shopro-float-btn>
+		<app-float-btn></app-float-btn>
 		<!-- 连续弹窗提醒 -->
-		<shopro-notice-modal></shopro-notice-modal>
+		<app-notice-modal></app-notice-modal>
 		<!-- 登录提示 -->
-		<shopro-login-modal></shopro-login-modal>
+		<app-login-modal></app-login-modal>
 	</view>
 </template>
 
 <script>
-import shoproMiniCard from '@/components/shopro-mini-card/shopro-mini-card.vue';
+import appMiniCard from '@/components/app-mini-card/app-mini-card.vue';
 import uniNumberBox from '@/components/uni-number-box/uni-number-box.vue';
-import shoproEmpty from '@/components/shopro-empty/shopro-empty.vue';
+import appEmpty from '@/components/app-empty/app-empty.vue';
 import { mapMutations, mapActions, mapState, mapGetters } from 'vuex';
 let timer = null;
 export default {
 	components: {
-		shoproMiniCard,
+		appMiniCard,
 		uniNumberBox,
-		shoproEmpty
+		appEmpty
 	},
 	data() {
 		return {

@@ -13,11 +13,11 @@
 				<checkbox-group @change="onSel" v-if="favoriteList.length">
 					<view class="collect-list x-f" v-if="f.goods_id" v-for="f in favoriteList" :key="f.id">
 						<checkbox v-if="isSel" :value="f.goods_id.toString()" :checked="f.checked" :class="{ checked: f.checked }" class="goods-radio round orange"></checkbox>
-						<shopro-mini-card :detail="f" :type="'favorite'"></shopro-mini-card>
+						<app-mini-card :detail="f" :type="'favorite'"></app-mini-card>
 					</view>
 				</checkbox-group>
 				<!-- 缺省页 -->
-				<shopro-empty v-if="!favoriteList.length" :emptyData="emptyData"></shopro-empty>
+				<app-empty v-if="!favoriteList.length" :emptyData="emptyData"></app-empty>
 				<!-- 更多 -->
 				<view v-if="favoriteList.length" class="cu-load text-gray" :class="loadStatus"></view>
 			</scroll-view>
@@ -32,23 +32,23 @@
 			</view>
 		</view>
 		<!-- 自定义底部导航 -->
-		<shopro-tabbar></shopro-tabbar>
+		<app-tabbar></app-tabbar>
 		<!-- 关注弹窗 -->
-		<shopro-float-btn></shopro-float-btn>
+		<app-float-btn></app-float-btn>
 		<!-- 连续弹窗提醒 -->
-		<shopro-notice-modal></shopro-notice-modal>
+		<app-notice-modal></app-notice-modal>
 		<!-- 登录提示 -->
-		<shopro-login-modal></shopro-login-modal>
+		<app-login-modal></app-login-modal>
 	</view>
 </template>
 
 <script>
-import shoproMiniCard from '@/components/shopro-mini-card/shopro-mini-card.vue';
-import shoproEmpty from '@/components/shopro-empty/shopro-empty.vue';
+import appMiniCard from '@/components/app-mini-card/app-mini-card.vue';
+import appEmpty from '@/components/app-empty/app-empty.vue';
 export default {
 	components: {
-		shoproMiniCard,
-		shoproEmpty
+		appMiniCard,
+		appEmpty
 	},
 	data() {
 		return {

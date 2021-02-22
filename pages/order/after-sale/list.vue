@@ -19,7 +19,7 @@
 						</view>
 					</view>
 
-					<view class="order-content"><shopro-mini-card :type="'order'" :detail="order"></shopro-mini-card></view>
+					<view class="order-content"><app-mini-card :type="'order'" :detail="order"></app-mini-card></view>
 
 					<view class="order-bottom">
 						<view class="serve-status x-bc" @tap.stop="jump('/pages/order/after-sale/log', { aftersaleId: order.id })">
@@ -39,7 +39,7 @@
 					</view>
 				</view>
 				<!-- 缺省页 -->
-				<shopro-empty v-if="!orderList.length" :emptyData="emptyData"></shopro-empty>
+				<app-empty v-if="!orderList.length" :emptyData="emptyData"></app-empty>
 				<!-- 更多 -->
 				<view v-if="orderList.length" class="cu-load text-gray" :class="loadStatus"></view>
 			</scroll-view>
@@ -49,7 +49,7 @@
 </template>
 
 <script>
-import shoproMiniCard from '@/components/shopro-mini-card/shopro-mini-card.vue';
+import appMiniCard from '@/components/app-mini-card/app-mini-card.vue';
 export default {
 	components: {},
 	data() {
