@@ -340,14 +340,14 @@ export default {
 		},
 
 		getWxMiniProgramSessionKey: {
-			url: 'user/getWxMiniProgramSessionKey',
+			url: 'weChat/memberAuthorize',
 			auth: false,
 			method: 'POST',
 			// desc: '获取用户session_key',
 		},
 
 		wxMiniProgramLogin: {
-			url: 'user/wxMiniProgramLogin',
+			url: 'weChat/memberLogin',
 			auth: false,
 			method: 'POST',
 			// desc: '微信小程序登录',

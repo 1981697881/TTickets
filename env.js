@@ -10,12 +10,13 @@ let protocol = window.location.protocol;
 // #endif
 // https://api.7wpp.com
 const ENV_BASE_URL = {
-	development: 'https://api.7wpp.com', //开发环境
-	production: 'https://api.7wpp.com', //生产环境
+	development: 'http://test.gzfzdev.com:8080', //开发环境
+	production: 'http://test.gzfzdev.com:8080', //生产环境
 }
+// /addons/shopro
 const ENV_API_URL = {
-	development: `${ENV_BASE_URL.development}/addons/shopro/`, //开发环境
-	production: `${ENV_BASE_URL.production}/addons/shopro/`, //生产环境
+	development: `${ENV_BASE_URL.development}/`, //开发环境
+	production: `${ENV_BASE_URL.production}/`, //生产环境
 }
 
 export const BASE_URL = ENV_BASE_URL[process.env.NODE_ENV || 'development']; //后台根域名

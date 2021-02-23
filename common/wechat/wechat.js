@@ -101,7 +101,7 @@ export default class Wechat {
 								api('user.getWxMiniProgramSessionKey', {
 									code: code,
 								}).then(res => {
-									if (res.code === 1) {
+									if (res.flag) {
 										uni.setStorageSync('session_key', res.data.session_key);
 										uni.setStorageSync('openid', res.data.openid);
 										session_key = res.data.session_key;
@@ -131,8 +131,10 @@ export default class Wechat {
 				return;
 			}
 			if (e.detail.errMsg === "getUserInfo:ok") {
+				console.log(e.detail)
 				api('user.wxMiniProgramLogin', {
-					session_key: uni.getStorageSync('session_key'),
+					sessionKey: uni.getStorageSync('session_key'),
+					openid: uni.getStorageSync('openid'),
 					encryptedData: e.detail.encryptedData,
 					iv: e.detail.iv,
 					signature: e.detail.signature

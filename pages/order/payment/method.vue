@@ -116,8 +116,7 @@ export default {
 		// 发起支付
 		confirmPay() {
 			let that = this;
-
-			let pay = new ShoproPay(that.payType, that.orderDetail);
+			let pay = new AppPay(that.payType, that.orderDetail);
 		},
 		// 支付信息
 		getOrderDetail() {
