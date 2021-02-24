@@ -382,7 +382,7 @@
 			"pages": [
 				// 票夹------start
 				{
-					"path": "detail/index",
+					"path": "index",
 					"style": {
 						"navigationBarTitleText": "票据详情",
 						"navigationBarBackgroundColor":"#03AFFF",

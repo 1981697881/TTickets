@@ -15,7 +15,7 @@ export default function api(url, data = {}) {
 			}
 		}
 		if (uni.getStorageSync('token')) {
-			config.header.token = uni.getStorageSync('token');
+			config.header.authorization = uni.getStorageSync('token');
 		}
 		return config
 	});

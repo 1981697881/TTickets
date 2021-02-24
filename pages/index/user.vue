@@ -57,7 +57,6 @@ import shOrder from './components/sh-order.vue';
 import shWallet from './components/sh-wallet.vue';
 import shGrid from './components/sh-grid.vue';
 import shTitleCard from './components/sh-title-card.vue';
-
 import appNoticeModal from '@/components/app-notice-modal/app-notice-modal.vue';
 import { mapMutations, mapActions, mapState } from 'vuex';
 export default {

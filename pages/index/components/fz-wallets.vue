@@ -26,7 +26,7 @@
 
 <script>
 export default {
-	name: 'shoproActivityCard',
+	name: 'walletCard',
 	components: {},
 	data() {
 		return {};

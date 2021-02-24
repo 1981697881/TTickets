@@ -54,12 +54,14 @@
 	</view>
 </template>
 <script>
-import walletList from '@/pages/wallet/list.vue';
+import walletList from './components/fz-wallets.vue';
 import seckillList from '@/csJson/seckillList.json';
+import appEmpty from '@/components/app-empty/app-empty.vue';
+import { mapMutations, mapActions, mapState, mapGetters } from 'vuex';
 export default {
 	components: {
 		walletList,
-		
+		appEmpty
 	},
 	data() {
 		return {
@@ -67,7 +69,7 @@ export default {
 				img: '/static/imgs/empty/empty_goods.png',
 				tip: '暂无可使用票劵，快去逛逛吧~'
 			},
-			isLoading: true,
+			isLoading: false,
 			loadStatus: '', //loading,over
 			lastPage: 1,
 			currentPage: 1,
@@ -106,12 +108,14 @@ export default {
 	},
 	computed: {},
 	onLoad() {
-		setTimeout(() => {
+		this.getCartList();
+		/* setTimeout(() => {
 			this.loading = true;
-		}, 500);
-		this.getGoodsList();
+		}, 500); */
+		
 	},
 	methods: {
+		...mapActions(['getCartList', 'changeCartList']),
 		jump(path, parmas) {
 			this.$Router.push({
 				path: path,
@@ -122,7 +126,7 @@ export default {
 			this.tabCurrent = id;
 			this.goodsList = [];
 			this.currentPage = 1;
-			this.getGoodsList();
+			this.getCartList();
 		},
 		// 百分比
 		getProgress(sales, stock) {

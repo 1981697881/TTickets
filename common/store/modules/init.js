@@ -45,6 +45,7 @@ const actions = {
 		uni.setStorageSync('mode', 'product');
 		return new Promise((resolve, reject) => {
 			let res = init
+			
 			commit('INIT_DATA', res.data);
 			uni.setStorageSync('sysInfo', res.data.info);
 			uni.setStorageSync('shareInfo', res.data.share);
@@ -98,6 +99,36 @@ const actions = {
 				});
 			}
 			let res = template
+			api('posterList').then(reso => {
+				let data = []
+				reso.data.forEach((v)=>{
+					let obj = {
+					"name": v.posterName,
+					"bgcolor": "#2B4055",
+					"image": "http://139.159.136.187:50080/uploadFiles/image/"+v.posterPhoto,
+					"path": v.posterUrl,
+					"path_name": "",
+					"path_type": 1
+					}
+					data.push(obj)
+				})
+				res.data.home[1].content.list=data
+			})
+			api('menuList').then(reso => {
+				let data = []
+				reso.data.forEach((v)=>{
+					let obj = {
+					"name": v.menuName,
+					"image": "../../static/imgs/poster/trailer_Movie_72px.png",
+					"path": "/pages/cinema/list",
+					"path_name": "",
+					"path_type": 1
+					}
+					data.push(obj)
+				})
+				res.data.home[2].content.list=data
+			})
+			console.log(res)
 			uni.setStorageSync('templateData', res.data);
 			commit('TEMPLATE_DATA', res.data);
 			if(res.code == 0){

@@ -22,8 +22,8 @@
 </template>
 
 <script>
-import walletHead from '@/pages/wallet/detail/children/wallet-head.vue';
-import walletInfo from '@/pages/wallet/detail/children/wallet-info.vue';
+import walletHead from '@/pages/wallet/children/wallet-head.vue';
+import walletInfo from '@/pages/wallet/children/wallet-info.vue';
 export default {
 	components: {
 		walletHead,

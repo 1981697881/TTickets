@@ -52,7 +52,7 @@
 				<view class="padding-xs text-bold text-xxl text-black">广州Wecha影城广州店</view>
 				<view class="padding-xs text-gray">白云区太和镇龙归龙岗1号广场</view>
 			</view>
-			<view class="shops-img padding-xl"><image class="simg-box" src="../../../../static/telephone.png" mode="aspectFill"></image></view>
+			<view class="shops-img padding-xl"><image class="simg-box" src="../../../static/telephone.png" mode="aspectFill"></image></view>
 		</view>
 		<view class="cir-info">
 			<view class="cir-left"></view>

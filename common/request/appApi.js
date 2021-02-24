@@ -2,7 +2,6 @@
  * 接口列表文件
  */
 export default {
-
 	/** 初始化 ↓ **/
 	init: {
 		url: 'index/init',
@@ -10,7 +9,18 @@ export default {
 		method: 'GET',
 		// desc: '初始化数据',
 	},
-
+	posterList:{
+		url: 'app/api/posterList',
+		auth: false,
+		method: 'POST',
+		// desc: '获取广告轮播',
+	},
+	menuList:{
+		url: 'app/api/menuList',
+		auth: false,
+		method: 'POST',
+		// desc: '获取菜单',
+	},
 	/** 上传图片 ↓ **/
 	upload: {
 		url: 'index/upload',
@@ -205,7 +215,15 @@ export default {
 			// desc: '商品评论分类',
 		},
 	},
-
+	/** 影讯 ↓ **/
+	cinema: {
+		lists: {
+			url: 'app/api/hotMovieList',
+			auth: false,
+			method: 'POST',
+			// desc: '商品列表',
+		},
+	},
 	/** 商品 ↓ **/
 	goods: {
 		lists: {

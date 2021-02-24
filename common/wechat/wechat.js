@@ -139,8 +139,8 @@ export default class Wechat {
 					iv: e.detail.iv,
 					signature: e.detail.signature
 				}).then(res => {
-					if (res.code === 1) {
-						resolve(res.data.token);
+					if (res.flag) {
+						resolve(res.data);
 					}
 				});
 			}

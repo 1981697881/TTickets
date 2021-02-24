@@ -1,7 +1,7 @@
 <template>
-	<!-- 今日必拼 -->
+	<!-- 热映影片 -->
 	<view class="group-goods pa20 mx20 mb10" v-if="goodsList.length">
-		<view class="title-box x-bc" @tap="jump('/pages/activity/groupon/list')">
+		<view class="title-box x-bc" @tap="jump('/pages/cinema/list')">
 			<text class="title">{{ detail.name }}</text>
 			<view class="group-people x-f">
 				<!-- <view class="head-box x-f"><image v-for="i in 3" class="head-img" src="" mode="" :key="i"></image></view> -->
@@ -13,7 +13,7 @@
 			<swiper class="carousel" circular @change="swiperChange" :autoplay="true" duration="2000">
 				<swiper-item v-for="(goods, index) in goodsList" :key="index" class="carousel-item">
 					<view class="goods-list-box x-f">
-						<block v-for="mgoods in goods" :key="mgoods.id">
+						<block v-for="mgoods in goods" :key="mgoods.filmId">
 							<fz-film-list :detail="mgoods" class="goods-item"><!-- <block slot="titleText">立减￥8.5</block> --></fz-film-list>
 						</block>
 					</view>
@@ -73,22 +73,17 @@ export default {
 				query: parmas
 			});
 		},
-		// 获取拼团商品
+		// 获取热映影片
 		getGoodsList() {
 			let that = this;
-			let res = activity
+			/* let res = activity
 			let arr = that.sortData(res.data.goods.data, 4);
-			console.log(arr)
-			that.goodsList = arr;
-			/* that.$api('goods.activity', {
-				activity_id: that.detail.id
-			}).then(res => {
-				if (res.code === 1) {
-					console.log(JSON.stringify(res))
-					let arr = that.sortData(res.data.goods.data, 4);
-					that.goodsList = arr;
+			that.goodsList = arr; */
+			that.$api('cinema.lists', {}).then(res => {
+				if (res.flag) {
+					that.goodsList = [res.data];
 				}
-			}); */
+			});
 		}
 	}
 };
