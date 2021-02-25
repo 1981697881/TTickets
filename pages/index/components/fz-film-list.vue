@@ -1,12 +1,12 @@
 <template>
 	<view class="min-goods">
-		<view class="img-box" @tap="jump('/pages/cinema/detail/index', { id: detail.id })">
+		<view class="img-box" @tap="jump('/pages/cinema/detail/index', { filmId: detail.filmId })">
 			<view class="tag" v-if="detail.type === 'Movie'">2D IMAX</view>
 			<view class="tagb" v-if="detail.type === 'Movie'">评分 <text>{{ detail.score }}.0</text></view>
 			<image class="img" :src="detail.image" mode="scaleToFill"></image>
 		</view>
 		<view class="price-box">
-			<view class="y-f" @tap="jump('/pages/cinema/circuit/list', { id: detail.id })" v-if="detail.type === 'Movie'">
+			<view class="y-f" @tap="jump('/pages/cinema/circuit/list', { filmId: detail.filmId })" v-if="detail.type === 'Movie'">
 				<view class="text-cut cr_name ">{{ detail.filmName}}</view>
 				<text class="seckill-current"><button class="cu-btn bg-red round sm">购票</button></text>
 			</view>

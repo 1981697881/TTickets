@@ -20,6 +20,7 @@ router.beforeEach((to, from, next) => {
 	// 有两个个判断条件,一个是token,还有一个路由元信息
 	let userInfo = Boolean(uni.getStorageSync('userInfo'));
 	// 权限控制
+	console.log(to)
 	if (to.meta && to.meta.auth && !userInfo) {
 		store.commit('LOGIN_TIP', true)
 	} else {

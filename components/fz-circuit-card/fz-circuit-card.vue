@@ -4,7 +4,7 @@
 			<text v-if="isTag && detail.activity" class="tag-star"><text class="lg text-red cuIcon-favorfill"></text></text>
 			<view class="cont_one">
 				<view class="o_name">
-					<text class="text-cut text-xl text-bold">广州WeChat影城广州店</text>
+					<text class="text-cut text-xl text-bold">{{detail.cinemaName}}</text>
 					<text class="tip" v-if="!(isTag && detail.activity)">上次来过</text>
 				</view>
 				<view class="o_price">
@@ -14,7 +14,7 @@
 			</view>
 			<view class="cont_two">
 				<view class="t_score text-yellow">好评度99% |</view>
-				<view class="t_address"><text class="text-cut text-grey">白云区太和镇龙归镇龙岗路100号广场1楼</text></view>
+				<view class="t_address"><text class="text-cut text-grey">{{detail.cinemaAddress}}</text></view>
 				<view class="t_distance">1.0km</view>
 			</view>
 			<view class="flex flex-wrap">
@@ -25,7 +25,7 @@
 		</view>
 		<view class="swiper-box x-f" v-if="tabId=='ended'">
 			<swiper class="carousel" @change="swiperChange">
-				<swiper-item v-for="(goods, swindex) in goodsList" :key="swindex" class="carousel-item">
+				<swiper-item v-for="(goods, swindex) in detail.marshallinDetail" :key="swindex" class="carousel-item">
 					<view class="min-goods" @tap="jump('/pages/cinema/movie/list', { id: detail.id })">
 						<view class="price-box">
 							<view class="y-f text-black">

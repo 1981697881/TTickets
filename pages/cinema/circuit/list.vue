@@ -7,20 +7,20 @@
 					<block slot="content">{{ circuit }}</block>
 				</cu-custom>
 			</view>
-			<swiper class="card-swiper" :class="dotStyle ? 'square-dot' : 'round-dot'" :circular="true" duration="500" @change="cardSwiper">
+			<swiper class="card-swiper" :current="activeItem" :class="dotStyle ? 'square-dot' : 'round-dot'" :circular="true" duration="500" @change="cardSwiper">
 				<swiper-item v-for="(item, cindex) in swiperList" :key="cindex" :class="cardCur == cindex ? 'cur' : ''">
 					<view class="swiper-item">
 						<image :src="item.url" mode="aspectFill" v-if="item.type == 'image'"></image>
 						<video :src="item.url" autoplay loop muted :show-play-btn="false" :controls="false" objectFit="cover" v-if="item.type == 'video'"></video>
-						<view class="cir_group" v-if="item.type == 'group'">
+						<view class="cir_group" v-if="item.type == 'Movie'">
 							<view class="cir_logo">
 								<view class="tag" v-if="item.scrn === 'screen'">2D IMAX</view>
-								<image :src="item.url" mode="aspectFill"></image>
+								<image :src="item.filmPhoto" mode="aspectFill"></image>
 							</view>
 							<view class="text-white cir_detail">
-								<view class="text-cut de_name">{{ item.name }}</view>
-								<view class="de_pin">评分{{ item.score }} | 10.1万人想看</view>
-								<view class="text-orange de_info">{{ item.time }} | {{ item.genre }}</view>
+								<view class="text-cut de_name">{{ item.filmName }}</view>
+								<view class="de_pin">评分{{ item.score }} | 0万人想看</view>
+								<view class="text-orange de_info">{{ item.filmLong }}分钟 | {{ item.filmSortid }}</view>
 								<view class="text-orange de_info">导演：{{ item.direct }}</view>
 								<view class="text-orange de_info">主演：{{ item.starring }}</view>
 							</view>
@@ -73,6 +73,7 @@ export default {
 	data() {
 		return {
 			cardCur: 0,
+			activeItem: 0,
 			circuit: '',
 			swiperList: [
 				{
@@ -121,7 +122,7 @@ export default {
 			searchVal: '',
 			headHeight: '0',
 			listParams: {
-				category_id: 0,
+				filmId: null,
 				keywords: '',
 				page: 1
 			},
@@ -142,15 +143,17 @@ export default {
 		this.getScrHeight()
 	},
 	onLoad() {
+		console.log(this.$Route.query)
 		this.circuit = this.swiperList[0].name;
-		if (this.$Route.query.id) {
-			this.listParams.category_id = this.$Route.query.id;
+		if (this.$Route.query.filmId) {
+			this.listParams.filmId = this.$Route.query.filmId;
 		}
 		if (this.$Route.query.keywords) {
 			this.listParams.keywords = this.$Route.query.keywords;
 			this.searchVal = this.$Route.query.keywords;
 		}
-		this.getGoodsList();
+		this.getMoviesList()
+		this.getGoodsList()
 	},
 	methods: {
 		// 加载更多
@@ -194,7 +197,7 @@ export default {
 		// 输入防抖搜索
 		onInput() {
 			let that = this;
-			that.listParams.category_id = 0;
+			that.listParams.filmId = 0;
 			// 输入不及时
 			setTimeout(() => {
 				that.listParams.keywords = that.searchVal;
@@ -216,24 +219,27 @@ export default {
 			this.listParams.page = 1;
 			this.getGoodsList();
 		},
-		// 商品列表
-		getGoodsList() {
+		// 获取热映影片
+		getMoviesList() {
+			let that = this;
+			that.$api('cinema.lists', {}).then(res => {
+				if (res.flag) {
+					that.swiperList = res.data;
+					that.swiperList.forEach((item,index)=>{
+						if(item.filmId==that.$Route.query.filmId){
+							that.activeItem = index
+						}
+					})
+				}
+			});
+		},
+		// 影城场次列表
+		getGoodsList(val) {
 			let that = this;
 			that.isLoading = true;
 			that.loadStatus = 'loading';
-			let res = moreGoodList;
-			if (res.code === 1) {
-				that.isLoading = false;
-				that.goodsList = [...that.goodsList, ...res.data.data];
-				that.lastPage = res.data.last_page;
-				if (that.listParams.page < res.data.last_page) {
-					that.loadStatus = '';
-				} else {
-					that.loadStatus = 'over';
-				}
-			}
-			/* that.$api('goods.lists', that.listParams).then(res => {
-				if (res.code === 1) {
+			that.$api('cinema.filmLists', that.listParams).then(res => {
+				if (res.flag) {
 					that.isLoading = false;
 					that.goodsList = [...that.goodsList, ...res.data.data];
 					that.lastPage = res.data.last_page;
@@ -243,7 +249,7 @@ export default {
 						that.loadStatus = 'over';
 					}
 				}
-			}); */
+			});
 		}
 	}
 };

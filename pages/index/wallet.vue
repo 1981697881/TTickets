@@ -2,7 +2,7 @@
 	<view class="page_box">
 		<view class="head_box">
 			<view class="tab-box x-f">
-				<view class="tab-item" @tap="onTab(tab.id)" :class="{ 'tab-active': tabCurrent === tab.id }" v-for="tab in tabList" :key="tab.id">
+				<view class="tab-item" @tap="onTab(tab)" :class="{ 'tab-active': tabCurrent === tab.id }" v-for="tab in tabList" :key="tab.id">
 					<text class="tab-title">{{ tab.title }}</text>
 					<text v-show="tabCurrent === tab.id" class="tab-triangle"></text>
 				</view>
@@ -73,6 +73,7 @@ export default {
 			loadStatus: '', //loading,over
 			lastPage: 1,
 			currentPage: 1,
+			status: 0,
 			tabCurrent: 'ing',
 			goodsList: [],
 			loading: false,
@@ -93,40 +94,42 @@ export default {
 			tabList: [
 				{
 					id: 'ended',
-					title: '已使用'
+					title: '已使用',
+					status: '1',
 				},
 				{
 					id: 'ing',
-					title: '电影票'
+					title: '电影票',
+					status: '0',
 				},
 				{
 					id: 'nostart',
-					title: '商品'
+					title: '商品',
+					status: '0',
 				}
 			]
 		};
 	},
 	computed: {},
 	onLoad() {
-		this.getCartList();
 		/* setTimeout(() => {
 			this.loading = true;
 		}, 500); */
-		
+		this.getGoodsList()
 	},
 	methods: {
-		...mapActions(['getCartList', 'changeCartList']),
 		jump(path, parmas) {
 			this.$Router.push({
 				path: path,
 				query: parmas
 			});
 		},
-		onTab(id) {
-			this.tabCurrent = id;
+		onTab(val) {
+			this.tabCurrent = val.id;
+			this.status = val.status;
 			this.goodsList = [];
 			this.currentPage = 1;
-			this.getCartList();
+			this.getGoodsList();
 		},
 		// 百分比
 		getProgress(sales, stock) {
@@ -146,28 +149,17 @@ export default {
 				this.getGoodsList();
 			}
 		},
-		// 秒杀列表
+		// 票劵列表
 		getGoodsList() {
 			let that = this;
-			that.isLoading = true;
+			/* that.isLoading = true; */
 			that.loadStatus = 'loading';
-			let res = seckillList;
-			if (res.code === 1) {
-				that.isLoading = false;
-				that.goodsList = [...that.goodsList, ...res.data.data];
-				that.lastPage = res.data.last_page;
-				if (that.currentPage < res.data.last_page) {
-					that.loadStatus = '';
-				} else {
-					that.loadStatus = 'over';
-				}
-			}
-			/* that.$api('goods.seckillList', {
-				type: that.tabCurrent,
-				page: that.currentPage
+			that.$api('wallet.lists', {
+				open: uni.getStorageSync('openid'),
+				page: that.currentPage,
+				status : that.tabCurrent,
 			}).then(res => {
-				console.log(JSON.stringify(res))
-				if (res.code === 1) {
+				if (res.flag) {
 					that.isLoading = false;
 					that.goodsList = [...that.goodsList, ...res.data.data];
 					that.lastPage = res.data.last_page;
@@ -177,7 +169,7 @@ export default {
 						that.loadStatus = 'over';
 					}
 				}
-			}); */
+			});
 		}
 	}
 };

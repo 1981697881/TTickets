@@ -19,26 +19,20 @@
 					@change="onMove"
 					@scale="onScale"
 				>
-				
-					<view
-						class="thumbnail"
-						v-show="thumbnailShow"
-						:style="'left: ' + (10 - moveX / scale) + 'px;'"
-					>
+					<view class="thumbnail" v-show="thumbnailShow" :style="'left: ' + (10 - moveX / scale) + 'px;'">
 						<!--红色外框开始-->
 						<view class="thumbnail-border" :style="{ transform: 'scale(' + scalereciprocal + ')', top: topthumbnail + 'rpx', left: leftthumbnail + 'rpx' }"></view>
-						<view  v-for="(item, index) in seatArray" :key="index" :style="'width:' + boxWidth/2 + 'rpx;height:' + seatSize/2 + 'rpx'">
+						<view v-for="(item, index) in seatArray" :key="index" :style="'width:' + boxWidth / 2 + 'rpx;height:' + seatSize / 2 + 'rpx'">
 							<view
 								v-for="(seat, col) in item"
 								:key="col"
 								class="thumbnailSeatClass"
-								:style="{height:seatSize/5 +'rpx',width:seatSize/5 +'rpx',background: thumbnailBackgroud(seat)}"
+								:style="{ height: seatSize / 5 + 'rpx', width: seatSize / 5 + 'rpx', background: thumbnailBackgroud(seat) }"
 								@click="handleChooseSeat(index, col)"
-							>
-							</view>
+							></view>
 						</view>
 					</view>
-					
+
 					<view class="Stage dp-f jc-c ai-c fz-22 color-333">5号厅</view>
 					<view style="width: 100rpx;height: 30rpx;" class="m-0-a mt-48 dp-f jc-c ai-c fz-20 color-999 b-1 br-5">银幕中央</view>
 					<view class="pt-f pa-v-2 b-d-1" :style="'height:' + seatRow * (20 + seatSize * pxNum) + 'rpx;top:165rpx;width:0'"></view>
@@ -165,43 +159,47 @@ export default {
 		this.initData();
 	},
 	methods: {
-		 // 根据影厅的大小缩放比例(需要把影厅全部显示出来)
-		    seatScale: function () {
-		      let seatScaleX = 1
-		      let seatScaleY = 1
-		      seatScaleX = this.seatAreaWidthRem / this.seatBoxWidth
-		      seatScaleY = this.seatAreaHeightRem / this.seatBoxHeight
-		      return seatScaleX < seatScaleY ? seatScaleX : seatScaleY
-		    },
+		// 根据影厅的大小缩放比例(需要把影厅全部显示出来)
+		seatScale: function() {
+			let seatScaleX = 1;
+			let seatScaleY = 1;
+			seatScaleX = this.seatAreaWidthRem / this.seatBoxWidth;
+			seatScaleY = this.seatAreaHeightRem / this.seatBoxHeight;
+			return seatScaleX < seatScaleY ? seatScaleX : seatScaleY;
+		},
 		thumbnailBackgroud: function(seatItem) {
 			if (seatItem.type === 1) {
 				return 'green';
 			} else if (seatItem.type === 2) {
 				return 'red';
-			} else if (seatItem.type === 0){
+			} else if (seatItem.type === 0) {
 				return 'white';
 			}
 		},
 		initData: function() {
-			let arr = seatData;
+			let that = this;
 			//假数据说明：SeatCode座位编号，RowNum-行号，ColumnNum-纵号，YCoord-Y坐标，XCoord-X坐标，Status-状态
 			let row = 0;
 			let col = 0;
-			let minCol = parseInt(arr[0].XCoord);
-			let minRow = parseInt(arr[0].YCoord);
-			for (let i of arr) {
-				minRow = parseInt(i.YCoord) < minRow ? parseInt(i.YCoord) : minRow;
-				minCol = parseInt(i.XCoord) < minCol ? parseInt(i.XCoord) : minCol;
-				row = parseInt(i.YCoord) > row ? parseInt(i.YCoord) : row;
-				col = parseInt(i.XCoord) > col ? parseInt(i.XCoord) : col;
-			}
-			this.seatList = arr;
-			this.seatRow = row - minRow + 1;
-			this.seatCol = col - minCol + 3;
-			this.minRow = minRow;
-			this.minCol = minCol - 1;
-
-			this.initSeatArray();
+			/* that.$api('cinema.seatsLists', {}).then(res => {
+				if (res.flag) { */
+					let arr = seatData;
+					let minCol = parseInt(arr[0].XCoord);
+					let minRow = parseInt(arr[0].YCoord);
+					for (let i of arr) {
+						minRow = parseInt(i.YCoord) < minRow ? parseInt(i.YCoord) : minRow;
+						minCol = parseInt(i.XCoord) < minCol ? parseInt(i.XCoord) : minCol;
+						row = parseInt(i.YCoord) > row ? parseInt(i.YCoord) : row;
+						col = parseInt(i.XCoord) > col ? parseInt(i.XCoord) : col;
+					}
+					that.seatList = arr;
+					that.seatRow = row - minRow + 1;
+					that.seatCol = col - minCol + 3;
+					that.minRow = minRow;
+					that.minCol = minCol - 1;
+					that.initSeatArray();
+				/* }
+			}); */
 		},
 		//初始座位数组
 		initSeatArray: function() {
@@ -266,10 +264,10 @@ export default {
 				this.showTis = true;
 			}
 		},
-		 // scale的倒数
-		scalereciprocal: function () {
-	      return 1 / this.scale
-	    },
+		// scale的倒数
+		scalereciprocal: function() {
+			return 1 / this.scale;
+		},
 		//移动事件
 		onMove: function(e) {
 			this.thumbnailShow = true;
@@ -293,6 +291,7 @@ export default {
 		},
 		//选定且购买座位
 		buySeat: function() {
+			let that = this;
 			if (this.SelectNum === 0) {
 				return;
 			}
@@ -304,6 +303,18 @@ export default {
 					}
 				}
 			}
+			that.jump('/pages/order/confirm', {});
+			/* that.$api('cinema.lockSeats', oldArray).then(res => {
+				if (res.flag) {
+					console.log(res.flag)
+				}
+			}); */
+		},
+		jump:function(path, parmas) {
+			this.$Router.push({
+				path: path,
+				query: parmas
+			});
 		},
 		//处理座位选择逻辑
 		handleChooseSeat: function(row, col) {

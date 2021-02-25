@@ -215,6 +215,15 @@ export default {
 			// desc: '商品评论分类',
 		},
 	},
+	/** 票夹 ↓ **/
+	wallet:{
+		lists: {
+			url: 'app/api/hotMovieList',
+			auth: true,
+			method: 'POST',
+			// desc: '票劵列表',
+		},
+	},
 	/** 影讯 ↓ **/
 	cinema: {
 		lists: {
@@ -222,6 +231,24 @@ export default {
 			auth: false,
 			method: 'POST',
 			// desc: '商品列表',
+		},
+		filmLists: {
+			url: 'app/api/locationList',
+			auth: false,
+			method: 'POST',
+			// desc: '影片的影城和场次',
+		},
+		seatsLists: {
+			url: 'app/api/detailSeats',
+			auth: false,
+			method: 'POST',
+			// desc: '座位列表',
+		},
+		lockSeats: {
+			url: 'app/api/lockSeats ',
+			auth: true,
+			method: 'POST',
+			// desc: '提交订单',
 		},
 	},
 	/** 商品 ↓ **/
