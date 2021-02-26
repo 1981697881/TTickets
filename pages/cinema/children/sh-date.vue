@@ -15,12 +15,14 @@ export default {
 	data() {
 		return {
 			TabCur: 0,
+			detail: [],
 			scrollLeft: 0
 		};
 	},
 	methods: {
 		tabSelect(e) {
 			this.TabCur = e.currentTarget.dataset.id;
+			this.$emit('subClickFtn',{day: this.detail[this.TabCur].day})
 			this.scrollLeft = (e.currentTarget.dataset.id - 1) * 60
 		}
 	},

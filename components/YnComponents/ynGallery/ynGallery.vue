@@ -32,15 +32,15 @@
 								:ref="'image' + index"
 								style="align-self: center;border-radius: 15rpx; "
 								:style="{ width: item.w - 10 + 'px', height: item.h - 10 + 'px', border: [activeviewindex == index ? '#ccc 1px solid' : '#ccc 0px solid'] }"
-								:src="item.url"
+								:src="item.filmPhoto"
 								@click="clickimg(index, item)"
 								mode="scaleToFill"
 							></image>
 						</view>
 						<!-- 描述视图 -->
 						<view class="describe">
-							<view v-if="showdec" class="text-bold text-xl">{{ item.name }}</view>
-							<view v-if="showdec" class="text-cut text-gray">{{ item.time }} / {{ item.genre }}</view>
+							<view v-if="showdec" class="text-bold text-xl">{{ item.filmName }}</view>
+							<view v-if="showdec" class="text-cut text-gray">{{ item.filmLong }}分钟 / {{ item.filmSortid }}</view>
 						</view>
 					</view>
 					<!-- 右侧留空  必须用min-width属性 用width属性无效-->

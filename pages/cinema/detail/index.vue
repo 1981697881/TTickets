@@ -4,14 +4,14 @@
 			<block slot="backText"></block>
 			<block slot="content">{{ goodsInfo.title }}</block>
 		</cu-custom>
-		<view class="load-box" v-if="!goodsInfo.price"><app-skeletons :type="'detail'"></app-skeletons></view>
+		<view class="load-box" v-if="goodsInfo.type != 'Movie'"><app-skeletons :type="'detail'"></app-skeletons></view>
 		<view class="detail_box shopro-selector" v-else>
 			<view class="detail-content">
 				<view class="goodes_detail_swiper-box">
 					<!-- 购买滚动提示 -->
 					<sh-groupon-tip v-if="false"></sh-groupon-tip>
 					<view class="carousel">
-						<video controls :poster="videoImg" object-fit="fill" class="swiper-image shopro-selector-rect" src="../../../static/testVideo.mp4"></video>
+						<video controls :poster="goodsInfo.filmPhoto" object-fit="fill" class="swiper-image shopro-selector-rect" :src="goodsInfo.herald"></video>
 					</view>
 					<!-- 详情轮播 -->
 					<!-- <swiper class="carousel" circular @change="swiperChange">
@@ -36,7 +36,7 @@
 					<view class="tab-detail pb20">
 						<view class="rich-box" v-show="tabCurrent === 'tab0'">
 							<view class="box-about">
-								<mote-lines-divide :dt="goodsInfo.title" :line="1" expandText="展开" foldHint="收起"/>
+								<mote-lines-divide :dt="goodsInfo.filmIntro" :line="1" expandText="展开" foldHint="收起"/>
 							</view>
 							<view class="about-unline">
 								<fz-detail-gallery :detail='goodsInfo' type='crew'></fz-detail-gallery>
@@ -74,21 +74,21 @@
 						<image class="tool-img shopro-selector-circular" src="http://shopro.7wpp.com/imgs/tabbar/tab_home_sel.png" mode=""></image>
 						<text class="tool-title shopro-selector-rect">首页</text>
 					</view>
-					<view class="tools-item y-f" @tap="onFavorite(goodsInfo.id)">
+					<!-- <view class="tools-item y-f" @tap="onFavorite(goodsInfo.id)">
 						<image
 							class="tool-img"
 							:src="Boolean(goodsInfo.favorite) ? 'http://shopro.7wpp.com/imgs/favorite_end.png' : 'http://shopro.7wpp.com/imgs/favorite.png'"
 							mode=""
 						></image>
 						<text class="tool-title">收藏</text>
-					</view>
+					</view> 
 					<view class="tools-item y-f" @tap="onShare">
 						<image class="tool-img" src="http://shopro.7wpp.com/imgs/share.png" mode=""></image>
 						<text class="tool-title">分享</text>
-					</view>
+					</view> -->
 				</view>
 				<view class="detail-right">
-					<view class="detail-btn-box x-ac" v-if="!goodsInfo.activity"><button class="cu-btn tool-btn pay-btn" @tap="jump('/pages/cinema/circuit/list', { goodsId: goodsInfo.id })">立即购买</button></view>
+					<view class="detail-btn-box x-ac" v-if="!goodsInfo.activity"><button class="cu-btn tool-btn pay-btn" @tap="jump('/pages/cinema/circuit/list', { filmId: goodsInfo.filmId })">立即订票</button></view>
 				</view>
 			</view>
 			<!-- 分享组件 -->
@@ -108,7 +108,7 @@
 </template>
 +
 <script>
-	import MoteLinesDivide from "@/components/mote-lines-divide/mote-lines-divide"
+import MoteLinesDivide from "@/components/mote-lines-divide/mote-lines-divide"
 import shGrouponTip from './children/sh-groupon-tip.vue';
 import fzDetailHead from './children/fz-detail-head.vue';
 import fzDetailGallery from './children/fz-detail-gallery.vue';
@@ -218,39 +218,23 @@ export default {
 		// 商品详情
 		getGoodsDetail() {
 			let that = this;
-			let res = goodsDetail;
-			if (res.code === 1) {
-				that.goodsInfo = res.data;
-				that.getCommentList();
-				that.setShareInfo({
-					query: {
-						url: 'goods-' + that.$Route.query.id
-					},
-					title: that.goodsInfo.title,
-					image: that.goodsInfo.image
-				});
-			}
-			if (res.code == 0) {
-				that.$tools.toast(res.msg);
-			}
-			/* that.$api('goods.detail', {
-				id: that.$Route.query.id
+			that.$api('cinema.lists', {
+				filmId: that.$Route.query.filmId
 			}).then(res => {
-				if (res.code === 1) {
+				if (res.flag) {
 					that.goodsInfo = res.data;
 					that.getCommentList();
 					that.setShareInfo({
 						query: {
-							url: 'goods-' + that.$Route.query.id
+							url: 'goods-' + that.$Route.query.filmId
 						},
 						title: that.goodsInfo.title,
 						image: that.goodsInfo.image
 					});
-				}
-				if (res.code == 0) {
+				}else{
 					that.$tools.toast(res.msg);
 				}
-			}); */
+			});
 		},
 		// 商品评论
 		getCommentList() {

@@ -2,12 +2,12 @@
 	<view class="ci-header">
 		<view class="locate-logo">
 			<view class="tag">2D IMAX</view>
-			<image class="logo-img" src="http://139.159.136.187:50080/uploadFiles/image/d02494f7a0c24790f2d10b4d5fc4b613.jpg" mode="scaleToFill"></image>
+			<image class="logo-img" :src="detail.filmPhoto"></image>
 		</view>
 		<view class="header-info">
-			<view class="text-bold text-xxl padding-top">百鸟朝凤</view>
-			<view class="info-text text-gray">128分钟 / 剧情 / 中国大陆</view>
-			<view class="info-text text-gray">2020-12-31 18:00 在中国大陆上映</view>
+			<view class="text-bold text-xxl padding-top">{{detail.filmName}}</view>
+			<view class="info-text text-gray">{{detail.filmLong}}分钟 / {{detail.filmSortid}} / {{detail.showArea}}</view>
+			<view class="info-text text-gray">{{detail.filmDate}} 在{{detail.showArea}}上映</view>
 		</view>
 	</view>
 </template>

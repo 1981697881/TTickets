@@ -292,7 +292,7 @@ export default {
 		let weeks = new Array('周日', '周一', '周二', '周三', '周四', '周五', '周六');
 		let week = weeks[getDay];
 		return {
-			day: tDate,
+			day: tYear + '-' + tMonth + '-' + tDate,
 			week: week,
 			date: tMonth + '-' + tDate
 		};

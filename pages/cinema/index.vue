@@ -3,9 +3,9 @@
 		<view class="head_box">
 			<view class="ci-header">
 				<view class="header-info">
-					<view class="text-bold text-xxl padding-top">广州WeChat影院广州店</view>
+					<view class="text-bold text-xxl padding-top">{{detail.cinemaName}}</view>
 					<view class="info-local text-black padding-xs">
-						<view class="local-adr text-cut">白云区太和镇龙归龙岗路1号</view>
+						<view class="local-adr text-cut">{{detail.cinemaAddress}}</view>
 						<view>· 0.1km</view>
 					</view>
 					<view class="text-gray">好评度 88% · 可退票 · 可改签</view>
@@ -26,7 +26,7 @@
 				:images="swiperList"
 				@clickimg="onclickimg"
 			></ynGallery>
-			<sh-date></sh-date>
+			<sh-date @subClickFtn="fatherMethod"></sh-date>
 		</view>
 		<scroll-view :style="{ height: headHeight + 'px' }" class="scroll-box" scroll-y enable-back-to-top scroll-with-animation @scrolltolower="loadMore">
 			<view class="content-box">
@@ -59,6 +59,7 @@ import appEmpty from '@/components/app-empty/app-empty.vue';
 import { mapMutations, mapActions, mapState } from 'vuex';
 import moreGoodList from '@/csJson/moreGoodList.json';
 import ynGallery from '@/components/YnComponents/ynGallery/ynGallery.vue';
+import tools from '@/common/utils/tools';
 let timer = null;
 export default {
 	components: {
@@ -115,7 +116,8 @@ export default {
 			goodsList: [],
 			searchVal: '',
 			listParams: {
-				category_id: 0,
+				filmId: null,
+				cinemaId: null,
 				keywords: '',
 				page: 1
 			},
@@ -138,15 +140,20 @@ export default {
 	},
 	onLoad() {
 		this.setimgs();
+		this.listParams.sessionsDate = tools.getDayList('', 0).day;
 		this.circuit = this.swiperList[0].name;
-		if (this.$Route.query.id) {
-			this.listParams.category_id = this.$Route.query.id;
+		if (this.$Route.query.filmId) {
+			this.listParams.filmId = this.$Route.query.filmId;
+		} 
+		if (this.$Route.query.detail) {
+			this.detail = this.$Route.query.detail
+			this.listParams.cinemaId = this.$Route.query.detail.cinemaId;
 		}
 		if (this.$Route.query.keywords) {
 			this.listParams.keywords = this.$Route.query.keywords;
 			this.searchVal = this.$Route.query.keywords;
 		}
-		this.getGoodsList();
+		this.getMoviesList()
 	},
 	methods: {
 		getScrHeight() {
@@ -162,7 +169,6 @@ export default {
 				}
 			});
 		},
-
 		// 加载更多
 		loadMore() {
 			if (this.listParams.page < this.lastPage) {
@@ -171,6 +177,9 @@ export default {
 			}
 		},
 		onclickimg(imgviewobj) {
+			this.listParams.filmId = imgviewobj.filmId
+			this.goodsList = [];
+			this.getGoodsList();
 			if (imgviewobj.index != undefined) this.Msg = `${imgviewobj.index}`;
 		},
 		setimgs() {
@@ -213,7 +222,7 @@ export default {
 		// 输入防抖搜索
 		onInput() {
 			let that = this;
-			that.listParams.category_id = 0;
+			that.listParams.cinemaId = null;
 			// 输入不及时
 			setTimeout(() => {
 				that.listParams.keywords = that.searchVal;
@@ -235,26 +244,30 @@ export default {
 			this.listParams.page = 1;
 			this.getGoodsList();
 		},
+		fatherMethod(val) {
+			this.listParams.sessionsDate = val.day;
+			this.goodsList = [];
+			this.getGoodsList();
+		},
+		// 获取影城影片
+		getMoviesList() {
+			let that = this;
+			that.$api('cinema.lists', {cinemaId: that.listParams.cinemaId, filmId: that.listParams.filmId }).then(res => {
+				if (res.flag) {
+					that.swiperList = res.data;
+					that.getGoodsList();
+				}
+			});
+		},
 		// 商品列表
 		getGoodsList() {
 			let that = this;
 			that.isLoading = true;
 			that.loadStatus = 'loading';
-			let res = moreGoodList;
-			if (res.code === 1) {
-				that.isLoading = false;
-				that.goodsList = [...that.goodsList, ...res.data.data];
-				that.lastPage = res.data.last_page;
-				if (that.listParams.page < res.data.last_page) {
-					that.loadStatus = '';
-				} else {
-					that.loadStatus = 'over';
-				}
-			}
-			/* that.$api('goods.lists', that.listParams).then(res => {
-				if (res.code === 1) {
+			that.$api('cinema.filmLists', that.listParams).then(res => {
+				if (res.flag) {
 					that.isLoading = false;
-					that.goodsList = [...that.goodsList, ...res.data.data];
+					that.goodsList = [...that.goodsList, ...res.data];
 					that.lastPage = res.data.last_page;
 					if (that.listParams.page < res.data.last_page) {
 						that.loadStatus = '';
@@ -262,7 +275,7 @@ export default {
 						that.loadStatus = 'over';
 					}
 				}
-			}); */
+			});
 		},
 		// towerSwiper触摸开始
 		TowerStart(e) {

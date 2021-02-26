@@ -1,18 +1,18 @@
 <template>
 	<view class="goods-box" v-if="detail">
-		<view class="content-box" @tap="jump('/pages/cinema/movie/list', { id: detail.id })">
-			<text v-if="isTag && detail.activity" class="tag-star"><text class="lg text-red cuIcon-favorfill"></text></text>
+		<view class="content-box" @tap="jump('/pages/cinema/movie/list', { sessionsId: detail.sessionsId })">
+			<text v-if="isTag && detail.status" class="tag-star"><text class="lg text-red cuIcon-favorfill"></text></text>
 			<view class="cont_one">
-				<view><text class="text-xl text-bold">14:30</text></view>
-				<view><text class="text-gray">15:40散场</text></view>
+				<view><text class="text-xl text-bold">{{detail.sessionsStarttime}}</text></view>
+				<view><text class="text-gray">{{detail.sessionsEndtime}}散场</text></view>
 			</view>
 			<view class="cont_two">
-				<view><text class="text-xs text-bold">国语 2D</text></view>
-				<view><text class="text-gray">5号厅</text></view>
+				<view><text class="text-xs text-bold">{{detail.hallType}}</text></view>
+				<view><text class="text-gray">{{detail.hallName}}</text></view>
 			</view>
 			<view class="cont_three">
-				<view class="o_price text-xxl">39</view>
-				<view class="text-olive text-xs">首单特惠<text class="o_price2">34</text></view>
+				<view class="o_price text-xxl">{{detail.money}}</view>
+				<view class="text-olive text-xs">团购优惠<text class="o_price2">{{detail.memberMoney}}</text></view>
 			</view>
 			<view class="cont_four"><button class="cu-btn bg-pink round ">购票</button></view>
 		</view>
@@ -25,7 +25,7 @@ export default {
 	components: {},
 	data() {
 		return {
-			goodsList: [{}, {}, {}, {}],
+			goodsList: [],
 			swiperCurrent: 0
 		};
 	},

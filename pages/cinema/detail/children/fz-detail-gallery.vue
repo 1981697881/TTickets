@@ -2,23 +2,32 @@
 	<view class="seckill-goods" v-if="showActivity">
 		<view class="title-box x-bc">
 			<text class="title" v-if="type == 'crew'">演职人员</text>
-			<text class="title" v-else>视频和剧照</text>
-			<view class="group-people x-f">
+			<text class="title" v-else>剧照</text>
+			<!-- <view class="group-people x-f">
 				<text class="tip">更多</text>
 				<text class="cuIcon-right"></text>
-			</view>
+			</view> -->
 		</view>
-		<view class="goods-box swiper-box x-f">
+		<view v-if="type == 'crew'" class="goods-box swiper-box x-f">
 			<swiper class="carousel" @change="swiperChange">
-				<swiper-item v-for="(item, index) in goodsList" :key="index" class="carousel-item">
+				<swiper-item v-for="(item, index) in detail.starVOS" :key="index" class="carousel-item"> 
 					<view class="min-goods">
-						<view :class="type=='still'?'img-boxt':'img-box'"><image class="img" :src="item.images" mode="scaleToFill"></image></view>
+						<view :class="type=='still'?'img-boxt':'img-box'"><image class="img" :src="header+'uploadFiles/image/'+item.starPhotoUrl" mode="scaleToFill"></image></view>
 						<view v-if="type == 'crew'" class="info-box">
 							<view class="y-f">
-								<text class="cr_name text-black">陶泽如</text>
-								<text class="text-gray seckill-current">导演</text>
+								<text class="cr_name text-black">{{item.starName}}</text>
+								<text class="text-gray seckill-current">{{item.roleType}}</text>
 							</view>
 						</view>
+					</view>
+				</swiper-item>
+			</swiper>
+		</view>
+		<view v-else class="goods-box swiper-box x-f">
+			<swiper class="carousel" @change="swiperChange">
+				<swiper-item v-for="(item, index) in detail.photoArrays" :key="index" class="carousel-item">
+					<view class="min-goods">
+						<view :class="type=='still'?'img-boxt':'img-box'"><image class="img" :src="header+'uploadFiles/image/'+item.images" mode="scaleToFill"></image></view>
 					</view>
 				</swiper-item>
 			</swiper>
@@ -28,12 +37,16 @@
 
 <script>
 import seckill from '@/csJson/seckill.json';
+import {
+	API_URL
+} from '@/env'
 export default {
 	components: {},
 	data() {
 		return {
+			header: API_URL,
 			time: {}, //倒计时
-			goodsList: [{},{}],
+			goodsList: [],
 			swiperCurrent: 0,
 			showActivity: true //是否显示活动。
 		};

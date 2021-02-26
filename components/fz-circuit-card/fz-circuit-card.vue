@@ -1,6 +1,6 @@
 <template>
 	<view class="goods-box" v-if="detail" >
-		<view class="content-box" @tap="jump('/pages/cinema/index', { id: detail.id })">
+		<view class="content-box" @tap="jump('/pages/cinema/index', { detail: detail,filmId: filmId })">
 			<text v-if="isTag && detail.activity" class="tag-star"><text class="lg text-red cuIcon-favorfill"></text></text>
 			<view class="cont_one">
 				<view class="o_name">
@@ -8,7 +8,7 @@
 					<text class="tip" v-if="!(isTag && detail.activity)">上次来过</text>
 				</view>
 				<view class="o_price">
-					<text>39</text>
+					<text>{{detail.prices}}</text>
 					起
 				</view>
 			</view>
@@ -26,12 +26,12 @@
 		<view class="swiper-box x-f" v-if="tabId=='ended'">
 			<swiper class="carousel" @change="swiperChange">
 				<swiper-item v-for="(goods, swindex) in detail.marshallinDetail" :key="swindex" class="carousel-item">
-					<view class="min-goods" @tap="jump('/pages/cinema/movie/list', { id: detail.id })">
+					<view class="min-goods" @tap="jump('/pages/cinema/movie/list', { sessionsId: detail.sessionsId })">
 						<view class="price-box">
 							<view class="y-f text-black">
-								<text class="text-bold seckill-current">15:35</text>
-								<text class="seckill-lau text-grey">国语 2D</text>
-								<text class="original text-red">￥{{ detail.original_price }}</text>
+								<text class="text-bold seckill-current">{{goods.sessionsStarttime}}</text>
+								<text class="seckill-lau text-grey">{{goods.hallType}}</text>
+								<text class="original text-red">￥{{ goods.money }}</text>
 							</view>
 						</view>
 						<view class="title"><slot name="titleText"></slot></view>
@@ -48,7 +48,7 @@ export default {
 	components: {},
 	data() {
 		return {
-			goodsList: [{},{},{},{},],
+			goodsList: [],
 			swiperCurrent: 0,
 			ColorList: [
 				{
@@ -84,13 +84,13 @@ export default {
 			default: false
 		},
 		tabId: '',
+		filmId: '',
 		detail: {
 			type: Object,
 			default: null
 		}
 	},
 	mounted() {
-		console.log(this.tabId)
 	},
 	computed: {},
 	methods: {
