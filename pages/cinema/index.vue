@@ -8,7 +8,7 @@
 						<view class="local-adr text-cut">{{detail.cinemaAddress}}</view>
 						<view>· 0.1km</view>
 					</view>
-					<view class="text-gray">好评度 88% · 可退票 · 可改签</view>
+					<view class="text-gray">好评度 88% {{detail.keysWord.toString()}}</view>
 				</view>
 				<view class="locate-logo"><image class="logo-img" src="../../static/dingweis.png" mode="aspectFill"></image></view>
 			</view>
@@ -255,6 +255,10 @@ export default {
 			that.$api('cinema.lists', {cinemaId: that.listParams.cinemaId, filmId: that.listParams.filmId }).then(res => {
 				if (res.flag) {
 					that.swiperList = res.data;
+					if (that.$Route.query.filmId == '') {
+						that.listParams.filmId = that.swiperList[0].filmId;
+					} 
+					console.log(that.listParams.filmId)
 					that.getGoodsList();
 				}
 			});

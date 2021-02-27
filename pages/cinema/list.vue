@@ -9,10 +9,10 @@
 			</view>
 		</view>
 		<view class="content_box">
-				<view class="goods-item" v-for="item in goodsList" :key="item.id">
+				<!-- <view class="goods-item" v-for="item in goodsList" :key="item.id">
 					<fz-unmovie-list v-if="tabCurrent=='nostart'" :tabId="tabCurrent" :cardId="item.id" :title="item.title" :subtitle="item.subtitle" :img="item.image" :price="item.price" :originalPrice="item.original_price">
 					</fz-unmovie-list>
-				</view> 
+				</view> -->
 				<fz-cinema-list :tabId="tabCurrent" v-if="tabCurrent=='ended'">
 				</fz-cinema-list>
 				<fz-movie-list :tabId="tabCurrent" v-if="tabCurrent=='ing'">
@@ -25,7 +25,7 @@
 		<app-tabbar></app-tabbar>
 		<!-- 关注弹窗 -->
 		<app-float-btn></app-float-btn>
-		<!-- 连续弹窗提醒 -->
+		<!-- 连续弹窗提醒 --> 
 		<app-notice-modal></app-notice-modal>
 		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>

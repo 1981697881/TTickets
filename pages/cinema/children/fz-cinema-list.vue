@@ -6,29 +6,29 @@
 					<view class="swiper-item">
 						<image :src="item.url" mode="aspectFill" v-if="item.type == 'image'"></image>
 						<video :src="item.url" autoplay loop muted :show-play-btn="false" :controls="false" objectFit="cover" v-if="item.type == 'video'"></video>
-						<view class="cir_group" v-if="item.type == 'group'">
+						<view class="cir_group" v-if="item.type == 'Movie'">
 							<view class="cir_logo">
 								<view class="tag" v-if="item.scrn === 'screen'">2D IMAX</view>
-								<image :src="item.url" mode="aspectFill"></image>
+								<image :src="item.filmPhoto" mode="aspectFill"></image>
 							</view>
 							<view class="text-white cir_detail">
-								<view class="text-cut de_name">{{ item.name }}</view>
-								<view class="de_pin">评分{{ item.score }} | 10.1万人想看</view>
-								<view class="text-orange de_info">{{ item.time }} | {{ item.genre }}</view>
-								<view class="text-orange de_info">导演：{{ item.direct }}</view>
-								<view class="text-orange de_info">主演：{{ item.starring }}</view>
+								<view class="text-cut de_name">{{ item.filmName }}</view>
+								<view class="de_pin">评分{{ item.score }} | 0万人想看</view>
+								<view class="text-orange de_info">{{ item.filmLong }}分钟 | {{ item.filmSortid }}</view>
+								<view class="text-orange de_info">导演：{{ item.filmDirector }}</view>
+								<view class="text-orange de_info">主演：{{ item.filmPlay }}</view>
 							</view>
 						</view>
 					</view>
 				</swiper-item>
 			</swiper>
-			<sh-date v-if="tabId == 'ended'"></sh-date>
+			<sh-date v-if="tabId == 'ended'" @subClickFtn="fatherMethod"></sh-date>
 			<view class="filter-item"><sh-filter @change="onFilter"></sh-filter></view>
 		</view>
 		<scroll-view :style="{ height: headHeight + 'px' }" class="scroll-box" scroll-y enable-back-to-top scroll-with-animation @scrolltolower="loadMore">
 			<view class="content-box">
 				<view class="goods-list x-f">
-					<view class="goods-item" v-for="goods in goodsList" :key="goods.id"><fz-circuit-card :detail="goods" :tabId="tabId" :isTag="true"></fz-circuit-card></view>
+					<view class="goods-item" v-for="goods in goodsList" :key="goods.cinemaId"><fz-circuit-card :detail="goods" :filmId="listParams.filmId" :tabId="tabId" :isTag="true"></fz-circuit-card></view>
 				</view>
 				<!-- 加载更多 -->
 				<view v-if="goodsList.length" class="cu-load text-gray" :class="loadStatus"></view>
@@ -43,6 +43,7 @@
 import shFilter from './sh-filter.vue';
 import shDate from './sh-date.vue';
 import moreGoodList from '@/csJson/moreGoodList.json';
+import tools from '@/common/utils/tools';
 export default {
 	components: {
 		shFilter,
@@ -53,7 +54,8 @@ export default {
 			cardCur: 0,
 			headHeight: '0',
 			listParams: {
-				category_id: 0,
+				filmId: null,
+				sessionsDate: null,
 				keywords: '',
 				page: 1
 			},
@@ -104,8 +106,7 @@ export default {
 	},
 	mounted() {
 		this.getScrHeight();
-		this.circuit = this.swiperList[0].name;
-		this.getGoodsList();
+		this.getMoviesList();
 	},
 	computed: {},
 	created() {},
@@ -132,6 +133,10 @@ export default {
 		},
 		cardSwiper(e) {
 			this.cardCur = e.detail.current;
+			this.listParams.filmId = this.swiperList[e.detail.current].filmId;
+			this.goodsList = [];
+			this.listParams.page = 1;
+			this.getGoodsList();
 		},
 		onFilter(e) {
 			this.listParams.order = e;
@@ -139,26 +144,46 @@ export default {
 			this.listParams.page = 1;
 			this.getGoodsList();
 		},
-		// 商品列表
+		// 获取热映影片
+		getMoviesList() {
+			let that = this;
+			that.$api('cinema.lists', {}).then(res => {
+				if (res.flag) {
+					that.swiperList = res.data;
+					that.swiperList.forEach((item, index) => {
+						if (item.filmId == that.$Route.query.filmId) {
+							that.activeItem = index;
+						}
+					});
+					that.circuit = that.swiperList[0].filmName;
+					that.listParams.sessionsDate = tools.getDayList('', 0).day;
+					if (typeof that.$Route.query.filmId != 'undefined') {
+						that.listParams.filmId = that.$Route.query.filmId;
+					} else {
+						that.listParams.filmId = that.swiperList[0].filmId;
+					}
+					if (that.$Route.query.keywords) {
+						that.listParams.keywords = that.$Route.query.keywords;
+						that.searchVal = that.$Route.query.keywords;
+					}
+					that.getGoodsList();
+				}
+			});
+		},
+		fatherMethod(val) {
+			this.listParams.sessionsDate = val.day;
+			this.goodsList = [];
+			this.getGoodsList();
+		},
+		// 影城场次列表
 		getGoodsList() {
 			let that = this;
 			that.isLoading = true;
 			that.loadStatus = 'loading';
-			let res = moreGoodList;
-			if (res.code === 1) {
-				that.isLoading = false;
-				that.goodsList = [...that.goodsList, ...res.data.data];
-				that.lastPage = res.data.last_page;
-				if (that.listParams.page < res.data.last_page) {
-					that.loadStatus = '';
-				} else {
-					that.loadStatus = 'over';
-				}
-			}
-			/* that.$api('goods.lists', that.listParams).then(res => {
-				if (res.code === 1) {
+			that.$api('cinema.filmLists', that.listParams).then(res => {
+				if (res.flag) {
 					that.isLoading = false;
-					that.goodsList = [...that.goodsList, ...res.data.data];
+					that.goodsList = [...that.goodsList, ...res.data];
 					that.lastPage = res.data.last_page;
 					if (that.listParams.page < res.data.last_page) {
 						that.loadStatus = '';
@@ -166,7 +191,7 @@ export default {
 						that.loadStatus = 'over';
 					}
 				}
-			}); */
+			});
 		},
 		// 路由跳转
 		jump(path, parmas) {

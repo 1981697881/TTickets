@@ -34,7 +34,7 @@
 		<scroll-view :style="{ height: headHeight + 'px' }" class="scroll-box" scroll-y enable-back-to-top scroll-with-animation @scrolltolower="loadMore">
 			<view class="content-box">
 				<view class="goods-list x-f">
-					<view class="goods-item" v-for="goods in goodsList" :key="goods.id"><fz-circuit-card :detail="goods" :filmId="listParams.filmId" tabId="ended" :isTag="true"></fz-circuit-card></view>
+					<view class="goods-item" v-for="goods in goodsList" :key="goods.cinemaId"><fz-circuit-card :detail="goods" :filmId="listParams.filmId" tabId="ended" :isTag="true"></fz-circuit-card></view>
 				</view>
 				<!-- 空白页 -->
 				<app-empty :isFixed="false" v-if="!goodsList.length && !isLoading" :emptyData="emptyData"></app-empty>

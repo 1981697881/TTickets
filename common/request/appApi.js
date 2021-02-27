@@ -230,7 +230,7 @@ export default {
 			url: 'app/api/hotMovieList',
 			auth: false,
 			method: 'POST',
-			// desc: '商品列表',
+			// desc: '影片列表',
 		},
 		filmLists: {
 			url: 'app/api/locationList',
@@ -245,10 +245,16 @@ export default {
 			// desc: '座位列表',
 		},
 		lockSeats: {
-			url: 'app/api/lockSeats ',
+			url: 'app/api/lockSeats',
 			auth: true,
 			method: 'POST',
 			// desc: '提交订单',
+		},
+		studios: {
+			url: 'app/api/locations',
+			auth: false,
+			method: 'POST',
+			// desc: '影城',
 		},
 	},
 	/** 商品 ↓ **/

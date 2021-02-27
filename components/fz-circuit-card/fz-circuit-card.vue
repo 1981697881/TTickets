@@ -1,6 +1,6 @@
 <template>
 	<view class="goods-box" v-if="detail" >
-		<view class="content-box" @tap="jump('/pages/cinema/index', { detail: detail,filmId: filmId })">
+		<view class="content-box" @tap="jump('/pages/cinema/index', { detail: info,filmId: filmId })">
 			<text v-if="isTag && detail.activity" class="tag-star"><text class="lg text-red cuIcon-favorfill"></text></text>
 			<view class="cont_one">
 				<view class="o_name">
@@ -18,7 +18,7 @@
 				<view class="t_distance">1.0km</view>
 			</view>
 			<view class="flex flex-wrap">
-				<view class="padding-xs" v-for="(item, tagindex) in ColorList" :key="tagindex" v-if="item.name != 'white'">
+				<view class="padding-xs" v-for="(item, tagindex) in cinemaKeysWord" :key="tagindex" v-if="item.name != 'white'">
 					<view class="cu-tag radius" :class="'line-' + item.name">{{ item.title }}</view>
 				</view>
 			</view>
@@ -26,7 +26,7 @@
 		<view class="swiper-box x-f" v-if="tabId=='ended'">
 			<swiper class="carousel" @change="swiperChange">
 				<swiper-item v-for="(goods, swindex) in detail.marshallinDetail" :key="swindex" class="carousel-item">
-					<view class="min-goods" @tap="jump('/pages/cinema/movie/list', { sessionsId: detail.sessionsId })">
+					<view class="min-goods" @tap="jump('/pages/cinema/movie/list', { sessionsId: goods.sessionsId })">
 						<view class="price-box">
 							<view class="y-f text-black">
 								<text class="text-bold seckill-current">{{goods.sessionsStarttime}}</text>
@@ -50,28 +50,8 @@ export default {
 		return {
 			goodsList: [],
 			swiperCurrent: 0,
-			ColorList: [
-				{
-					title: '可退票',
-					name: 'red',
-					color: '#e54d42'
-				},
-				{
-					title: '可改签',
-					name: 'orange',
-					color: '#f37b1d'
-				},
-				{
-					title: '中国巨幕厅',
-					name: 'yellow',
-					color: '#fbbd08'
-				},
-				{
-					title: '可停车',
-					name: 'olive',
-					color: '#8dc63f'
-				}
-			],
+			ColorList: this.ColorList,
+			cinemaKeysWord: [],
 			tagPath: {
 				groupon: '/static/imgs/groupon_tag.png',
 				seckill: '/static/imgs/seckill_tag.png'
@@ -84,13 +64,34 @@ export default {
 			default: false
 		},
 		tabId: '',
-		filmId: '',
+		filmId: {
+			type: String,
+			default: ''
+		},
 		detail: {
 			type: Object,
 			default: null
 		}
 	},
 	mounted() {
+		this.info = { ...this.detail}
+		delete this.info.marshallinDetail
+		delete this.info.cinemaContact
+		delete this.info.status
+		delete this.info.cinemaKeysWord
+		delete this.info.cinemaMessage
+		delete this.info.cinemaPhone
+		delete this.info.cinemaTel
+		delete this.info.createDatetime
+		delete this.info.editDatetime
+		let keyword = this.info.keysWord
+		keyword.forEach((item,index)=>{
+			let obj = {
+				name:this.ColorList[index].name,
+				title:item
+			}
+			this.cinemaKeysWord.push(obj)
+		})
 	},
 	computed: {},
 	methods: {

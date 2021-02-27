@@ -5,7 +5,7 @@
 			<scroll-view :style="{ height: hHeight + 'px' }" class="scroll-box" scroll-y enable-back-to-top scroll-with-animation @scrolltolower="loadMore">
 				<view class="content-box">
 					<view class="goods-list x-f">
-						<view class="goods-item" v-for="goods in goodsList" :key="goods.id"><fz-circuit-card :detail="goods" :tabId="tabId" :isTag="true"></fz-circuit-card></view>
+						<view class="goods-item" v-for="goods in goodsList" :key="goods.cinemaId"><fz-circuit-card :detail="goods" :tabId="tabId" :isTag="true"></fz-circuit-card></view>
 					</view>
 					<!-- 加载更多 -->
 					<view v-if="goodsList.length" class="cu-load text-gray" :class="loadStatus"></view>
@@ -30,7 +30,6 @@ export default {
 		return {
 			hHeight: '0',
 			listParams: {
-				category_id: 0,
 				keywords: '',
 				page: 1
 			},
@@ -59,7 +58,6 @@ export default {
 		},
 		getScrHeight() {
 			let me = this;
-			console.log(me.hHight)
 			uni.getSystemInfo({
 				success: function(res) {
 					// res - 各种参数
@@ -82,21 +80,10 @@ export default {
 			let that = this;
 			that.isLoading = true;
 			that.loadStatus = 'loading';
-			let res = moreGoodList;
-			if (res.code === 1) {
-				that.isLoading = false;
-				that.goodsList = [...that.goodsList, ...res.data.data];
-				that.lastPage = res.data.last_page;
-				if (that.listParams.page < res.data.last_page) {
-					that.loadStatus = '';
-				} else {
-					that.loadStatus = 'over';
-				}
-			}
-			/* that.$api('goods.lists', that.listParams).then(res => {
-				if (res.code === 1) {
+			that.$api('cinema.studios', that.listParams).then(res => {
+				if (res.flag) {
 					that.isLoading = false;
-					that.goodsList = [...that.goodsList, ...res.data.data];
+					that.goodsList = [...that.goodsList, ...res.data];
 					that.lastPage = res.data.last_page;
 					if (that.listParams.page < res.data.last_page) {
 						that.loadStatus = '';
@@ -104,7 +91,7 @@ export default {
 						that.loadStatus = 'over';
 					}
 				}
-			}); */
+			});
 		},
 		// 路由跳转
 		jump(path, parmas) {
