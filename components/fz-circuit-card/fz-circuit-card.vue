@@ -1,6 +1,6 @@
 <template>
 	<view class="goods-box" v-if="detail" >
-		<view class="content-box" @tap="jump('/pages/cinema/index', { detail: info,filmId: filmId })">
+		<view class="content-box" @tap="jump('/pages/cinema/index', info)">
 			<text v-if="isTag && detail.activity" class="tag-star"><text class="lg text-red cuIcon-favorfill"></text></text>
 			<view class="cont_one">
 				<view class="o_name">
@@ -26,7 +26,7 @@
 		<view class="swiper-box x-f" v-if="tabId=='ended'">
 			<swiper class="carousel" @change="swiperChange">
 				<swiper-item v-for="(goods, swindex) in detail.marshallinDetail" :key="swindex" class="carousel-item">
-					<view class="min-goods" @tap="jump('/pages/cinema/movie/list', { sessionsId: goods.sessionsId })">
+					<view class="min-goods" @tap="jump('/pages/cinema/movie/list', { sessionsId: goods.sessionsId,hallType: goods.hallType,sessionsStarttime: goods.sessionsStarttime,filmName:goods.filmName,hallName:goods.hallName,sessionsDate:goods.sessionsDate})">
 						<view class="price-box">
 							<view class="y-f text-black">
 								<text class="text-bold seckill-current">{{goods.sessionsStarttime}}</text>
@@ -84,6 +84,7 @@ export default {
 		delete this.info.cinemaTel
 		delete this.info.createDatetime
 		delete this.info.editDatetime
+		this.info.filmId = this.filmId
 		let keyword = this.info.keysWord
 		keyword.forEach((item,index)=>{
 			let obj = {

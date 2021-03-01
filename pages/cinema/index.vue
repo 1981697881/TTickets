@@ -145,9 +145,9 @@ export default {
 		if (this.$Route.query.filmId) {
 			this.listParams.filmId = this.$Route.query.filmId;
 		} 
-		if (this.$Route.query.detail) {
-			this.detail = this.$Route.query.detail
-			this.listParams.cinemaId = this.$Route.query.detail.cinemaId;
+		if (this.$Route.query) {
+			this.detail = this.$Route.query
+			this.listParams.cinemaId = this.$Route.query.cinemaId;
 		}
 		if (this.$Route.query.keywords) {
 			this.listParams.keywords = this.$Route.query.keywords;

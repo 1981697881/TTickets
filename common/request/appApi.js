@@ -347,6 +347,12 @@ export default {
 			method: 'GET',
 			// desc: '用户信息',
 		},
+		member: {
+			url: 'member/loginMember',
+			auth: true,
+			method: 'POST',
+			// desc: '用户信息',
+		},
 
 		profile: {
 			url: 'user/profile',

@@ -3,11 +3,10 @@
 		<view class="bg-f1 h-100vh">
 			<view class="pt-f left-0 w-100 p-0-32 bg-white z1000" :style="'height: 162rpx;top:0'">
 				<view>
-					<view class="fz-34 fw-b pt-20">三体2：黑暗森林</view>
-					<view class="mt-10 fz-28 color-666">2021年1月22日 国语3D</view>
+					<view class="fz-34 fw-b pt-20">{{head.filmName}}</view>
+					<view class="mt-10 fz-28 color-666">{{head.sessionsDate}} {{head.sessionsStarttime}} {{head.hallType}}</view>
 				</view>
 			</view>
-
 			<movable-area :style="'height:' + (seatRow * 40 + 350) + 'rpx;width: 100vw;top:' + rpxNum * 132 + 'px'" class="pt-f left-0">
 				<movable-view
 					:style="'width: 100vw;height:' + (seatRow * 40 + 350) + 'rpx;'"
@@ -33,7 +32,7 @@
 						</view>
 					</view>
 
-					<view class="Stage dp-f jc-c ai-c fz-22 color-333">5号厅</view>
+					<view class="Stage dp-f jc-c ai-c fz-22 color-333">{{head.hallName}}</view>
 					<view style="width: 100rpx;height: 30rpx;" class="m-0-a mt-48 dp-f jc-c ai-c fz-20 color-999 b-1 br-5">银幕中央</view>
 					<view class="pt-f pa-v-2 b-d-1" :style="'height:' + seatRow * (20 + seatSize * pxNum) + 'rpx;top:165rpx;width:0'"></view>
 					<view v-for="(item, index) in seatArray" :key="index" class="dp-f jc-c mt-20" :style="'width:' + boxWidth + 'px;height:' + seatSize + 'px'">
@@ -42,7 +41,7 @@
 							:key="col"
 							class="dp-ib"
 							:style="'width:' + seatSize + 'px;height:' + seatSize + 'px'"
-							@click="handleChooseSeat(index, col)"
+							@click="handleChooseSeat(index, col,seat)"
 						>
 							<image v-if="seat.type === 0" class="w-100 h-100" src="../../../static/unselected.png" mode="aspectFit"></image>
 							<image v-else-if="seat.type === 1" class="w-100 h-100" src="../../../static/selected.png" mode="aspectFit"></image>
@@ -74,11 +73,11 @@
 					<view class="dp-f ai-c fw-w fz-28 color-333 mb-20" v-if="SelectNum > 0">
 						<text>已选</text>
 						<view class="p-all-10 b-1 br-5 dp-f ai-c jc-c fz-28 ml-20" v-for="(optItem, optindex) in optArr" :key="optindex">
-							{{ optItem.RowNum + '排' + optItem.ColumnNum + '座' }}
+							{{ optItem.rowNum + '排' + optItem.columnNum + '座' }}
 						</view>
 					</view>
 					<view style="width: 686rpx;height: 90rpx;" class="dp-f jc-c ai-c br-10 fz-34 color-fff" :class="SelectNum > 0 ? 'bg-red-1' : 'bg-unbtn'" @click="buySeat">
-						{{ SelectNum > 0 ? '￥ ' + aPrice + ' 确认座位' : '请选座位' }}
+						{{ SelectNum > 0 ? '￥ ' + totalPrice + ' 确认座位' : '请选座位' }}
 					</view>
 				</view>
 				<view class="dp-f jc-c ai-c mb-20 fz-28" v-if="showTis">
@@ -124,6 +123,19 @@ export default {
 			seatCol: 0, //影院座位列数
 			seatSize: 0, //座位尺寸
 			SelectNum: 0, //选择座位数
+			listParams:{
+				sId: null,
+				sessionsId: null,
+			},
+			head:{
+				filmName: null,
+				hallName: null,
+				hallType: null,
+				sessionsDate: null,
+				sessionsId: null,
+				sessionsStarttime: null,
+			},
+			totalPrice: 0,//总价
 			moveX: 0, //水平移动偏移量
 			scale: 1, //放大倍数
 			minRow: 0, //从第几行开始排座位
@@ -147,6 +159,8 @@ export default {
 		}
 	},
 	onLoad() {
+		this.head = this.$Route.query
+		this.listParams.sessionsId = this.$Route.query.sessionsId
 		//获取宽度
 		uni.getSystemInfo({
 			success: function(e) {
@@ -172,25 +186,26 @@ export default {
 				return 'green';
 			} else if (seatItem.type === 2) {
 				return 'red';
-			} else if (seatItem.type === 0) {
+			} else if (seatItem.type === 0) { 
 				return 'white';
 			}
 		},
 		initData: function() {
 			let that = this;
-			//假数据说明：SeatCode座位编号，RowNum-行号，ColumnNum-纵号，YCoord-Y坐标，XCoord-X坐标，Status-状态
+			//假数据说明：sid座位编号，rowNum-行号，columnNum-纵号，ycoord-Y坐标，xcoord-X坐标，status-状态
 			let row = 0;
 			let col = 0;
-			/* that.$api('cinema.seatsLists', {}).then(res => {
-				if (res.flag) { */
-					let arr = seatData;
-					let minCol = parseInt(arr[0].XCoord);
-					let minRow = parseInt(arr[0].YCoord);
+			that.$api('cinema.seatsLists', this.listParams).then(res => {
+				if (res.flag) {
+					console.log(seatData)
+					let arr = res.data;
+					let minCol = parseInt(arr[0].xcoord);
+					let minRow = parseInt(arr[0].ycoord);
 					for (let i of arr) {
-						minRow = parseInt(i.YCoord) < minRow ? parseInt(i.YCoord) : minRow;
-						minCol = parseInt(i.XCoord) < minCol ? parseInt(i.XCoord) : minCol;
-						row = parseInt(i.YCoord) > row ? parseInt(i.YCoord) : row;
-						col = parseInt(i.XCoord) > col ? parseInt(i.XCoord) : col;
+						minRow = parseInt(i.ycoord) < minRow ? parseInt(i.ycoord) : minRow;
+						minCol = parseInt(i.xcoord) < minCol ? parseInt(i.xcoord) : minCol;
+						row = parseInt(i.ycoord) > row ? parseInt(i.ycoord) : row;
+						col = parseInt(i.xcoord) > col ? parseInt(i.xcoord) : col;
 					}
 					that.seatList = arr;
 					that.seatRow = row - minRow + 1;
@@ -198,8 +213,8 @@ export default {
 					that.minRow = minRow;
 					that.minCol = minCol - 1;
 					that.initSeatArray();
-				/* }
-			}); */
+				}
+			});
 		},
 		//初始座位数组
 		initSeatArray: function() {
@@ -208,9 +223,9 @@ export default {
 				.map(() =>
 					Array(this.seatCol).fill({
 						type: -1,
-						SeatCode: '',
-						RowNum: '',
-						ColumnNum: ''
+						sid: '',
+						rowNum: '',
+						columnNum: ''
 					})
 				);
 			this.seatArray = seatArray;
@@ -223,16 +238,18 @@ export default {
 			let arr = this.seatArray.slice();
 			for (let num in seat) {
 				let status = 2; //-1为非座位，0为未购座位，1为已选座位(绿色),2为已购座位(红色)
-				if (seat[num].Status === 0) {
+				if (seat[num].status === "0") {
 					status = 0;
-				} else if (seat[num].Status === -1) {
-					status = -1;
+				} else if (seat[num].status === "-1") {
+					status = -1; 
 				}
-				arr[parseInt(seat[num].YCoord) - this.minRow][parseInt(seat[num].XCoord) - this.minCol] = {
+				arr[parseInt(seat[num].ycoord) - this.minRow][parseInt(seat[num].xcoord) - this.minCol] = {
 					type: status,
-					SeatCode: seat[num].SeatCode,
-					RowNum: seat[num].RowNum,
-					ColumnNum: seat[num].ColumnNum
+					sid: seat[num].sid,
+					memberMoney: seat[num].memberMoney,
+					money: seat[num].money,
+					rowNum: seat[num].rowNum,
+					columnNum: seat[num].columnNum
 				};
 			}
 			this.seatArray = arr.slice();
@@ -240,8 +257,8 @@ export default {
 			for (let i in arr) {
 				let m = '';
 				for (let n of arr[i]) {
-					if (n.SeatCode) {
-						m = n.RowNum;
+					if (n.sid) {
+						m = n.rowNum;
 					}
 				}
 				if (m) {
@@ -299,11 +316,12 @@ export default {
 			for (let i = 0; i < this.seatRow; i++) {
 				for (let j = 0; j < this.seatCol; j++) {
 					if (this.seatArray[i][j].type === 1) {
-						oldArray.push(this.seatArray[i][j].SeatCode);
+						oldArray.push(this.seatArray[i][j].sid);
 					}
 				}
 			}
-			that.jump('/pages/order/confirm', {});
+			console.log(oldArray)
+			/* that.jump('/pages/order/confirm', {}); */
 			/* that.$api('cinema.lockSeats', oldArray).then(res => {
 				if (res.flag) {
 					console.log(res.flag)
@@ -317,7 +335,7 @@ export default {
 			});
 		},
 		//处理座位选择逻辑
-		handleChooseSeat: function(row, col) {
+		handleChooseSeat: function(row, col,seat) {
 			let seatValue = this.seatArray[row][col].type;
 			let newArray = this.seatArray;
 			//如果是已购座位，直接返回
@@ -326,12 +344,15 @@ export default {
 			if (seatValue === 1) {
 				newArray[row][col].type = 0;
 				this.SelectNum--;
+				this.totalPrice = this.totalPrice - 1 * Number(seat.money)
 				this.getOptArr(newArray[row][col], 0);
 			} else if (seatValue === 0) {
 				newArray[row][col].type = 1;
 				this.SelectNum++;
+				this.totalPrice = this.totalPrice + 1 * Number(seat.money)
 				this.getOptArr(newArray[row][col], 1);
 			}
+			console.log(this.totalPrice)
 			//必须整体更新二维数组，Vue无法检测到数组某一项更新,必须slice复制一个数组才行
 			this.seatArray = newArray.slice();
 		},
@@ -343,7 +364,7 @@ export default {
 			} else if (type === 0) {
 				let arr = [];
 				optArr.forEach(v => {
-					if (v.SeatCode !== item.SeatCode) {
+					if (v.sid !== item.sid) {
 						arr.push(v);
 					}
 				});
@@ -481,6 +502,7 @@ export default {
 			for (let i = 0; i < result.length; i++) {
 				//选定座位
 				oldArray[result[i][0]][result[i][1]].type = 1;
+				this.totalPrice = this.totalPrice + 1 * Number(oldArray[result[i][0]][result[i][1]].money)
 				this.optArr.push(oldArray[result[i][0]][result[i][1]]);
 			}
 			this.seatArray = oldArray;

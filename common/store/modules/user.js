@@ -75,6 +75,22 @@ const actions = {
 			})
 		})
 	},
+	// 获取用户信息-普通
+	getUserDetails({
+		commit
+	}) {
+		return new Promise((resolve, reject) => {
+			api('user.member').then(res => {
+				commit('LOGIN_TIP', false);
+				commit('USER_INFO', res.data);
+				uni.setStorageSync('userInfo', res.data);
+				resolve(res)
+	
+			}).catch(e => {
+				reject(e)
+			})
+		})
+	},
 	// 订单信息
 	getOrderNum({
 		commit
