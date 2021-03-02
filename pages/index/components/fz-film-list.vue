@@ -8,7 +8,7 @@
 		<view class="price-box">
 			<view class="y-f" @tap="jump('/pages/cinema/circuit/list', { filmId: detail.filmId })" v-if="detail.type === 'Movie'">
 				<view class="text-cut cr_name ">{{ detail.filmName}}</view>
-				<text class="seckill-current"><button class="cu-btn bg-red round sm">购票</button></text>
+				<view class="seckill-current"><button class="cu-btn bg-red round sm">购票</button></view>
 			</view>
 			<view class="y-f" v-else>
 				<text class="seckill-current">￥{{ detail.type === 'Movie' ? detail.groupon_price : detail.price }}</text>

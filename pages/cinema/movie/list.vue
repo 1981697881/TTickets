@@ -320,13 +320,12 @@ export default {
 					}
 				}
 			}
-			console.log(oldArray)
-			/* that.jump('/pages/order/confirm', {}); */
-			/* that.$api('cinema.lockSeats', oldArray).then(res => {
+			that.$api('cinema.lockSeats', {sIds:oldArray,openId:uni.getStorageSync('openid')}).then(res => {
 				if (res.flag) {
+					that.jump('/pages/order/confirm', {});
 					console.log(res.flag)
 				}
-			}); */
+			});
 		},
 		jump:function(path, parmas) {
 			this.$Router.push({

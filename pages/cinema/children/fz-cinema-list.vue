@@ -1,7 +1,7 @@
 <template>
-	<view>
+	<view style="height: auto;">
 		<view class="head-box">
-			<swiper v-if="tabId == 'ended'" class="card-swiper round-dot" :circular="true" duration="500" @change="cardSwiper">
+			<swiper v-if="tabId == 'ended'" class="card-swiper round-dot" :circular="true" :indicator-dots="false" duration="500" @change="cardSwiper">
 				<swiper-item v-for="(item, cindex) in swiperList" :key="cindex" :class="cardCur == cindex ? 'cur' : ''">
 					<view class="swiper-item">
 						<image :src="item.url" mode="aspectFill" v-if="item.type == 'image'"></image>
@@ -123,7 +123,7 @@ export default {
 			uni.getSystemInfo({
 				success: function(res) {
 					// res - 各种参数
-					let info = uni.createSelectorQuery().select('.head-box');
+					let info = uni.createSelectorQuery().in(me).select('.head-box');
 					info.boundingClientRect(function(data) {
 						//data - 各种参数
 						me.headHeight = res.windowHeight - data.height - 3 - 35;

@@ -81,6 +81,7 @@ const actions = {
 	}) {
 		return new Promise((resolve, reject) => {
 			api('user.member').then(res => {
+				console.log(res)
 				commit('LOGIN_TIP', false);
 				commit('USER_INFO', res.data);
 				uni.setStorageSync('userInfo', res.data);

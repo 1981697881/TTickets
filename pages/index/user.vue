@@ -91,8 +91,8 @@ export default {
 			initData: state => state.init.initData, //初始化数据
 			template: state => state.init.templateData.user, //模板数据
 			userInfo: state => state.user.userInfo,
-			orderNum: state => state.user.orderNum,
-			cartNum: state => state.cart.cartNum,
+			/* orderNum: state => state.user.orderNum,
+			cartNum: state => state.cart.cartNum, */
 			forceOauth: state => state.user.forceOauth
 		}),
 		info() {
@@ -115,10 +115,10 @@ export default {
 		this.init();
 	},
 	methods: {
-		...mapActions(['getUserInfo', 'getOrderNum']),
+		...mapActions(['getUserDetails']),/* , 'getOrderNum' */
 		// 初始化
 		init() {
-			return Promise.all([this.getUserInfo(), this.getOrderNum()])
+			return Promise.all([this.getUserDetails()])/* , this.getOrderNum() */
 				.then(() => {
 					uni.stopPullDownRefresh();
 				})
