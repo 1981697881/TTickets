@@ -100,12 +100,12 @@ export default {
 				{
 					id: 'ing',
 					title: '电影票',
-					status: '0',
+					status: '2',
 				},
 				{
 					id: 'nostart',
 					title: '商品',
-					status: '0',
+					status: '4',
 				}
 			]
 		};
@@ -155,13 +155,12 @@ export default {
 			/* that.isLoading = true; */
 			that.loadStatus = 'loading';
 			that.$api('wallet.lists', {
-				open: uni.getStorageSync('openid'),
-				page: that.currentPage,
-				status : that.tabCurrent,
+				openId: uni.getStorageSync('openid'),
+				status : that.status,
 			}).then(res => {
 				if (res.flag) {
 					that.isLoading = false;
-					that.goodsList = [...that.goodsList, ...res.data.data];
+					that.goodsList = [...that.goodsList, ...res.data];
 					that.lastPage = res.data.last_page;
 					if (that.currentPage < res.data.last_page) {
 						that.loadStatus = '';

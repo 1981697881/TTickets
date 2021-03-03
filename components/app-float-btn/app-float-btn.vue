@@ -12,14 +12,14 @@
 				</view>
 			</view>
 		</view>
-		<view class="cu-modal" :class="{ show: showModal }" cathctouchmove @tap="hideModal">
+		<!-- <view class="cu-modal" :class="{ show: showModal }" cathctouchmove @tap="hideModal">
 			<view class="cu-dialog" @tap.stop style="background: none;overflow: visible;">
 				<view class="img-box">
 					<image class="modal-img" :src="modalImg" mode="widthFix" @longtap="saveImg(modalImg)"></image>
 					<text class="cuIcon-roundclose" @tap="hideModal"></text>
 				</view>
 			</view>
-		</view>
+		</view> -->
 	</view>
 </template>
 

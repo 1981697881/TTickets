@@ -96,6 +96,8 @@
 				</view>
 			</view>
 		</view>
+		<!-- 登录提示 -->
+		<app-login-modal></app-login-modal>
 	</view>
 </template>
 <script>
@@ -197,7 +199,6 @@ export default {
 			let col = 0;
 			that.$api('cinema.seatsLists', this.listParams).then(res => {
 				if (res.flag) {
-					console.log(seatData)
 					let arr = res.data;
 					let minCol = parseInt(arr[0].xcoord);
 					let minRow = parseInt(arr[0].ycoord);
@@ -322,8 +323,11 @@ export default {
 			}
 			that.$api('cinema.lockSeats', {sIds:oldArray,openId:uni.getStorageSync('openid')}).then(res => {
 				if (res.flag) {
-					that.jump('/pages/order/confirm', {});
-					console.log(res.flag)
+					let result = {...res.data}
+					delete result.engrosses
+					delete result.createDatetime
+					delete result.filmPhoto
+					that.jump('/pages/order/confirm', result);
 				}
 			});
 		},
@@ -351,7 +355,6 @@ export default {
 				this.totalPrice = this.totalPrice + 1 * Number(seat.money)
 				this.getOptArr(newArray[row][col], 1);
 			}
-			console.log(this.totalPrice)
 			//必须整体更新二维数组，Vue无法检测到数组某一项更新,必须slice复制一个数组才行
 			this.seatArray = newArray.slice();
 		},

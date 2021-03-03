@@ -6,7 +6,7 @@
 				<view class="titleNav pad">
 					<view class="status-bar"></view>
 					<text class="nav-title x-f">
-						我的
+						个人中心
 						<!-- <text @tap="onService" class="cuIcon-servicefill"></text> -->
 					</text>
 				</view>
@@ -16,7 +16,7 @@
 						<view class="info-box">
 							<view class="x-f">
 								<view class="head-img-wrap">
-									<image class="head-img" @tap.stop="jump('/pages/user/info')" :src="userInfo.avatar || '/static/imgs/base_avatar.png'" mode="aspectFill"></image>
+									<image class="head-img" @tap.stop="jump('/pages/user/info')" :src="userInfo.avatarUrl || '/static/imgs/base_avatar.png'" mode="aspectFill"></image>
 									<block v-if="platform !== 'H5'">
 										<button v-if="platform === 'wxMiniProgram'" open-type="getUserInfo" @getuserinfo="refreshWechatUser" class="cu-btn refresh-btn x-c">
 											<text class="cuIcon-refresh" :class="{ 'refresh-rotate': isRefresh }"></text>
@@ -26,7 +26,7 @@
 										</button>
 									</block>
 								</view>
-								<text @tap.stop="jump('/pages/user/info')" class="user-name one-t">{{ userInfo.nickname || '请登录~' }}</text>
+								<text @tap.stop="jump('/pages/user/info')" class="user-name one-t">{{ userInfo.username || '请登录~' }}</text>
 							</view>
 						</view>
 						<view class="grade-tag tag-box x-f" v-if="userInfo.group">
@@ -35,7 +35,7 @@
 						</view>
 					</view>
 					<view class="x-f">
-						<button class="cu-btn code-btn" v-if="userInfo.avatar" @tap="jump('/pages/public/poster/index', { posterType: 'user' })">
+						<button class="cu-btn code-btn" v-if="userInfo.avatarUrl" @tap="jump('/pages/public/poster/index', { posterType: 'user' })">
 							<text class="cuIcon-qr_code"></text>
 						</button>
 						<button v-if="userInfo.is_store" @tap="goStore" class="cu-btn merchant-btn">切换商家版</button>
@@ -44,9 +44,9 @@
 			</view>
 		</view>
 		<!-- 绑定手机 -->
-		<view class="notice-box x-bc pad" v-if="!userInfo.mobile && userInfo.nickname" @tap="jump('/pages/user/edit-phone', { fromType: 'bind' })">
+		<view class="notice-box x-bc pad" v-if="!userInfo.mobile && userInfo.username">
 			<view class="notice-detail one-t">点击绑定手机号，确保账户安全</view>
-			<button class="bindPhone cu-btn">去绑定</button>
+			<button class="bindPhone cu-btn" open-type="getPhoneNumber" @getphonenumber="bindPhone">去绑定</button>
 		</view>
 		<!-- 绑定微信 -->
 		<view class="notice-box x-bc pad" v-if="false" @tap="jump('/pages/user/edit-phone', { fromType: 'bind' })">
@@ -120,6 +120,20 @@ export default {
 			} else if (this.platform === 'wxMiniProgram') {
 				this.$store.commit('FORCE_OAUTH', true);
 			}
+		},
+		bindPhone(e){
+			console.log(e)
+			let me = this
+			me.$api('user.getWxMiniPhoneNumber', {sessionKey: uni.getStorageSync('session_key'),
+				openid: uni.getStorageSync('openid'),
+				encryptedData: e.detail.encryptedData,
+				iv: e.detail.iv}).then(res => {
+				if (res.flag) {
+					console.log(res)
+					me.jump('/pages/user/edit-phone', { fromType: 'bind' })
+				}
+			});
+			
 		}
 	}
 };

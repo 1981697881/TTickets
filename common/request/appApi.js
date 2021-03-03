@@ -67,7 +67,6 @@ export default {
 		method: 'GET',
 		// desc: '直播列表',
 	},
-
 	/** 微信Jssdk ↓ **/
 	wechat: {
 		jssdk: {
@@ -77,7 +76,6 @@ export default {
 			// desc: '微信Jssdk',
 		},
 	},
-
 	/** 签到 ↓ **/
 	user_sign: {
 		index: {
@@ -218,7 +216,7 @@ export default {
 	/** 票夹 ↓ **/
 	wallet:{
 		lists: {
-			url: 'app/api/hotMovieList',
+			url: 'memberTicket/userTicketForm',
 			auth: true,
 			method: 'POST',
 			// desc: '票劵列表',
@@ -245,7 +243,7 @@ export default {
 			// desc: '座位列表',
 		},
 		lockSeats: {
-			url: 'app/api/lockSeats',
+			url: 'memberTicket/lockSeats',
 			auth: true,
 			method: 'POST',
 			// desc: '提交订单',
@@ -401,6 +399,12 @@ export default {
 			auth: false,
 			method: 'POST',
 			// desc: '获取用户session_key',
+		},
+		getWxMiniPhoneNumber: {
+			url: 'phone/phoneNumber',
+			auth: false,
+			method: 'POST',
+			// desc: '获取用户手机号码',
 		},
 
 		wxMiniProgramLogin: {

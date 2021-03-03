@@ -432,6 +432,16 @@
 						"auth": true,
 						"async": false
 					}
+				},{
+					"path": "reserve",
+					"style": {
+						"navigationBarTitleText": "确认订单"
+
+					},
+					"meta": {
+						"auth": false,
+						"async": true
+					}
 				},
 				{
 					"path": "business-address",

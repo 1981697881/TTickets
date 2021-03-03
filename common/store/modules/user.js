@@ -31,7 +31,7 @@ const actions = {
 		commit
 	}, token) {
 		uni.setStorageSync('token', token);
-		store.dispatch('getUserInfo');
+		store.dispatch('getUserDetails');
 		let fromLogin = uni.getStorageSync('fromLogin');
 		if (fromLogin) {
 			tools.routerTo(fromLogin.path, fromLogin.query, true);
@@ -80,13 +80,12 @@ const actions = {
 		commit
 	}) {
 		return new Promise((resolve, reject) => {
-			api('user.member').then(res => {
+			api('user.member',{openId: uni.getStorageSync('openid')}).then(res => {
 				console.log(res)
 				commit('LOGIN_TIP', false);
 				commit('USER_INFO', res.data);
 				uni.setStorageSync('userInfo', res.data);
 				resolve(res)
-	
 			}).catch(e => {
 				reject(e)
 			})

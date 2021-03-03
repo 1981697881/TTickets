@@ -2,7 +2,7 @@
 	<view class="page_box">
 		<view class="head_box"></view>
 		<view class="content_box">
-			<view class="y-f money-box" v-if="orderDetail.total_fee">
+			<view class="y-f money-box" v-if="orderDetail.ticketId">
 				<text class="time" v-if="isPast">{{ timeText }}</text>
 				<view class="money">{{ orderDetail.total_fee }}</view>
 			</view>
@@ -71,6 +71,9 @@ export default {
 	},
 	onLoad(options) {
 		this.options = options;
+		if(this.$Route.query){
+			this.orderDetail = this.$Route.query
+		}
 		if (options.openid) {
 			//检测到回传openid
 			uni.setStorageSync('openid', options.openid);
@@ -84,7 +87,7 @@ export default {
 		}
 		uni.removeStorageSync('payReload');
 		// #endif
-		this.init();
+		/* this.init(); */
 	},
 	onShow() {},
 	onHide() {
