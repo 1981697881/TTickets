@@ -129,8 +129,8 @@ export default {
 				encryptedData: e.detail.encryptedData,
 				iv: e.detail.iv}).then(res => {
 				if (res.flag) {
-					console.log(res)
-					me.jump('/pages/user/edit-phone', { fromType: 'bind' })
+					uni.getStorageSync('phone',res.data)
+					me.jump('/pages/user/edit-phone', { fromType: 'bind',phone:res.data })
 				}
 			});
 			

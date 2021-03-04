@@ -160,6 +160,10 @@ export default {
 			return 750 / this.boxWidth;
 		}
 	},
+	onShow(){
+		console.log(123)
+		this.initData();
+	},
 	onLoad() {
 		this.head = this.$Route.query
 		this.listParams.sessionsId = this.$Route.query.sessionsId
@@ -324,10 +328,10 @@ export default {
 			that.$api('cinema.lockSeats', {sIds:oldArray,openId:uni.getStorageSync('openid')}).then(res => {
 				if (res.flag) {
 					let result = {...res.data}
-					delete result.engrosses
 					delete result.createDatetime
 					delete result.filmPhoto
-					that.jump('/pages/order/confirm', result);
+					result.engrosses = JSON.stringify(result.engrosses)
+					that.jump('/pages/order/reserve', result);
 				}
 			});
 		},
@@ -471,11 +475,9 @@ export default {
 					}
 				});
 			}
-
 			//直接返回结果
 			return finalReuslt;
 		},
-
 		/*辅助函数，判断每一行座位从i列到j列是否全部空余且连续
 		 *
 		 */

@@ -248,6 +248,12 @@ export default {
 			method: 'POST',
 			// desc: '提交订单',
 		},
+		escSeats: {
+			url: 'memberTicket/escUserTicketForm',
+			auth: true,
+			method: 'POST',
+			// desc: '提交订单',
+		},
 		studios: {
 			url: 'app/api/locations',
 			auth: false,
