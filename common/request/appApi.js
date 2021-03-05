@@ -221,6 +221,12 @@ export default {
 			method: 'POST',
 			// desc: '票劵列表',
 		},
+		detail: {
+			url: 'memberTicketDetail/userTicketFormDetail',
+			auth: true,
+			method: 'POST',
+			// desc: '票劵详情',
+		},
 	},
 	/** 影讯 ↓ **/
 	cinema: {

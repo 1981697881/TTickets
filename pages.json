@@ -390,9 +390,7 @@
 					},
 					"meta": {
 						"auth": false,
-						"async": true,
-						"title": "票据详情",
-						"group": "票夹"
+						"async": true
 					}
 				}
 				// 票夹------end

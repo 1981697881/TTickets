@@ -51,11 +51,20 @@ export default {
 		};
 	},
 	onLoad() {
-		/* this.getGrouponList(); */
+		if(this.$Route.query){
+			this.ticketId = this.$Route.query.ticketId
+			this.getOrderDetail()
+		}
 	},
 	onPullDownRefresh() {},
 	computed: {},
 	methods: {
+		// 加载更多
+		loadMore() {
+			if (this.currentPage < this.lastPage) {
+				this.currentPage += 1;
+			}
+		},
 		// 路由跳转
 		jump(path, parmas) {
 			this.$Router.push({
@@ -63,34 +72,16 @@ export default {
 				query: parmas
 			});
 		},
-		// 加载更多
-		loadMore() {
-			if (this.currentPage < this.lastPage) {
-				this.currentPage += 1;
-				this.getGrouponList();
-			}
-		},
-		// 拼团列表
-		getGrouponList() {
+		getOrderDetail(){
 			let that = this;
-			that.isLoading = true;
-			that.loadStatus = 'loading';
-			that.$api('goods.grouponList', {
-				page: that.currentPage
+			that.$api('wallet.lists', {
+				ticketId : that.ticketId,
 			}).then(res => {
-				if (res.code === 1) {
-					that.isLoading = false;
-					that.grouponList = [...that.grouponList, ...res.data.data];
-					// that.grouponList=[];
-					that.lastPage = res.data.last_page;
-					if (that.currentPage < res.data.last_page) {
-						that.loadStatus = '';
-					} else {
-						that.loadStatus = 'over';
-					}
+				if (res.flag) {
+					that.walletInfo = res.data;
 				}
 			});
-		}
+		},
 	}
 };
 </script>

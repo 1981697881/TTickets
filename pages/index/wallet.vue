@@ -11,24 +11,27 @@
 		<view class="content_box">
 			<scroll-view scroll-y="true" enable-back-to-top @scrolltolower="loadMore" class="scroll-box">
 				<view class="goods-item" v-for="item in goodsList" :key="item.id">
-					<wallet-list :cardId="item.id" :title="item.title" :subtitle="item.subtitle" :img="item.image" :price="item.price" :originalPrice="item.original_price">
+					<wallet-list :cardId="item.ticketId" :title="item.filmName" :subtitle="item.cinemaName" :img="item.filmPhoto" :price="item.payMoney" :originalPrice="item.payMemberMoney">
 						<block slot="sell">
-							<view class="x-f">
+							<!-- <view class="x-f">
 								<view class="cu-progress round sm">
 									<view class="progress--color" :style="[{ width: loading ? getProgress(item.sales, item.stock) : '' }]"></view>
 								</view>
 								<view class="progress-text">已抢{{ getProgress(item.sales, item.stock) }}</view>
+							</view> -->
+							<view class="x-f">
+								<view>{{item.sessionsDate}} {{item.sessionsStarttime}}</view>
 							</view>
 						</block>
 						<block slot="btn">
 							<view class="fot-text">
 								<view class="text-grey">
-									共 <text class="text-black text-bold text-xl padding-xs"> 2 </text> 张
+									共 <text class="text-black text-bold text-xl padding-xs"> {{item.count}} </text> 张
 									</view>
 								<view class="fot-btn">
-								<button v-if="btnType[tabCurrent].color=='btn-end'" @tap.stop="jump('/pages/order/add-comment', {id: item.id})" class="cu-btn buy-btn" :class="btnType[tabCurrent].color">{{ btnType[tabCurrent].name }}</button>
-								<button v-if="btnType[tabCurrent].color=='btn-ing'" @tap.stop="jump('/pages/wallet/detail/index', {id: item.id})" class="cu-btn buy-btn" :class="btnType[tabCurrent].color">{{ btnType[tabCurrent].name }}</button>
-								<button v-if="btnType[tabCurrent].color=='btn-nostart'" @tap.stop="jump('/pages/wallet/detail/index', {id: item.id})" class="cu-btn buy-btn" :class="btnType[tabCurrent].color">{{ btnType[tabCurrent].name }}</button>
+								<button v-if="btnType[tabCurrent].color=='btn-end'" @tap.stop="jump('/pages/order/add-comment', {ticketId : item.ticketId })" class="cu-btn buy-btn" :class="btnType[tabCurrent].color">{{ btnType[tabCurrent].name }}</button>
+								<button v-if="btnType[tabCurrent].color=='btn-ing'" @tap.stop="jump('/pages/wallet/index', {ticketId : item.ticketId })" class="cu-btn buy-btn" :class="btnType[tabCurrent].color">{{ btnType[tabCurrent].name }}</button>
+								<button v-if="btnType[tabCurrent].color=='btn-nostart'" @tap.stop="jump('/pages/wallet/index', {ticketId : item.ticketId })" class="cu-btn buy-btn" :class="btnType[tabCurrent].color">{{ btnType[tabCurrent].name }}</button>
 								</view>
 							</view>
 						</block>

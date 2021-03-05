@@ -161,7 +161,8 @@ export default {
 		}
 	},
 	onShow(){
-		console.log(123)
+		this.SelectNum = 0
+		this.optArr = []
 		this.initData();
 	},
 	onLoad() {
