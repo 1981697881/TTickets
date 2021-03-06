@@ -1,7 +1,7 @@
 <template>
 	<view class="group-head">
-		<view class="head-title"><text>{{detail.title}}</text></view>
-		<view class="head-buttitle"><text></text>{{detail.butTitle}}</view>
+		<view class="head-title"><text></text></view>
+		<view class="head-buttitle"><text></text></view>
 		<view class="head-btn" v-if="detail.state=='end'">
 			<view><button @tap.stop="jump('/pages/order/add-comment', { id: detail.id })" class="cu-btn buy-btn">评价影片</button></view>
 			<view><button @tap.stop="jump('/pages/order/add-comment', { id: detail.id })" class="cu-btn buy-btn">评价影院</button></view>

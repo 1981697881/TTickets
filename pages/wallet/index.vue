@@ -74,7 +74,7 @@ export default {
 		},
 		getOrderDetail(){
 			let that = this;
-			that.$api('wallet.lists', {
+			that.$api('wallet.detail', {
 				ticketId : that.ticketId,
 			}).then(res => {
 				if (res.flag) {
