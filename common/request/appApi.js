@@ -684,7 +684,7 @@ export default {
 	/** 支付 ↓ **/
 	pay: {
 		prepay: {
-			url: 'pay/prepay',
+			url: 'WeChat/payMoney',
 			auth: true,
 			method: 'POST',
 			// desc: '发起支付',

@@ -63,7 +63,7 @@
 				<text>合计：</text>
 				<text class="price">￥{{ orderPre.total_fee || '0.00' }}</text>
 			</view>
-			<button class="cu-btn sub-btn bg-red" @tap="subOrder" :disabled="isSubOrder">
+			<button class="cu-btn sub-btn bg-red" @tap="confirmPay" :disabled="isSubOrder">
 				<text v-if="isSubOrder" class="cuIcon-loading2 cuIconfont-spin"></text>
 				立即购买
 			</button>
@@ -78,6 +78,7 @@
 <script>
 import appMiniCard from '@/components/fz-mini-card/fz-mini-card.vue';
 import shPickerModal from './children/sh-picker-modal.vue';
+import AppPay from '@/common/app-pay';
 import { mapMutations, mapActions, mapState } from 'vuex';
 // #ifdef H5
 import wxsdk from '@/common/wechat/sdk';
@@ -99,6 +100,10 @@ export default {
 				title: '选择优惠券',
 				couponList: []
 			},
+			isPast: true, //是否显示订单倒计时。
+			isAndroid: uni.getStorageSync('isAndroid'),
+			platform: uni.getStorageSync('platform'),
+			payType: 'wechat',
 			from: '',
 			orderType: '',
 			grouponBuyType: 'alone',
@@ -139,7 +144,12 @@ export default {
 			return true; //阻止默认返回行为
 		}
 	},
-	async onLoad() {
+	async onLoad(options) {
+		this.options = options;
+		if (options.openid) {
+			//检测到回传openid
+			uni.setStorageSync('openid', options.openid);
+		}
 		if(this.$Route.query){
 			this.perGoodsList = {...this.$Route.query}
 			this.perGoodsList.engrosses = JSON.parse(this.perGoodsList.engrosses)
@@ -175,6 +185,11 @@ export default {
 					});
 				}
 			});
+		},
+		// 发起支付
+		confirmPay() {
+			let that = this;
+			let pay = new AppPay(that.payType, that.perGoodsList);
 		},
 		jump(path, parmas) {
 			this.$Router.push({
@@ -219,12 +234,13 @@ export default {
 			this.checkTime = obj;
 		},
 		escOrder() {
+			console.log('进入取消订单流程')
 			let that = this;
 			that.$api('cinema.escSeats', {
 				ticketId: perGoodsList.ticketId
 			}).then(res => {
 				if (res.flag) {
-					console.log(re);
+					console.log(res);
 				}
 			});
 		},
@@ -274,47 +290,6 @@ export default {
 					})
 				}
 			}); */
-		},
-		// 提交订单
-		subOrder() {
-			let that = this;
-			that.isSubOrder = true;
-			that.$api('order.createOrder', {
-				goods_list: that.goodsList,
-				from: that.from,
-				address_id: that.addressId,
-				coupons_id: that.couponId,
-				remark: that.remark,
-				order_type: that.orderType,
-				buy_type: that.grouponBuyType,
-				groupon_id: that.grouponId
-			}).then(res => {
-				if (res.code === 1) {
-					let orderId = res.data.id;
-					let orderSn = res.data.order_sn;
-					that.getCartList();
-					that.isSubOrder = false;
-					//  #ifdef MP-WEIXIN
-					res.data.activity_type == 'groupon' ? this.$store.dispatch('getMessageIds', 'grouponResult') : this.$store.dispatch('getMessageIds', 'result');
-					//  #endif
-					if (res.data.status > 0) {
-						that.$Router.replace({
-							path: '/pages/order/payment/result',
-							query: {
-								orderSn: orderSn,
-								type: '',
-								pay: 1
-							}
-						});
-					} else {
-						uni.redirectTo({
-							url: `/pages/order/payment/method?orderId=${orderId}`
-						});
-					}
-				} else {
-					that.isSubOrder = false;
-				}
-			});
 		},
 		// 可用优惠券
 		getCoupons() {

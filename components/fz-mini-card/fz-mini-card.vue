@@ -62,7 +62,7 @@ export default {
 			let date =new Date()
 			let year=date.getFullYear();
 			let month=date.getMonth()+1;
-			let lastDay=new Date('2021-03-05').getDate() - new Date().getDate() +1
+			let lastDay=new Date(this.detail.sessionsDate).getDate() - new Date().getDate() +1
 			for(let i = 0;i<lastDay;i++){
 				let obj = tools.getDayList('',i)
 				if(i==0){

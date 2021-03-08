@@ -74,6 +74,7 @@ export default class AppPay {
 				},
 			},
 		}
+		console.log(this.platform)
 		return payMethod[this.platform][this.payment];
 	}
 
@@ -88,20 +89,21 @@ export default class AppPay {
 		return new Promise((resolve, reject) => {
 			let that = this;
 			let params = {
-				order_sn: that.order.order_sn,
-				payment: that.payment
+				ticketId: that.order.ticketId,
+				ticketPaymoney: that.order.payMemberMoney
 			}
 			if (uni.getStorageSync('openid')) {
-				params.openid = uni.getStorageSync('openid');
+				params.openId = uni.getStorageSync('openid');
 			}
+			console.log(params)
 			api('pay.prepay', params).then(res => {
-				if (res.code === 1) {
+				if (res.flag) {
+					console.log(res)
 					if (res.data === 'no_openid') {
 						uni.showModal({
 							title: '微信支付',
 							content: '点击确定后请再次使用微信支付',
 							success: function(res) {
-
 								if (res.confirm) {
 									//静默获取openid
 									let wechat = new Wechat();
@@ -114,7 +116,6 @@ export default class AppPay {
 								uni.hideLoading();
 							}
 						});
-
 					} else {
 						uni.hideLoading();
 						resolve(res);
@@ -135,7 +136,7 @@ export default class AppPay {
 	async wxOfficialAccountPay() {
 		let that = this;
 		let result = await this.prepay();
-		wxsdk.wxpay(result.data.pay_data, (res) => {
+		wxsdk.wxpay(result.data, (res) => {
 			if (res.errMsg == "chooseWXPay:ok") {
 				Router.replace({
 					path: '/pages/order/payment/result',
@@ -180,7 +181,7 @@ export default class AppPay {
 	async wxMiniProgramPay() {
 		let that = this;
 		let result = await this.prepay();
-		let payData = result.data.pay_data;
+		let payData = result.data;
 		uni.requestPayment({
 			provider: 'wxpay',
 			timeStamp: payData.timeStamp,

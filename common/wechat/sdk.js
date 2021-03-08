@@ -164,7 +164,6 @@ export default {
 					},
 					cancel: function(res) {
 						that.tools.toast('取消支付')
-
 					},
 				});
 			});
