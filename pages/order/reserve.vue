@@ -61,7 +61,7 @@
 			<text class="num">共1件</text>
 			<view class="all-money">
 				<text>合计：</text>
-				<text class="price">￥{{ orderPre.total_fee || '0.00' }}</text>
+				<text class="price">￥{{ perGoodsList.payMoney || '0.00' }}</text>
 			</view>
 			<button class="cu-btn sub-btn bg-red" @tap="confirmPay" :disabled="isSubOrder">
 				<text v-if="isSubOrder" class="cuIcon-loading2 cuIconfont-spin"></text>
@@ -237,7 +237,7 @@ export default {
 			console.log('进入取消订单流程')
 			let that = this;
 			that.$api('cinema.escSeats', {
-				ticketId: perGoodsList.ticketId
+				ticketId: that.perGoodsList.ticketId
 			}).then(res => {
 				if (res.flag) {
 					console.log(res);

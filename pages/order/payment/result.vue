@@ -1,9 +1,9 @@
 <template>
 	<view class="success-page">
-		<view class="success-box flex flex-direction align-center" v-if="orderDetail.total_fee">
+		<view class="success-box flex flex-direction align-center" v-if="orderDetail.ticketId">
 			<image class="pay-img" :src="pay ? 'http://shopro.7wpp.com/imgs/pay_success.png' : 'http://shopro.7wpp.com/imgs/pay_fail.png'" mode=""></image>
 			<text class="notice">{{ pay ? '支付成功' : '支付失败' }}</text>
-			<text class="pay-money" v-if="pay && orderDetail.total_fee">￥{{ orderDetail.total_fee }}</text>
+			<text class="pay-money" v-if="pay && orderDetail.ticketPaymoney">￥{{ orderDetail.ticketPaymoney }}</text>
 			<view class="btn-box flex justify-between">
 				<block v-if="pay && orderDetail.activity_type === 'groupon' && orderDetail.ext_arr.buy_type === 'groupon'">
 					<button
@@ -39,14 +39,11 @@ export default {
 	},
 	computed: {},
 	onLoad() {
-		this.pay = +this.$Route.query.pay;
-		if (this.pay) {
-			this.getCartList();
-		}
-		this.getOrderDetail();
+		console.log(this.$Route.query)
+		this.orderDetail = this.$Route.query;
+		/* this.getOrderDetail(); */
 	},
 	methods: {
-		...mapActions(['getCartList']),
 		jump(path, parmas) {
 			this.$Router.push({
 				path: path,
@@ -62,8 +59,8 @@ export default {
 		// 查看订单
 		onOrder() {
 			this.$Router.replace({
-				path: '/pages/order/detail',
-				query: { id: this.orderDetail.id }
+				path: '/pages/wallet/index',
+				query: { ticketId: this.orderDetail.ticketId }
 			});
 		},
 		// 支付信息

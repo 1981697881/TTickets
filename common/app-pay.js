@@ -193,7 +193,7 @@ export default class AppPay {
 				Router.replace({
 					path: '/pages/order/payment/result',
 					query: {
-						orderSn: that.order.order_sn,
+						orderSn: that.order,
 						type: that.payment,
 						pay: 1
 					}
@@ -204,7 +204,7 @@ export default class AppPay {
 					Router.replace({
 						path: '/pages/order/payment/result',
 						query: {
-							orderSn: that.order.order_sn,
+							orderSn: that.order,
 							type: that.payment,
 							pay: 0
 						}
