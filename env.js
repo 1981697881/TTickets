@@ -10,8 +10,8 @@ let protocol = window.location.protocol;
 // #endif
 // https://api.7wpp.com
 const ENV_BASE_URL = {
-	development: 'http://gzfzdev.com', //开发环境
-	production: 'http://gzfzdev.com', //生产环境
+	development: 'http://test.gzfzdev.com:8080', //开发环境
+	production: 'http://test.gzfzdev.com:8080', //生产环境
 }
 // /addons/shopro
 const ENV_API_URL = {

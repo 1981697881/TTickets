@@ -25,13 +25,13 @@
 		</view>
 		<view class="swiper-box x-f" v-if="tabId=='ended'">
 			<swiper class="carousel" @change="swiperChange">
-				<swiper-item v-for="(goods, swindex) in detail.marshallinDetail" :key="swindex" class="carousel-item">
-					<view class="min-goods" @tap="jump('/pages/cinema/movie/list', { sessionsId: goods.sessionsId,hallType: goods.hallType,sessionsStarttime: goods.sessionsStarttime,filmName:goods.filmName,hallName:goods.hallName,sessionsDate:goods.sessionsDate})">
+				<swiper-item v-for="(goods, swindex) in detail.schedules" :key="swindex" class="carousel-item">
+					<view class="min-goods" @tap="jump('/pages/cinema/movie/list', { scheduleId: goods.scheduleId,schedulekey:goods.schedulekey,language: goods.language,dimensional: goods.dimensional,filmName:goods.filmName,showDatetime:goods.showDatetime})">
 						<view class="price-box">
 							<view class="y-f text-black">
-								<text class="text-bold seckill-current">{{goods.sessionsStarttime}}</text>
-								<text class="seckill-lau text-grey">{{goods.hallType}}</text>
-								<text class="original text-red">￥{{ goods.money }}</text>
+								<text class="text-bold seckill-current">{{goods.showDatetime.substring(11,16)}}</text>
+								<text class="seckill-lau text-grey">{{goods.language}} {{goods.dimensional}}</text>
+								<text class="original text-red">￥{{ goods.standardprice }}</text>
 							</view>
 						</view>
 						<view class="title"><slot name="titleText"></slot></view>
@@ -58,6 +58,7 @@ export default {
 			}
 		};
 	},
+	
 	props: {
 		isTag: {
 			type: [Boolean, String],
@@ -76,6 +77,7 @@ export default {
 	mounted() {
 		this.info = { ...this.detail}
 		delete this.info.marshallinDetail
+		delete this.info.schedules
 		delete this.info.cinemaContact
 		delete this.info.status
 		delete this.info.cinemaKeysWord
@@ -84,15 +86,21 @@ export default {
 		delete this.info.cinemaTel
 		delete this.info.createDatetime
 		delete this.info.editDatetime
+		delete this.info.scheduleVOS
 		this.info.filmId = this.filmId
-		let keyword = this.info.keysWord
-		keyword.forEach((item,index)=>{
-			let obj = {
-				name:this.ColorList[index].name,
-				title:item
-			}
-			this.cinemaKeysWord.push(obj)
-		})
+		if(this.info.keysWord){
+			let keyword = this.info.keysWord
+			keyword.forEach((item,index)=>{
+				let obj = {
+					name:this.ColorList[index].name,
+					title:item
+				}
+				this.cinemaKeysWord.push(obj)
+			})
+		}else{
+			this.info.keysWord = []
+		}
+		console.log(this.info)
 	},
 	computed: {},
 	methods: {
@@ -132,7 +140,7 @@ export default {
 	overflow: hidden;
 	.content-box {
 		width: 100%;
-		height: 200rpx;
+		height: auto;
 		overflow: hidden;
 		position: relative;
 		padding: 20rpx;

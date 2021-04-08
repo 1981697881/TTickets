@@ -1,5 +1,5 @@
 <template>
-	<view v-if="floatList && floatList.length" class="app-float-btn">
+	<view v-if="!floatList && floatList.length" class="app-float-btn">
 		<view :class="{ 'btn-mark': showBtnList }" cathctouchmove @tap="hideBtnModal"></view>
 		<button class="cu-btn wechat-btn" @tap="onBtn">
 			<image class="wechat_img" :src="floatList.length == 1 ? floatList[0].btnimage : floatData.image" mode="widthFix"></image>

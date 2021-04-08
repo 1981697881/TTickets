@@ -6,7 +6,6 @@ import {
 } from '@/env'
 
 export default class Wechat {
-
 	async login() {
 		let token = '';
 		if (router.$Route.path.indexOf('public/login') == -1) {
@@ -104,6 +103,7 @@ export default class Wechat {
 									if (res.flag) {
 										uni.setStorageSync('session_key', res.data.session_key);
 										uni.setStorageSync('openid', res.data.openid);
+										uni.setStorageSync('token', res.data.token);
 										session_key = res.data.session_key;
 									}
 								});

@@ -243,13 +243,13 @@ export default {
 			// desc: '影片的影城和场次',
 		},
 		seatsLists: {
-			url: 'app/api/detailSeats',
+			url: 'app/api/scheduleSeats',
 			auth: false,
 			method: 'POST',
 			// desc: '座位列表',
 		},
 		lockSeats: {
-			url: 'memberTicket/lockSeats',
+			url: 'app/api/lockSeats',
 			auth: true,
 			method: 'POST',
 			// desc: '提交订单',
@@ -673,12 +673,12 @@ export default {
 			method: 'GET',
 			// desc: '包裹详情',
 		},
-		itemDetail: {
+		/* itemDetail: {
 			url: 'order/itemDetail',
 			auth: true,
 			method: 'GET',
 			// desc: '订单商品详情',
-		}
+		} */
 	},
 
 	/** 支付 ↓ **/

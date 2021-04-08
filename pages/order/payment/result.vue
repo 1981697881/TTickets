@@ -16,7 +16,7 @@
 					<button class="cu-btn base-btn" v-else @tap="replace('/pages/activity/groupon/my-groupon')">我的拼团</button>
 				</block>
 				<button class="cu-btn base-btn" v-else @tap="routerTo.push('/pages/index/index')">返回首页</button>
-				<button class="cu-btn base-btn" @tap="onOrder">查看订单</button>
+				<button class="cu-btn base-btn" v-if="pay" @tap="onOrder">查看订单</button>
 				<button class="again-pay cu-btn" v-if="!pay" @tap="onPay">重新支付</button>
 			</view>
 		</view>
@@ -41,6 +41,7 @@ export default {
 	onLoad() {
 		console.log(this.$Route.query)
 		this.orderDetail = this.$Route.query;
+		this.pay = this.$Route.query.pay;
 		/* this.getOrderDetail(); */
 	},
 	methods: {

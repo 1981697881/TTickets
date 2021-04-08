@@ -142,6 +142,7 @@ export default {
 		this.setimgs();
 		this.listParams.sessionsDate = tools.getDayList('', 0).day;
 		this.circuit = this.swiperList[0].name;
+		console.log(this.$Route.query)
 		if (this.$Route.query.filmId) {
 			this.listParams.filmId = this.$Route.query.filmId;
 		} 

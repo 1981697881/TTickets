@@ -3,8 +3,8 @@
 		<view class="bg-f1 h-100vh">
 			<view class="pt-f left-0 w-100 p-0-32 bg-white z1000" :style="'height: 162rpx;top:0'">
 				<view>
-					<view class="fz-34 fw-b pt-20">{{head.filmName}}</view>
-					<view class="mt-10 fz-28 color-666">{{head.sessionsDate}} {{head.sessionsStarttime}} {{head.hallType}}</view>
+					<view class="fz-34 fw-b pt-20">{{ head.filmName }}</view>
+					<view class="mt-10 fz-28 color-666">{{ head.showDatetime }}</view>
 				</view>
 			</view>
 			<movable-area :style="'height:' + (seatRow * 40 + 350) + 'rpx;width: 100vw;top:' + rpxNum * 132 + 'px'" class="pt-f left-0">
@@ -32,7 +32,7 @@
 						</view>
 					</view>
 
-					<view class="Stage dp-f jc-c ai-c fz-22 color-333">{{head.hallName}}</view>
+					<view class="Stage dp-f jc-c ai-c fz-22 color-333">{{ head.language }} {{ head.dimensional }}</view>
 					<view style="width: 100rpx;height: 30rpx;" class="m-0-a mt-48 dp-f jc-c ai-c fz-20 color-999 b-1 br-5">银幕中央</view>
 					<view class="pt-f pa-v-2 b-d-1" :style="'height:' + seatRow * (20 + seatSize * pxNum) + 'rpx;top:165rpx;width:0'"></view>
 					<view v-for="(item, index) in seatArray" :key="index" class="dp-f jc-c mt-20" :style="'width:' + boxWidth + 'px;height:' + seatSize + 'px'">
@@ -41,7 +41,7 @@
 							:key="col"
 							class="dp-ib"
 							:style="'width:' + seatSize + 'px;height:' + seatSize + 'px'"
-							@click="handleChooseSeat(index, col,seat)"
+							@click="handleChooseSeat(index, col, seat)"
 						>
 							<image v-if="seat.type === 0" class="w-100 h-100" src="../../../static/unselected.png" mode="aspectFit"></image>
 							<image v-else-if="seat.type === 1" class="w-100 h-100" src="../../../static/selected.png" mode="aspectFit"></image>
@@ -109,7 +109,6 @@
  *
  */
 
-import { seatData } from '@/common/utils/seat-data.js';
 export default {
 	data() {
 		return {
@@ -125,19 +124,21 @@ export default {
 			seatCol: 0, //影院座位列数
 			seatSize: 0, //座位尺寸
 			SelectNum: 0, //选择座位数
-			listParams:{
-				sId: null,
-				sessionsId: null,
+			listParams: {
+				scheduleId: null,
+				schedulekey: null
 			},
-			head:{
+			head: {
 				filmName: null,
-				hallName: null,
+				language: null,
+				dimensional: null,
 				hallType: null,
-				sessionsDate: null,
-				sessionsId: null,
-				sessionsStarttime: null,
+				showDatetime: null,
+				scheduleId: null,
+				schedulekey: null,
+				sessionsStarttime: null
 			},
-			totalPrice: 0,//总价
+			totalPrice: 0, //总价
 			moveX: 0, //水平移动偏移量
 			scale: 1, //放大倍数
 			minRow: 0, //从第几行开始排座位
@@ -160,14 +161,15 @@ export default {
 			return 750 / this.boxWidth;
 		}
 	},
-	onShow(){
-		this.SelectNum = 0
-		this.optArr = []
+	onShow() {
+		this.SelectNum = 0;
+		this.optArr = [];
 		this.initData();
 	},
 	onLoad() {
-		this.head = this.$Route.query
-		this.listParams.sessionsId = this.$Route.query.sessionsId
+		this.head = this.$Route.query;
+		this.listParams.scheduleId = this.$Route.query.scheduleId;
+		this.listParams.schedulekey = this.$Route.query.schedulekey;
 		//获取宽度
 		uni.getSystemInfo({
 			success: function(e) {
@@ -193,25 +195,26 @@ export default {
 				return 'green';
 			} else if (seatItem.type === 2) {
 				return 'red';
-			} else if (seatItem.type === 0) { 
+			} else if (seatItem.type === 0) {
 				return 'white';
 			}
 		},
 		initData: function() {
 			let that = this;
-			//假数据说明：sid座位编号，rowNum-行号，columnNum-纵号，ycoord-Y坐标，xcoord-X坐标，status-状态
+			//假数据说明：sid座位编号，rowNum-行号，columnNum-纵号，y-Y坐标，x-X坐标，status-状态
 			let row = 0;
 			let col = 0;
 			that.$api('cinema.seatsLists', this.listParams).then(res => {
 				if (res.flag) {
-					let arr = res.data;
-					let minCol = parseInt(arr[0].xcoord);
-					let minRow = parseInt(arr[0].ycoord);
+					let arr = res.data.scheduleSeats;
+					console.log(arr[0]);
+					let minCol = parseInt(arr[0].x);
+					let minRow = parseInt(arr[0].y);
 					for (let i of arr) {
-						minRow = parseInt(i.ycoord) < minRow ? parseInt(i.ycoord) : minRow;
-						minCol = parseInt(i.xcoord) < minCol ? parseInt(i.xcoord) : minCol;
-						row = parseInt(i.ycoord) > row ? parseInt(i.ycoord) : row;
-						col = parseInt(i.xcoord) > col ? parseInt(i.xcoord) : col;
+						minRow = parseInt(i.y) < minRow ? parseInt(i.y) : minRow;
+						minCol = parseInt(i.x) < minCol ? parseInt(i.x) : minCol;
+						row = parseInt(i.y) > row ? parseInt(i.y) : row;
+						col = parseInt(i.x) > col ? parseInt(i.x) : col;
 					}
 					that.seatList = arr;
 					that.seatRow = row - minRow + 1;
@@ -244,18 +247,17 @@ export default {
 			let arr = this.seatArray.slice();
 			for (let num in seat) {
 				let status = 2; //-1为非座位，0为未购座位，1为已选座位(绿色),2为已购座位(红色)
-				if (seat[num].status === "0") {
+				if (seat[num].status === '') {
 					status = 0;
-				} else if (seat[num].status === "-1") {
-					status = -1; 
+				} else if (seat[num].status === '-1') {
+					status = -1;
 				}
-				arr[parseInt(seat[num].ycoord) - this.minRow][parseInt(seat[num].xcoord) - this.minCol] = {
+				arr[parseInt(seat[num].y) - this.minRow][parseInt(seat[num].x) - this.minCol] = {
 					type: status,
-					sid: seat[num].sid,
-					memberMoney: seat[num].memberMoney,
-					money: seat[num].money,
-					rowNum: seat[num].rowNum,
-					columnNum: seat[num].columnNum
+					sid: seat[num].seatId,
+					money: seat[num].standardprice,
+					rowNum: seat[num].y,
+					columnNum: seat[num].x
 				};
 			}
 			this.seatArray = arr.slice();
@@ -326,24 +328,24 @@ export default {
 					}
 				}
 			}
-			that.$api('cinema.lockSeats', {sIds:oldArray,openId:uni.getStorageSync('openid')}).then(res => {
+			that.$api('cinema.lockSeats', { seatIdList: oldArray,scheduleId: this.listParams.scheduleId,schedulekey: this.listParams.schedulekey}).then(res => {
 				if (res.flag) {
-					let result = {...res.data}
-					delete result.createDatetime
-					delete result.filmPhoto
-					result.engrosses = JSON.stringify(result.engrosses)
+					let result = { ...res.data };
+					delete result.createDatetime;
+					delete result.filmPhoto;
+					result.engrosses = JSON.stringify(result.engrosses);
 					that.jump('/pages/order/reserve', result);
 				}
 			});
 		},
-		jump:function(path, parmas) {
+		jump: function(path, parmas) {
 			this.$Router.push({
 				path: path,
 				query: parmas
 			});
 		},
 		//处理座位选择逻辑
-		handleChooseSeat: function(row, col,seat) {
+		handleChooseSeat: function(row, col, seat) {
 			let seatValue = this.seatArray[row][col].type;
 			let newArray = this.seatArray;
 			//如果是已购座位，直接返回
@@ -352,12 +354,12 @@ export default {
 			if (seatValue === 1) {
 				newArray[row][col].type = 0;
 				this.SelectNum--;
-				this.totalPrice = this.totalPrice - 1 * Number(seat.money)
+				this.totalPrice = this.totalPrice - 1 * Number(seat.money);
 				this.getOptArr(newArray[row][col], 0);
 			} else if (seatValue === 0) {
 				newArray[row][col].type = 1;
 				this.SelectNum++;
-				this.totalPrice = this.totalPrice + 1 * Number(seat.money)
+				this.totalPrice = this.totalPrice + 1 * Number(seat.money);
 				this.getOptArr(newArray[row][col], 1);
 			}
 			//必须整体更新二维数组，Vue无法检测到数组某一项更新,必须slice复制一个数组才行
@@ -507,7 +509,7 @@ export default {
 			for (let i = 0; i < result.length; i++) {
 				//选定座位
 				oldArray[result[i][0]][result[i][1]].type = 1;
-				this.totalPrice = this.totalPrice + 1 * Number(oldArray[result[i][0]][result[i][1]].money)
+				this.totalPrice = this.totalPrice + 1 * Number(oldArray[result[i][0]][result[i][1]].money);
 				this.optArr.push(oldArray[result[i][0]][result[i][1]]);
 			}
 			this.seatArray = oldArray;

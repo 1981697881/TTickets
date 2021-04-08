@@ -18,28 +18,7 @@
 			"content": {
 				"name": "",
 				"style": 1,
-				"list": [{
-					"name": "",
-					"bgcolor": "#2B4055",
-					"image": "http://139.159.136.187:50080/uploadFiles/image/2102602922.jpg",
-					"path": "/pages/cinema/circuit/list?id=78",
-					"path_name": "商城-商品列表-美妆工具",
-					"path_type": 1
-				}, {
-					"image": "http://139.159.136.187:50080/uploadFiles/image/4205961149.jpg",
-					"path": "/pages/cinema/circuit/list?id=39",
-					"path_type": 1,
-					"name": "",
-					"bgcolor": "#5B3626",
-					"path_name": "商城-商品列表-厨房用品"
-				}, {
-					"image": "http://139.159.136.187:50080/uploadFiles/image/4100127922.jpg",
-					"path": "/pages/cinema/circuit/list?id=8",
-					"path_type": 1,
-					"name": "",
-					"bgcolor": "#5C92C1",
-					"path_name": "商城-商品列表-女装"
-				}]
+				"list": []
 			},
 			"decorate_id": 1
 		}, {
@@ -50,31 +29,7 @@
 			"content": {
 				"name": "",
 				"style": 4,
-				"list": [{
-					"name": "电影",
-					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/884360099a48d435e23e24091fb7084f.png",
-					"path": "/pages/cinema/list",
-					"path_name": "通用-签到中心",
-					"path_type": 1
-				}, {
-					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/ce173c7d81d9521350620e51b0166808.png",
-					"path": "/pages/activity/groupon/list",
-					"name": "商品",
-					"path_name": "活动-今日必拼",
-					"path_type": 1
-				}, {
-					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/cdc081320a7676753af09dbfad64b0f5.png",
-					"path": "/pages/activity/seckill/list",
-					"name": "电玩",
-					"path_name": "活动-限时秒杀",
-					"path_type": 1
-				}, {
-					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/c7b17849d22f345b4886d9a7dc6ef72a.png",
-					"path": "/pages/app/coupon/list",
-					"name": "领福利",
-					"path_name": "优惠券-优惠劵中心",
-					"path_type": 1
-				}]
+				"list": []
 			},
 			"decorate_id": 1
 		}, {

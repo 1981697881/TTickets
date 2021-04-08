@@ -72,8 +72,8 @@
 							<image class="service-head-img" src="/static/imgs/modal/servece_head.png" mode="widthFix"></image>
 							<view class="service-title">用户隐私协议概况</view>
 							<view class="service-content ">
-								感谢您使用Shopro商城，我们非常重视您的个人信息和隐私保护，在您使用服务前，请仔细阅读
-								<text style="color: #EAB866;" @tap="jump('/pages/public/richtext', { id: 2 })">《Shopro商城隐私协议》</text>
+								感谢您使用，我们非常重视您的个人信息和隐私保护，在您使用服务前，请仔细阅读
+								<text style="color: #EAB866;" @tap="jump('/pages/public/richtext', { id: 2 })">《隐私协议》</text>
 								，我们将会严格按照经您同意的各项条款使用您的个人信息，以便为您提供更好的服务。
 							</view>
 							<view class="service-tip ">如您同意此条款，请点击“同意”并开始使用我们的产品和服务，我们将尽全力保护您的个人信息安全。</view>
@@ -144,13 +144,13 @@ export default {
 	},
 	data() {
 		return {
-			bgcolor: '',
+			bgcolor: '#2B4055',
 			// #ifdef MP-WEIXIN
 			HAS_LIVE: HAS_LIVE,
 			// #endif
 			mode: '',
 			showPrivacy: false,
-			showNoticeModal: true,
+			showNoticeModal: false,
 			triggered: false, //下拉刷新
 			_freshing: false, //下拉刷新状态
 			emptyData: {
