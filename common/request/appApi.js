@@ -237,7 +237,7 @@ export default {
 			// desc: '影片列表',
 		},
 		filmLists: {
-			url: 'app/api/locationList',
+			url: 'app/api/schedulesByMovie',
 			auth: false,
 			method: 'POST',
 			// desc: '影片的影城和场次',
@@ -250,21 +250,39 @@ export default {
 		},
 		lockSeats: {
 			url: 'app/api/lockSeats',
-			auth: true,
+			auth: false,
 			method: 'POST',
 			// desc: '提交订单',
 		},
+		confirmOrder: {
+			url: 'FH/confirmOrder',
+			auth: false,
+			method: 'POST',
+			// desc: '确认订单',
+		},
 		escSeats: {
-			url: 'memberTicket/escUserTicketForm',
+			url: 'FH/releaseSeats',
 			auth: true,
 			method: 'POST',
-			// desc: '提交订单',
+			// desc: '取消锁位',
 		},
 		studios: {
 			url: 'app/api/locations',
 			auth: false,
 			method: 'POST',
 			// desc: '影城',
+		},
+		locationMovies: {
+			url: 'app/api/locationMovies',
+			auth: false,
+			method: 'POST',
+			// desc: '影城下的影片',
+		},
+		locationSchedules: {
+			url: 'app/api/locationSchedules',
+			auth: false,
+			method: 'POST',
+			// desc: '影城下影片的场次',
 		},
 	},
 	/** 商品 ↓ **/

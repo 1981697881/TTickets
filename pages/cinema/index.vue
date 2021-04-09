@@ -73,7 +73,7 @@ export default {
 			Msg: '0',
 			circuit: '',
 			swiperList: [
-				{
+				/* {
 					id: 0,
 					name: '百鸟朝凤',
 					score: '8.0',
@@ -106,7 +106,7 @@ export default {
 					starring: '徐峥 周一围 王传君',
 					type: 'image',
 					url: 'http://139.159.136.187:50080/uploadFiles/image/340beba0ae805c0f9e8ad5928b0e2fdf.jpeg'
-				}
+				} */
 			],
 			emptyData: {
 				img: '/static/imgs/empty/empty_goods.png',
@@ -140,8 +140,7 @@ export default {
 	},
 	onLoad() {
 		this.setimgs();
-		this.listParams.sessionsDate = tools.getDayList('', 0).day;
-		this.circuit = this.swiperList[0].name;
+		this.listParams.showDatetime = tools.getDayList('', 0).day;
 		console.log(this.$Route.query)
 		if (this.$Route.query.filmId) {
 			this.listParams.filmId = this.$Route.query.filmId;
@@ -149,6 +148,9 @@ export default {
 		if (this.$Route.query) {
 			this.detail = this.$Route.query
 			this.listParams.cinemaId = this.$Route.query.cinemaId;
+		}
+		if (this.$Route.query) {
+			this.listParams.cinemalinkId = this.$Route.query.cinemalinkId;
 		}
 		if (this.$Route.query.keywords) {
 			this.listParams.keywords = this.$Route.query.keywords;
@@ -246,14 +248,14 @@ export default {
 			this.getGoodsList();
 		},
 		fatherMethod(val) {
-			this.listParams.sessionsDate = val.day;
+			this.listParams.showDatetime = val.day;
 			this.goodsList = [];
 			this.getGoodsList();
 		},
 		// 获取影城影片
 		getMoviesList() {
 			let that = this;
-			that.$api('cinema.lists', {cinemaId: that.listParams.cinemaId, filmId: that.listParams.filmId }).then(res => {
+			that.$api('cinema.locationMovies', {cinemalinkId: that.listParams.cinemalinkId, filmId: that.listParams.filmId }).then(res => {
 				if (res.flag) {
 					that.swiperList = res.data;
 					if (that.$Route.query.filmId == '') {
@@ -269,7 +271,7 @@ export default {
 			let that = this;
 			that.isLoading = true;
 			that.loadStatus = 'loading';
-			that.$api('cinema.filmLists', that.listParams).then(res => {
+			that.$api('cinema.locationSchedules', that.listParams).then(res => {
 				if (res.flag) {
 					that.isLoading = false;
 					that.goodsList = [...that.goodsList, ...res.data];

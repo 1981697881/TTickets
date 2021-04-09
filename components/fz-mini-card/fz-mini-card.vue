@@ -4,13 +4,13 @@
 			<image class="goods-img" :src="detail.filmPhoto" mode="aspectFill"></image>
 			<view class="y-start">
 				<view class="goods-title more-t">
-					<view class="item-title">{{ detail.filmName }}</view>
+					<view class="item-title">{{ detail.locationHall.hallName }}</view>
 					<view class="item-time">
 						<text class="time cuIcon-time" v-if="isPast">{{ timeText }}</text>
 						<text class="time" v-else>{{ timeText }}</text>
 					</view>
 				</view>
-				<slot name="tipTag">{{checkTime.week}} {{checkTime.date}} {{detail.sessionsStarttime}} ~ {{detail.sessionsEndtime}} ({{detail.hallType}})</slot>
+				<slot name="tipTag">{{checkTime.week}} {{detail.schedule.showDatetime.toString()}} ({{detail.schedule.dimensional}})</slot>
 				<view class="size-tip">{{detail.cinemaName}}</view>
 				<slot name="goodsBottom">
 					<view class="price">￥{{ detail.money }}</view>
@@ -62,7 +62,7 @@ export default {
 			let date =new Date()
 			let year=date.getFullYear();
 			let month=date.getMonth()+1;
-			let lastDay=new Date(this.detail.sessionsDate).getDate() - new Date().getDate() +1
+			let lastDay=new Date(this.detail.schedule.showDatetime).getDate() - new Date().getDate() +1
 			for(let i = 0;i<lastDay;i++){
 				let obj = tools.getDayList('',i)
 				if(i==0){
@@ -92,7 +92,7 @@ export default {
 		// 倒计时
 		countDown() {
 			let that = this;
-			let maxtime = 10 * 60;
+			let maxtime = 10 * 1;
 			let timer = setInterval(() => {
 				if (maxtime >= 0) {
 					let minutes = Math.floor(maxtime / 60);

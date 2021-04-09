@@ -5,7 +5,7 @@
 			<view class="cont_one">
 				<view class="o_name">
 					<text class="text-cut text-xl text-bold">{{detail.cinemaName}}</text>
-					<text class="tip" v-if="!(isTag && detail.activity)">上次来过</text>
+					<text class="tip" v-if="(isTag && detail.activity)">上次来过</text>
 				</view>
 				<view class="o_price">
 					<text>{{detail.prices}}</text>
@@ -25,8 +25,8 @@
 		</view>
 		<view class="swiper-box x-f" v-if="tabId=='ended'">
 			<swiper class="carousel" @change="swiperChange">
-				<swiper-item v-for="(goods, swindex) in detail.schedules" :key="swindex" class="carousel-item">
-					<view class="min-goods" @tap="jump('/pages/cinema/movie/list', { scheduleId: goods.scheduleId,schedulekey:goods.schedulekey,language: goods.language,dimensional: goods.dimensional,filmName:goods.filmName,showDatetime:goods.showDatetime})">
+				<swiper-item v-for="(goods, swindex) in detail.scheduleVOS" :key="swindex" class="carousel-item">
+					<view class="min-goods" @tap="jump('/pages/cinema/movie/list', { scheduleId: goods.scheduleId,schedulekey:goods.schedulekey,language: goods.language,dimensional: goods.dimensional,filmName:goods.filmName,showDatetime: goods.showDatetime})">
 						<view class="price-box">
 							<view class="y-f text-black">
 								<text class="text-bold seckill-current">{{goods.showDatetime.substring(11,16)}}</text>
@@ -75,6 +75,7 @@ export default {
 		}
 	},
 	mounted() {
+		console.log(this.detail)
 		this.info = { ...this.detail}
 		delete this.info.marshallinDetail
 		delete this.info.schedules

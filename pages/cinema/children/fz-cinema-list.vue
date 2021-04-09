@@ -55,7 +55,7 @@ export default {
 			headHeight: '0',
 			listParams: {
 				filmId: null,
-				sessionsDate: null,
+				showDatetime: null,
 				keywords: '',
 				page: 1
 			},
@@ -64,7 +64,7 @@ export default {
 			lastPage: 1,
 			goodsList: [],
 			swiperList: [
-				{
+				/* {
 					id: 0,
 					name: '百鸟朝凤',
 					score: '8.0',
@@ -97,7 +97,7 @@ export default {
 					starring: '徐峥 周一围 王传君',
 					type: 'group',
 					url: 'http://139.159.136.187:50080/uploadFiles/image/340beba0ae805c0f9e8ad5928b0e2fdf.jpeg'
-				}
+				} */
 			]
 		};
 	},
@@ -156,7 +156,7 @@ export default {
 						}
 					});
 					that.circuit = that.swiperList[0].filmName;
-					that.listParams.sessionsDate = tools.getDayList('', 0).day;
+					that.listParams.showDatetime = tools.getDayList('', 0).day;
 					if (typeof that.$Route.query.filmId != 'undefined') {
 						that.listParams.filmId = that.$Route.query.filmId;
 					} else {
@@ -171,7 +171,7 @@ export default {
 			});
 		},
 		fatherMethod(val) {
-			this.listParams.sessionsDate = val.day;
+			this.listParams.showDatetime = val.day;
 			this.goodsList = [];
 			this.getGoodsList();
 		},

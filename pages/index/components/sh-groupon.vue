@@ -81,7 +81,12 @@ export default {
 			that.goodsList = arr; */
 			that.$api('cinema.lists', {}).then(res => {
 				if (res.flag) {
+					res.data.forEach((item,index)=>{
+						item.type = 'Movie'
+					})
 					that.goodsList = [res.data];
+					console.log(that.goodsList)
+					
 				}
 			});
 		}

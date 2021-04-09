@@ -8,10 +8,10 @@
 						<block slot="goodsBottom">
 							<view class="goods-price">
 								<view class="goods-hald">
-									<text>{{ perGoodsList.hallName }}</text>
+									<text>{{ perGoodsList.schedule.filmName }} ({{perGoodsList.schedule.language}})</text>
 								</view>
 								<view class="goods-num">
-									<text v-for="(item, index) in perGoodsList.engrosses" :key="index">{{ item.id.split('-')[0] }}排{{ item.id.split('-')[1] }}座</text>
+									<text v-for="(item, index) in perGoodsList.seats" :key="index">{{ item.y }}排{{ item.x }}座</text>
 								</view>
 							</view>
 						</block>
@@ -19,11 +19,11 @@
 				</view>
 				<view class="logistic item-list x-bc" @tap="onSelExpressType(g)">
 					<view class="x-f">
-						<text class="cuIcon-roundcheck text-blue padding-xs">可改签</text>
+						<text class="cuIcon-roundcheck text-red padding-xs">不可改签</text>
 						<text class="cuIcon-roundclose text-red padding-xs">不可退票</text>
 					</view>
 					<view class="x-f">
-						<view class="detail">共{{perGoodsList.engrosses.length}}张 原价 ￥{{perGoodsList.payMoney}}</view>
+						<view class="detail">共{{perGoodsList.seats.length}}张 原价 ￥{{Number(perGoodsList.schedule.standardprice) *Number(perGoodsList.seats.length)}}</view>
 					</view>
 				</view>
 			</view>
@@ -61,7 +61,7 @@
 			<text class="num">共1件</text>
 			<view class="all-money">
 				<text>合计：</text>
-				<text class="price">￥{{ perGoodsList.payMoney || '0.00' }}</text>
+				<text class="price">￥{{ Number(perGoodsList.schedule.standardprice) *Number(perGoodsList.seats.length) || '0.00' }}</text>
 			</view>
 			<button class="cu-btn sub-btn bg-red" @tap="confirmPay" :disabled="isSubOrder">
 				<text v-if="isSubOrder" class="cuIcon-loading2 cuIconfont-spin"></text>
@@ -126,6 +126,7 @@ export default {
 				content: '还没付款，是否退出',
 				success: function(res) {
 					if (res.confirm) {
+						this.escOrder()
 						uni.showToast({
 							title: '用户点击确定',
 							duration: 1000
@@ -152,7 +153,9 @@ export default {
 		}
 		if(this.$Route.query){
 			this.perGoodsList = {...this.$Route.query}
-			this.perGoodsList.engrosses = JSON.parse(this.perGoodsList.engrosses)
+			this.perGoodsList.schedule = JSON.parse(this.$Route.query.schedule); 
+			this.perGoodsList.locationHall = JSON.parse(this.$Route.query.locationHall); 
+			this.perGoodsList.seats = JSON.parse(this.$Route.query.seats); 
 		}
 		/* this.goodsList = JSON.parse(this.$Route.query.goodsList); 
 		this.from = this.$Route.query.from;
@@ -179,7 +182,7 @@ export default {
 						iv: e.detail.iv
 					}).then(res => {
 						if (res.flag) {
-							uni.getStorageSync('phone', res.data);
+							uni.setStorageSync('phone', res.data);
 							me.jump('/pages/user/edit-phone', { fromType: 'bind', phone: res.data });
 						}
 					});
@@ -236,14 +239,45 @@ export default {
 		escOrder() {
 			console.log('进入取消订单流程')
 			let that = this;
+			that.isSubOrder = true
+			let seats = []
+			that.perGoodsList.seats.forEach((item)=>{
+				let obj = {}
+				obj.seatId = item.seatId
+				seats.push(obj)
+			})
 			that.$api('cinema.escSeats', {
-				ticketId: that.perGoodsList.ticketId
+				scheduleId: that.perGoodsList.scheduleId,
+				lockOrderId: that.perGoodsList.lockOrderId,
+				seats: seats,
 			}).then(res => {
 				if (res.flag) {
 					console.log(res);
 				}
 			});
 		},
+		//确认订单
+		confirmOrder(){
+			let ticketList = []
+			this.perGoodsList.seats.forEach((item)=>{
+				let obj = {}
+				obj.seatId = item.seatId
+				obj.ticketFee = item.ticketFee
+				obj.ticketPrice = item.ticketPrice
+				ticketList.push(obj)
+			})
+			this.$api('cinema.confirmOrder', {
+				lockOrderId: this.perGoodsList.lockOrderId,
+				scheduleId: this.perGoodsList.scheduleId,
+				scheduleKey: this.perGoodsList.scheduleKey,
+				mobile: uni.getStorageSync('phone'),
+				ticketList: ticketList,
+			}).then(res => {
+				if(res.flag){
+					console.log(res)
+				}
+			});
+		},	
 		// 订单信息
 		getPre() {
 			let that = this;

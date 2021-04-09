@@ -4,7 +4,7 @@
 			<view class="pt-f left-0 w-100 p-0-32 bg-white z1000" :style="'height: 162rpx;top:0'">
 				<view>
 					<view class="fz-34 fw-b pt-20">{{ head.filmName }}</view>
-					<view class="mt-10 fz-28 color-666">{{ head.showDatetime }}</view>
+					<view class="mt-10 fz-28 color-666">{{ head.showDatetime}}</view>
 				</view>
 			</view>
 			<movable-area :style="'height:' + (seatRow * 40 + 350) + 'rpx;width: 100vw;top:' + rpxNum * 132 + 'px'" class="pt-f left-0">
@@ -46,6 +46,7 @@
 							<image v-if="seat.type === 0" class="w-100 h-100" src="../../../static/unselected.png" mode="aspectFit"></image>
 							<image v-else-if="seat.type === 1" class="w-100 h-100" src="../../../static/selected.png" mode="aspectFit"></image>
 							<image v-else-if="seat.type === 2" class="w-100 h-100" src="../../../static/bought.png" mode="aspectFit"></image>
+							<image v-else-if="seat.type === 3" class="w-100 h-100" src="../../../static/lockwei.png" mode="aspectFit"></image>
 						</view>
 					</view>
 					<view class="pt-f bg-line br-15 over-h" :style="'left: ' + (10 - moveX / scale) + 'px;top:109rpx;width:30rpx;'">
@@ -93,11 +94,19 @@
 						<image :style="'width:' + seatSize + 'px;height:' + seatSize + 'px'" src="../../../static/selected.png" mode="aspectFit"></image>
 						<span class="ml-10">选中</span>
 					</view>
+					<view class="dp-f jc-c ai-c m-0-10">
+						<image :style="'width:' + seatSize + 'px;height:' + seatSize + 'px'" src="../../../static/lockwei.png" mode="aspectFit"></image>
+						<span class="ml-10">维修</span>
+					</view>
 				</view>
 			</view>
 		</view>
 		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>
+		<view class="cu-load load-modal" v-if="loadModal">
+			<view class="cuIcon-emojifill text-orange"></view>
+			<view class="gray-text">加载中...</view>
+		</view>
 	</view>
 </template>
 <script>
@@ -112,6 +121,7 @@
 export default {
 	data() {
 		return {
+			loadModal: false,
 			//缩略图是否显示
 			topthumbnail: 0, // 单位rem
 			leftthumbnail: 0, // 单位rem
@@ -168,6 +178,7 @@ export default {
 	},
 	onLoad() {
 		this.head = this.$Route.query;
+		console.log(this.head)
 		this.listParams.scheduleId = this.$Route.query.scheduleId;
 		this.listParams.schedulekey = this.$Route.query.schedulekey;
 		//获取宽度
@@ -205,9 +216,8 @@ export default {
 			let row = 0;
 			let col = 0;
 			that.$api('cinema.seatsLists', this.listParams).then(res => {
-				if (res.flag) {
+				if (res.flag) { 
 					let arr = res.data.scheduleSeats;
-					console.log(arr[0]);
 					let minCol = parseInt(arr[0].x);
 					let minRow = parseInt(arr[0].y);
 					for (let i of arr) {
@@ -246,11 +256,13 @@ export default {
 			let seat = this.seatList.slice();
 			let arr = this.seatArray.slice();
 			for (let num in seat) {
-				let status = 2; //-1为非座位，0为未购座位，1为已选座位(绿色),2为已购座位(红色)
+				let status = 3; //-1为非座位，0为未购座位，1为已选座位(绿色),2为已购座位(红色)
 				if (seat[num].status === '') {
 					status = 0;
 				} else if (seat[num].status === '-1') {
 					status = -1;
+				}else if (seat[num].status === 'locked'||seat[num].status === 'selled') {
+					status = 2;
 				}
 				arr[parseInt(seat[num].y) - this.minRow][parseInt(seat[num].x) - this.minCol] = {
 					type: status,
@@ -317,6 +329,7 @@ export default {
 		//选定且购买座位
 		buySeat: function() {
 			let that = this;
+			that.loadModal = true;
 			if (this.SelectNum === 0) {
 				return;
 			}
@@ -328,12 +341,13 @@ export default {
 					}
 				}
 			}
-			that.$api('cinema.lockSeats', { seatIdList: oldArray,scheduleId: this.listParams.scheduleId,schedulekey: this.listParams.schedulekey}).then(res => {
+			that.$api('cinema.lockSeats', { seatIdList: oldArray,scheduleId: this.listParams.scheduleId,scheduleKey: this.listParams.schedulekey,openIdNotNull: 0}).then(res => {
 				if (res.flag) {
+					that.loadModal = false;
 					let result = { ...res.data };
-					delete result.createDatetime;
-					delete result.filmPhoto;
-					result.engrosses = JSON.stringify(result.engrosses);
+					result.schedule = JSON.stringify(result.schedule)
+					result.seats= JSON.stringify(result.seats)
+					result.locationHall= JSON.stringify(result.locationHall)
 					that.jump('/pages/order/reserve', result);
 				}
 			});

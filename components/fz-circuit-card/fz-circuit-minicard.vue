@@ -1,18 +1,18 @@
 <template>
 	<view class="goods-box" v-if="detail">
-		<view class="content-box" @tap="jump('/pages/cinema/movie/list', { sessionsId: detail.sessionsId,hallType: detail.hallType,sessionsStarttime: detail.sessionsStarttime,filmName:detail.filmName,hallName:detail.hallName,sessionsDate:detail.sessionsDate })">
+		<view class="content-box" @tap="jump('/pages/cinema/movie/list', { scheduleId: detail.scheduleId,schedulekey:detail.schedulekey,language: detail.language,dimensional: detail.dimensional,filmName:detail.filmName,showDatetime:detail.showDatetime})">
 			<text v-if="isTag && detail.status" class="tag-star"><text class="lg text-red cuIcon-favorfill"></text></text>
 			<view class="cont_one">
-				<view><text class="text-xl text-bold">{{detail.sessionsStarttime}}</text></view>
-				<view><text class="text-gray">{{detail.sessionsEndtime}}散场</text></view>
+				<view><text class="text-xl text-bold">{{detail.showDatetime.substring(11,16)}}</text></view>
+				<view><text class="text-gray">{{detail.language}} {{detail.dimensional}}</text></view>
 			</view>
 			<view class="cont_two">
 				<view><text class="text-xs text-bold">{{detail.hallType}}</text></view>
 				<view><text class="text-gray">{{detail.hallName}}</text></view>
 			</view>
 			<view class="cont_three">
-				<view class="o_price text-xxl">{{detail.money}}</view>
-				<view class="text-olive text-xs">团购优惠<text class="o_price2">{{detail.memberMoney}}</text></view>
+				<view class="o_price text-xxl">{{detail.standardprice}}</view>
+				<view class="text-olive text-xs">会员<text class="o_price2">{{detail.lowestprice}}</text>起</view>
 			</view>
 			<view class="cont_four"><button class="cu-btn bg-pink round ">购票</button></view>
 		</view>
@@ -92,7 +92,7 @@ export default {
 		}
 		.cont_three {
 			text-align: right;
-			width: 200rpx;
+			width: 250rpx;
 		}
 		.cont_four {
 			padding-top: 20rpx;

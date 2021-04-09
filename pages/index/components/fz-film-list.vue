@@ -1,7 +1,7 @@
 <template>
 	<view class="min-goods">
 		<view class="img-box" @tap="jump('/pages/cinema/detail/index', { filmId: detail.filmId })">
-			<view class="tag" v-if="detail.type === 'Movie'">2D IMAX</view>
+			<view class="tag" v-if="detail.type === 'Movie'">{{detail.dimensional}}</view>
 			<view class="tagb" v-if="detail.type === 'Movie'">评分 <text>{{ detail.score }}.0</text></view>
 			<image class="img" :src="detail.image" mode="scaleToFill"></image>
 		</view>

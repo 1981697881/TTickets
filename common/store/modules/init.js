@@ -119,7 +119,7 @@ const actions = {
 				reso.data.forEach((v)=>{
 					let obj = {
 					"name": v.menuName,
-					"image": "../../static/imgs/poster/trailer_Movie_72px.png",
+					"image": "https://i.postimg.cc/s2rw46FN/trailer-Movie-72px.png",
 					"path": "/pages/cinema/list",
 					"path_name": "",
 					"path_type": 1
