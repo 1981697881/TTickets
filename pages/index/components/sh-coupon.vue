@@ -27,6 +27,7 @@ export default {
 	},
 	computed: {},
 	created() {
+		console.log(this.detail)
 		this.detail.ids && this.getCouponsList();
 	},
 	methods: {

@@ -81,7 +81,6 @@ export default {
 			query: {} //自定义分享参数
 		}) {
 			let that = this;
-
 			uni.getStorage({
 				key: 'shareInfo',
 				success(e) {

@@ -44,7 +44,7 @@
 			</view>
 		</view>
 		<!-- 绑定手机 -->
-		<view class="notice-box x-bc pad" v-if="!userInfo.mobile && userInfo.username">
+		<view class="notice-box x-bc pad" v-if="!userInfo.phoneNumber && userInfo.username">
 			<view class="notice-detail one-t">点击绑定手机号，确保账户安全</view>
 			<button class="bindPhone cu-btn" open-type="getPhoneNumber" @getphonenumber="bindPhone">去绑定</button>
 		</view>
@@ -78,6 +78,7 @@ export default {
 		}
 	},
 	methods: {
+		...mapActions(['getUserDetails']),
 		jump(path, query) {
 			this.$Router.push({
 				path: path,
@@ -129,8 +130,8 @@ export default {
 				encryptedData: e.detail.encryptedData,
 				iv: e.detail.iv}).then(res => {
 				if (res.flag) {
-					uni.getStorageSync('phone',res.data)
-					me.jump('/pages/user/edit-phone', { fromType: 'bind',phone:res.data })
+					me.getUserDetails();
+					/* me.jump('/pages/user/edit-phone', { fromType: 'bind',phone:res.data }) */
 				}
 			});
 			

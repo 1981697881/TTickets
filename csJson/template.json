@@ -150,7 +150,13 @@
 			"name": "宫格列表",
 			"content": {
 				"name": "",
-				"list": [
+				"list": [{
+					"name": "团体票",
+					"image": "https://api.7wpp.com/uploads/20200929/7aff2a07472660035e99c4f341bdfd85.png",
+					"path": "/pages/user/group-ticket",
+					"path_name": "优惠券",
+					"path_type": 1
+					},
 					{
 					"name": "积分商城",
 					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/ab05b484afd9e2a21977adc79d0c456e.png",

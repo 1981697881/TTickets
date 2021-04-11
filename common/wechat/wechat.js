@@ -93,7 +93,7 @@ export default class Wechat {
 					if (res.errMsg === 'checkSession:ok') sessionStatus = true;
 				},
 				complete() {
-					if (!uni.getStorageSync('session_key') || !sessionStatus) {
+					/* 	 */
 						uni.login({
 							success: function(info) {
 								let code = info.code;
@@ -109,9 +109,9 @@ export default class Wechat {
 								});
 							}
 						});
-					} else {
+					/* } else {
 						session_key = uni.getStorageSync('session_key');
-					}
+					} */
 				}
 			})
 

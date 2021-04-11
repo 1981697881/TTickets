@@ -9,14 +9,9 @@
 			</view>
 		</view>
 		<view class="content_box">
-				<!-- <view class="goods-item" v-for="item in goodsList" :key="item.id">
-					<fz-unmovie-list v-if="tabCurrent=='nostart'" :tabId="tabCurrent" :cardId="item.id" :title="item.title" :subtitle="item.subtitle" :img="item.image" :price="item.price" :originalPrice="item.original_price">
-					</fz-unmovie-list>
-				</view> -->
-				<fz-cinema-list :tabId="tabCurrent" v-if="tabCurrent=='ended'">
-				</fz-cinema-list>
-				<fz-movie-list :tabId="tabCurrent" v-if="tabCurrent=='ing'">
-				</fz-movie-list>
+				<gz-exchange :tabId="tabCurrent" v-if="tabCurrent=='ended'"></gz-exchange>
+				<gz-purchase :tabId="tabCurrent" v-if="tabCurrent=='ing'"></gz-purchase>
+				<gz-purchased :tabId="tabCurrent" v-if="tabCurrent=='nostart'"></gz-purchased>
 		</view>
 		<view class="foot_box"></view>
 		<!-- 自定义底部导航 -->
@@ -29,22 +24,21 @@
 		<app-login-modal></app-login-modal>
 	</view>
 </template>
-
 <script>
-import fzCinemaList from './children/fz-cinema-list.vue';
-import fzUnmovieList from './children/fz-unmovie-list.vue';
-import fzMovieList from './children/fz-movie-list.vue';
+import gzExchange from './children/gz-exchange.vue';
+import gzPurchased from './children/gz-purchased.vue';
+import gzPurchase from './children/gz-purchase.vue';
 export default {
 	components: {
-		fzCinemaList,
-		fzUnmovieList,
-		fzMovieList
+		gzExchange,
+		gzPurchased,
+		gzPurchase
 	},
 	data() {
 		return {
 			emptyData: {
 				img: '/static/imgs/empty/empty_goods.png',
-				tip: '暂无电影信息，敬请期待~'
+				tip: '暂无团体票，敬请期待~'
 			},
 			isLoading: true,
 			loadStatus: '', //loading,over
@@ -56,15 +50,15 @@ export default {
 			tabList: [ 
 				{
 					id: 'ended',
-					title: '正在热映'
+					title: '兑换'
 				},
 				{
 					id: 'ing',
-					title: '影院'
+					title: '购买'
 				},
 				{
 					id: 'nostart',
-					title: '即将上映'
+					title: '已购买'
 				}
 			]
 		};

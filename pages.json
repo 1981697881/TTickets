@@ -835,6 +835,17 @@
 						"title": "修改手机号",
 						"group": "用户"
 					}
+				},{
+					"path": "group-ticket",
+					"style": {
+						"navigationBarTitleText": "团体票"
+					},
+					"meta": {
+						"auth": false,
+						"async": true,
+						"title": "兑换赠送",
+						"group": "用户"
+					}
 				},
 				{
 					"path": "wallet/index",

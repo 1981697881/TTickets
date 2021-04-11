@@ -3,7 +3,7 @@
 		<view @tap.stop="_calcValue('minus')" class="uni-numbox__minus">
 			<button class=" cu-btn uni-numbox--text" :class="{ 'uni-numbox--disabled': inputValue <= min || disabled }"><text class=" iconfont icon-reduce-fill"></text></button>
 		</view>
-		<input :disabled="true" @blur="_onBlur" class="uni-numbox__value" type="number" v-model="inputValue" />
+		<input  :disabled="true" @blur="_onBlur" class="uni-numbox__value text-red" type="number" v-model="inputValue" />
 		<view @tap.stop="_calcValue('plus')" class="uni-numbox__plus">
 			<button class=" cu-btn uni-numbox--text" :class="{ 'uni-numbox--disabled': inputValue >= max || disabled }"><text class="iconfont icon-add-fill"></text></button>
 		</view>

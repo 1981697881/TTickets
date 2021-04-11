@@ -25,7 +25,7 @@
 						<!-- 广告魔方 -->
 						<!-- <sh-adv v-if="item.type === 'adv'" :detail="item.content"></sh-adv> -->
 						<!-- 优惠券 -->
-						<!-- <sh-coupon v-if="item.type === 'coupons'" :detail="item.content"></sh-coupon> -->
+						<sh-coupon v-if="item.type === 'coupons'" :detail="item.content"></sh-coupon>
 						<!-- 秒杀 -->
 						<sh-seckill v-if="item.type === 'seckill'" :detail="item.content"></sh-seckill>
 						<!-- 拼团 -->

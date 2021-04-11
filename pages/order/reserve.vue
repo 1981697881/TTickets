@@ -17,7 +17,7 @@
 						</block>
 					</app-mini-card>
 				</view>
-				<view class="logistic item-list x-bc" @tap="onSelExpressType(g)">
+				<view class="logistic item-list x-bc">
 					<view class="x-f">
 						<text class="cuIcon-roundcheck text-red padding-xs">不可改签</text>
 						<text class="cuIcon-roundclose text-red padding-xs">不可退票</text>
@@ -39,8 +39,8 @@
 			<!-- 手机号码 -->
 			<view class="phone x-bc item-list">
 				<view class="item-title">手机号码</view>
-				<view class="x-f" v-if="pickerData.couponList.length">
-					<text class="price">{{ pickerData.title }}</text>
+				<view class="x-f" v-if="userInfo.phoneNumber">
+					<text class="price">{{ userInfo.phoneNumber }}</text>
 				</view>
 				<view v-else class="x-f">
 					<text class="sel-coupon">无手机号码</text>
@@ -116,7 +116,11 @@ export default {
 			checkTime: {}
 		};
 	},
-	computed: {},
+	computed: {
+		...mapState({
+			userInfo: state => state.user.userInfo
+		})
+	},
 	watch: {},
 	onBackPress(options) {
 		console.log(options);
@@ -146,6 +150,8 @@ export default {
 		}
 	},
 	async onLoad(options) {
+		console.log(123)
+		console.log(this.userInfo)
 		this.options = options;
 		if (options.openid) {
 			//检测到回传openid
