@@ -2,15 +2,26 @@
 	<view class="group-content">
 		<view class="cont-header">
 			<view class="head-box text-black">
-				<view class="text-bold text-xxl">123</view>
-				<view class="box-text padding-top">123 </view>
-				<view class="box-text">123</view>
-				<view class="box-text text-gray">
-				123
-				</view>
+				<view class="text-bold text-xxl">电子普通电影抵用券</view>
+				<view class="box-text padding-top">数量：10张</view>
+				<view class="box-text">已兑换：3</view>
+				<view class="box-text text-gray">剩余：7</view>
 			</view>
-			<view class="img-box"><image class="img" src="" mode="aspectFill"></image></view>
+			<view class="img-box"><image class="img" src="https://i.postimg.cc/nryKKkJp/wx-guojixinze.jpg" mode="scaleToFill"></image></view>
 		</view>
+		<view class="cir-info">
+			<view class="cir-left"></view>
+			<view class="cir-right"></view>
+			<view class="cir-line"></view>
+		</view>
+		<view class="cont-price text-gray">
+			<view class="text-black text-bold text-xl">实付金额：￥{{ detail.ticketPaymoney }}</view>
+			<view>订单号：{{ detail.ticketId }}</view>
+			<view>购买时间：2021-01-01 13:00:00</view>
+			<view>手机号：131****1213</view>
+			<view>电影票由公司提供</view>
+		</view>
+
 		<view class="cir-info">
 			<view class="cir-left"></view>
 			<view class="cir-right"></view>
@@ -27,26 +38,9 @@
 			<view class="cir-right"></view>
 			<view class="cir-line"></view>
 		</view>
-		<view class="cont-price text-gray">
-			<view class="text-black text-bold text-xl">实付金额：￥{{ detail.ticketPaymoney }}</view>
-			<view>订单号：{{ detail.ticketId }}</view>
-			<view>购买时间：2021-01-01 13:00:00</view>
-			<view>手机号：131****1213</view>
-			<view>电影票由公司提供</view>
-		</view>
-		<view class="cir-info">
-			<view class="cir-left"></view>
-			<view class="cir-right"></view>
-			<view class="cir-line"></view>
-		</view>
 		<view class="cont-notice text-gray">
-			<view class="text-black text-bold text-xl">观影须知</view>
-			<view>1.请提前到达影院，找到自助取票机，打印纸质电影票，完成取票。</view>
-			<view>2.如现场自助取票机无法打印电影票，请联系影院工作人员处理。</view>
-			<view>3.凭打印好的纸质电影票，检查入场观影。</view>
-			<view>4.如果订单使用了兑换劵，或购买了特殊场次，暂不支持退票和改签。</view>
-			<view>5.如有开具所购买电影票发票的需求，请保留好电影票根，尽量在观影当天联系影城工作人员进行开具，如遇特殊情况请及时联系人工客服咨询。</view>
-			<view>6.改签、退票服务由影城决定，特殊场次及使用兑换券场次不支持改签、退票。</view>
+			<view class="text-black text-bold text-xl">团体票使用方法</view>
+			<view>1.生成兑换码，截图发送给好友。</view>
 		</view>
 	</view>
 </template>
@@ -57,7 +51,7 @@ export default {
 	components: { tkiQrcode },
 	data() {
 		return {
-			cid:'qrcode',
+			cid: 'qrcode',
 			ifShow: true,
 			val: '二维码', // 要生成的二维码值
 			size: 200, // 二维码大小
@@ -89,8 +83,8 @@ export default {
 			this.tabCurrent = id;
 		},
 		qrR(res) {
-					this.src = res
-				},
+			this.src = res;
+		}
 	},
 	props: {
 		detail: {
@@ -125,7 +119,7 @@ export default {
 			.img {
 				top: 30%;
 				width: 200rpx;
-				height: 200rpx;
+				height: 180rpx;
 				border-radius: 15rpx;
 				background-color: #ccc;
 			}

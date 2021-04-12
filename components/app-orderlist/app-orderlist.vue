@@ -1,6 +1,6 @@
 <template>
 	<view class="">
-		<view class="goods-box">
+		<view class="goods-box" @tap="jump('/pages/user/groupticketinfo', {})">
 			<view class="box-title">
 				<view class="titel-name text-xl text-pink">影城</view>
 				<view><text class="cuIcon-pay text-gray padding-xs">已付款</text></view>
@@ -33,7 +33,15 @@ export default {
 	onHide() {},
 	computed: {},
 	created() {},
-	methods: {}
+	methods: {
+		// 路由跳转
+		jump(path, parmas) {
+			this.$Router.push({
+				path: path,
+				query: parmas
+			});
+		}
+	}
 };
 </script>
 

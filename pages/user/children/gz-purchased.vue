@@ -5,7 +5,7 @@
 			<scroll-view :style="{ height: hHeight + 'px' }" class="scroll-box" scroll-y enable-back-to-top scroll-with-animation @scrolltolower="loadMore">
 				<view class="content-box">
 					<view class="goods-list x-f">
-						<view class="goods-item" v-for="goods in goodsList" :key="goods.cinemaId">
+						<view class="goods-item" v-for="goods in goodsList" :key="goods.cinemaId" >
 							<app-orderlist></app-orderlist>
 						</view>
 					</view>
