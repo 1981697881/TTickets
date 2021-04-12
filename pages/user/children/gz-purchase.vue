@@ -91,22 +91,14 @@ export default {
 		return {
 			ticketNum: 5,
 			tickettNum: 5,
-			goodsInfo: {},
 			currentSkuPrice: {},
-			showPicker: false,
 			isSubOrder: false,
 			isAndroid: uni.getStorageSync('isAndroid'),
 			platform: uni.getStorageSync('platform'),
 			payType: 'wechat',
-			from: '',
 			orderType: '',
-			grouponBuyType: 'alone',
-			grouponId: 0,
 			perGoodsList: {}, //确认单订单
-			orderPre: {},
-			couponId: 0,
-			getFocus: false, //获取焦点。
-			checkTime: {}
+			ticketsList: {},
 		};
 	},
 	computed: {
@@ -115,45 +107,13 @@ export default {
 		})
 	},
 	watch: {},
+	created() {
+		this.getTicketsList()
+	},
 	async onLoad(options) {
-		this.options = options;
-		if (options.openid) {
-			//检测到回传openid
-			uni.setStorageSync('openid', options.openid);
-		}
-		if (this.$Route.query) {
-			this.perGoodsList = { ...this.$Route.query };
-			this.perGoodsList.schedule = JSON.parse(this.$Route.query.schedule);
-			this.perGoodsList.locationHall = JSON.parse(this.$Route.query.locationHall);
-			this.perGoodsList.seats = JSON.parse(this.$Route.query.seats);
-		}
-		this.initDate();
 	},
 	onShow() {},
 	methods: {
-		bindPhone(e) {
-			let me = this;
-			me.$api('user.getWxMiniPhoneNumber', {
-				sessionKey: uni.getStorageSync('session_key'),
-				openid: uni.getStorageSync('openid'),
-				encryptedData: e.detail.encryptedData,
-				iv: e.detail.iv
-			}).then(res => {
-				if (res.flag) {
-					me.$api('user.getWxMiniPhoneNumber', {
-						sessionKey: uni.getStorageSync('session_key'),
-						openid: uni.getStorageSync('openid'),
-						encryptedData: e.detail.encryptedData,
-						iv: e.detail.iv
-					}).then(res => {
-						if (res.flag) {
-							uni.setStorageSync('phone', res.data);
-							me.jump('/pages/user/edit-phone', { fromType: 'bind', phone: res.data });
-						}
-					});
-				}
-			});
-		},
 		// 数量
 		changeNum(e) {
 			let that = this;
@@ -166,7 +126,11 @@ export default {
 		// 发起支付
 		confirmPay() {
 			let that = this;
-			let pay = new AppPay(that.payType, that.perGoodsList);
+			uni.showToast({
+				icon: 'none',
+				title: '当前功能尚未开放....'
+			})
+			/* let pay = new AppPay(that.payType, that.perGoodsList); */
 		},
 		jump(path, parmas) {
 			this.$Router.push({
@@ -184,7 +148,7 @@ export default {
 				obj.ticketPrice = item.ticketPrice;
 				ticketList.push(obj);
 			});
-			this.$api('cinema.confirmOrder', {
+			this.$api('user.payCdKeyMoney', {
 				lockOrderId: this.perGoodsList.lockOrderId,
 				scheduleId: this.perGoodsList.scheduleId,
 				scheduleKey: this.perGoodsList.scheduleKey,
@@ -196,42 +160,17 @@ export default {
 				}
 			});
 		},
-		// 订单信息
-		getPre() {
+		// 抵用券列表
+		getTicketsList() {
 			let that = this;
-			let res = goods;
-			if (res.code === 1) {
-				that.orderPre = res.data;
-				that.perGoodsList = res.data.data;
-				that.perGoodsList.map(item => {
-					item.selType = item.dispatch_type;
-					that.goodsList.forEach(goods => {
-						if (item.goods_id == goods.goods_id && item.sku_price_id == goods.sku_price_id) {
-							goods.dispatch_type = item.dispatch_type;
-
-							if (item.store_id) {
-								goods.store_id = item.store_id;
-							}
-						}
-					});
-				});
-			}
-		},
-		// 更改提交数据
-		changeGoodsList() {
-			this.goodsList.forEach(goods => {
-				if (goods.goods_id == this.currentGoodsId && this.currentSkuId == goods.sku_price_id) {
-					goods.dispatch_type = this.expressTypeCur;
-					goods.dispatch_phone = this.selfPhone;
-					goods.dispatch_date = this.checkTime['day'][this.checkDayCur].value + ' ' + this.checkTime['time'][this.checkTimeCur] + ':00';
-					if (this.expressTypeCur == 'selfetch') {
-						goods.store_id = this.storeInfo.id;
-					}
-					goods.checkDayCur = this.checkDayCur;
-					goods.checkTimeCur = this.checkTimeCur;
+			that.$api('user.cdKeyList', {
+			}).then(res => {
+				if (res.flag) {
+					that.ticketsList = res.data
 				}
 			});
 		},
+		
 		// 格式日期
 		check(type, index) {
 			if (type == 'time') {
@@ -242,10 +181,7 @@ export default {
 				this.checkDayCur = index;
 			}
 		},
-		// 是否同意协议
-		checkProtocol() {
-			this.isProtocol = !this.isProtocol;
-		}
+		
 	}
 };
 </script>

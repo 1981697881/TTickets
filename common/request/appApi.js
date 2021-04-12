@@ -284,6 +284,12 @@ export default {
 			method: 'POST',
 			// desc: '影城下影片的场次',
 		},
+		movieMessage: {
+			url: 'app/api/movieMessage',
+			auth: false,
+			method: 'POST',
+			// desc: '影片详情',
+		},
 	},
 	/** 商品 ↓ **/
 	goods: {
@@ -457,12 +463,23 @@ export default {
 			method: 'POST',
 			// desc: '用户注册',
 		},
-
 		forgot: {
 			url: 'user/forgot',
 			auth: false,
 			method: 'POST',
 			// desc: '忘记密码',
+		},
+		cdKeyList: {
+			url: 'cdkey/cdKeyList',
+			auth: true,
+			method: 'POST',
+			//desc: '团体票列表',
+		},
+		payCdKeyMoney: {
+			url: 'WeChat/payCdKeyMoney',
+			auth: true,
+			method: 'POST',
+			//desc: '团体票购买',
 		},
 	},
 

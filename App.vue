@@ -62,6 +62,7 @@ export default {
 				// #ifdef MP-WEIXIN
 				wechat.login();
 				// #endif
+				this.getUserInfo()
 			}
 		},
 		async getAppLocal() {

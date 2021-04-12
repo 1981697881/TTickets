@@ -846,6 +846,17 @@
 						"title": "兑换赠送",
 						"group": "用户"
 					}
+				},{
+					"path": "groupticketinfo",
+					"style": {
+						"navigationBarTitleText": "团体票详情"
+					},
+					"meta": {
+						"auth": false,
+						"async": true,
+						"title": "详情",
+						"group": "用户"
+					}
 				},
 				{
 					"path": "wallet/index",

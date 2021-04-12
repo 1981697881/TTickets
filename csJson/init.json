@@ -5,7 +5,7 @@
 	"data": {
 		"payment": ["wechat", "alipay", "wallet"],
 		"info": {
-			"name": "FZ影院",
+			"name": "财富中心影城",
 			"domain": "https://shopro.7wpp.com",
 			"version": "1.0.7",
 			"logo": "https://api.7wpp.com/uploads/20201207/38c9eb1c83f2f1848693f66cd86933ce.jpg",
