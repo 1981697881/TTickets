@@ -35,6 +35,22 @@
 					<text class="sel-coupon" v-else>暂无优惠券</text>
 					<text class="cuIcon-right"></text>
 				</view>
+				<radio-group @change="selPay" class="pay-box">
+					<label class="x-bc pay-item" >
+						<view class="x-f">
+							<image class="pay-img" src="http://shopro.7wpp.com/imgs/wx_pay.png" mode=""></image>
+							<text>微信支付</text>
+						</view>
+						<radio value="wechat" :class="{ checked: payType === 'wechat' }" class=" pay-radio orange" :checked="payType === 'wechat'"></radio>
+					</label>
+					<label class="x-bc pay-item" >
+						<view class="x-f">
+							<image class="pay-img" src="http://shopro.7wpp.com/imgs/wallet_pay.png" mode=""></image>
+							<text>余额支付</text>
+						</view>
+						<radio value="wallet" :class="{ checked: payType === 'wallet' }" class="pay-radio orange" :checked="payType === 'wallet'"></radio>
+					</label>
+				</radio-group>
 			</view>
 			<!-- 手机号码 -->
 			<view class="phone x-bc item-list">
@@ -150,8 +166,6 @@ export default {
 		}
 	},
 	async onLoad(options) {
-		console.log(123)
-		console.log(this.userInfo)
 		this.options = options;
 		if (options.openid) {
 			//检测到回传openid
@@ -160,6 +174,7 @@ export default {
 		if(this.$Route.query){
 			this.perGoodsList = {...this.$Route.query}
 			this.perGoodsList.schedule = JSON.parse(this.$Route.query.schedule); 
+			this.perGoodsList.schedule.showDatetime=decodeURI(this.perGoodsList.schedule.showDatetime); 
 			this.perGoodsList.locationHall = JSON.parse(this.$Route.query.locationHall); 
 			this.perGoodsList.seats = JSON.parse(this.$Route.query.seats); 
 		}
@@ -172,6 +187,10 @@ export default {
 	},
 	onShow() {},
 	methods: {
+		...mapActions(['getUserDetails']),
+		selPay(e) {
+			this.payType = e.detail.value;
+		},
 		bindPhone(e) {
 			let me = this;
 			me.$api('user.getWxMiniPhoneNumber', {
@@ -188,8 +207,9 @@ export default {
 						iv: e.detail.iv
 					}).then(res => {
 						if (res.flag) {
-							uni.setStorageSync('phone', res.data);
-							me.jump('/pages/user/edit-phone', { fromType: 'bind', phone: res.data });
+							me.getUserDetails();
+							/* uni.setStorageSync('phone', res.data);
+							me.jump('/pages/user/edit-phone', { fromType: 'bind', phone: res.data }); */
 						}
 					});
 				}
@@ -198,10 +218,11 @@ export default {
 		// 发起支付
 		confirmPay() {
 			let that = this;
-			let pay = new AppPay(that.payType, that.perGoodsList);
+			this.confirmOrder()
+			/* let pay = new AppPay(that.payType, that.perGoodsList); */
 		},
 		jump(path, parmas) {
-			this.$Router.push({
+			this.$Router.replace({
 				path: path,
 				query: parmas
 			});
@@ -265,22 +286,29 @@ export default {
 		//确认订单
 		confirmOrder(){
 			let ticketList = []
+			let that = this
 			this.perGoodsList.seats.forEach((item)=>{
 				let obj = {}
 				obj.seatId = item.seatId
-				obj.ticketFee = item.ticketFee
-				obj.ticketPrice = item.ticketPrice
+				obj.ticketFee = item.ticketfee
+				obj.ticketPrice = item.standardprice
 				ticketList.push(obj)
 			})
 			this.$api('cinema.confirmOrder', {
 				lockOrderId: this.perGoodsList.lockOrderId,
 				scheduleId: this.perGoodsList.scheduleId,
 				scheduleKey: this.perGoodsList.scheduleKey,
-				mobile: uni.getStorageSync('phone'),
+				mobile: this.userInfo.phoneNumber,
 				ticketList: ticketList,
 			}).then(res => {
 				if(res.flag){
-					console.log(res)
+					that.isSubOrder = true
+					that.jump('/pages/index/wallet', res.data); 
+				}else{
+					uni.showToast({
+						icon: 'none',
+						title: res.msg
+					})
 				}
 			});
 		},	
@@ -296,7 +324,6 @@ export default {
 					that.goodsList.forEach(goods => {
 						if (item.goods_id == goods.goods_id && item.sku_price_id == goods.sku_price_id) {
 							goods.dispatch_type = item.dispatch_type;
-
 							if (item.store_id) {
 								goods.store_id = item.store_id;
 							}

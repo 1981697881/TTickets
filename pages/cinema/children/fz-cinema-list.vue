@@ -6,14 +6,14 @@
 					<view class="swiper-item">
 						<image :src="item.url" mode="aspectFill" v-if="item.type == 'image'"></image>
 						<video :src="item.url" autoplay loop muted :show-play-btn="false" :controls="false" objectFit="cover" v-if="item.type == 'video'"></video>
-						<view class="cir_group" v-if="item.type == 'Movie'">
+						<view class="cir_group">
 							<view class="cir_logo">
-								<view class="tag" v-if="item.scrn === 'screen'">2D IMAX</view>
+								<view class="tag" >{{item.dimensional}}</view>
 								<image :src="item.filmPhoto" mode="aspectFill"></image>
 							</view>
 							<view class="text-white cir_detail">
 								<view class="text-cut de_name">{{ item.filmName }}</view>
-								<view class="de_pin">评分{{ item.score }} | 0万人想看</view>
+								<view class="de_pin">评分：暂无</view>
 								<view class="text-orange de_info">{{ item.filmLong }}分钟 | {{ item.filmSortid }}</view>
 								<view class="text-orange de_info">导演：{{ item.filmDirector }}</view>
 								<view class="text-orange de_info">主演：{{ item.filmPlay }}</view>

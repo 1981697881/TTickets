@@ -178,7 +178,7 @@ export default {
 	},
 	onLoad() {
 		this.head = this.$Route.query;
-		console.log(this.head)
+		this.head.showDatetime = decodeURI(this.head.showDatetime)
 		this.listParams.scheduleId = this.$Route.query.scheduleId;
 		this.listParams.schedulekey = this.$Route.query.schedulekey;
 		//获取宽度

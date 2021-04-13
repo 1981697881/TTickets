@@ -1,13 +1,13 @@
 <template>
 	<view class="ci-header">
 		<view class="locate-logo">
-			<view class="tag">2D IMAX</view>
+			<view class="tag">{{detail.dimensional}}</view>
 			<image class="logo-img" :src="detail.filmPhoto"></image>
 		</view>
 		<view class="header-info">
 			<view class="text-bold text-xxl padding-top">{{detail.filmName}}</view>
-			<view class="info-text text-gray">{{detail.filmLong}}分钟 / {{detail.filmSortid}} / {{detail.showArea}}</view>
-			<view class="info-text text-gray">{{detail.filmDate}} 在{{detail.showArea}}上映</view>
+			<view class="info-text text-gray">{{detail.filmLong}}分钟 / {{detail.filmSortid || ""}} / {{detail.showArea || ""}}</view>
+			<view class="info-text text-gray"></view>
 		</view>
 	</view>
 </template>

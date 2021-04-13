@@ -84,7 +84,18 @@ export default {
 					res.data.forEach((item,index)=>{
 						item.type = 'Movie'
 					})
-					that.goodsList = [res.data];
+					let resArray = []
+					res.data.forEach((item,index)=>{
+						console.log(Number(index+1) %4)
+						if(index%4 === 0){
+							resArray.push(item)
+							that.goodsList.push(resArray);
+							resArray = []
+						}else{
+							resArray.push(item)
+						}
+					})
+					
 					console.log(that.goodsList)
 					
 				}

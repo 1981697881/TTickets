@@ -25,7 +25,7 @@
 						<view v-if="showbadge && badegtype == 'round'" class="roundbadge" :style="{ background: [index % 2 == 0 ? 'red' : 'green'] }">
 							<text>{{ item.badeg }}</text>
 						</view>
-						<view v-if="showbadge && badegtype == 'trian'" class="tag">{{ item.badeg }}</view>
+						<view v-if="showbadge && badegtype == 'trian'" class="tag">{{ item.dimensional }}</view>
 						<!-- 图片框 居中属性-->
 						<view style="display:flex; align-content:flex-end;justify-content: center; border:red 0px solid;" :style="{ width: item.w + 'px', height: item.h + 'px' }">
 							<image

@@ -866,7 +866,7 @@
 
 					},
 					"meta": {
-						"auth": true,
+						"auth": false,
 						"async": true,
 						"title": "我的钱包",
 						"group": "用户"
@@ -881,6 +881,18 @@
 						"auth": true,
 						"async": true,
 						"title": "绑定银行卡",
+						"group": "用户"
+
+					}
+				},{
+					"path": "wallet/recharge",
+					"style": {
+						"navigationBarTitleText": "充值"
+					},
+					"meta": {
+						"auth": false,
+						"async": true,
+						"title": "充值",
 						"group": "用户"
 
 					}

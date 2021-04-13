@@ -105,7 +105,7 @@ const actions = {
 					let obj = {
 					"name": v.posterName,
 					"bgcolor": "#2B4055",
-					"image": "http://139.159.136.187:50080/uploadFiles/image/"+v.posterPhoto,
+					"image": "http://139.159.136.187:50080/movie/uploadFiles/image/"+v.posterPhoto,
 					"path": v.posterUrl,
 					"path_name": "",
 					"path_type": 1

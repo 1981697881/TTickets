@@ -8,18 +8,25 @@
 			<!-- <image class="resale-bg" src="/static/resale_bg.png" mode=""></image> -->
 			<view class="card-box x-end x-bc">
 				<view class="left y-start">
-					<text class="title">可提现</text>
+					<text class="title">账户</text>
 					<text class="money-num">{{ userinfo.money }}</text>
-					<text class="add">{{ rules }}</text>
+					<text class="add">温馨提示:{{ rules }}</text>
 				</view>
 				<button class="cu-btn cash-btn" @tap="onWithdrawals">提现</button>
 			</view>
 		</view>
 		<view class="content_box">
-			<view class="resale-list x-bc" @tap="jump('/pages/user/wallet/bind-bank')">
+			<!-- <view class="resale-list x-bc" @tap="jump('/pages/user/wallet/bind-bank')">
 				<view class="x-f">
 					<text class=" cuicon cuIcon-vipcard"></text>
 					<text>绑定银行卡</text>
+				</view>
+				<text class="cuIcon-right"></text>
+			</view> -->
+			<view class="resale-list x-bc" @tap="jump('/pages/user/wallet/recharge')">
+				<view class="x-f">
+					<text class=" cuicon cuIcon-recharge"></text>
+					<text>充值</text>
 				</view>
 				<text class="cuIcon-right"></text>
 			</view>

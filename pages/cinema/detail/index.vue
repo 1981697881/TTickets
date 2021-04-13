@@ -11,7 +11,8 @@
 					<!-- 购买滚动提示 -->
 					<sh-groupon-tip v-if="false"></sh-groupon-tip>
 					<view class="carousel">
-						<video controls :poster="goodsInfo.filmPhoto" object-fit="fill" class="swiper-image shopro-selector-rect" :src="goodsInfo.herald"></video>
+						<!-- <video controls :poster="goodsInfo.filmPhoto" object-fit="fill" class="swiper-image shopro-selector-rect" :src="goodsInfo.herald"></video> -->
+						<image class="swiper-image shopro-selector-rect" :src="goodsInfo.filmPhoto" mode="aspectFill" lazy-load></image>
 					</view>
 					<!-- 详情轮播 -->
 					<!-- <swiper class="carousel" circular @change="swiperChange">
@@ -161,10 +162,10 @@ export default {
 					id: 'tab1',
 					title: '规格参数'
 				}, */
-				{
+				/* {
 					id: 'tab2',
 					title: '影评'
-				}
+				} */
 			]
 		};
 	},
@@ -218,11 +219,12 @@ export default {
 		// 商品详情
 		getGoodsDetail() {
 			let that = this;
-			that.$api('cinema.lists', {
+			that.$api('cinema.movieMessage', {
 				filmId: that.$Route.query.filmId
 			}).then(res => {
 				if (res.flag) {
 					that.goodsInfo = res.data;
+					that.goodsInfo.type='Movie';
 					that.getCommentList();
 					that.setShareInfo({
 						query: {

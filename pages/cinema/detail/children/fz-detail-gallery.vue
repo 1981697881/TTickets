@@ -10,9 +10,9 @@
 		</view>
 		<view v-if="type == 'crew'" class="goods-box swiper-box x-f">
 			<swiper class="carousel" @change="swiperChange">
-				<swiper-item v-for="(item, index) in detail.starVOS" :key="index" class="carousel-item"> 
+				<swiper-item v-for="(item, index) in detail.filmRoleVOS" :key="index" class="carousel-item"> 
 					<view class="min-goods">
-						<view :class="type=='still'?'img-boxt':'img-box'"><image class="img" :src="header+'uploadFiles/image/'+item.starPhotoUrl" mode="scaleToFill"></image></view>
+						<view :class="type=='still'?'img-boxt':'img-box'"><image class="img" :src="item.starPhotoUrl" mode="scaleToFill"></image></view>
 						<view v-if="type == 'crew'" class="info-box">
 							<view class="y-f">
 								<text class="cr_name text-black">{{item.starName}}</text>
@@ -27,7 +27,7 @@
 			<swiper class="carousel" @change="swiperChange">
 				<swiper-item v-for="(item, index) in detail.photoArrays" :key="index" class="carousel-item">
 					<view class="min-goods">
-						<view :class="type=='still'?'img-boxt':'img-box'"><image class="img" :src="header+'uploadFiles/image/'+item.images" mode="scaleToFill"></image></view>
+						<view :class="type=='still'?'img-boxt':'img-box'"><image class="img" :src="item" mode="scaleToFill"></image></view>
 					</view>
 				</swiper-item>
 			</swiper>

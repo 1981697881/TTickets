@@ -27,7 +27,7 @@
 			<view class="cir-right"></view>
 			<view class="cir-line"></view>
 		</view>
-		<view class="cont-action">
+		<!-- <view class="cont-action">
 			<view class="act-btn"><button>申请改签</button></view>
 			<view class="act-btn"><button>申请退票</button></view>
 			<view class="act-text"><text>未取票开场前30分钟可以改签,改签费规则点击查看</text></view>
@@ -37,7 +37,7 @@
 			<view class="cir-left"></view>
 			<view class="cir-right"></view>
 			<view class="cir-line"></view>
-		</view>
+		</view> -->
 		<view class="cont-notice text-gray">
 			<view class="text-black text-bold text-xl">团体票使用方法</view>
 			<view>1.生成兑换码，截图发送给好友。</view>

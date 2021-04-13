@@ -2,48 +2,37 @@
 	<view class="page_box">
 		<view class="content_box">
 			<!-- 确认订单卡片 -->
-			<view class="goods-list">
+			<view class="goods-list" v-for="ticeket in ticketsList" :key="ticeket.cdkeyNumber">
 				<view class="goods-card">
 					<view class="goods-box x-start">
 						<view class="y-start">
-							<view class="goods-title more-t"><view class="item-title text-xl text-bold">团体电子普通电影抵用券</view></view>
+							<view class="goods-title more-t">
+								<view class="item-title text-xl text-bold">{{ ticeket.cdkeyName }}</view>
+							</view>
 							<view class="size-tip">
-								<view class="cu-tag radius line-yellow">全场影片</view>
-								<view class="cu-tag radius line-yellow">普通厅</view>
+								<view v-for="(item, index) in ticeket.cdKeyKeyWordsArrays" :key="index" class="cu-tag radius line-yellow">{{ item }}</view>
 							</view>
 							<slot name="goodsBottom">
-								<view class="price">
-									注意事项：该劵为普通抵用券，可适用于全场普通影厅的影片播放场次，若需选择除普通影厅外的特殊厅，可购买“通用电影抵用劵”或在选择影片支付时额外补交其他影厅的所需的费用
-								</view>
+								<view class="price">{{ ticeket.cdkeyDescription }}</view>
 							</slot>
 						</view>
 					</view>
 				</view>
-				<view class="logistic item-list x-bc">
-					<view class="x-f"><text class="cuIcon-ticket text-blue padding-xs">普通票 ￥15</text></view>
-					<view class="x-f"><uni-number-box @change="changeNum" :step="1" :min="4" :currentSkuPrice.sync="currentSkuPrice" :value="ticketNum"></uni-number-box></view>
-				</view>
-			</view>
-			<view class="goods-list">
-				<view class="goods-card">
-					<view class="goods-box x-start">
-						<view class="y-start">
-							<view class="goods-title more-t"><view class="item-title text-xl text-bold">团体电子通用电影抵用券</view></view>
-							<view class="size-tip">
-								<view class="cu-tag radius line-yellow">全场影片</view>
-								<view class="cu-tag radius line-yellow">所有影厅</view>
-							</view>
-							<slot name="goodsBottom">
-								<view class="price">
-									注意事项：该劵为通用抵用券，使用于全场所有影厅，所有影片，但该劵为特殊影厅而设，若只是普通观影，请选择“普通电影抵用券”，避免造成不必要的浪费
-								</view>
-							</slot>
-						</view>
+				<view v-if="ticeket.cdkeyNumber == 1" class="logistic item-list x-bc">
+					<view class="x-f">
+						<text class="cuIcon-ticket text-blue padding-xs">普通票 ￥{{ ticeket.cdkeyPrice }}</text>
+					</view>
+					<view class="x-f">
+						<uni-number-box @change="changeNum($event, ticeket)" :step="1" :min="0" :currentSkuPrice.sync="currentSkuPrice" :value="ticketNum"></uni-number-box>
 					</view>
 				</view>
-				<view class="logistic item-list x-bc">
-					<view class="x-f"><text class="cuIcon-ticket text-red padding-xs">通用票 ￥30</text></view>
-					<view class="x-f"><uni-number-box @change="changeNumt" :step="1" :min="4" :currentSkuPrice.sync="currentSkuPrice" :value="tickettNum"></uni-number-box></view>
+				<view v-else class="logistic item-list x-bc">
+					<view class="x-f">
+						<text class="cuIcon-ticket text-red padding-xs">通用票 ￥{{ ticeket.cdkeyPrice }}</text>
+					</view>
+					<view class="x-f">
+						<uni-number-box @change="changeNumt($event, ticeket)" :step="1" :min="0" :currentSkuPrice.sync="currentSkuPrice" :value="tickettNum"></uni-number-box>
+					</view>
 				</view>
 			</view>
 			<!-- 团体票购买须知 -->
@@ -57,11 +46,11 @@
 			</view>
 		</view>
 		<view class="foot_box x-f">
-			<text class="num">共1件</text>
+			<text class="num">共{{count}}件</text>
 			<view class="all-money">
 				<text>合计：</text>
-				<text class="price">￥1</text>
-			</view>
+				<text class="price">￥{{countPrice.toFixed(2)}}</text>
+			</view> 
 			<button class="cu-btn sub-btn bg-red" @tap="confirmPay" :disabled="isSubOrder">
 				<text v-if="isSubOrder" class="cuIcon-loading2 cuIconfont-spin"></text>
 				立即购买
@@ -89,8 +78,8 @@ export default {
 	},
 	data() {
 		return {
-			ticketNum: 5,
-			tickettNum: 5,
+			ticketNum: 0,
+			tickettNum: 0,
 			currentSkuPrice: {},
 			isSubOrder: false,
 			isAndroid: uni.getStorageSync('isAndroid'),
@@ -98,30 +87,43 @@ export default {
 			payType: 'wechat',
 			orderType: '',
 			perGoodsList: {}, //确认单订单
-			ticketsList: {},
+			ticketsList: {}
 		};
 	},
 	computed: {
 		...mapState({
 			userInfo: state => state.user.userInfo
-		})
+		}),
+		countPrice: function() {
+			let sum = 0;
+			return this.ticketNum*Number(this.ticketsList[0].cdkeyPrice)  + this.tickettNum*Number(this.ticketsList[1].cdkeyPrice);
+		},
+		count: function() {
+			return this.tickettNum + this.ticketNum;
+		},
 	},
 	watch: {},
 	created() {
-		this.getTicketsList()
+		this.getTicketsList();
 	},
-	async onLoad(options) {
-	},
+	async onLoad(options) {},
 	onShow() {},
 	methods: {
 		// 数量
-		changeNum(e) {
+		changeNum(e, item) {
+			console.log(e);
+			console.log(item);
 			let that = this;
 			that.ticketNum = +e;
+			that.$set(item, 'ticketNum', that.ticketNum);
+		
 		},
-		changeNumt(e) {
+		changeNumt(e, item) {
+			console.log(e);
+			console.log(item);
 			let that = this;
 			that.tickettNum = +e;
+			that.$set(item, 'ticketNum', that.tickettNum);
 		},
 		// 发起支付
 		confirmPay() {
@@ -129,7 +131,7 @@ export default {
 			uni.showToast({
 				icon: 'none',
 				title: '当前功能尚未开放....'
-			})
+			});
 			/* let pay = new AppPay(that.payType, that.perGoodsList); */
 		},
 		jump(path, parmas) {
@@ -163,14 +165,12 @@ export default {
 		// 抵用券列表
 		getTicketsList() {
 			let that = this;
-			that.$api('user.cdKeyList', {
-			}).then(res => {
+			that.$api('user.cdKeyList', {}).then(res => {
 				if (res.flag) {
-					that.ticketsList = res.data
+					that.ticketsList = res.data;
 				}
 			});
 		},
-		
 		// 格式日期
 		check(type, index) {
 			if (type == 'time') {
@@ -180,8 +180,7 @@ export default {
 			if (type == 'day') {
 				this.checkDayCur = index;
 			}
-		},
-		
+		}
 	}
 };
 </script>

@@ -10,7 +10,7 @@
 						<text class="time" v-else>{{ timeText }}</text>
 					</view>
 				</view>
-				<slot name="tipTag">{{checkTime.week}} {{detail.schedule.showDatetime.toString()}} ({{detail.schedule.dimensional}})</slot>
+				<slot name="tipTag">{{checkTime.week}} {{detail.schedule.showDatetime}} ({{detail.schedule.dimensional}})</slot>
 				<view class="size-tip">{{detail.cinemaName}}</view>
 				<slot name="goodsBottom">
 					<view class="price">￥{{ detail.money }}</view>
@@ -92,7 +92,7 @@ export default {
 		// 倒计时
 		countDown() {
 			let that = this;
-			let maxtime = 10 * 1;
+			let maxtime = 10 * 3;
 			let timer = setInterval(() => {
 				if (maxtime >= 0) {
 					let minutes = Math.floor(maxtime / 60);
