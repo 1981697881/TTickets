@@ -86,7 +86,7 @@ export default {
 }
 .group-box {
 	width: 700rpx;
-	box-shadow: 1px 1px 2px 2px #FFF5EE;
+	/* box-shadow: 1px 1px 2px 2px #FFF5EE; */
 	border-radius: 20rpx;
 	margin: 0 auto;
 	margin-top: 10rpx;

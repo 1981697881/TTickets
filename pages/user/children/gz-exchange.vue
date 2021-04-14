@@ -3,8 +3,13 @@
 		<view class="form-box">
 			<label>
 				<view class="form-item flex align-center justify-between">
-					<view class="item-title">兑换码:</view>
-					<input class="item-input flex-sub" type="number" v-model="phone" placeholder="请输入兑换序列号" placeholder-class="pl-input" />
+					<label>
+						<view class="x-f">
+							<view class="item-title">兑换码:</view>
+							<input class="item-input flex-sub" type="text" v-model="code.value" placeholder="请输入兑换码" placeholder-class="pl-input" />
+						</view>
+						<button class="cu-btn code-btn" @tap.stop="getCode"><text class="cuIcon-scan"></text></button>
+					</label>
 				</view>
 			</label>
 		</view>
@@ -26,9 +31,7 @@ export default {
 		};
 	},
 	computed: {},
-	onLoad() {
-		
-	},
+	onLoad() {},
 	methods: {
 		...mapActions(['getUserInfo']),
 		//修改手机号
@@ -47,6 +50,13 @@ export default {
 				}
 			});
 		},
+		getCode() {
+			uni.scanCode({
+				success: function(res) {
+					console.log(res);
+				}
+			});
+		}
 	}
 };
 </script>

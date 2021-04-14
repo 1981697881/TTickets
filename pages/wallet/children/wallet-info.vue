@@ -117,8 +117,8 @@ export default {
 			onval: false, // val值变化时自动重新生成二维码
 			loadMake: true, // 组件加载完成后自动生成二维码
 			src: '', // 二维码生成后的图片地址或base64
-			tabCurrent: 'ended',
 			scrollLeft: 0,
+			tabCurrent: 'ended',
 			tabList: [
 				{
 					id: 'ended',
