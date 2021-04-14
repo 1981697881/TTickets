@@ -7,10 +7,7 @@
 		</view>
 		<view class="content_box">
 			<view class="y-f money-box" >
-				<view class="money">100</view>
-				<view class="money">200</view>
-				<view class="money">300</view>
-				<view class="money">400</view>
+				<button v-for="(item,index) in setMeal" :key="index" class="money" :class="checkItem == index?'moneyAct':''" @tap="checkMoney" :data-target="index" :data-price="item.price">{{item.price}}</button>
 			</view>
 			<radio-group @change="selPay" class="pay-box" v-if="payment">
 				<label class="x-bc pay-item" v-if="payment.includes('wechat')">
@@ -22,7 +19,7 @@
 				</label>
 			</radio-group>
 			<view class="x-c">
-				<button class="cu-btn pay-btn" @tap="confirmPay">确认支付 ￥{{ orderDetail.total_fee }}</button>
+				<button class="cu-btn pay-btn bg-cyan" @tap="confirmPay">确认支付 ￥{{ checkPrice }}</button>
 			</view>
 		</view>
 		<view class="foot_box"></view>
@@ -40,8 +37,23 @@ export default {
 	components: {},
 	data() {
 		return {
+			setMeal:[{
+				price: 100,
+				itemId: 1,
+			},{
+				price: 200,
+				itemId: 2,
+			},{
+				price: 300,
+				itemId: 3,
+			},{
+				price: 400,
+				itemId: 4,
+			}],
 			payType: 'wechat',
 			options: {},
+			checkItem: 0,
+			checkPrice: 100,
 			orderDetail: {},
 			isAndroid: uni.getStorageSync('isAndroid'),
 			platform: uni.getStorageSync('platform')
@@ -77,6 +89,14 @@ export default {
 		clearInterval(timer);
 	},
 	methods: {
+		checkMoney(e){
+			if(this.checkItem == e.target.dataset.target){
+				return
+			}else{
+				this.checkItem = e.target.dataset.target
+				this.checkPrice = e.target.dataset.price
+			}
+		},
 		init() {
 			return Promise.all([this.getOrderDetail()]);
 		},
@@ -133,16 +153,18 @@ export default {
 		box-shadow: 1px 1px 1px 1px #A5A5A5;
 		border-radius: 15rpx;
 		line-height: 120rpx;
-		color: #e1212b;
-		background: #CCCCCC;
+		color: #778899;
+		background: #F8F8FF;
 		font-size: 60rpx;
 		&::before {
 			content: '￥';
 			font-size: 46rpx;
 		}
 	}
-	.money:after{ 
-	background-color:yellow;
+	.moneyAct{ 
+	color: #e1212b;
+	box-shadow: 1px 1px 1px 1px ;
+	background-color:#FAF0E6;
 	}
 }
 
@@ -175,9 +197,8 @@ export default {
 .pay-btn {
 	width: 690rpx;
 	height: 80rpx;
-	background: linear-gradient(90deg, rgba(240, 199, 133, 1), rgba(246, 214, 157, 1));
 	border-radius: 40rpx;
-	color: rgba(#fff, 0.9);
+	box-shadow: 1px 1px 1px 1px #CCE6FF;
 	margin-top: 100rpx;
 }
 </style>

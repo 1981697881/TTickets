@@ -12,7 +12,7 @@
 					<text class="money-num">{{ userinfo.money }}</text>
 					<text class="add">温馨提示:{{ rules }}</text>
 				</view>
-				<button class="cu-btn cash-btn" @tap="onWithdrawals">提现</button>
+				<!-- <button class="cu-btn cash-btn" @tap="onWithdrawals">提现</button> -->
 			</view>
 		</view>
 		<view class="content_box">

@@ -11,7 +11,7 @@
 			<view class=" price-box">
 				<view class="x-f">
 					<view class="current">￥{{ price }}</view>
-					<view class="original">￥{{ originalPrice }}</view>
+					<!-- <view class="original">￥{{ originalPrice }}</view> -->
 				</view>
 			</view>
 		</view>

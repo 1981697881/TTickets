@@ -53,6 +53,7 @@ export default class Wechat {
 						uni.getUserInfo({
 							provider: 'weixin',
 							success: function(infoRes) {
+								console.log(infoRes)
 								if (infoRes.errMsg === "getUserInfo:ok") {
 									let userInfo = infoRes.userInfo;
 									api('user.wxOpenPlatformLogin', {

@@ -389,7 +389,7 @@
 						"navigationBarTextStyle":"white"
 					},
 					"meta": {
-						"auth": false,
+						"auth": true,
 						"async": true
 					}
 				}

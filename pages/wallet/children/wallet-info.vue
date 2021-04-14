@@ -2,11 +2,11 @@
 	<view class="group-content">
 		<view class="cont-header">
 			<view class="head-box text-black">
-				<view class="text-bold text-xxl">{{ detail.filmName }}</view>
-				<view class="box-text padding-top">{{ detail.sessionsDate }} {{ detail.sessionsEndtime }}~{{ detail.sessionsStarttime }} ({{ detail.hallType }})</view>
+				<view class="text-bold text-xxl">{{ detail.shortName }}</view>
+				<view class="box-text padding-top">{{ detail.showDateTime }} </view>
 				<view class="box-text">{{ detail.cinemaName }} {{ detail.hallName }}</view>
 				<view class="box-text text-gray">
-					<text v-for="(item, index) in detail.engrosses" :key="index">{{ item.rowNum }}排{{ item.columnNum }}座</text>
+					<text v-for="(item, index) in detail.tickets" :key="index">{{ item.rowId }}排{{ item.columnId }}座</text>
 				</view>
 			</view>
 			<view class="img-box"><image class="img" :src="detail.filmPhoto" mode="aspectFill"></image></view>
@@ -30,7 +30,7 @@
 						ref="qrcode"
 						:cid="cid"
 						class="img"
-						:val="detail.ticketId"
+						:val="scanId"
 						:size="size"
 						:unit="unit"
 						:icon="icon"
@@ -41,10 +41,10 @@
 						@result="qrR"
 					/>
 				</view>
-				<view class="box-info">{{ detail.engrosses.length }}张电影票</view>
+				<view class="box-info">{{ detail.tickets.length }}张电影票</view>
 				<view v-if="tabCurrent == 'ended'" class="box-num">
 					取票号：
-					<text class="is-use">{{ detail.ticketId }}</text>
+					<text class="is-use">{{ detail.confirmationId }}</text>
 				</view>
 			</view>
 		</view>
@@ -53,7 +53,7 @@
 			<view class="cir-right"></view>
 			<view class="cir-line"></view>
 		</view>
-		<view class="cont-action">
+		<!-- <view class="cont-action">
 			<view class="act-btn"><button>申请改签</button></view>
 			<view class="act-btn"><button>申请退票</button></view>
 			<view class="act-text"><text>未取票开场前30分钟可以改签,改签费规则点击查看</text></view>
@@ -63,8 +63,8 @@
 			<view class="cir-left"></view>
 			<view class="cir-right"></view>
 			<view class="cir-line"></view>
-		</view>
-		<view class="cont-shops">
+		</view> -->
+		<!-- <view class="cont-shops">
 			<view class="shops-info padding-xs">
 				<view class="padding-xs text-bold text-xxl text-black">{{ detail.cinemaName }}</view>
 				<view class="padding-xs text-gray">白云区太和镇龙归龙岗1号广场</view>
@@ -75,13 +75,13 @@
 			<view class="cir-left"></view>
 			<view class="cir-right"></view>
 			<view class="cir-line"></view>
-		</view>
+		</view> -->
 		<view class="cont-price text-gray">
-			<view class="text-black text-bold text-xl">实付金额：￥{{ detail.ticketPaymoney }}</view>
-			<view>订单号：{{ detail.ticketId }}</view>
-			<view>购买时间：2021-01-01 13:00:00</view>
-			<view>手机号：131****1213</view>
-			<view>电影票由公司提供</view>
+			<view class="text-black text-bold text-xl">实付金额：￥{{ detail.ticketPayMoney }}</view>
+			<view>订单号：{{ detail.confirmationId }}</view>
+			<view>购买时间：{{detail.createDateTime}}</view>
+			<view>手机号：{{detail.mobile}}</view>
+			<view>电影票由{{detail.channelName}}提供</view>
 		</view>
 		<view class="cir-info">
 			<view class="cir-left"></view>
@@ -108,7 +108,7 @@ export default {
 		return {
 			cid:'qrcode',
 			ifShow: true,
-			val: '二维码', // 要生成的二维码值
+			val: '', // 要生成的二维码值
 			size: 200, // 二维码大小
 			unit: 'upx', // 单位
 			icon: '', // 二维码图标
@@ -117,8 +117,6 @@ export default {
 			onval: false, // val值变化时自动重新生成二维码
 			loadMake: true, // 组件加载完成后自动生成二维码
 			src: '', // 二维码生成后的图片地址或base64
-			img: 'http://139.159.136.187:50080/uploadFiles/image/340beba0ae805c0f9e8ad5928b0e2fdf.jpeg',
-			scan: 'http://139.159.136.187:50080/uploadFiles/image/scan.png',
 			tabCurrent: 'ended',
 			scrollLeft: 0,
 			tabList: [
@@ -145,8 +143,16 @@ export default {
 		detail: {
 			type: Object,
 			default: null
+		},
+		scanId: {
+			type: String,
+			default: ''
 		}
-	}
+	},
+	created(){
+		console.log(123)
+		console.log(scanId)
+	},
 };
 </script>
 

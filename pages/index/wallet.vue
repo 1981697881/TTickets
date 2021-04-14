@@ -11,7 +11,7 @@
 		<view class="content_box">
 			<scroll-view scroll-y="true" enable-back-to-top @scrolltolower="loadMore" class="scroll-box">
 				<view class="goods-item" v-for="item in goodsList" :key="item.id">
-					<wallet-list :cardId="item.ticketId" :title="item.filmName" :subtitle="item.cinemaName" :img="item.filmPhoto" :price="item.payMoney" :originalPrice="item.payMemberMoney">
+					<wallet-list :cardId="item.ticketId" :title="item.filmName" :subtitle="item.hallName" :img="item.filmPhoto" :price="item.ticketPayMoney" >
 						<block slot="sell">
 							<!-- <view class="x-f">
 								<view class="cu-progress round sm">
@@ -20,18 +20,18 @@
 								<view class="progress-text">已抢{{ getProgress(item.sales, item.stock) }}</view>
 							</view> -->
 							<view class="x-f">
-								<view>{{item.sessionsDate}} {{item.sessionsStarttime}}</view>
+								<view>{{item.showDatetime}}</view>
 							</view>
 						</block>
 						<block slot="btn">
 							<view class="fot-text">
 								<view class="text-grey">
-									共 <text class="text-black text-bold text-xl padding-xs"> {{item.count}} </text> 张
+									共 <text class="text-black text-bold text-xl padding-xs"> {{item.ticketCount}} </text> 张
 									</view>
 								<view class="fot-btn">
-								<button v-if="btnType[tabCurrent].color=='btn-end'" @tap.stop="jump('/pages/order/add-comment', {ticketId : item.ticketId })" class="cu-btn buy-btn" :class="btnType[tabCurrent].color">{{ btnType[tabCurrent].name }}</button>
-								<button v-if="btnType[tabCurrent].color=='btn-ing'" @tap.stop="jump('/pages/wallet/index', {ticketId : item.ticketId })" class="cu-btn buy-btn" :class="btnType[tabCurrent].color">{{ btnType[tabCurrent].name }}</button>
-								<button v-if="btnType[tabCurrent].color=='btn-nostart'" @tap.stop="jump('/pages/wallet/index', {ticketId : item.ticketId })" class="cu-btn buy-btn" :class="btnType[tabCurrent].color">{{ btnType[tabCurrent].name }}</button>
+								<button v-if="btnType[tabCurrent].color=='btn-end'" @tap.stop="jump('/pages/order/add-comment', {confirmationId : item.confirmationId })" class="cu-btn buy-btn" :class="btnType[tabCurrent].color">{{ btnType[tabCurrent].name }}</button>
+								<button v-if="btnType[tabCurrent].color=='btn-ing'" @tap.stop="jump('/pages/wallet/index', {confirmationId : item.confirmationId })" class="cu-btn buy-btn" :class="btnType[tabCurrent].color">{{ btnType[tabCurrent].name }}</button>
+								<button v-if="btnType[tabCurrent].color=='btn-nostart'" @tap.stop="jump('/pages/wallet/index', {confirmationId : item.confirmationId })" class="cu-btn buy-btn" :class="btnType[tabCurrent].color">{{ btnType[tabCurrent].name }}</button>
 								</view>
 							</view>
 						</block>
@@ -103,7 +103,7 @@ export default {
 				{
 					id: 'ing',
 					title: '电影票',
-					status: '2',
+					status: '0',
 				},
 				{
 					id: 'nostart',

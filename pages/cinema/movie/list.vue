@@ -341,7 +341,7 @@ export default {
 					}
 				}
 			}
-			that.$api('cinema.lockSeats', { seatIdList: oldArray,scheduleId: this.listParams.scheduleId,scheduleKey: this.listParams.schedulekey,openIdNotNull: 0}).then(res => {
+			that.$api('cinema.lockSeats', {openId: uni.getStorageSync('openid'), seatIdList: oldArray,scheduleId: this.listParams.scheduleId,scheduleKey: this.listParams.schedulekey,openIdNotNull: 0}).then(res => {
 				if (res.flag) {
 					that.loadModal = false;
 					let result = { ...res.data };

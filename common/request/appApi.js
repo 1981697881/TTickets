@@ -222,7 +222,7 @@ export default {
 			// desc: '票劵列表',
 		},
 		detail: {
-			url: 'memberTicketDetail/userTicketFormDetail',
+			url: 'FH/getTicketInfo',
 			auth: true,
 			method: 'POST',
 			// desc: '票劵详情',
@@ -249,10 +249,10 @@ export default {
 			// desc: '座位列表',
 		},
 		lockSeats: {
-			url: 'app/api/lockSeats',
+			url: 'FH/lockSeats',
 			auth: false,
 			method: 'POST',
-			// desc: '提交订单',
+			// desc: '锁位',
 		},
 		confirmOrder: {
 			url: 'FH/confirmOrder',

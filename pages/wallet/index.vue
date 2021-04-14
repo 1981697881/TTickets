@@ -5,7 +5,7 @@
 				<view class="group-wrap">
 					<wallet-head :detail="walletInfo"></wallet-head>
 					<view class="group-box">
-						<wallet-info :detail="walletInfo"></wallet-info>
+						<wallet-info :detail="walletInfo" :scanId="confirmationId"></wallet-info>
 					</view>
 				</view>
 				<!-- loading -->
@@ -32,7 +32,7 @@ export default {
 	data() {
 		return {
 			walletInfo: {
-				id: '123',
+				/* id: '123',
 				type: 'movie', //movie 电影票 goods商品票
 				state: 'ing', //end 已结束，ing 进行中 restEnd已退款 restIng退款中
 				title: '1天后开场',
@@ -41,8 +41,9 @@ export default {
 				endTime: '',
 				ingTime: '',
 				resetEndTime: '',
-				resetTime: ''
+				resetTime: '' */
 			},
+			confirmationId: '',
 			isLoading: false,
 			loadStatus: '', //loading,over
 			lastPage: 1,
@@ -52,7 +53,7 @@ export default {
 	},
 	onLoad() {
 		if(this.$Route.query){
-			this.ticketId = this.$Route.query.ticketId
+			this.confirmationId = this.$Route.query.confirmationId
 			this.getOrderDetail()
 		}
 	},
@@ -75,7 +76,7 @@ export default {
 		getOrderDetail(){
 			let that = this;
 			that.$api('wallet.detail', {
-				ticketId : that.ticketId,
+				confirmationId : that.confirmationId,
 			}).then(res => {
 				if (res.flag) {
 					that.walletInfo = res.data;

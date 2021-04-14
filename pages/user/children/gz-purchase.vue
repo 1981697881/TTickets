@@ -51,7 +51,7 @@
 				<text>合计：</text>
 				<text class="price">￥{{countPrice.toFixed(2)}}</text>
 			</view> 
-			<button class="cu-btn sub-btn bg-red" @tap="confirmPay" :disabled="isSubOrder">
+			<button class="cu-btn sub-btn bg-red" @tap="confirmOrder" :disabled="isSubOrder">
 				<text v-if="isSubOrder" class="cuIcon-loading2 cuIconfont-spin"></text>
 				立即购买
 			</button>
@@ -87,7 +87,7 @@ export default {
 			payType: 'wechat',
 			orderType: '',
 			perGoodsList: {}, //确认单订单
-			ticketsList: {}
+			ticketsList: []
 		};
 	},
 	computed: {
@@ -143,7 +143,7 @@ export default {
 		//确认订单
 		confirmOrder() {
 			let ticketList = [];
-			this.perGoodsList.seats.forEach(item => {
+			this.ticketsList.forEach(item => {
 				let obj = {};
 				obj.seatId = item.seatId;
 				obj.ticketFee = item.ticketFee;

@@ -86,16 +86,17 @@ export default {
 					})
 					let resArray = []
 					res.data.forEach((item,index)=>{
-						console.log(Number(index+1) %4)
-						if(index%4 === 0){
-							resArray.push(item)
+						if(index+1%4 === 0){
 							that.goodsList.push(resArray);
 							resArray = []
+							resArray.push(item)
 						}else{
 							resArray.push(item)
+							if(index+1 == res.data.length){
+								that.goodsList.push(resArray);
+							}
 						}
 					})
-					
 					console.log(that.goodsList)
 					
 				}
