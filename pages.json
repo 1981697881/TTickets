@@ -841,7 +841,7 @@
 						"navigationBarTitleText": "团体票"
 					},
 					"meta": {
-						"auth": false,
+						"auth": true,
 						"async": true,
 						"title": "兑换赠送",
 						"group": "用户"
@@ -890,7 +890,7 @@
 						"navigationBarTitleText": "充值"
 					},
 					"meta": {
-						"auth": false,
+						"auth": true,
 						"async": true,
 						"title": "充值",
 						"group": "用户"

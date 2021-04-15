@@ -3,15 +3,15 @@
 	<view class="sh-wallet-box x-f mb10">
 		<view class="x-f wallet-left">
 			<view class="wallet-item y-f" @tap="jump('/pages/user/wallet/index')">
-				<text class="wallet-item__detail item-balance">{{ userInfo.money || '0' }}</text>
+				<text class="wallet-item__detail item-balance">{{ balInfo.Money || '0.00' }}</text>
 				<text class="wallet-item__title">账户余额</text>
 			</view>
 			<view class="wallet-item y-f" @tap="jump('/pages/user/wallet/score-balance')">
-				<text class="wallet-item__detail item-score">{{ userInfo.score || '0' }}</text>
+				<text class="wallet-item__detail item-score">{{ balInfo.score || '0' }}</text>
 				<text class="wallet-item__title">积分</text>
 			</view>
 			<view class="wallet-item y-f" @tap="jump('/pages/app/coupon/list')">
-				<text class="wallet-item__detail item-coupon">{{ userInfo.coupons_num || '0' }}</text>
+				<text class="wallet-item__detail item-coupon">{{ balInfo.coupons_num || '0' }}</text>
 				<text class="wallet-item__title">优惠券</text>
 			</view>
 		</view>
@@ -34,7 +34,8 @@ export default {
 	},
 	computed: {
 		...mapState({
-			userInfo: state => state.user.userInfo
+			userInfo: state => state.user.userInfo,
+			balInfo: state => state.user.balInfo
 		})
 	},
 	methods: {

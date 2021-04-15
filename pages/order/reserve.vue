@@ -35,23 +35,23 @@
 					<text class="sel-coupon" v-else>暂无优惠券</text>
 					<text class="cuIcon-right"></text>
 				</view>
-				<radio-group @change="selPay" class="pay-box">
-					<label class="x-bc pay-item" >
-						<view class="x-f">
-							<image class="pay-img" src="http://shopro.7wpp.com/imgs/wx_pay.png" mode=""></image>
-							<text>微信支付</text>
-						</view>
-						<radio value="wechat" :class="{ checked: payType === 'wechat' }" class=" pay-radio orange" :checked="payType === 'wechat'"></radio>
-					</label>
-					<label class="x-bc pay-item" >
-						<view class="x-f">
-							<image class="pay-img" src="http://shopro.7wpp.com/imgs/wallet_pay.png" mode=""></image>
-							<text>余额支付</text>
-						</view>
-						<radio value="wallet" :class="{ checked: payType === 'wallet' }" class="pay-radio orange" :checked="payType === 'wallet'"></radio>
-					</label>
-				</radio-group>
 			</view>
+			<radio-group @change="selPay" class="pay-box">
+				<label class="x-bc pay-item" >
+					<view class="x-f">
+						<image class="pay-img" src="http://shopro.7wpp.com/imgs/wx_pay.png" mode=""></image>
+						<text>微信支付</text>
+					</view>
+					<radio value="wechat" :class="{ checked: payType === 'wechat' }" class=" pay-radio orange" :checked="payType === 'wechat'"></radio>
+				</label>
+				<label class="x-bc pay-item" >
+					<view class="x-f">
+						<image class="pay-img" src="http://shopro.7wpp.com/imgs/wallet_pay.png" mode=""></image>
+						<text>余额支付<text class="text-red">(0.00)</text></text>
+					</view>
+					<radio value="wallet" :class="{ checked: payType === 'wallet' }" class="pay-radio orange" :checked="payType === 'wallet'"></radio>
+				</label>
+			</radio-group>
 			<!-- 手机号码 -->
 			<view class="phone x-bc item-list">
 				<view class="item-title">手机号码</view>
@@ -77,7 +77,7 @@
 			<text class="num">共1件</text>
 			<view class="all-money">
 				<text>合计：</text>
-				<text class="price">￥{{ Number(perGoodsList.schedule.standardprice) *Number(perGoodsList.seats.length) || '0.00' }}</text>
+				<text class="price">￥{{ticketPaymoney || '0.00' }}</text>
 			</view>
 			<button class="cu-btn sub-btn bg-red" @tap="confirmPay" :disabled="isSubOrder">
 				<text v-if="isSubOrder" class="cuIcon-loading2 cuIconfont-spin"></text>
@@ -135,11 +135,16 @@ export default {
 	computed: {
 		...mapState({
 			userInfo: state => state.user.userInfo
-		})
+		}),
+		ticketPaymoney(){
+			let that = this
+			return Number(that.perGoodsList.schedule.standardprice) *Number(that.perGoodsList.seats.length)
+		}
 	},
 	watch: {},
 	onBackPress(options) {
 		console.log(options);
+		console.log("触发返回");
 		if (e.from == 'backbutton') {
 			uni.showModal({
 				title: '提示',
@@ -218,8 +223,28 @@ export default {
 		// 发起支付
 		confirmPay() {
 			let that = this;
-			this.confirmOrder()
-			/* let pay = new AppPay(that.payType, that.perGoodsList); */
+			if(that.ticketPaymoney>0){
+				if(that.userInfo.phoneNumber){
+					let params = {
+						ticketId: that.perGoodsList.ticketId,
+						ticketPaymoney: that.ticketPaymoney
+					}
+					/* let pay = new AppPay(that.payType, that.perGoodsList,null,params); */
+					that.confirmOrder()
+				}else{
+					uni.showToast({
+						icon: 'none',
+						title: '手机号码为必填项'
+					})
+				}
+			}else{
+				uni.showToast({
+					icon: 'none',
+					title: '金额不能为零'
+				})
+			}
+			
+			
 		},
 		jump(path, parmas) {
 			this.$Router.replace({
@@ -302,8 +327,12 @@ export default {
 				ticketList: ticketList,
 			}).then(res => {
 				if(res.flag){
+					uni.showToast({
+						icon: 'none',
+						title: res.msg
+					})
 					that.isSubOrder = true
-					that.jump('/pages/index/wallet', res.data); 
+					that.jump('/pages/index/wallet', res.data);
 				}else{
 					uni.showToast({
 						icon: 'none',
@@ -498,6 +527,31 @@ export default {
 	}
 	.input-pl {
 		color: #c4c4c4;
+	}
+}
+.pay-box {
+	margin: 20rpx;
+	.pay-item {
+		height: 90rpx;
+		padding: 0 30rpx;
+		font-size: 26rpx;
+		background: #fff;
+		width: 710rpx;
+		border-bottom: 1rpx solid #eeeeee;
+		&:last-child {
+			border-bottom: none;
+		}
+
+		.pay-radio {
+			transform: scale(0.8);
+		}
+
+		.pay-img {
+			width: 40rpx;
+			height: 40rpx;
+			// background: #ccc;
+			margin-right: 25rpx;
+		}
 	}
 }
 // 商品卡片

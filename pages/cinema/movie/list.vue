@@ -173,6 +173,7 @@ export default {
 	},
 	onShow() {
 		this.SelectNum = 0;
+		this.totalPrice = 0;
 		this.optArr = [];
 		this.initData();
 	},
@@ -232,6 +233,11 @@ export default {
 					that.minRow = minRow;
 					that.minCol = minCol - 1;
 					that.initSeatArray();
+				}else{
+					uni.showToast({
+						icon: 'none',
+						title: res.msg
+					})
 				}
 			});
 		},
@@ -314,6 +320,7 @@ export default {
 		//重置座位
 		resetSeat: function() {
 			this.SelectNum = 0;
+			this.totalPrice = 0;
 			this.optArr = [];
 			//将所有已选座位的值变为0
 			let oldArray = this.seatArray.slice();
@@ -329,7 +336,7 @@ export default {
 		//选定且购买座位
 		buySeat: function() {
 			let that = this;
-			that.loadModal = true;
+			
 			if (this.SelectNum === 0) {
 				return;
 			}
@@ -342,6 +349,7 @@ export default {
 				}
 			}
 			that.$api('cinema.lockSeats', {openId: uni.getStorageSync('openid'), seatIdList: oldArray,scheduleId: this.listParams.scheduleId,scheduleKey: this.listParams.schedulekey,openIdNotNull: 0}).then(res => {
+				that.loadModal = true;
 				if (res.flag) {
 					that.loadModal = false;
 					let result = { ...res.data };
@@ -349,6 +357,12 @@ export default {
 					result.seats= JSON.stringify(result.seats)
 					result.locationHall= JSON.stringify(result.locationHall)
 					that.jump('/pages/order/reserve', result);
+				}else{
+					uni.showToast({
+						icon: 'none',
+						title: res.msg
+					})
+					that.loadModal = false;
 				}
 			});
 		},

@@ -43,7 +43,11 @@ export default {
 		},
 		// 初始化背景颜色，轮播图没滚动前
 		initBgColor() {
-			let bgcolor = this.detail.list[this.swiperCurrent].bgcolor;
+			if (this.detail.list[this.swiperCurrent].bgcolor) {
+				let bgcolor = this.detail.list[this.swiperCurrent].bgcolor;
+			} else {
+				let bgcolor = '';
+			}
 			this.$emit('getbgcolor', bgcolor);
 		},
 		// 路由跳转

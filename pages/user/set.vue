@@ -1,17 +1,17 @@
 <template>
 	<view class="set-box">
-		<view class="list x-bc" @tap="jump('/pages/public/feedback')">
+		<!-- <view class="list x-bc" @tap="jump('/pages/public/feedback')">
 			<view class="title">意见反馈</view>
 			<text class="cuIcon-right"></text>
-		</view>
-		<view class="list x-bc" @tap="jump('/pages/user/address/list')">
+		</view> -->
+		<!-- <view class="list x-bc" @tap="jump('/pages/user/address/list')">
 			<view class="title">地址管理</view>
 			<text class="cuIcon-right"></text>
-		</view>
-		<view class="list x-bc" @tap="jump('/pages/user/edit-password')">
+		</view> -->
+		<!-- <view class="list x-bc" @tap="jump('/pages/user/edit-password')">
 			<view class="title">修改密码</view>
 			<text class="cuIcon-right"></text>
-		</view>
+		</view> -->
 		<view class="list x-bc" @tap="jump('/pages/public/richtext', { id: 3 })">
 			<view class="title">关于我们</view>
 			<text class="cuIcon-right"></text>
@@ -36,10 +36,10 @@
 			<view class="title">分享APP</view>
 			<text class="cuIcon-right"></text>
 		</view> -->
-		<view class="list x-bc" @tap="outLogin">
+		<!-- <view class="list x-bc" @tap="outLogin">
 			<view class="title">退出登录</view>
 			<text class="cuIcon-right"></text>
-		</view>
+		</view> -->
 		<!-- 自定义底部导航 -->
 		<app-tabbar></app-tabbar>
 		<!-- 关注弹窗 -->

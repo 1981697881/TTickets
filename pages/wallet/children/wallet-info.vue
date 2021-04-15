@@ -2,11 +2,11 @@
 	<view class="group-content">
 		<view class="cont-header">
 			<view class="head-box text-black">
-				<view class="text-bold text-xxl">{{ detail.shortName }}</view>
-				<view class="box-text padding-top">{{ detail.showDateTime }} </view>
-				<view class="box-text">{{ detail.cinemaName }} {{ detail.hallName }}</view>
+				<view class="text-bold text-xxl">{{ detail.shortName || ''}}</view>
+				<view class="box-text padding-top">{{ detail.showDateTime || ''}} </view>
+				<view class="box-text">{{ detail.cinemaName || ''}} {{ detail.hallName || ''}}</view>
 				<view class="box-text text-gray">
-					<text v-for="(item, index) in detail.tickets" :key="index">{{ item.rowId }}排{{ item.columnId }}座</text>
+					<text v-for="(item, index) in detail.tickets" :key="index">{{ item.rowId || ''}}排{{ item.columnId || ''}}座</text>
 				</view>
 			</view>
 			<view class="img-box"><image class="img" :src="detail.filmPhoto" mode="aspectFill"></image></view>

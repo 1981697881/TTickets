@@ -10,7 +10,7 @@
 						<text class="time" v-else>{{ timeText }}</text>
 					</view>
 				</view>
-				<slot name="tipTag">{{checkTime.week}} {{detail.schedule.showDatetime}} ({{detail.schedule.dimensional}})</slot>
+				<slot name="tipTag">{{checkTime.week || ''}} {{detail.schedule.showDatetime}} ({{detail.schedule.dimensional}})</slot>
 				<view class="size-tip">{{detail.cinemaName}}</view>
 				<slot name="goodsBottom">
 					<view class="price">￥{{ detail.money }}</view>
@@ -28,7 +28,9 @@ export default {
 	components: {},
 	data() {
 		return {
-			checkTime: {},
+			checkTime: {
+				week: ''
+			},
 			timeText: '',
 			isPast: true, //是否显示订单倒计时。
 			routerTo: this.$Router,
@@ -47,35 +49,37 @@ export default {
 		type: ''
 	},
 	mounted() {
-		console.log(this.detail)
 		this.countDown();
-		this.initDate();
+		this.initDate(this.detail.schedule.showDatetime);
+	},
+	created() {
+		
 	},
 	onHide() {
 		clearInterval(timer);
 		this.$emit('overTime')
 	},
 	computed: {},
-	created() {},
 	methods: {
-		initDate() {
+		initDate(dval) {
+			let that = this
 			let date =new Date()
 			let year=date.getFullYear();
 			let month=date.getMonth()+1;
-			let lastDay=new Date(this.detail.schedule.showDatetime).getDate() - new Date().getDate() +1
+			let lastDay=new Date(dval).getDate() - new Date().getDate() +1
 			for(let i = 0;i<lastDay;i++){
 				let obj = tools.getDayList('',i)
 				if(i==0){
 					obj.week = '今天'
-					this.checkTime = obj
+					that.checkTime = obj
 				}else if(i==1){
 					obj.week = '明天'
-					this.checkTime = obj
+					that.checkTime = obj
 				}else if(i==2){
 					obj.week = '后天'
-					this.checkTime = obj
+					that.checkTime = obj
 				}else{
-					this.checkTime = obj
+					that.checkTime = obj
 				}
 			}
 		},

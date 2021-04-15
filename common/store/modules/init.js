@@ -116,11 +116,11 @@ const actions = {
 			})
 			api('menuList').then(reso => {
 				let data = []
-				reso.data.forEach((v)=>{
+				reso.data.forEach((v,vindex)=>{
 					let obj = {
 					"name": v.menuName,
-					"image": "https://i.postimg.cc/s2rw46FN/trailer-Movie-72px.png",
-					"path": "/pages/cinema/list",
+					"image": v.menuPhoto,
+					"path": v.menuUrl,
 					"path_name": "",
 					"path_type": 1
 					}

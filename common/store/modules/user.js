@@ -7,6 +7,7 @@ import tools from '@/common/utils/tools'
 import {
 	USER_INFO,
 	LOGIN_TIP,
+	BAL_INFO,
 	ORDER_NUMBER,
 	MESSAGE_IDS,
 	OUT_LOGIN,
@@ -18,6 +19,7 @@ const state = {
 	userInfo: uni.getStorageSync('userInfo') ? uni.getStorageSync('userInfo') : {},
 	showLoginTip: false,
 	orderNum: {},
+	balInfo: uni.getStorageSync('balInfo'),
 	// #ifdef MP-WEIXIN
 	forceOauth: false,
 	// #endif
@@ -85,6 +87,19 @@ const actions = {
 				commit('LOGIN_TIP', false);
 				commit('USER_INFO', res.data);
 				uni.setStorageSync('userInfo', res.data);
+				resolve(res)
+			}).catch(e => {
+				reject(e)
+			})
+		})
+	},// 获取用户余额
+	getUserBalance({
+		commit
+	}) {
+		return new Promise((resolve, reject) => {
+			api('user.balance',{phone: state.userInfo.phoneNumber}).then(res => {
+				commit('BAL_INFO', res.data);
+				uni.setStorageSync('balInfo', res.data);
 				resolve(res)
 			}).catch(e => {
 				reject(e)
@@ -162,6 +177,8 @@ const mutations = {
 	},
 	[USER_INFO](state, data) {
 		state.userInfo = data
+	},[BAL_INFO](state, data) {
+		state.balInfo = data
 	},
 	[LOGIN_TIP](state, data) {
 		state.showLoginTip = data

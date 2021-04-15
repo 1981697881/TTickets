@@ -60,7 +60,7 @@ export default {
 		// 查看订单
 		onOrder() {
 			this.$Router.replace({
-				path: '/pages/wallet/index',
+				path: '/pages/index/wallet',
 				query: { ticketId: this.orderDetail.ticketId }
 			});
 		},

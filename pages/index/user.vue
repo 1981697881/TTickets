@@ -115,10 +115,10 @@ export default {
 		this.init();
 	},
 	methods: {
-		...mapActions(['getUserDetails']),/* , 'getOrderNum' */
+		...mapActions(['getUserDetails','getUserBalance']),/* , 'getOrderNum' */
 		// 初始化
 		init() {
-			return Promise.all([this.getUserDetails()])/* , this.getOrderNum() */
+			return Promise.all([this.getUserDetails(),this.getUserBalance()])/* , this.getOrderNum() */
 				.then(() => {
 					uni.stopPullDownRefresh();
 				})

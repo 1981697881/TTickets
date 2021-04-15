@@ -53,7 +53,7 @@ export default {
 		getCode() {
 			uni.scanCode({
 				success: function(res) {
-					console.log(res);
+					this.code.value= res.result
 				}
 			});
 		}

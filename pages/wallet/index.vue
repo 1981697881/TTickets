@@ -80,6 +80,12 @@ export default {
 			}).then(res => {
 				if (res.flag) {
 					that.walletInfo = res.data;
+				}else{
+					uni.showToast({
+						icon: 'none',
+						title: res.msg
+					})
+					
 				}
 			});
 		},

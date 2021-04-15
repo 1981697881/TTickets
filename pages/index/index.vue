@@ -21,7 +21,7 @@
 						<!-- 菜单 -->
 						<sh-menu v-if="item.type === 'menu'" :detail="item.content" :menu="item.content.style" :imgW="94"></sh-menu>
 						<!-- 推荐商品 -->
-						<sh-hot-goods v-if="item.type === 'goods-list' || item.type === 'goods-group'" :detail="item.content"></sh-hot-goods>
+						<!-- <sh-hot-goods v-if="item.type === 'goods-list' || item.type === 'goods-group'" :detail="item.content"></sh-hot-goods> -->
 						<!-- 广告魔方 -->
 						<!-- <sh-adv v-if="item.type === 'adv'" :detail="item.content"></sh-adv> -->
 						<!-- 优惠券 -->

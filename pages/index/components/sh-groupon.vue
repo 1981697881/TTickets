@@ -86,14 +86,14 @@ export default {
 					})
 					let resArray = []
 					res.data.forEach((item,index)=>{
-						if(index+1%4 === 0){
-							that.goodsList.push(resArray);
-							resArray = []
+						if(index%4 === 0){
 							resArray.push(item)
+							that.goodsList.unshift(resArray);
+							resArray = []
 						}else{
 							resArray.push(item)
 							if(index+1 == res.data.length){
-								that.goodsList.push(resArray);
+								that.goodsList.unshift(resArray);
 							}
 						}
 					})

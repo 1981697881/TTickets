@@ -250,13 +250,13 @@ export default {
 		},
 		lockSeats: {
 			url: 'FH/lockSeats',
-			auth: false,
+			auth: true,
 			method: 'POST',
 			// desc: '锁位',
 		},
 		confirmOrder: {
 			url: 'FH/confirmOrder',
-			auth: false,
+			auth: true,
 			method: 'POST',
 			// desc: '确认订单',
 		},
@@ -380,6 +380,26 @@ export default {
 			auth: true,
 			method: 'GET',
 			// desc: '用户信息',
+		},balance: {
+			url: 'V8/Balance',
+			auth: true,
+			method: 'POST',
+			// desc: '用户余额',
+		},deduction: {
+			url: 'V8/Deduction',
+			auth: true,
+			method: 'POST',
+			// desc: '用户余额操作',
+		},recharge: {
+			url: 'V8/Recharge',
+			auth: true,
+			method: 'POST',
+			// desc: 'v8用户充值',
+		},payRecharge: {
+			url: 'WeChat/payRechargeMoney',
+			auth: true,
+			method: 'POST',
+			// desc: '用户充值生成预付订单',
 		},
 		member: {
 			url: 'member/loginMember',

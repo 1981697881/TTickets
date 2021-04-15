@@ -46,12 +46,12 @@
 			</view>
 		</view>
 		<view class="foot_box x-f">
-			<text class="num">共{{count}}件</text>
+			<text class="num">共{{ count }}件</text>
 			<view class="all-money">
 				<text>合计：</text>
-				<text class="price">￥{{countPrice.toFixed(2)}}</text>
-			</view> 
-			<button class="cu-btn sub-btn bg-red" @tap="confirmOrder" :disabled="isSubOrder">
+				<text class="price">￥{{ countPrice.toFixed(2) }}</text>
+			</view>
+			<button class="cu-btn sub-btn bg-red" @tap="confirmPay" :disabled="isSubOrder">
 				<text v-if="isSubOrder" class="cuIcon-loading2 cuIconfont-spin"></text>
 				立即购买
 			</button>
@@ -96,11 +96,11 @@ export default {
 		}),
 		countPrice: function() {
 			let sum = 0;
-			return this.ticketNum*Number(this.ticketsList[0].cdkeyPrice)  + this.tickettNum*Number(this.ticketsList[1].cdkeyPrice);
+			return this.ticketNum * Number(this.ticketsList[0].cdkeyPrice) + this.tickettNum * Number(this.ticketsList[1].cdkeyPrice);
 		},
 		count: function() {
 			return this.tickettNum + this.ticketNum;
-		},
+		}
 	},
 	watch: {},
 	created() {
@@ -116,7 +116,6 @@ export default {
 			let that = this;
 			that.ticketNum = +e;
 			that.$set(item, 'ticketNum', that.ticketNum);
-		
 		},
 		changeNumt(e, item) {
 			console.log(e);
@@ -128,11 +127,30 @@ export default {
 		// 发起支付
 		confirmPay() {
 			let that = this;
-			uni.showToast({
-				icon: 'none',
-				title: '当前功能尚未开放....'
-			});
-			/* let pay = new AppPay(that.payType, that.perGoodsList); */
+			if (that.userInfo.phoneNumber) {
+				if (that.count > 0 && that.countPrice > 0) {
+					let params = {
+						cdkeyNumber: this.ticketsList[0].cdkeyNumber,
+						cdkeyCount: this.count,
+						paymoney: this.countPrice
+					};
+					uni.showToast({
+						icon: 'none',
+						title: '当前功能尚未开放....'
+					});
+					/* let pay = new AppPay(that.payType, that.ticketsList,'user.payCdKeyMoney',params); */
+				} else {
+					uni.showToast({
+						icon: 'none',
+						title: '请选择购买数量....'
+					});
+				}
+			} else {
+				uni.showToast({
+					icon: 'none',
+					title: '需提供手机号码，请到“我的”页面，填写或者授权手机号码'
+				});
+			}
 		},
 		jump(path, parmas) {
 			this.$Router.push({
@@ -142,25 +160,28 @@ export default {
 		},
 		//确认订单
 		confirmOrder() {
-			let ticketList = [];
-			this.ticketsList.forEach(item => {
-				let obj = {};
-				obj.seatId = item.seatId;
-				obj.ticketFee = item.ticketFee;
-				obj.ticketPrice = item.ticketPrice;
-				ticketList.push(obj);
-			});
-			this.$api('user.payCdKeyMoney', {
-				lockOrderId: this.perGoodsList.lockOrderId,
-				scheduleId: this.perGoodsList.scheduleId,
-				scheduleKey: this.perGoodsList.scheduleKey,
-				mobile: uni.getStorageSync('phone'),
-				ticketList: ticketList
-			}).then(res => {
-				if (res.flag) {
-					console.log(res);
-				}
-			});
+			if (this.count > 0 && this.countPrice > 0) {
+				let ticketList = [];
+				this.ticketsList.forEach(item => {
+					let obj = {};
+					ticketList.push(obj);
+				});
+				this.$api('user.payCdKeyMoney', {
+					cdkeyNumber: this.ticketsList[0].cdkeyNumber,
+					cdkeyCount: this.count,
+					paymoney: this.countPrice,
+					openId: uni.getStorageSync('openid')
+				}).then(res => {
+					if (res.flag) {
+						this.confirmPay(res.data);
+					}
+				});
+			} else {
+				uni.showToast({
+					icon: 'none',
+					title: '请选择购买数量....'
+				});
+			}
 		},
 		// 抵用券列表
 		getTicketsList() {

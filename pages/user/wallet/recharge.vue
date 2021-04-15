@@ -1,13 +1,23 @@
 <template>
 	<view class="page_box">
 		<view class="head_box margin-top">
-			<view class="cu-form-group text-xl text-bold text-brown">我的账户：123123</view>
-			<view class="cu-form-group text-grey">我的账号余额：0元</view>
+			<view class="cu-form-group text-xl text-bold text-brown">我的账户：cs1234</view>
+			<view class="cu-form-group text-grey">我的账户余额：{{ balInfo.Money || "0.00" }} 元</view>
 			<view class="cu-form-group text-bold">充值金额：</view>
 		</view>
 		<view class="content_box">
-			<view class="y-f money-box" >
-				<button v-for="(item,index) in setMeal" :key="index" class="money" :class="checkItem == index?'moneyAct':''" @tap="checkMoney" :data-target="index" :data-price="item.price">{{item.price}}</button>
+			<view class="y-f money-box">
+				<button
+					v-for="(item, index) in setMeal"
+					:key="index"
+					class="money"
+					:class="checkItem == index ? 'moneyAct' : ''"
+					@tap="checkMoney"
+					:data-target="index"
+					:data-price="item.price"
+				>
+					{{ item.price }}
+				</button>
 			</view>
 			<radio-group @change="selPay" class="pay-box" v-if="payment">
 				<label class="x-bc pay-item" v-if="payment.includes('wechat')">
@@ -19,7 +29,7 @@
 				</label>
 			</radio-group>
 			<view class="x-c">
-				<button class="cu-btn pay-btn bg-cyan" @tap="confirmPay">确认支付 ￥{{ checkPrice }}</button>
+				<button class="cu-btn pay-btn bg-cyan" :disabled="isSubOrder" @tap="confirmPay">确认支付 ￥{{ checkPrice }}</button>
 			</view>
 		</view>
 		<view class="foot_box"></view>
@@ -50,6 +60,7 @@ export default {
 				price: 400,
 				itemId: 4,
 			}],
+			isSubOrder: false,
 			payType: 'wechat',
 			options: {},
 			checkItem: 0,
@@ -61,7 +72,9 @@ export default {
 	},
 	computed: {
 		...mapState({
-			payment: state => state.init.initData.payment
+			payment: state => state.init.initData.payment,
+			balInfo: state => state.user.balInfo,
+			userInfo: state => state.user.userInfo
 		})
 	},
 	onLoad(options) {
@@ -82,13 +95,13 @@ export default {
 		}
 		uni.removeStorageSync('payReload');
 		// #endif
-		/* this.init(); */
 	},
 	onShow() {},
 	onHide() {
 		clearInterval(timer);
 	},
 	methods: {
+		...mapActions(['getUserBalance']),
 		checkMoney(e){
 			if(this.checkItem == e.target.dataset.target){
 				return
@@ -97,74 +110,94 @@ export default {
 				this.checkPrice = e.target.dataset.price
 			}
 		},
-		init() {
-			return Promise.all([this.getOrderDetail()]);
-		},
 		selPay(e) {
 			this.payType = e.detail.value;
 		},
 		// 发起支付
 		confirmPay() {
 			let that = this;
-			uni.showToast({
-				icon: 'none',
-				title: '此功能尚未完善....'
-			})
-			/* let pay = new AppPay(that.payType, that.orderDetail); */
-		},
-		// 支付信息
-		getOrderDetail() {
-			let that = this;
-			that.$api('order.detail', {
-				id: that.options.orderId
-			}).then(res => {
-				if (res.code === 1) {
-					that.orderDetail = res.data;
-					if (res.data.ext_arr !== null) {
-						that.countDown();
-					} else {
-						that.isPast = false;
+			if(that.userInfo.phoneNumber){
+				that.isSubOrder = true
+					uni.showToast({
+						icon: 'none',
+						title: '此功能尚未完善....'
+					})
+					let params ={
+						rechargeMoney: that.checkPrice,
+						openId:uni.getStorageSync('openid'),
+						custId:uni.getStorageSync('custId'),
 					}
+					/* let pay = new AppPay(that.payType, that.orderDetail,"user.payRecharge",params); */
+				
+			}else{
+				uni.showToast({
+					icon: 'none',
+					title: '需提供手机号码，请到“我的”页面，填写或者授权手机号码'
+				})
+			}
+		},
+		//第三方订单接口
+		confirmOrder(){
+			let ticketList = []
+			let that = this
+			this.$api('user.recharge', {
+				lockOrderId: this.perGoodsList.lockOrderId,
+				scheduleId: this.perGoodsList.scheduleId,
+				mobile: this.userInfo.phoneNumber,
+			}).then(res => {
+				if(res.flag){
+					uni.showToast({
+						icon: 'none',
+						title: res.msg
+					})
+					that.isSubOrder = false
+					that.getUserBalance()
+					/* that.jump('/pages/index/wallet', res.data); */
+				}else{
+					uni.showToast({
+						icon: 'none',
+						title: res.msg
+					})
 				}
 			});
-		}
+		},	
 	}
 };
 </script>
 
 <style lang="scss">
-.head_box{
+.head_box {
 	background: #fff;
 }
 .money-box {
 	background: #fff;
 	height: 340rpx;
 	display: flex;
-	 flex-direction: row;
-	 flex-wrap:wrap;
-	 align-items: flex-start;
-	 align-content: flex-start;
+	flex-direction: row;
+	flex-wrap: wrap;
+	align-items: flex-start;
+	align-content: flex-start;
 	margin-bottom: 20rpx;
-	.money { 
+	.money {
 		text-align: center;
 		width: 220rpx;
 		margin: 15rpx;
 		height: 120rpx;
-		box-shadow: 1px 1px 1px 1px #A5A5A5;
+		box-shadow: 1px 1px 1px 1px #a5a5a5;
 		border-radius: 15rpx;
 		line-height: 120rpx;
 		color: #778899;
-		background: #F8F8FF;
+		background: #f8f8ff;
 		font-size: 60rpx;
 		&::before {
 			content: '￥';
 			font-size: 46rpx;
 		}
 	}
-	.moneyAct{ 
-	color: #e1212b;
-	box-shadow: 1px 1px 1px 1px ;
-	background-color:#FAF0E6;
+	.moneyAct {
+		color: #e1212b;
+		box-shadow: 1px 1px 1px 1px;
+		background-color: #faf0e6;
 	}
 }
 
@@ -198,7 +231,7 @@ export default {
 	width: 690rpx;
 	height: 80rpx;
 	border-radius: 40rpx;
-	box-shadow: 1px 1px 1px 1px #CCE6FF;
+	box-shadow: 1px 1px 1px 1px #cce6ff;
 	margin-top: 100rpx;
 }
 </style>

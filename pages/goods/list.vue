@@ -126,9 +126,10 @@ export default {
 		// 商品列表
 		getGoodsList() {
 			let that = this;
-			that.isLoading = true;
-			that.loadStatus = 'loading';
-			that.$api('goods.lists', that.listParams).then(res => {
+			that.isLoading = false;
+			/* that.isLoading = true;
+			that.loadStatus = 'loading'; */
+			/* that.$api('goods.lists', that.listParams).then(res => {
 				if (res.code === 1) {
 					that.isLoading = false;
 					that.goodsList = [...that.goodsList, ...res.data.data];
@@ -139,7 +140,7 @@ export default {
 						that.loadStatus = 'over';
 					}
 				}
-			});
+			}); */
 		}
 	}
 };

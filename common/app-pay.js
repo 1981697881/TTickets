@@ -18,9 +18,11 @@ export default class AppPay {
 	// 			wallet			v							v					v						v
 
 
-	constructor(payment, order) {
+	constructor(payment, order,url="pay.prepay",params) {
 		this.payment = payment;
 		this.order = order;
+		this.url = url || "pay.prepay";
+		this.params = params
 		this.platform = uni.getStorageSync('platform');
 		let payMehod = this.getPayMethod();
 		payMehod();
@@ -88,15 +90,13 @@ export default class AppPay {
 		});
 		return new Promise((resolve, reject) => {
 			let that = this;
-			let params = {
-				ticketId: that.order.ticketId,
-				ticketPaymoney: that.order.payMemberMoney
-			}
+			
 			if (uni.getStorageSync('openid')) {
-				params.openId = uni.getStorageSync('openid');
+				that.params.openId = uni.getStorageSync('openid');
 			}
-			console.log(params)
-			api('pay.prepay', params).then(res => {
+			console.log(that.params)
+			console.log(that.url)
+			api(that.url, that.params).then(res => {
 				if (res.flag) {
 					console.log(res)
 					if (res.data === 'no_openid') {

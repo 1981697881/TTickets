@@ -34,12 +34,12 @@
 							<text class="tag-title">{{ userInfo.group.name }}</text>
 						</view>
 					</view>
-					<view class="x-f">
+					<!-- <view class="x-f">
 						<button class="cu-btn code-btn" v-if="userInfo.avatarUrl" @tap="jump('/pages/public/poster/index', { posterType: 'user' })">
 							<text class="cuIcon-qr_code"></text>
 						</button>
 						<button v-if="userInfo.is_store" @tap="goStore" class="cu-btn merchant-btn">切换商家版</button>
-					</view>
+					</view> -->
 				</view>
 			</view>
 		</view>
