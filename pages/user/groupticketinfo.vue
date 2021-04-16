@@ -30,16 +30,7 @@ export default {
 	data() {
 		return {
 			walletInfo: {
-				id: '123',
-				type: 'movie', //movie 电影票 goods商品票
-				state: 'ing', //end 已结束，ing 进行中 restEnd已退款 restIng退款中
-				title: '1天后开场',
-				butTitle: '是否购票成功以订单信息为准',
-				circuit: '',
-				endTime: '',
-				ingTime: '',
-				resetEndTime: '',
-				resetTime: ''
+				
 			},
 			isLoading: false,
 			loadStatus: '', //loading,over
@@ -50,7 +41,7 @@ export default {
 	},
 	onLoad() {
 		if(this.$Route.query){
-			this.ticketId = this.$Route.query.ticketId
+			this.memberCdkeyId = this.$Route.query.memberCdkeyId
 			this.getOrderDetail()
 		}
 	},
@@ -65,13 +56,13 @@ export default {
 		},
 		getOrderDetail(){
 			let that = this;
-			/* that.$api('wallet.detail', {
-				ticketId : that.ticketId,
+			that.$api('user.CdKeyDetails', {
+				memberCdkeyId : that.memberCdkeyId,
 			}).then(res => {
 				if (res.flag) {
 					that.walletInfo = res.data;
 				}
-			}); */
+			});
 		},
 	}
 };

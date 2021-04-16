@@ -1,6 +1,6 @@
 <template>
 	<view class="">
-		<view class="goods-box" @tap="jump('/pages/user/groupticketinfo', {})">
+		<view class="goods-box" @tap="jump('/pages/user/groupticketinfo', {memberCdkeyId:detail.memberCdkeyId})">
 			<view class="box-title">
 				<view class="titel-name text-xl text-pink">影城</view>
 				<view><text class="cuIcon-pay text-gray padding-xs">已付款</text></view>

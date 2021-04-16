@@ -114,6 +114,7 @@ export default {
 			console.log(e);
 			console.log(item);
 			let that = this;
+			that.tickettNum = 0
 			that.ticketNum = +e;
 			that.$set(item, 'ticketNum', that.ticketNum);
 		},
@@ -121,6 +122,7 @@ export default {
 			console.log(e);
 			console.log(item);
 			let that = this;
+			that.ticketNum = 0
 			that.tickettNum = +e;
 			that.$set(item, 'ticketNum', that.tickettNum);
 		},

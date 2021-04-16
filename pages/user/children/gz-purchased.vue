@@ -6,7 +6,7 @@
 				<view class="content-box">
 					<view class="goods-list x-f">
 						<view class="goods-item" v-for="goods in goodsList" :key="goods.cinemaId" >
-							<app-orderlist></app-orderlist>
+							<app-orderlist :detail="goods"></app-orderlist>
 						</view>
 					</view>
 					<!-- 加载更多 -->
@@ -75,21 +75,16 @@ export default {
 			this.listParams.page = 1;
 			this.getGoodsList();
 		},
-		// 商品列表
+		// 订单列表
 		getGoodsList() {
 			let that = this;
 			that.isLoading = true;
-			that.loadStatus = 'loading';
-			that.$api('cinema.studios', that.listParams).then(res => {
+			that.$api('user.cdKeysList', {
+				openId: uni.getStorageSync('openid')
+			}).then(res => {
 				if (res.flag) {
 					that.isLoading = false;
-					that.goodsList = [...that.goodsList, ...res.data];
-					that.lastPage = res.data.last_page;
-					if (that.listParams.page < res.data.last_page) {
-						that.loadStatus = '';
-					} else {
-						that.loadStatus = 'over';
-					}
+					that.goodsList = [...res.data];
 				}
 			});
 		},

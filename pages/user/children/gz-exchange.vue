@@ -13,7 +13,7 @@
 				</view>
 			</label>
 		</view>
-		<view class="btn-box flex align-center justify-center"><button class="cu-btn confirem-btn" @tap="editChangemobile">兑换</button></view>
+		<view class="btn-box flex align-center justify-center"><button class="cu-btn confirem-btn" @tap="exchange">兑换</button></view>
 	</view>
 </template>
 
@@ -34,19 +34,18 @@ export default {
 	onLoad() {},
 	methods: {
 		...mapActions(['getUserInfo']),
-		//修改手机号
-		editChangemobile() {
+		//兑换
+		exchange() {
 			let that = this;
-			that.$api('user.changemobile', {
-				mobile: that.phone,
-				captcha: that.code.value
+			that.$api('user.exchangeCdKey', {
+				openId: uni.getStorageSync('openid'),
+				cdkeyCode: that.code.value
 			}).then(res => {
-				if (res.code === 1) {
-					that.$tools.toast('修改手机号成功');
-					that.getUserInfo();
-					setTimeout(() => {
-						that.$Router.back();
-					}, 500);
+				if (res.flag) {
+					that.$tools.toast('兑换成功');
+					/* that.getUserInfo(); */
+				}else{
+					that.$tools.toast(res.msg);
 				}
 			});
 		},

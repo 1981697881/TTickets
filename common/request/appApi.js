@@ -494,6 +494,22 @@ export default {
 			auth: true,
 			method: 'POST',
 			//desc: '团体票列表',
+		},cdKeysList: {
+			url: 'memberCdkey/CdKeys',
+			auth: true,
+			method: 'POST',
+			//desc: '已购买团体票列表',
+		},CdKeyDetails: {
+			url: 'memberCdkeyDetail/CdKeyDetails',
+			auth: true,
+			method: 'POST',
+			//desc: '团体票详情',
+		},
+		exchangeCdKey: {
+			url: 'memberCdkeyDetail/exchangeCdKey',
+			auth: true,
+			method: 'POST',
+			//desc: '团体票兑换',
 		},
 		payCdKeyMoney: {
 			url: 'WeChat/payCdKeyMoney',
