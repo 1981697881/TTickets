@@ -271,6 +271,11 @@ export default {
 			auth: false,
 			method: 'POST',
 			// desc: '影城',
+		},locationList: {
+			url: 'app/api/locationList',
+			auth: false,
+			method: 'POST',
+			// desc: '影城',
 		},
 		locationMovies: {
 			url: 'app/api/locationMovies',

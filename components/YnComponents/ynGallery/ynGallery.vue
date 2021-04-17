@@ -38,9 +38,9 @@
 							></image>
 						</view>
 						<!-- 描述视图 -->
-						<view class="describe">
-							<view v-if="showdec" class="text-bold text-xl">{{ item.filmName }}</view>
-							<view v-if="showdec" class="text-cut text-gray">{{ item.filmLong }}分钟 / {{ item.filmSortid }}</view>
+						<view class="describe" @tap="jump('/pages/cinema/detail/index', { filmId: item.filmId })">
+							<view v-if="showdec" class="text-bold text-cut text-olive text-xl">{{ item.filmName }}</view>
+							<view v-if="showdec" class="text-cut text-white">{{ item.filmLong }}分钟 / {{ item.filmSortid }}</view>
 						</view>
 					</view>
 					<!-- 右侧留空  必须用min-width属性 用width属性无效-->
@@ -166,6 +166,10 @@ export default {
 		}
 	},
 	methods: {
+		// 路由跳转
+		jump(path, parmas) {
+			this.$Router.push({ path: path, query: parmas });
+		},
 		SetBkRightAnimate: function(startcolor) {
 			var that = this;
 			var nums = 10;
@@ -643,6 +647,8 @@ export default {
 </script>
 
 <style lang="scss" scoped="">
+.ynGalleryPanel{
+}
 .describe {
 	border: #008000 0px solid;
 	view {

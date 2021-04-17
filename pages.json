@@ -12,8 +12,7 @@
 			"title": "首页",
 			"aliasPath": "/", //对于h5端你必须在首页加上aliasPath并设置为/
 			"style": {
-				"navigationBarTitleText": "",
-				"navigationBarTextStyle": "white",
+				"navigationBarTitleText": "推荐",
 				"enablePullDownRefresh": true,
 				"navigationStyle": "custom"
 			},
@@ -270,7 +269,7 @@
 				{
 					"path": "index",
 					"style": {
-						"navigationBarTitleText": "影城",
+						"navigationBarTitleText": "电影 +",
 						"navigationBarBackgroundColor": "#060210",
 						"navigationBarTextStyle": "white"
 					},
@@ -613,7 +612,7 @@
 
 					},
 					"meta": {
-						"auth": false,
+						"auth": true,
 						"async": true,
 						"title": "客服",
 						"group": "通用"

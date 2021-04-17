@@ -6,7 +6,6 @@
 				<view class="titleNav pad">
 					<view class="status-bar"></view>
 					<text class="nav-title x-f">
-						个人中心
 						<!-- <text @tap="onService" class="cuIcon-servicefill"></text> -->
 					</text>
 				</view>
@@ -143,10 +142,10 @@ export default {
 <style lang="scss">
 .sh-userinfo-box {
 	position: relative;
-	height: 320rpx;
+	height: 250rpx;
 	.user-bg {
 		width: 100%;
-		height: 320rpx;
+		height: 250rpx;
 	}
 	.head-wrap {
 		position: absolute;

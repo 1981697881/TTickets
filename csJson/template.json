@@ -43,6 +43,23 @@
 			},	
 			"decorate_id": 1
 		}, {
+			"id": 17949,
+			"type": "spread",
+			"category": "home",
+			"name": "二级广告",
+			"content": {
+				"name": "",
+				"style": 1,
+				"list": [{
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/0669a6adec3f35d45ec66a082e03774f.png",
+					"name": "",
+					"path": "/pages/app/coupon/list",
+					"path_name": "优惠券-优惠劵中心",
+					"path_type": 1
+				}]
+			},
+			"decorate_id": 1
+		},{
 			"id": 17951,
 			"type": "adv",
 			"category": "home",
@@ -151,7 +168,13 @@
 			"content": {
 				"name": "",
 				"list": [{
-					"name": "团体票",
+					"name": "我的订单",
+					"image": "https://api.7wpp.com/uploads/20200929/7aff2a07472660035e99c4f341bdfd85.png",
+					"path": "/pages/index/wallet",
+					"path_name": "优惠券",
+					"path_type": 1
+					},{
+					"name": "兑换券",
 					"image": "https://api.7wpp.com/uploads/20200929/7aff2a07472660035e99c4f341bdfd85.png",
 					"path": "/pages/user/group-ticket",
 					"path_name": "优惠券",
@@ -206,25 +229,32 @@
 				"color": "#000",
 				"activeColor": "#999",
 				"list": [{
-					"name": "首页",
+					"name": "电影",
 					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/c4591c74c27a49bda021257d3c889225.png",
 					"activeImage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/558feb98726495d17128d07694d7ff47.png",
-					"path": "/pages/index/index",
-					"path_name": "商城-首页",
+					"path": "/pages/cinema/index",
+					"path_name": "电影",
 					"path_type": 1
 				}, {
-					"name": "商品",
+					"name": "卖品",
 					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/d6e987bb27013691478ddce7ce700288.png",
 					"activeImage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/f280b7f9ea18db0c80337d1c1cac6075.png",
 					"path": "/pages/index/category?id=276",
 					"path_name": "商品-OTO购买",
 					"path_type": 1
 				}, {
-					"name": "票夹",
+					"name": "活动",
 					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/0ab4659f44404d6d4723c265ccd21f94.png",
 					"activeImage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/5273d6e90fb45e3d9189fba9fcbea47c.png",
-					"path": "/pages/index/wallet",
-					"path_name": "订单-票夹",
+					"path": "/pages/index/index",
+					"path_name": "主页-活动",
+					"path_type": 1
+				}, {
+					"name": "电玩",
+					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/406848d5827325fead27224decffd141.png",
+					"activeImage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/8eca666cc43686d292113244b31e0664.png",
+					"path": "/pages/index/user",
+					"path_name": "用户-我的",
 					"path_type": 1
 				}, {
 					"name": "我的",

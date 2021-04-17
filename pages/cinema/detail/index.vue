@@ -2,7 +2,7 @@
 	<view class="box">
 		<cu-custom :isBack="true" bgColor="bg-gray">
 			<block slot="backText"></block>
-			<block slot="content">{{ goodsInfo.title }}</block>
+			<block slot="content">{{ goodsInfo.filmName }}</block>
 		</cu-custom>
 		<view class="load-box" v-if="goodsInfo.type != 'Movie'"><app-skeletons :type="'detail'"></app-skeletons></view>
 		<view class="detail_box shopro-selector" v-else>
@@ -89,7 +89,7 @@
 					</view> -->
 				</view>
 				<view class="detail-right">
-					<view class="detail-btn-box x-ac" v-if="!goodsInfo.activity"><button class="cu-btn tool-btn pay-btn" @tap="jump('/pages/cinema/circuit/list', { filmId: goodsInfo.filmId })">立即订票</button></view>
+					<view class="detail-btn-box x-ac" v-if="!goodsInfo.activity"><button class="cu-btn tool-btn pay-btn" @tap="onBack">立即订票</button></view>
 				</view>
 			</view>
 			<!-- 分享组件 -->
@@ -183,6 +183,9 @@ export default {
 	},
 	onReady() {},
 	methods: {
+		onBack(){
+			this.$Router.back();
+		},
 		getActivityRules(e) {
 			if (e) {
 				this.activityRules = JSON.parse(e);

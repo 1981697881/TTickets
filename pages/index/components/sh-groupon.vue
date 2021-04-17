@@ -86,7 +86,7 @@ export default {
 					})
 					let resArray = []
 					res.data.forEach((item,index)=>{
-						if(index%4 === 0){
+						if(index+1%4 === 0){
 							resArray.push(item)
 							that.goodsList.unshift(resArray);
 							resArray = []

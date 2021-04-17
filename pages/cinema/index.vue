@@ -3,19 +3,22 @@
 		<view class="head_box">
 			<view class="ci-header">
 				<view class="header-info">
-					<view class="text-bold text-xxl padding-top">{{detail.cinemaName}}</view>
+					<view class="text-bold text-xxl">{{cinemaName}}</view>
 					<view class="info-local text-black padding-xs">
-						<view class="local-adr text-cut">{{detail.cinemaAddress}}</view>
-						<view>· 0.1km</view>
+						<view class="local-adr text-cut">{{cinemaAddress}}</view>
+						<!-- <view>· 0.1km</view> -->
 					</view>
-					<view class="text-gray">好评度 88% {{detail.keysWord.toString()}}</view>
+					<!-- <view class="text-gray">好评度 88% {{detail.keysWord.toString() ||""}}</view> -->
 				</view>
-				<view class="locate-logo"><image class="logo-img" src="../../static/dingweis.png" mode="aspectFill"></image></view>
+				<view class="locate-logo" @tap="jump('/pages/public/kefu/index')">
+					<image class="logo-img" src="https://i.postimg.cc/YCNMFFBt/customer-service-96px-1187377-easyicon-net.png" mode="aspectFill"></image>
+					<view>影院客服</view>
+					</view>
 			</view>
 			<ynGallery
 				:galleryheight="165"
-				bkstart="#fff"
-				bkend="#fff"
+				bkstart="#C6E2FF"
+				bkend="#828282"
 				:imgviewwidth="85"
 				:imgviewheight="100"
 				:showbadge="true"
@@ -71,42 +74,12 @@ export default {
 	data() {
 		return {
 			Msg: '0',
+			cinemaName: '',
+			cinemaAddress: '',
 			circuit: '',
+			cinemaList: [],
 			swiperList: [
-				/* {
-					id: 0,
-					name: '百鸟朝凤',
-					score: '8.0',
-					scrn: 'screen',
-					genre: '剧情',
-					time: '103分钟',
-					direct: '吴天明',
-					starring: '陶泽如 李岷城 嵇波',
-					type: 'image',
-					url: 'http://139.159.136.187:50080/uploadFiles/image/d02494f7a0c24790f2d10b4d5fc4b613.jpg'
-				},
-				{
-					id: 1,
-					name: '流浪地球',
-					score: '7.0',
-					time: '125 分钟',
-					direct: '郭帆',
-					genre: '科幻',
-					starring: '吴京 屈楚萧 赵今麦',
-					type: 'image',
-					url: 'http://139.159.136.187:50080/uploadFiles/image/75932d4f57e9ad2f1af692bc4c8ab470.jpeg'
-				},
-				{
-					id: 2,
-					name: '我不是药神',
-					score: '8.1',
-					time: '116 分钟',
-					genre: '剧情',
-					direct: '文牧野',
-					starring: '徐峥 周一围 王传君',
-					type: 'image',
-					url: 'http://139.159.136.187:50080/uploadFiles/image/340beba0ae805c0f9e8ad5928b0e2fdf.jpeg'
-				} */
+				
 			],
 			emptyData: {
 				img: '/static/imgs/empty/empty_goods.png',
@@ -129,7 +102,6 @@ export default {
 	computed: {},
 	// 触底加载更多
 	onReachBottom() {
-		console.log(111233);
 		if (this.listParams.page < this.lastPage) {
 			this.listParams.page += 1;
 			this.getGoodsList();
@@ -141,7 +113,6 @@ export default {
 	onLoad() {
 		this.setimgs();
 		this.listParams.showDatetime = tools.getDayList('', 0).day;
-		console.log(this.$Route.query)
 		if (this.$Route.query.filmId) {
 			this.listParams.filmId = this.$Route.query.filmId;
 		} 
@@ -156,9 +127,13 @@ export default {
 			this.listParams.keywords = this.$Route.query.keywords;
 			this.searchVal = this.$Route.query.keywords;
 		}
-		this.getMoviesList()
+		this.getCinemaList()
 	},
 	methods: {
+		// 路由跳转
+		jump(path, parmas) {
+			this.$Router.push({ path: path, query: parmas });
+		},
 		getScrHeight() {
 			let me = this
 			uni.getSystemInfo({
@@ -167,7 +142,7 @@ export default {
 					let info = uni.createSelectorQuery().select('.head_box');
 					info.boundingClientRect(function(data) {
 						//data - 各种参数
-						me.headHeight = res.windowHeight - data.height - 3;
+						me.headHeight = res.windowHeight - data.height - 35;
 					}).exec();
 				}
 			});
@@ -208,59 +183,32 @@ export default {
 			let color = '#' + ('00000' + ((Math.random() * 0x1000000) << 0).toString(16)).substr(-6);
 			return color;
 		},
-		onFilter(e) {
-			this.listParams.order = e;
-			this.goodsList = [];
-			this.listParams.page = 1;
-			this.getGoodsList();
-		},
-		// 键盘搜索
-		onSearch() {
-			let that = this;
-			that.listParams.keywords = that.searchVal;
-			that.goodsList = [];
-			this.listParams.page = 1;
-			that.getGoodsList();
-		},
-		// 输入防抖搜索
-		onInput() {
-			let that = this;
-			that.listParams.cinemaId = null;
-			// 输入不及时
-			setTimeout(() => {
-				that.listParams.keywords = that.searchVal;
-			}, 0);
-			// 防抖
-			if (timer !== null) {
-				clearTimeout(timer);
-			}
-			timer = setTimeout(() => {
-				that.goodsList = [];
-				this.listParams.page = 1;
-				that.getGoodsList();
-			}, 1000);
-		},
-		// 清除搜索框
-		clearSearch() {
-			this.searchVal = '';
-			this.listParams.keywords = '';
-			this.listParams.page = 1;
-			this.getGoodsList();
-		},
 		fatherMethod(val) {
 			this.listParams.showDatetime = val.day;
 			this.goodsList = [];
 			this.getGoodsList();
 		},
-		// 获取影城影片
+		// 获取影城
+		getCinemaList() {
+			let that = this;
+			that.$api('cinema.locationList', {cinemalinkId: that.listParams.cinemalinkId, filmId: that.listParams.filmId }).then(res => {
+				if (res.flag) {
+					that.cinemaList = res.data;
+					that.cinemaName = res.data[0].cinemaName;
+					that.cinemaAddress = res.data[0].cinemaAddress;
+					that.listParams.cinemalinkId = res.data[0].cinemalinkId
+					that.getMoviesList();
+				}
+			});
+		},// 获取影城影片
 		getMoviesList() {
 			let that = this;
 			that.$api('cinema.locationMovies', {cinemalinkId: that.listParams.cinemalinkId, filmId: that.listParams.filmId }).then(res => {
 				if (res.flag) {
 					that.swiperList = res.data;
-					if (that.$Route.query.filmId == '') {
+					if (that.$Route.query.filmId == null) {
 						that.listParams.filmId = that.swiperList[0].filmId;
-					} 
+					}
 					console.log(that.listParams.filmId)
 					that.getGoodsList();
 				}
@@ -360,9 +308,7 @@ export default {
 	z-index: 998;
 	background: linear-gradient(#060210, #fff 20%);
 	.ci-header {
-		margin: 20rpx;
 		background: #fff;
-		box-shadow: 1px 0px 1px 0px #ccc;
 		border-radius: 10rpx;
 		display: inline-flex;
 		.header-info {
@@ -376,7 +322,12 @@ export default {
 			}
 		}
 		.locate-logo {
-			padding: 18rpx;
+			border-radius:0 10rpx 0 0;
+			background-color: #8B4513;
+			padding-top: 10rpx;
+			width: 150rpx;
+			color: #FFFFFF;
+			text-align: center;
 			.logo-img {
 				top: 30%;
 				width: 80rpx;

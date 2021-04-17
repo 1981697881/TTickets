@@ -6,8 +6,8 @@
 			<!-- 导航栏 -->
 			<view class="head_box active" :style="{ background: bgcolor }">
 				<cu-custom :isBack="true" v-if="info && info.name">
-					<block slot="backText">
-						<text class="nav-title shopro-selector-rect">{{ info.name || '影院' }}</text>
+					<block slot="content">
+						<text class="nav-title shopro-selector-rect text-black">{{ info.name || '推荐' }}</text>
 					</block>
 				</cu-custom>
 			</view>
@@ -15,21 +15,23 @@
 				<scroll-view class="scroll-box" scroll-y scroll-with-animation enable-back-to-top>
 					<block v-if="template" v-for="(item, index) in template" :key="index">
 						<!-- 搜索 -->
-						<sh-search v-if="item.type === 'search'" :detail="item" :bgcolor="bgcolor"></sh-search>
+						<!-- <sh-search v-if="item.type === 'search'" :detail="item" :bgcolor="bgcolor"></sh-search> -->
 						<!-- 轮播 -->
 						<sh-banner v-if="item.type === 'banner'" :detail="item.content" @getbgcolor="getbgcolor"></sh-banner>
 						<!-- 菜单 -->
-						<sh-menu v-if="item.type === 'menu'" :detail="item.content" :menu="item.content.style" :imgW="94"></sh-menu>
+						<!-- <sh-menu v-if="item.type === 'menu'" :detail="item.content" :menu="item.content.style" :imgW="94"></sh-menu> -->
 						<!-- 推荐商品 -->
+						<!-- <sh-adv v-if="item.type === 'adv'" :detail="item.content"></sh-adv> -->
+						<!-- 二级广告 -->
+						<sh-spread v-if="item.type === 'spread'" :detail="item.content"></sh-spread>
 						<!-- <sh-hot-goods v-if="item.type === 'goods-list' || item.type === 'goods-group'" :detail="item.content"></sh-hot-goods> -->
 						<!-- 广告魔方 -->
-						<!-- <sh-adv v-if="item.type === 'adv'" :detail="item.content"></sh-adv> -->
 						<!-- 优惠券 -->
 						<!-- <sh-coupon v-if="item.type === 'coupons'" :detail="item.content"></sh-coupon> -->
 						<!-- 秒杀 -->
 						<sh-seckill v-if="item.type === 'seckill'" :detail="item.content"></sh-seckill>
 						<!-- 拼团 -->
-						<sh-groupon v-if="item.type === 'groupon'" :detail="item.content"></sh-groupon>
+						<!-- <sh-groupon v-if="item.type === 'groupon'" :detail="item.content"></sh-groupon> -->
 						<!-- 富文本 -->
 						<sh-richtext v-if="item.type === 'rich-text'" :detail="item.content"></sh-richtext>
 						<!-- 功能列表 -->
@@ -93,6 +95,7 @@ import shBanner from './components/sh-banner.vue';
 import shHotGoods from './components/sh-hot-goods.vue';
 import shMenu from './components/sh-menu.vue';
 import shAdv from './components/sh-adv.vue';
+import shSpread from './components/sh-spread.vue';
 import shCoupon from './components/sh-coupon.vue';
 import shSeckill from './components/sh-seckill.vue';
 import shGroupon from './components/sh-groupon.vue';
@@ -130,6 +133,7 @@ export default {
 		shWallet,
 		shMenu,
 		shAdv,
+		shSpread,
 		shGrid,
 		shCoupon,
 		shSeckill,
@@ -144,7 +148,7 @@ export default {
 	},
 	data() {
 		return {
-			bgcolor: '#2B4055',
+			bgcolor: 'white',
 			// #ifdef MP-WEIXIN
 			HAS_LIVE: HAS_LIVE,
 			// #endif
@@ -371,7 +375,6 @@ export default {
 		font-size: 38rpx;
 		font-family: PingFang SC;
 		font-weight: 500;
-		color: #fff;
 	}
 }
 </style>
