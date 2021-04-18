@@ -80,6 +80,42 @@
 				"title": "我的",
 				"group": "用户"
 			}
+		},{
+			"path": "pages/menu/menu",
+			"name": "menu",
+			"style": {
+				"navigationBarTitleText": "商城"
+			},
+			"meta": {
+				"auth": false,
+				"async": true,
+				"title": "小食和商品",
+				"group": "卖品"
+			}
+		},{
+			"path": "pages/index/videoGame",
+			"name": "videoGame",
+			"style": {
+				"navigationBarTitleText": "环游嘉年华+"
+			},
+			"meta": {
+				"auth": false,
+				"async": true,
+				"title": "电玩充值",
+				"group": "电玩"
+			}
+		},{
+			"path": "pages/menu/pay",
+			"name": "menu",
+			"style": {
+				"navigationBarTitleText": "支付"
+			},
+			"meta": {
+				"auth": true,
+				"async": true,
+				"title": "小食和商品",
+				"group": "卖品"
+			}
 		},
 		{
 			"path": "pages/index/view",

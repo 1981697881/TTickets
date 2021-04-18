@@ -47,7 +47,7 @@
 		</view>
 		<view class="foot_box"></view>
 		<!-- 自定义底部导航 -->
-		<app-tabbar></app-tabbar>
+		<!-- <app-tabbar></app-tabbar> -->
 		<!-- 关注弹窗 -->
 		<app-float-btn></app-float-btn>
 		<!-- 连续弹窗提醒 -->
@@ -58,7 +58,6 @@
 </template>
 <script>
 import walletList from './components/fz-wallets.vue';
-import seckillList from '@/csJson/seckillList.json';
 import appEmpty from '@/components/app-empty/app-empty.vue';
 import { mapMutations, mapActions, mapState, mapGetters } from 'vuex';
 export default {

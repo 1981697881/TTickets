@@ -303,6 +303,36 @@ export default {
 			auth: false,
 			method: 'GET',
 			// desc: '商品列表',
+		},commodityList: {
+			url: 'app/api/commodityList',
+			auth: false,
+			method: 'POST',
+			// desc: '卖品列表',
+		},payGoodsMoney: {
+			url: 'WeChat/payGoodsMoney',
+			auth: true,
+			method: 'POST',
+			// desc: '卖品支付',
+		},payCoinMoney: {
+			url: 'WeChat/payCoinMoney',
+			auth: true,
+			method: 'POST',
+			// desc: '游戏币支付',
+		},veCoin: {
+			url: 'v8/Coin',
+			auth: true,
+			method: 'POST',
+			// desc: '游戏币充值',
+		},veIntegral: {
+			url: 'v8/Integral',
+			auth: true,
+			method: 'POST',
+			// desc: '积分充值',
+		},memberGoodsList: {
+			url: 'memberGoods/memberGoodsList',
+			auth: true,
+			method: 'POST',
+			// desc: '商品订单列表',
 		},
 		seckillList: {
 			url: 'goods/seckillList',

@@ -329,7 +329,7 @@ export default {
 			color: #FFFFFF;
 			text-align: center;
 			.logo-img {
-				top: 30%;
+				top: 5rpx;
 				width: 80rpx;
 				height: 80rpx;
 			}

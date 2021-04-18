@@ -239,7 +239,7 @@
 					"name": "卖品",
 					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/d6e987bb27013691478ddce7ce700288.png",
 					"activeImage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/f280b7f9ea18db0c80337d1c1cac6075.png",
-					"path": "/pages/index/category?id=276",
+					"path": "/pages/menu/menu",
 					"path_name": "商品-OTO购买",
 					"path_type": 1
 				}, {
@@ -253,8 +253,8 @@
 					"name": "电玩",
 					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/406848d5827325fead27224decffd141.png",
 					"activeImage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/8eca666cc43686d292113244b31e0664.png",
-					"path": "/pages/index/user",
-					"path_name": "用户-我的",
+					"path": "/pages/index/videoGame",
+					"path_name": "电玩-充值",
 					"path_type": 1
 				}, {
 					"name": "我的",

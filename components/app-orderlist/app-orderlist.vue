@@ -2,15 +2,14 @@
 	<view class="">
 		<view class="goods-box" @tap="jump('/pages/user/groupticketinfo', {memberCdkeyId:detail.memberCdkeyId})">
 			<view class="box-title">
-				<view class="titel-name text-xl text-pink">影城</view>
+				<view class="titel-name text-xl text-pink">订单号：{{detail.memberCdkeyId}}</view>
 				<view><text class="cuIcon-pay text-gray padding-xs">已付款</text></view>
 			</view>
 			<view class="box-content">
-				<view>团体电子普通电影抵用券 x 10</view>
-				<view>团体电子普通电影抵用券 x 10</view>
+				<view>{{detail.cdkeyName}} x {{detail.cdkeyCount}}</view>
 			</view>
 			<view class="box-foot">
-				<view class="x-f"><view class="detail text-orange">1 件 共 5 张 实付款 ￥100</view></view>
+				<view class="x-f"><view class="detail text-orange"> 共 {{detail.cdkeyCount}} 张 实付款 ￥{{detail.paymoney}}</view></view>
 			</view>
 		</view>
 	</view>

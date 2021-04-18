@@ -172,8 +172,8 @@ export default {
 		}
 		// #endif
 		await this.setAppInfo();
-		let local = await this.getAppLocal();
-		await this.getLocation(local);
+		/* let local = await this.getAppLocal();
+		await this.getLocation(local); */
 		await this.getTemplate(options);
 		let init = await this.getAppInit(options);
 		await this.autoLogin(init.data);

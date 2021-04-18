@@ -2,7 +2,7 @@
 	<view class="adv-box mx20 mb10">
 		<!-- 模板1-->
 		<view class="x-f" v-if="detail.style == 1">
-			<image @tap="jump(detail.list[0].path)" :src="detail.list[0].image" mode="scaleToFill"></image>
+			<image src="https://i.postimg.cc/gj3t4Fwr/u-1942294908-891367187-fm-26-gp-0.jpg" mode="scaleToFill"></image>
 		</view>
 		<view class="box-fot flex flex-wrap justify-between ">
 			<view class="fot-left">
@@ -10,7 +10,7 @@
 				<view class="padding-xs">04/01/2021 00:00</view>
 			</view>
 			<view class="fot-right">
-				<button class="cu-btn round sm bg-blue">正在进行</button>
+				<button class="cu-btn round sm bg-blue margin-right">正在进行</button>
 			</view>
 		</view>
 	</view>

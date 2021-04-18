@@ -1,10 +1,9 @@
 <template>
 	<view>
 		<view v-show="ifshow" @tap="ableClose" @touchmove.stop.prevent class="popup-layer" >
-			
 		</view>
-		<view ref="popRef"  class="popup-content"   @tap.stop="stopEvent" :style="_location">
-			<slot></slot>
+		<view class="popup-content" @tap.stop="stopEvent" :style="_location">
+			<slot name="content"></slot>
 		</view>
 	</view>
 </template>
@@ -33,8 +32,12 @@
 		data() {
 			return {
 				ifshow: false, // 是否展示,
-				translateValue: -100, // 位移距离
-				site:-100,
+				//#ifdef H5
+				translateValue: -150, // 位移距离
+				//#endif
+				//#ifndef H5
+				translateValue: -150, // 位移距离
+				//#endif
 				timer: null,
 				iftoggle: false,
 
@@ -52,12 +55,17 @@
 			},
 			_location() {
 				const positionValue = {
-					'top': `bottom:${this.site}%;width:100%;`,
-					'bottom': `top:${this.site}%;width:100%;`,
-					'left': `right:0px;top:0;height:100%;`,
-					'right': `left:0px;top:0;height:100%;`,
+					//#ifndef H5
+					'top': 'bottom:100rpx;width:100%;',
+					//#endif
+					 //#ifdef H5
+					'top': 'bottom:100rpx;width:100%;',
+					 //#endif
+					'bottom': 'top:0px;width:100%;',
+					'left': 'right:0px;height:100%;',
+					'right': 'left:0px;height:100%;',
 				};
-				return positionValue[this.direction]+ this._translate;
+				return positionValue[this.direction] + this._translate;
 			}
 		},
 		mounted(){
@@ -78,11 +86,12 @@
 		},
 		methods: {
 			stopMove(event){
+				console.log(11);
+				console.log(event);
 				return;
 			},
 			show(events) {
 				this.ifshow = true;
-				this.site=0;
 				let _open = setTimeout(() => {
 					this.translateValue = 0;
 					_open = null;
@@ -96,7 +105,10 @@
 				if (this.timer !== null || !this.iftoggle) {
 					return;
 				}
-				this.translateValue = -100;
+				this.translateValue = -150;
+				//#ifdef H5
+				this.translateValue = -150
+				//#endif
 				this.timer = setTimeout(() => {
 					this.ifshow = false;
 					this.timer = null;
@@ -112,6 +124,7 @@
 			},
 			stopEvent(event) {},
 			doSome(){
+				console.log(111222111111111);
 			}
 
 		}
@@ -121,8 +134,8 @@
 <style lang="scss">
 	.popup-layer {
 		position: fixed;
-		z-index: 999999;
-		// background: rgba(0, 0, 0, .3);
+		z-index: 9990;
+		background: rgba(0, 0, 0, .3);
 		height: 100%;
 		width: 100%;
 		top: 0px;
@@ -132,9 +145,12 @@
 
 	.popup-content {
 		position: fixed;
-		z-index: 1000000;
+		z-index: 9991;
+		bottom: 0;
 		background: #FFFFFF;
-		transition: transform .2s ease;
-		overflow: hidden; 
+		transition: all .3s ease;
+		overflow: hidden;
+		box-sizing: border-box;
+		// border:1px solid red;
 	}
 </style>

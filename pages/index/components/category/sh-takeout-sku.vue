@@ -309,11 +309,11 @@ export default {
 		// 加入购物车确定
 		confirmCart() {
 			let that = this;
-			uni.showToast({
+			/* uni.showToast({
 				icon: 'none',
 				title: '此功能尚未完善....'
-			})
-			/* if (this.confirmSku()) {
+			}) */
+			if (this.confirmSku()) {
 				let confirmGoodsList = {
 					list: [that.confirmGoodsInfo],
 					from: 'goods'
@@ -323,7 +323,7 @@ export default {
 						that.$tools.toast(res.msg);
 					}
 				});
-			} */
+			}
 		},
 		// 立即购买
 		confirmBuy() {

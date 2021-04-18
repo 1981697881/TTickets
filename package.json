@@ -9,5 +9,8 @@
 		"uni-read-pages": "^1.0.5",
 		"uni-simple-router": "1.5.2",
 		"vue-qr": "^2.3.0"
+	},
+	"devDependencies": {
+		"sass-resources-loader": "^2.2.1"
 	}
 }

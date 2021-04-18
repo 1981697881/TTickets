@@ -47,7 +47,7 @@
 				<label class="x-bc pay-item" >
 					<view class="x-f">
 						<image class="pay-img" src="http://shopro.7wpp.com/imgs/wallet_pay.png" mode=""></image>
-						<text>余额支付<text class="text-red">(0.00)</text></text>
+						<text>余额支付<text class="text-red padding-left">余额不足(0.00)</text></text>
 					</view>
 					<radio value="wallet" :class="{ checked: payType === 'wallet' }" class="pay-radio orange" :checked="payType === 'wallet'"></radio>
 				</label>

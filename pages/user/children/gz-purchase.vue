@@ -114,17 +114,32 @@ export default {
 			console.log(e);
 			console.log(item);
 			let that = this;
-			that.tickettNum = 0
-			that.ticketNum = +e;
-			that.$set(item, 'ticketNum', that.ticketNum);
+			if(that.tickettNum>0){
+				that.tickettNum = 0
+				return uni.showToast({
+					icon: 'none',
+					title: '一次只能选择一种类型购买'
+				});
+			}else{
+				that.ticketNum = +e;
+				that.$set(item, 'ticketNum', that.ticketNum);
+			}
+			
 		},
 		changeNumt(e, item) {
 			console.log(e);
 			console.log(item);
 			let that = this;
-			that.ticketNum = 0
-			that.tickettNum = +e;
-			that.$set(item, 'ticketNum', that.tickettNum);
+			if(that.ticketNum>0){
+				that.ticketNum = 0
+				return uni.showToast({
+					icon: 'none',
+					title: '一次只能选择一种类型购买'
+				});
+			}else{
+				that.tickettNum = +e;
+				that.$set(item, 'ticketNum', that.tickettNum);
+			}
 		},
 		// 发起支付
 		confirmPay() {
