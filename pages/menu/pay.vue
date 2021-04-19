@@ -164,11 +164,11 @@ export default {
 				goodsPaymoney: that.amount,
 				memberGoodsDetailPojos: parArray
 			};
-			uni.showToast({
+			/* uni.showToast({
 				icon: 'none',
 				title: '此功能尚未完善....'
-			})
-			/* let pay = new AppPay(that.payType, that.cart, 'goods.payGoodsMoney', params); */
+			}) */
+			let pay = new AppPay(that.payType, that.cart, 'goods.payGoodsMoney', params);
 			uni.removeStorageSync('cart');
 			uni.hideLoading();
 		}

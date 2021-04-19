@@ -442,6 +442,12 @@ export default {
 			method: 'POST',
 			// desc: '用户信息',
 		},
+		transactionLogDorRList: {
+			url: 'transactionLog/transactionLogDorRList',
+			auth: true,
+			method: 'POST',
+			// desc: '用户钱包账单列表',
+		},
 
 		profile: {
 			url: 'user/profile',

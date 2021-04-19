@@ -118,16 +118,16 @@ export default {
 			let that = this;
 			if(that.userInfo.phoneNumber){
 				that.isSubOrder = true
-					uni.showToast({
+					/* uni.showToast({
 						icon: 'none',
 						title: '此功能尚未完善....'
-					})
+					}) */
 					let params ={
 						rechargeMoney: that.checkPrice,
 						openId:uni.getStorageSync('openid'),
 						custId:uni.getStorageSync('custId'),
 					}
-					/* let pay = new AppPay(that.payType, that.orderDetail,"user.payRecharge",params); */
+					let pay = new AppPay(that.payType, that.orderDetail,"user.payRecharge",params);
 				
 			}else{
 				uni.showToast({
@@ -141,9 +141,9 @@ export default {
 			let ticketList = []
 			let that = this
 			this.$api('user.recharge', {
-				lockOrderId: this.perGoodsList.lockOrderId,
-				scheduleId: this.perGoodsList.scheduleId,
-				mobile: this.userInfo.phoneNumber,
+				custId: this.balInfo.custId,
+				qty: that.checkPrice,
+				phoneNumber: this.userInfo.phoneNumber,
 			}).then(res => {
 				if(res.flag){
 					uni.showToast({

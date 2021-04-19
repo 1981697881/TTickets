@@ -230,36 +230,36 @@
 				"activeColor": "#999",
 				"list": [{
 					"name": "电影",
-					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/c4591c74c27a49bda021257d3c889225.png",
-					"activeImage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/558feb98726495d17128d07694d7ff47.png",
+					"image": "https://i.postimg.cc/xTWwc9Wm/20210419143757.png",
+					"activeImage": "https://i.postimg.cc/wxrPG6xr/20210419144423.png",
 					"path": "/pages/cinema/index",
 					"path_name": "电影",
 					"path_type": 1
 				}, {
 					"name": "卖品",
-					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/d6e987bb27013691478ddce7ce700288.png",
-					"activeImage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/f280b7f9ea18db0c80337d1c1cac6075.png",
+					"image": "https://i.postimg.cc/ZK2WnybL/202104191448131.png",
+					"activeImage": "https://i.postimg.cc/4487CSjq/20210419144813.png",
 					"path": "/pages/menu/menu",
 					"path_name": "商品-OTO购买",
 					"path_type": 1
 				}, {
 					"name": "活动",
-					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/0ab4659f44404d6d4723c265ccd21f94.png",
-					"activeImage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/5273d6e90fb45e3d9189fba9fcbea47c.png",
+					"image": "https://i.postimg.cc/kgGL1BKL/202104191448133.png",
+					"activeImage": "https://i.postimg.cc/4NBrQz7z/202104191448132.png",
 					"path": "/pages/index/index",
 					"path_name": "主页-活动",
 					"path_type": 1
 				}, {
 					"name": "电玩",
-					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/406848d5827325fead27224decffd141.png",
-					"activeImage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/8eca666cc43686d292113244b31e0664.png",
+					"image": "https://i.postimg.cc/qvWyP564/202104191448135.png",
+					"activeImage": "https://i.postimg.cc/PfMbCy9Q/202104191448134.png",
 					"path": "/pages/index/videoGame",
 					"path_name": "电玩-充值",
 					"path_type": 1
 				}, {
 					"name": "我的",
-					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/406848d5827325fead27224decffd141.png",
-					"activeImage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/8eca666cc43686d292113244b31e0664.png",
+					"image": "https://i.postimg.cc/9F53fm37/202104191448137.png",
+					"activeImage": "https://i.postimg.cc/7Z9jXS53/202104191448136.png",
 					"path": "/pages/index/user",
 					"path_name": "用户-我的",
 					"path_type": 1

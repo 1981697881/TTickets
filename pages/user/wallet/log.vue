@@ -21,6 +21,7 @@
 </template>
 
 <script>
+	import { mapMutations, mapActions, mapState } from 'vuex';
 export default {
 	components: {},
 	data() {
@@ -39,7 +40,11 @@ export default {
 			lastPage: 1
 		};
 	},
-	computed: {},
+	computed: {
+		...mapState({
+			userInfo: state => state.user.userInfo
+		})
+	},
 	onLoad() {
 		this.getWalletLog();
 	},
@@ -54,11 +59,10 @@ export default {
 		getWalletLog() {
 			let that = this;
 			that.loadStatus = 'loading';
-			that.$api('user_wallet_log', {
-				wallet_type: 'money',
-				page: that.currentPage
+			that.$api('user.transactionLogDorRList', {
+				phoneNumber: that.userInfo.phoneNumber
 			}).then(res => {
-				if (res.code === 1) {
+				if (res.flag) {
 					that.walletList = [...that.walletList, ...res.data.data];
 					that.lastPage = res.data.last_page;
 					if (that.currentPage < res.data.last_page) {

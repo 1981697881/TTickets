@@ -190,10 +190,19 @@ export default class AppPay {
 			signType: payData.signType,
 			paySign: payData.paySign,
 			success: function(res) {
+				console.log({
+						orderSn: that.order,
+						params: that.params,
+						url: that.url,
+						type: that.payment,
+						pay: 1
+					})
 				Router.replace({
 					path: '/pages/order/payment/result',
 					query: {
 						orderSn: that.order,
+						params: that.params,
+						url: that.url,
 						type: that.payment,
 						pay: 1
 					}
@@ -205,6 +214,8 @@ export default class AppPay {
 						path: '/pages/order/payment/result',
 						query: {
 							orderSn: that.order,
+							params: that.params,
+							url: that.url,
 							type: that.payment,
 							pay: 0
 						}

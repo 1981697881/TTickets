@@ -628,7 +628,7 @@
 
 					},
 					"meta": {
-						"auth": false,
+						"auth": true,
 						"async": false
 					}
 				}

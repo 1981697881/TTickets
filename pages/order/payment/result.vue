@@ -78,7 +78,7 @@ export default {
 		// 重新支付
 		onPay() {
 			let that = this;
-			let pay = new AppPay(that.$Route.query.type, that.orderDetail);
+			let pay = new AppPay(that.$Route.query.type, that.orderDetail, that.$Route.query.url, that.$Route.query.params);
 		}
 	}
 };
