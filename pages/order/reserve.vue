@@ -254,6 +254,7 @@ export default {
 						ticketPaymoney: that.ticketPaymoney
 					}
 					let pay = new AppPay(that.payType, that.perGoodsList,null,params,1);
+					that.isSubOrder = true
 					/* that.confirmOrder() */
 				}else{
 					uni.showToast({

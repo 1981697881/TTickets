@@ -391,7 +391,7 @@ export default {
 					console.log(1)
 					clearTimeout(that.TTT);
 					var ai = that.activeviewindex;
-					var TTT = setTimeout(function() {
+					that.TTT = setTimeout(function() {
 						if (that.activeviewindex == ai) {
 							that.$emit('clickimg', that.sviewlst.imgsview[that.activeviewindex]);
 						}
