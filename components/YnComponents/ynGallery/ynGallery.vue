@@ -387,7 +387,8 @@ export default {
 			this.sviewlst = obj;
 			this.$nextTick(function() {
 				var that = this;
-				if (this.istouchmove == true) {
+				if (this.isEndTouch == true) {
+					console.log(1)
 					clearTimeout(that.TTT);
 					var ai = that.activeviewindex;
 					var TTT = setTimeout(function() {

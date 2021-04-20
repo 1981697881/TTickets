@@ -77,9 +77,9 @@
 							{{ optItem.rowNum + '排' + optItem.columnNum + '座' }}
 						</view>
 					</view>
-					<view style="width: 686rpx;height: 90rpx;" class="dp-f jc-c ai-c br-10 fz-34 color-fff" :class="SelectNum > 0 ? 'bg-red-1' : 'bg-unbtn'" @click="buySeat">
+					<button :disabled="isSubOrder" style="width: 686rpx;height: 90rpx;" class="dp-f jc-c ai-c br-10 fz-34 color-fff" :class="SelectNum > 0 ? 'bg-red-1' : 'bg-unbtn'" @click="buySeat">
 						{{ SelectNum > 0 ? '￥ ' + totalPrice + ' 确认座位' : '请选座位' }}
-					</view>
+					</button>
 				</view>
 				<view class="dp-f jc-c ai-c mb-20 fz-28" v-if="showTis">
 					<view class="dp-f jc-c ai-c m-0-10">
@@ -122,6 +122,7 @@ export default {
 	data() {
 		return {
 			loadModal: false,
+			isSubOrder: false,
 			//缩略图是否显示
 			topthumbnail: 0, // 单位rem
 			leftthumbnail: 0, // 单位rem
@@ -175,9 +176,11 @@ export default {
 		this.SelectNum = 0;
 		this.totalPrice = 0;
 		this.optArr = [];
+		this.isSubOrder = false;
 		this.initData();
 	},
 	onLoad() {
+		this.isSubOrder = false;
 		this.head = this.$Route.query;
 		this.head.showDatetime = decodeURI(this.head.showDatetime)
 		this.listParams.scheduleId = this.$Route.query.scheduleId;
@@ -340,6 +343,7 @@ export default {
 			if (this.SelectNum === 0) {
 				return;
 			}
+			that.isSubOrder = true;
 			let oldArray = [];
 			for (let i = 0; i < this.seatRow; i++) {
 				for (let j = 0; j < this.seatCol; j++) {
@@ -363,6 +367,7 @@ export default {
 						title: res.msg
 					})
 					that.loadModal = false;
+					that.isSubOrder = false;
 				}
 			});
 		},

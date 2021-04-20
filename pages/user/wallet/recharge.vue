@@ -117,7 +117,8 @@ export default {
 		confirmPay() {
 			let that = this;
 			if(that.userInfo.phoneNumber){
-				that.isSubOrder = true
+			if(that.balInfo.custId){
+				
 					/* uni.showToast({
 						icon: 'none',
 						title: '此功能尚未开放....敬请期待'
@@ -125,11 +126,16 @@ export default {
 					let params ={
 						rechargeMoney: that.checkPrice,
 						openId:uni.getStorageSync('openid'),
-						custId:uni.getStorageSync('custId'),
+						custId:that.balInfo.custId,
 					}
-					let pay = new AppPay(that.payType, that.orderDetail,"user.payRecharge",params);
+					let pay = new AppPay(that.payType, that.orderDetail,"user.payRecharge",params,3);
 				
 			}else{
+				uni.showToast({
+					icon: 'none',
+					title: '新用戶暂还没开放充值，敬请期待'
+				})
+			}}else{
 				uni.showToast({
 					icon: 'none',
 					title: '需提供手机号码，请到“我的”页面，填写或者授权手机号码'

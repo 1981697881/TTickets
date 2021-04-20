@@ -1,21 +1,11 @@
 <template>
 	<view class="success-page">
-		<view class="success-box flex flex-direction align-center" v-if="orderDetail.ticketId">
+		<view class="success-box flex flex-direction align-center">
 			<image class="pay-img" :src="pay ? 'http://shopro.7wpp.com/imgs/pay_success.png' : 'http://shopro.7wpp.com/imgs/pay_fail.png'" mode=""></image>
 			<text class="notice">{{ pay ? '支付成功' : '支付失败' }}</text>
-			<text class="pay-money" v-if="pay && orderDetail.ticketPaymoney">￥{{ orderDetail.ticketPaymoney }}</text>
+			<text class="pay-money" v-if="pay &&ticketPaymoney">￥{{ ticketPaymoney }}</text>
 			<view class="btn-box flex justify-between">
-				<block v-if="pay && orderDetail.activity_type === 'groupon' && orderDetail.ext_arr.buy_type === 'groupon'">
-					<button
-						class="cu-btn base-btn"
-						v-if="orderDetail.ext_arr.groupon_id > 0"
-						@tap="replace('/pages/activity/groupon/detail', { id: orderDetail.ext_arr.groupon_id })"
-					>
-						拼团详情
-					</button>
-					<button class="cu-btn base-btn" v-else @tap="replace('/pages/activity/groupon/my-groupon')">我的拼团</button>
-				</block>
-				<button class="cu-btn base-btn" v-else @tap="routerTo.push('/pages/index/index')">返回首页</button>
+				<button class="cu-btn base-btn" @tap="routerTo.push('/pages/index/index')">返回首页</button>
 				<button class="cu-btn base-btn" v-if="pay" @tap="onOrder">查看订单</button>
 				<button class="again-pay cu-btn" v-if="!pay" @tap="onPay">重新支付</button>
 			</view>
@@ -39,9 +29,21 @@ export default {
 	},
 	computed: {},
 	onLoad() {
-		console.log(JSON.parse(this.$Route.query))
-		this.orderDetail = this.$Route.query;
+		console.log(this.$Route.query)
+		if(this.$Route.query){
+			if(this.$Route.query.reType ==1){
+				this.orderDetail = {...this.$Route.query.orderSn}
+				this.orderDetail.schedule = JSON.parse(this.$Route.query.schedule); 
+				this.orderDetail.locationHall = JSON.parse(this.$Route.query.locationHall); 
+				this.orderDetail.seats = JSON.parse(this.$Route.query.seats); 
+			}else{
+				this.orderDetail = {...this.$Route.query.orderSn};
+			}
+		}
+		console.log(this.orderDetail)
 		this.pay = this.$Route.query.pay;
+		this.ticketId = this.$Route.query.ticketId;
+		this.ticketPaymoney = this.$Route.query.ticketPaymoney;
 		/* this.getOrderDetail(); */
 	},
 	methods: {
@@ -61,7 +63,7 @@ export default {
 		onOrder() {
 			this.$Router.replace({
 				path: '/pages/index/wallet',
-				query: { ticketId: this.orderDetail.ticketId }
+				query: { ticketId: this.ticketId }
 			});
 		},
 		// 支付信息
@@ -78,7 +80,7 @@ export default {
 		// 重新支付
 		onPay() {
 			let that = this;
-			let pay = new AppPay(that.$Route.query.type, that.orderDetail, that.$Route.query.url, that.$Route.query.params,1);
+			let pay = new AppPay(that.$Route.query.type, that.orderDetail, that.$Route.query.url, that.$Route.query.params,this.$Route.query.reType);
 		}
 	}
 };

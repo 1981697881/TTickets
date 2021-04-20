@@ -205,9 +205,9 @@ export default {
 			}
 		},
 		selPay(e) {
-			console.log(payt)
 			if(e.detail.value == 'wallet'){
-				if(Number(this.this.ticketPaymoney) <= Number(this.balInfo.Money) ){
+				this.balInfo.Money = 100
+ 				if(Number(this.ticketPaymoney) <= Number(this.balInfo.Money) ){
 					this.payType = e.detail.value;
 				}else{
 				uni.showToast({
@@ -355,7 +355,7 @@ export default {
 						icon: 'none',
 						title: res.msg
 					}) */
-					that.isSubOrder = true
+					
 					that.jump('/pages/index/wallet', res.data);
 				}else{
 					uni.showToast({
@@ -367,20 +367,16 @@ export default {
 		},	//余额购买
 		blanBuy(){
 			let ticketList = []
+			let that = this;
 			if(that.userInfo.phoneNumber){
+				that.isSubOrder = true
 				let params = {
 					ticketId: that.perGoodsList.ticketId,
 					qty: that.ticketPaymoney,
 					custId: that.balInfo.custId,
 					phoneNumber: that.userInfo.phoneNumber,
 				}
-				this.$api('user.deduction', {
-					lockOrderId: this.perGoodsList.lockOrderId,
-					scheduleId: this.perGoodsList.scheduleId,
-					scheduleKey: this.perGoodsList.scheduleKey,
-					mobile: this.userInfo.phoneNumber,
-					ticketList: ticketList,
-				}).then(res => {
+				this.$api('user.deduction', params).then(res => {
 					if(res.flag){
 						that.confirmOrder()
 					}else{

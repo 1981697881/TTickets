@@ -198,6 +198,18 @@ export default class AppPay {
 						type: that.payment,
 						pay: 1
 					})
+					let orderResult
+					console.log(that.reType==1)
+					console.log(that.reType)
+					if(that.reType==1){
+					orderResult = {...that.order};
+					orderResult.schedule = JSON.stringify(orderResult.schedule)
+					orderResult.seats= JSON.stringify(orderResult.seats)
+					orderResult.locationHall= JSON.stringify(orderResult.locationHall)
+					}else{
+					orderResult = { ...that.order };
+					}
+					
 					if(that.reType==1){
 						let ticketList = []
 						that.order.seats.forEach((item)=>{
@@ -215,14 +227,16 @@ export default class AppPay {
 							ticketList: ticketList,
 						}).then(rescin => {
 							if(rescin.flag){
+								console.log(orderResult)
 								Router.replace({
 									path: '/pages/order/payment/result',
 									query: {
-										orderSn: JSON.stringify(that.order),
+										orderSn: orderResult,
 										params: that.params,
 										url: that.url,
 										type: that.payment,
-										pay: 1
+										pay: 1,
+										reType: that.reType
 									}
 								});
 							}else{
@@ -246,15 +260,36 @@ export default class AppPay {
 								}
 							});
 							
+					}else if(that.reType==3){
+							api('user.recharge', {
+								custId: store.state.user.balInfo.custId,
+								qty: that.params.rechargeMoney,
+								phoneNumber: store.state.user.userInfo.phoneNumber,
+							}).then(resch => {
+								if(resch.flag){
+									uni.showToast({
+										icon: 'none',
+										title: '充值成功'
+									})
+									store.state.user.getUserBalance()
+								}else{
+									uni.showToast({
+										icon: 'none',
+										title: resch.msg
+									})
+								}
+							});
+							
 					}else{
 						Router.replace({
 							path: '/pages/order/payment/result',
 							query: {
-								orderSn: JSON.stringify(that.order),
+								orderSn: orderResult,
 								params: that.params,
 								url: that.url,
 								type: that.payment,
-								pay: 1
+								pay: 1,
+								reType: that.reType
 							}
 						});
 					}
@@ -265,7 +300,7 @@ export default class AppPay {
 					Router.replace({
 						path: '/pages/order/payment/result',
 						query: {
-							orderSn: JSON.stringify(that.order),
+							orderSn: that.order,
 							params: that.params,
 							url: that.url,
 							type: that.payment,
