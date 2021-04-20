@@ -18,9 +18,10 @@ export default class AppPay {
 	// 			wallet			v							v					v						v
 
 
-	constructor(payment, order,url="pay.prepay",params) {
+	constructor(payment, order,url="pay.prepay",params,reType=0) {
 		this.payment = payment;
 		this.order = order;
+		this.reType = reType;
 		this.url = url || "pay.prepay";
 		this.params = params
 		this.platform = uni.getStorageSync('platform');
@@ -197,23 +198,74 @@ export default class AppPay {
 						type: that.payment,
 						pay: 1
 					})
-				Router.replace({
-					path: '/pages/order/payment/result',
-					query: {
-						orderSn: that.order,
-						params: that.params,
-						url: that.url,
-						type: that.payment,
-						pay: 1
+					if(that.reType==1){
+						let ticketList = []
+						that.order.seats.forEach((item)=>{
+							let obj = {}
+							obj.seatId = item.seatId
+							obj.ticketFee = item.ticketfee
+							obj.ticketPrice = item.standardprice
+							ticketList.push(obj)
+						})
+						api('cinema.confirmOrder', {
+							lockOrderId: that.order.lockOrderId,
+							scheduleId: that.order.scheduleId,
+							scheduleKey: that.order.scheduleKey,
+							mobile: store.state.user.userInfo.phoneNumber,
+							ticketList: ticketList,
+						}).then(rescin => {
+							if(rescin.flag){
+								Router.replace({
+									path: '/pages/order/payment/result',
+									query: {
+										orderSn: JSON.stringify(that.order),
+										params: that.params,
+										url: that.url,
+										type: that.payment,
+										pay: 1
+									}
+								});
+							}else{
+								uni.showToast({
+									icon: 'none',
+									title: rescin.msg
+								})
+							}
+						});
+						}else if(that.reType==2){
+							api('goods.veCoin', { qty: that.order.goodsPrice,custId:store.state.user.balInfo.custId,phoneNumber:store.state.user.userInfo.phoneNumber }).then(resve => {
+								if (resve.flag) {
+									api('goods.veIntegral', { qty: that.order.integral,custId:store.state.user.balInfo.custId,phoneNumber:store.state.user.userInfo.phoneNumber }).then(resal => {
+										if (resal.flag) {
+											uni.showToast({
+												icon: 'none',
+												title: '购买成功'
+											})
+										}
+									});
+								}
+							});
+							
+					}else{
+						Router.replace({
+							path: '/pages/order/payment/result',
+							query: {
+								orderSn: JSON.stringify(that.order),
+								params: that.params,
+								url: that.url,
+								type: that.payment,
+								pay: 1
+							}
+						});
 					}
-				});
+				
 			},
 			fail: function(err) {
 				if (err.errMsg !== "requestPayment:fail cancel") {
 					Router.replace({
 						path: '/pages/order/payment/result',
 						query: {
-							orderSn: that.order,
+							orderSn: JSON.stringify(that.order),
 							params: that.params,
 							url: that.url,
 							type: that.payment,

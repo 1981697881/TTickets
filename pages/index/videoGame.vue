@@ -43,6 +43,7 @@
 import moreGoodList from '@/csJson/moreGoodList.json';
 import fzCircuitMeal from '@/components/fz-circuit-card/fz-circuit-meal.vue';
 import AppPay from '@/common/app-pay';
+import { mapMutations, mapActions, mapState } from 'vuex';
 export default {
 	components: {
 		fzCircuitMeal
@@ -69,7 +70,12 @@ export default {
 		this.getScrHeight();
 		this.getGoodsList();
 	},
-	computed: {},
+	computed: {
+		...mapState({
+			balInfo: state => state.user.balInfo,
+			userInfo: state => state.user.userInfo
+		}),
+	},
 	created() {},
 	methods: {
 		// 加载更多
@@ -124,16 +130,15 @@ export default {
 			};
 			/* uni.showToast({
 				icon: 'none',
-				title: '此功能尚未完善....'
+				title: '此功能尚未开放....敬请期待'
 			}) */
-			let pay = new AppPay(that.payType, that.cart, 'goods.payCoinMoney', params);
-			uni.removeStorageSync('cart');
+			let pay = new AppPay(that.payType, val, 'goods.payCoinMoney', params,2);
 			uni.hideLoading();
 		},
 		//积分充值
 		integral(){
 			let that = this;
-			that.$api('goods.commodityList', { goodsType: 1 }).then(res => {
+			that.$api('goods.veIntegral', { qty: 1,custId:that.balInfo.custId,phoneNumber:that.userInfo.phoneNumber }).then(res => {
 				if (res.flag) {
 					
 				}
@@ -142,7 +147,7 @@ export default {
 		//游戏币充值
 		currency(){
 		let that = this;
-		that.$api('goods.commodityList', { goodsType: 1 }).then(res => {
+		that.$api('goods.veCoin', { qty: 1,custId:that.balInfo.custId,phoneNumber:that.userInfo.phoneNumber }).then(res => {
 			if (res.flag) {
 				
 			}

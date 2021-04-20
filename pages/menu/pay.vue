@@ -65,10 +65,10 @@
 						<image class="pay-img" src="http://shopro.7wpp.com/imgs/wallet_pay.png" mode=""></image>
 						<text>
 							余额支付
-							<text class="text-red padding-left">余额不足(0.00)</text>
+							<text class="text-red padding-left">{{balInfo.Money==0 ||balInfo.Money==null?'余额不足':''}}({{balInfo.Money || "0.00"}})</text>
 						</text>
 					</view>
-					<radio value="wallet" disabled="" :class="{ checked: payType === 'wallet' }" class="pay-radio orange" :checked="payType === 'wallet'"></radio>
+					<radio value="wallet" :disabled="balInfo.Money==0 ||balInfo.Money==null?true:false" :class="{ checked: payType === 'wallet' }" class="pay-radio orange" :checked="payType === 'wallet'"></radio>
 				</label>
 			</radio-group>
 
@@ -114,7 +114,8 @@ export default {
 	},
 	computed: {
 		...mapState({
-			userInfo: state => state.user.userInfo
+			userInfo: state => state.user.userInfo,
+			balInfo: state => state.user.balInfo
 		}),
 		total() {
 			return this.cart.reduce((acc, cur) => acc + cur.goodsCount * cur.goodsPrice, 0);
@@ -166,7 +167,7 @@ export default {
 			};
 			/* uni.showToast({
 				icon: 'none',
-				title: '此功能尚未完善....'
+				title: '此功能尚未开放....敬请期待'
 			}) */
 			let pay = new AppPay(that.payType, that.cart, 'goods.payGoodsMoney', params);
 			uni.removeStorageSync('cart');

@@ -47,9 +47,9 @@
 				<label class="x-bc pay-item" >
 					<view class="x-f">
 						<image class="pay-img" src="http://shopro.7wpp.com/imgs/wallet_pay.png" mode=""></image>
-						<text>余额支付<text class="text-red padding-left">余额不足(0.00)</text></text>
+						<text>余额支付<text class="text-red padding-left">{{balInfo.Money==0 ||balInfo.Money==null?'余额不足':''}}({{balInfo.Money || "0.00"}})  </text></text>
 					</view>
-					<radio value="wallet" :class="{ checked: payType === 'wallet' }" class="pay-radio orange" :checked="payType === 'wallet'"></radio>
+					<radio value="wallet" :class="{ checked: payType === 'wallet' }" :disabled="balInfo.Money==0 ||balInfo.Money==null?true:false" class="pay-radio orange" :checked="payType === 'wallet'"></radio>
 				</label>
 			</radio-group>
 			<!-- 手机号码 -->
@@ -79,7 +79,7 @@
 				<text>合计：</text>
 				<text class="price">￥{{ticketPaymoney || '0.00' }}</text>
 			</view>
-			<button class="cu-btn sub-btn bg-red" @tap="confirmPay" :disabled="isSubOrder">
+			<button class="cu-btn sub-btn bg-red" @tap="combuy" :disabled="isSubOrder">
 				<text v-if="isSubOrder" class="cuIcon-loading2 cuIconfont-spin"></text>
 				立即购买
 			</button>
@@ -134,7 +134,8 @@ export default {
 	},
 	computed: {
 		...mapState({
-			userInfo: state => state.user.userInfo
+			userInfo: state => state.user.userInfo,
+			balInfo: state => state.user.balInfo
 		}),
 		ticketPaymoney(){
 			let that = this
@@ -142,6 +143,9 @@ export default {
 		}
 	},
 	watch: {},
+	onUnload(options){
+		this.escOrder()
+	},
 	onBackPress(options) {
 		console.log(options);
 		console.log("触发返回");
@@ -193,8 +197,28 @@ export default {
 	onShow() {},
 	methods: {
 		...mapActions(['getUserDetails']),
+		combuy(){
+			if(this.payType=='wallet'){
+				this.blanBuy()
+			}else{
+				this.confirmPay()
+			}
+		},
 		selPay(e) {
-			this.payType = e.detail.value;
+			console.log(payt)
+			if(e.detail.value == 'wallet'){
+				if(Number(this.this.ticketPaymoney) <= Number(this.balInfo.Money) ){
+					this.payType = e.detail.value;
+				}else{
+				uni.showToast({
+					icon: 'none',
+					title: '余额不足以支付本次费用，请选择其他支付方式'
+				})
+				}
+			}else{
+				this.payType = e.detail.value;
+			}
+			
 		},
 		bindPhone(e) {
 			let me = this;
@@ -229,8 +253,8 @@ export default {
 						ticketId: that.perGoodsList.ticketId,
 						ticketPaymoney: that.ticketPaymoney
 					}
-					/* let pay = new AppPay(that.payType, that.perGoodsList,null,params); */
-					that.confirmOrder()
+					let pay = new AppPay(that.payType, that.perGoodsList,null,params,1);
+					/* that.confirmOrder() */
 				}else{
 					uni.showToast({
 						icon: 'none',
@@ -327,10 +351,10 @@ export default {
 				ticketList: ticketList,
 			}).then(res => {
 				if(res.flag){
-					uni.showToast({
+					/* uni.showToast({
 						icon: 'none',
 						title: res.msg
-					})
+					}) */
 					that.isSubOrder = true
 					that.jump('/pages/index/wallet', res.data);
 				}else{
@@ -340,6 +364,40 @@ export default {
 					})
 				}
 			});
+		},	//余额购买
+		blanBuy(){
+			let ticketList = []
+			if(that.userInfo.phoneNumber){
+				let params = {
+					ticketId: that.perGoodsList.ticketId,
+					qty: that.ticketPaymoney,
+					custId: that.balInfo.custId,
+					phoneNumber: that.userInfo.phoneNumber,
+				}
+				this.$api('user.deduction', {
+					lockOrderId: this.perGoodsList.lockOrderId,
+					scheduleId: this.perGoodsList.scheduleId,
+					scheduleKey: this.perGoodsList.scheduleKey,
+					mobile: this.userInfo.phoneNumber,
+					ticketList: ticketList,
+				}).then(res => {
+					if(res.flag){
+						that.confirmOrder()
+					}else{
+						uni.showToast({
+							icon: 'none',
+							title: res.msg
+						})
+					}
+				});
+				
+			}else{
+				uni.showToast({
+					icon: 'none',
+					title: '手机号码为必填项'
+				})
+			}
+			
 		},	
 		// 订单信息
 		getPre() {

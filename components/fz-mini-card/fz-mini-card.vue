@@ -96,7 +96,7 @@ export default {
 		// 倒计时
 		countDown() {
 			let that = this;
-			let maxtime = 10 * 3;
+			let maxtime = 10 * 60;
 			let timer = setInterval(() => {
 				if (maxtime >= 0) {
 					let minutes = Math.floor(maxtime / 60);

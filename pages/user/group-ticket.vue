@@ -52,14 +52,14 @@ export default {
 					id: 'ended',
 					title: '兑换'
 				},
-				{
+				/* {
 					id: 'ing',
 					title: '购买'
 				},
 				{
 					id: 'nostart',
 					title: '已购买'
-				}
+				} */
 			]
 		};
 	},

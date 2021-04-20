@@ -120,7 +120,7 @@ export default {
 				that.isSubOrder = true
 					/* uni.showToast({
 						icon: 'none',
-						title: '此功能尚未完善....'
+						title: '此功能尚未开放....敬请期待'
 					}) */
 					let params ={
 						rechargeMoney: that.checkPrice,

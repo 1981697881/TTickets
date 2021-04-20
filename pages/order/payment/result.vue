@@ -39,7 +39,7 @@ export default {
 	},
 	computed: {},
 	onLoad() {
-		console.log(this.$Route.query)
+		console.log(JSON.parse(this.$Route.query))
 		this.orderDetail = this.$Route.query;
 		this.pay = this.$Route.query.pay;
 		/* this.getOrderDetail(); */
@@ -78,7 +78,7 @@ export default {
 		// 重新支付
 		onPay() {
 			let that = this;
-			let pay = new AppPay(that.$Route.query.type, that.orderDetail, that.$Route.query.url, that.$Route.query.params);
+			let pay = new AppPay(that.$Route.query.type, that.orderDetail, that.$Route.query.url, that.$Route.query.params,1);
 		}
 	}
 };

@@ -17,7 +17,7 @@
 						<!-- 搜索 -->
 						<!-- <sh-search v-if="item.type === 'search'" :detail="item" :bgcolor="bgcolor"></sh-search> -->
 						<!-- 轮播 -->
-						<sh-banner v-if="item.type === 'banner'" :detail="item.content" @getbgcolor="getbgcolor"></sh-banner>
+						<sh-banner v-if="item.type === 'banner'" :detail="item.content"></sh-banner>
 						<!-- 菜单 -->
 						<!-- <sh-menu v-if="item.type === 'menu'" :detail="item.content" :menu="item.content.style" :imgW="94"></sh-menu> -->
 						<!-- 推荐商品 -->
@@ -39,7 +39,7 @@
 						<!-- 九宫格列表 -->
 						<sh-grid v-if="item.type === 'grid-list'" :detail="item.content"></sh-grid>
 						<!-- 功能标题 -->
-						<sh-title-card v-if="item.type === 'title-block'" :detail="item.content"></sh-title-card>
+						<!-- <sh-title-card v-if="item.type === 'title-block'" :detail="item.content"></sh-title-card> -->
 						<!-- 个人信息 -->
 						<sh-userinfo v-if="item.type === 'user'" :detail="item.content"></sh-userinfo>
 						<!-- 钱包 -->
