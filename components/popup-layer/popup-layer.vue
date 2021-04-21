@@ -33,7 +33,7 @@
 			return {
 				ifshow: false, // 是否展示,
 				//#ifdef H5
-				translateValue: -150, // 位移距离
+				translateValue: -160, // 位移距离
 				//#endif
 				//#ifndef H5
 				translateValue: -150, // 位移距离
@@ -134,7 +134,7 @@
 <style lang="scss">
 	.popup-layer {
 		position: fixed;
-		z-index: 9990;
+		z-index: 990;
 		background: rgba(0, 0, 0, .3);
 		height: 100%;
 		width: 100%;
@@ -145,7 +145,7 @@
 
 	.popup-content {
 		position: fixed;
-		z-index: 9991;
+		z-index: 991;
 		bottom: 0;
 		background: #FFFFFF;
 		transition: all .3s ease;

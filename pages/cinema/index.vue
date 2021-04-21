@@ -1,5 +1,18 @@
 <template>
 	<view class="page_box">
+		 <view class="cu-modal" :class="modalName=='RadioModal'?'show':''" @tap="hideModal">
+			  	<view class="cu-dialog" @tap.stop="">
+			  		<radio-group class="block" @change="RadioChange">
+			  		<view class="cu-list menu text-left">
+			  	<view class="cu-item" v-for="(item,index) in PhoneList">
+			  	<label class="flex justify-between align-center flex-sub">
+			  	<view class="flex-sub" @tap="CallPhone(item.Phone)">{{item.Name}}:{{item.Phone}}</view>
+			  		</label>
+			  			</view>
+			  		</view>
+			  	</radio-group>
+			  </view>
+		  </view>
 		<view class="head_box">
 			<view class="ci-header">
 				<view class="header-info">
@@ -10,7 +23,7 @@
 					</view>
 					<!-- <view class="text-gray">好评度 88% {{detail.keysWord.toString() ||""}}</view> -->
 				</view>
-				<view class="locate-logo" @tap="jump('/pages/public/kefu/index')">
+				<view class="locate-logo" @tap="showModal" data-target="RadioModal">
 					<image class="logo-img" src="https://i.postimg.cc/YCNMFFBt/customer-service-96px-1187377-easyicon-net.png" mode="aspectFill"></image>
 					<view>影院客服</view>
 					</view>
@@ -78,6 +91,11 @@ export default {
 			cinemaAddress: '',
 			circuit: '',
 			cinemaList: [],
+			modalName:null,
+			PhoneList: [{
+				Name:'客服电话(1)',
+				Phone: '182-8809-0152'
+			}],
 			swiperList: [
 				
 			],
@@ -94,6 +112,7 @@ export default {
 				keywords: '',
 				page: 1
 			},
+			
 			isLoading: false, //loading和空白页。
 			loadStatus: '', //loading,over
 			lastPage: 1
@@ -133,6 +152,19 @@ export default {
 		// 路由跳转
 		jump(path, parmas) {
 			this.$Router.push({ path: path, query: parmas });
+		},
+		//第二部分  模态框的显示与隐藏
+		showModal(e) {
+			this.modalName = e.currentTarget.dataset.target
+		},
+		hideModal(e) {
+			this.modalName = null
+		},
+		/*拨打电话*/
+		CallPhone(e){
+		    uni.makePhoneCall({
+				phoneNumber: e
+			});
 		},
 		getScrHeight() {
 			let me = this

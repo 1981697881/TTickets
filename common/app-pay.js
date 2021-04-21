@@ -251,6 +251,7 @@ export default class AppPay {
 								if (resve.flag) {
 									api('goods.veIntegral', { qty: that.order.integral,custId:store.state.user.balInfo.custId,phoneNumber:store.state.user.userInfo.phoneNumber }).then(resal => {
 										if (resal.flag) {
+											store.state.user.getUserBalance()
 											uni.showToast({
 												icon: 'none',
 												title: '购买成功'

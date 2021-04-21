@@ -319,12 +319,12 @@ export default {
 			method: 'POST',
 			// desc: '游戏币支付',
 		},veCoin: {
-			url: 'v8/Coin',
+			url: 'V8/Coin',
 			auth: true,
 			method: 'POST',
 			// desc: '游戏币充值',
 		},veIntegral: {
-			url: 'v8/Integral',
+			url: 'V8/Integral',
 			auth: true,
 			method: 'POST',
 			// desc: '积分充值',

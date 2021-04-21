@@ -611,7 +611,7 @@ page {
 
 .cart-box {
 	position: fixed;
-	bottom: 100rpx;
+	bottom: 130rpx;
 	left: 30rpx;
 	right: 30rpx;
 	height: 96rpx;
@@ -621,7 +621,7 @@ page {
 	display: flex;
 	align-items: center;
 	justify-content: space-between;
-	z-index: 9999;
+	z-index: 999;
 	
 	.cart-img {
 		width: 96rpx;

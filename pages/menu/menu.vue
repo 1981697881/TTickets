@@ -271,6 +271,7 @@ export default {
 		}
 	},
 	methods: {
+		// 初始化
 		async init() {
 			//页面初始化
 			this.loading = true;
@@ -424,6 +425,7 @@ export default {
 					if (confirm) {
 						this.cartPopupVisible = false;
 						this.cart = [];
+						uni.removeStorageSync('cart');
 					}
 				}
 			});

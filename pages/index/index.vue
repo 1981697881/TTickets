@@ -203,7 +203,7 @@ export default {
 		// #endif
 	},
 	onShow() {
-		this.$store.commit('CART_NUM', this.cartNum);
+		/* this.$store.commit('CART_NUM', this.cartNum); */
 		// #ifndef MP-WEIXIN
 		if (this.info && this.info.name) {
 			uni.setNavigationBarTitle({
@@ -211,13 +211,14 @@ export default {
 			});
 		}
 		// #endif
+		
 	},
 	methods: {
 		...mapMutations(['CART_NUM']),
-		...mapActions(['getAppInit', 'getTemplate', 'getLocation']),
+		...mapActions(['getAppInit', 'getTemplate', 'getUserBalance']),
 		// 初始化
 		init() {
-			return Promise.all([this.getAppInit(), this.getTemplate(), this.getLocation()]).then(() => {
+			return Promise.all([this.getAppInit(), this.getTemplate(), this.getUserBalance()]).then(() => {
 				uni.stopPullDownRefresh();
 			});
 		},

@@ -28,6 +28,13 @@
 					<radio value="wechat" :class="{ checked: payType === 'wechat' }" class=" pay-radio orange" :checked="payType === 'wechat'"></radio>
 				</label>
 			</radio-group>
+			<!-- 购票须知 -->
+			<view class="notice x-bc">
+				<view class="notice-title">充值须知</view>
+				<view class="notice-detail">
+					<view>充值之后<text class="text-bold text-xl">不可退款</text>并且<text class="text-bold text-xl">不可提现</text>，清选择合适的充值金额后确认充值，谢谢</view>
+				</view>
+			</view>
 			<view class="x-c">
 				<button class="cu-btn pay-btn bg-cyan" :disabled="isSubOrder" @tap="confirmPay">确认支付 ￥{{ checkPrice }}</button>
 			</view>
@@ -48,16 +55,16 @@ export default {
 	data() {
 		return {
 			setMeal:[{
-				price: 100,
+				price: "100",
 				itemId: 1,
 			},{
-				price: 200,
+				price: "200",
 				itemId: 2,
 			},{
-				price: 300,
+				price: "300",
 				itemId: 3,
 			},{
-				price: 400,
+				price: "400",
 				itemId: 4,
 			}],
 			isSubOrder: false,
@@ -124,7 +131,7 @@ export default {
 						title: '此功能尚未开放....敬请期待'
 					}) */
 					let params ={
-						rechargeMoney: that.checkPrice,
+						rechargeMoney: that.checkPrice+"",
 						openId:uni.getStorageSync('openid'),
 						custId:that.balInfo.custId,
 					}
@@ -174,6 +181,25 @@ export default {
 <style lang="scss">
 .head_box {
 	background: #fff;
+}
+.notice {
+	margin-top: 20rpx;
+	background: #fff;
+	padding: 0 25rpx;
+	display: inline-block;
+	.notice-title {
+		height: 80rpx;
+		line-height: 80rpx;
+		font-size: 35rpx;
+		font-weight: bold;
+		border-bottom: 1px solid #eeeed1;
+	}
+	.notice-detail {
+		padding-top: 10rpx;
+		view {
+			line-height: 50rpx;
+		}
+	}
 }
 .money-box {
 	background: #fff;

@@ -1,7 +1,20 @@
 <template>
 	<view class="sh-user-menu-box mb10">
+		<view class="cu-modal" :class="modalName=='RadioModal'?'show':''" @tap="hideModal">
+					  	<view class="cu-dialog" @tap.stop="">
+					  		<radio-group class="block" @change="RadioChange">
+					  		<view class="cu-list menu text-left">
+					  	<view class="cu-item" v-for="(item,index) in PhoneList">
+					  	<label class="flex justify-between align-center flex-sub">
+					  	<view class="flex-sub" @tap="CallPhone(item.Phone)">{{item.Name}}:{{item.Phone}}</view>
+					  		</label>
+					  			</view>
+					  		</view>
+					  	</radio-group>
+					  </view>
+		 </view>
 		<view class="menu-list-box">
-			<view class="menu-item x-bc" v-for="(nav, index) in detail.list" :key="index" @tap="jump(nav)">
+			<view class="menu-item x-bc" v-for="(nav, index) in detail.list" :key="index" @tap="onCheck(nav)">
 				<view class="x-f">
 					<image v-if="nav.image" class="item-img" :src="nav.image" mode=""></image>
 					<text class="item-title">{{ nav.name }}</text>
@@ -16,7 +29,13 @@
 export default {
 	components: {},
 	data() {
-		return {};
+		return {
+			modalName:null,
+			PhoneList: [{
+				Name:'客服电话(1)',
+				Phone: '182-8809-0152'
+			}],
+		};
 	},
 	props: {
 		detail: {
@@ -26,6 +45,27 @@ export default {
 	},
 	computed: {},
 	methods: {
+		//第二部分  模态框的显示与隐藏
+		showModal(e) {
+			this.modalName = e
+		},
+		hideModal(e) {
+			this.modalName = null
+		},
+		/*拨打电话*/
+		CallPhone(e){
+		    uni.makePhoneCall({
+				phoneNumber: e
+			});
+		},
+		onCheck(data){
+			if(data.path_type ==2){
+				this.showModal('RadioModal')
+			}else{
+				this.jump(data)
+			}
+			
+		},
 		jump(data) {
 			this.$tools.routerTo(data.path);
 		}

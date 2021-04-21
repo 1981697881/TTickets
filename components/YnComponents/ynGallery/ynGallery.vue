@@ -222,7 +222,7 @@ export default {
 		},
 		touchMoveHandle(e) {
 			// 手指滑动中
-			this.istouchmove = true;
+			this.istouchmove = false;
 		},
 		touchEndHandle(e) {
 			// 手指离开屏幕

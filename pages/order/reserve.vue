@@ -127,6 +127,7 @@ export default {
 			perGoodsList: {}, //确认单订单
 			orderPre: {},
 			couponId: 0,
+			ticketPaymoney: 0,
 			couponPrice: '选择优惠券',
 			getFocus: false, //获取焦点。
 			checkTime: {}
@@ -137,10 +138,11 @@ export default {
 			userInfo: state => state.user.userInfo,
 			balInfo: state => state.user.balInfo
 		}),
-		ticketPaymoney(){
+		/* ticketPaymoney(){
+			console.log('進入')
 			let that = this
 			return Number(that.perGoodsList.schedule.standardprice) *Number(that.perGoodsList.seats.length)
-		}
+		} */
 	},
 	watch: {},
 	onUnload(options){
@@ -192,6 +194,7 @@ export default {
 		this.orderType = this.$Route.query.orderType;
 		this.grouponBuyType = this.$Route.query.grouponBuyType;
 		this.grouponId = this.$Route.query.grouponId;*/
+		this.ticketPaymoney= Number(this.perGoodsList.schedule.standardprice) *Number(this.perGoodsList.seats.length)
 		this.initDate();
 	},
 	onShow() {},
@@ -205,10 +208,13 @@ export default {
 			}
 		},
 		selPay(e) {
+			let that = this
+			console.log(35.3 *Number(that.perGoodsList.seats.length))
+			console.log(35.2 *Number(10))
 			if(e.detail.value == 'wallet'){
-				this.balInfo.Money = 100
- 				if(Number(this.ticketPaymoney) <= Number(this.balInfo.Money) ){
-					this.payType = e.detail.value;
+ 				if(Number(that.ticketPaymoney) <= Number(that.balInfo.Money) ){
+					that.payType = e.detail.value;
+					that.ticketPaymoney=Number(that.perGoodsList.schedule.settleprice) *Number(that.perGoodsList.seats.length)
 				}else{
 				uni.showToast({
 					icon: 'none',
@@ -216,7 +222,8 @@ export default {
 				})
 				}
 			}else{
-				this.payType = e.detail.value;
+				that.payType = e.detail.value;
+				that.ticketPaymoney= Number(that.perGoodsList.schedule.standardprice) *Number(that.perGoodsList.seats.length)
 			}
 			
 		},
@@ -373,7 +380,7 @@ export default {
 				that.isSubOrder = true
 				let params = {
 					ticketId: that.perGoodsList.ticketId,
-					qty: that.ticketPaymoney,
+					qty: that.ticketPaymoney+"",
 					custId: that.balInfo.custId,
 					phoneNumber: that.userInfo.phoneNumber,
 				}

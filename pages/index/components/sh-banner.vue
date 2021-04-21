@@ -33,7 +33,7 @@ export default {
 	},
 	computed: {},
 	created() {
-		this.initBgColor();
+		/* this.initBgColor(); */
 	},
 	methods: {
 		// 轮播切换

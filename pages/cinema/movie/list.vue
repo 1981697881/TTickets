@@ -117,7 +117,7 @@
  * 感谢原作者[houzisbw](https://github.com/houzisbw), 如有侵权, 请举报
  *
  */
-
+import { mapMutations, mapActions, mapState } from 'vuex';
 export default {
 	data() {
 		return {
@@ -197,6 +197,7 @@ export default {
 		this.initData();
 	},
 	methods: {
+		...mapActions(['getUserBalance']),
 		// 根据影厅的大小缩放比例(需要把影厅全部显示出来)
 		seatScale: function() {
 			let seatScaleX = 1;
@@ -355,6 +356,7 @@ export default {
 			that.$api('cinema.lockSeats', {openId: uni.getStorageSync('openid'), seatIdList: oldArray,scheduleId: this.listParams.scheduleId,scheduleKey: this.listParams.schedulekey,openIdNotNull: 0}).then(res => {
 				that.loadModal = true;
 				if (res.flag) {
+					that.getUserBalance();
 					that.loadModal = false;
 					let result = { ...res.data };
 					result.schedule = JSON.stringify(result.schedule)
