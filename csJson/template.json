@@ -186,13 +186,7 @@
 					"path": "/pages/app/score/list",
 					"path_name": "积分商城",
 					"path_type": 1
-				}, {
-					"name": "常见问题",
-					"image": "https://i.postimg.cc/zvptN8rm/555ef0a1151e83014610b288e53827c2.png",
-					"path": "/pages/public/faq",
-					"path_name": "常见问题",
-					"path_type": 1
-				}, {
+				},{
 					"name": "系统设置",
 					"image": "https://i.postimg.cc/28ccXkGh/a37d85ca8d8e7f1ca90874f89f524886.png",
 					"path": "/pages/user/set",

@@ -1,6 +1,6 @@
 <template>
 	<view class="goods-box" v-if="detail">
-		<view class="content-box" @tap="jump('/pages/cinema/movie/list', { scheduleId: detail.scheduleId,schedulekey:detail.schedulekey,language: detail.language,dimensional: detail.dimensional,filmName:detail.filmName,showDatetime:detail.showDatetime})">
+		<view class="content-box" @tap="jump('/pages/cinema/movie/list', { sectionId: detail.sectionId,scheduleId: detail.scheduleId,schedulekey:detail.scheduleKey,language: detail.language,dimensional: detail.dimensional,filmName:detail.filmName,showDatetime:detail.showDatetime})">
 			<text v-if="isTag && detail.status" class="tag-star"><text class="lg text-red cuIcon-favorfill"></text></text>
 			<view class="cont_one">
 				<view><text class="text-xl text-bold">{{detail.showDatetime.substring(11,16)}}</text></view>
@@ -39,6 +39,9 @@ export default {
 			default: null
 		}
 	},
+	created() {
+		
+	},
 	computed: {},
 	methods: {
 		swiperChange(e) {
@@ -46,6 +49,7 @@ export default {
 		},
 		// 路由跳转
 		jump(path, parmas) {
+			console.log(parmas)
 			this.$Router.push({
 				path: path,
 				query: parmas

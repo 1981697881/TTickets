@@ -204,6 +204,8 @@ export default {
 		this.head.showDatetime = decodeURI(this.head.showDatetime)
 		this.listParams.scheduleId = this.$Route.query.scheduleId;
 		this.listParams.schedulekey = this.$Route.query.schedulekey;
+		this.listParams.scheduleKey = this.$Route.query.schedulekey;
+		this.listParams.sectionId = this.$Route.query.sectionId;
 		//获取宽度
 		uni.getSystemInfo({
 			success: function(e) {
@@ -213,7 +215,7 @@ export default {
 				//#endif
 			}
 		});
-		this.initData();
+		/* this.initData(); */
 	},
 	methods: {
 		...mapActions(['getUserBalance']),
@@ -239,6 +241,8 @@ export default {
 			//假数据说明：sid座位编号，rowNum-行号，columnNum-纵号，y-Y坐标，x-X坐标，status-状态
 			let row = 0;
 			let col = 0;
+			that.$api('cinema.SchedulesSoldSeats', this.listParams).then(reso => {
+			if (reso.flag) { 
 			that.$api('cinema.seatsLists', this.listParams).then(res => {
 				if (res.flag) { 
 					let arr = res.data.scheduleSeats;
@@ -261,6 +265,13 @@ export default {
 					uni.showToast({
 						icon: 'none',
 						title: res.msg
+					})
+				}
+				});
+				}else{
+					uni.showToast({
+						icon: 'none',
+						title: reso.msg
 					})
 				}
 			});

@@ -149,6 +149,7 @@ export default {
 		let that = this
 		that.isSubOrder = true
 		let seats = []
+		console.log(that.perGoodsList)
 		that.perGoodsList.seats.forEach((item)=>{
 			let obj = {}
 			obj.seatId = item.seatId
@@ -200,8 +201,8 @@ export default {
 			this.perGoodsList = {...this.$Route.query}
 			this.perGoodsList.schedule = JSON.parse(this.$Route.query.schedule); 
 			this.perGoodsList.schedule.showDatetime=decodeURI(this.perGoodsList.schedule.showDatetime); 
-			this.perGoodsList.locationHall = JSON.parse(this.$Route.query.locationHall); 
-			this.perGoodsList.seats = JSON.parse(this.$Route.query.seats); 
+			this.perGoodsList.locationHall = JSON.parse(this.perGoodsList.locationHall); 
+			this.perGoodsList.seats = JSON.parse(this.perGoodsList.seats); 
 		}
 		/* this.goodsList = JSON.parse(this.$Route.query.goodsList); 
 		this.from = this.$Route.query.from;

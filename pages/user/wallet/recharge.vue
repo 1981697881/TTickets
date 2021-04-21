@@ -55,16 +55,16 @@ export default {
 	data() {
 		return {
 			setMeal:[{
-				price: "100",
+				price: "200",
 				itemId: 1,
 			},{
-				price: "200",
+				price: "300",
 				itemId: 2,
 			},{
-				price: "300",
+				price: "500",
 				itemId: 3,
 			},{
-				price: "400",
+				price: "1000",
 				itemId: 4,
 			}],
 			isSubOrder: false,
@@ -142,7 +142,8 @@ export default {
 					icon: 'none',
 					title: '新用戶暂还没开放充值，敬请期待'
 				})
-			}}else{
+			}
+			}else{
 				uni.showToast({
 					icon: 'none',
 					title: '需提供手机号码，请到“我的”页面，填写或者授权手机号码'

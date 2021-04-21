@@ -248,7 +248,12 @@ export default {
 			method: 'POST',
 			// desc: '座位列表',
 		},
-		lockSeats: {
+		SchedulesSoldSeats: {
+			url: 'app/api/downloadScheduleSoldSeats',
+			auth: false,
+			method: 'POST',
+			// desc: '场次座位状态',
+		},lockSeats: {
 			url: 'FH/lockSeats',
 			auth: true,
 			method: 'POST',

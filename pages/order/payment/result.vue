@@ -33,9 +33,9 @@ export default {
 		if(this.$Route.query){
 			if(this.$Route.query.reType ==1){
 				this.orderDetail = {...this.$Route.query.orderSn}
-				this.orderDetail.schedule = JSON.parse(this.$Route.query.schedule); 
-				this.orderDetail.locationHall = JSON.parse(this.$Route.query.locationHall); 
-				this.orderDetail.seats = JSON.parse(this.$Route.query.seats); 
+				this.orderDetail.schedule = JSON.parse(this.orderDetail.schedule); 
+				this.orderDetail.locationHall = JSON.parse(this.orderDetail.locationHall); 
+				this.orderDetail.seats = JSON.parse(this.orderDetail.seats); 
 			}else{
 				this.orderDetail = {...this.$Route.query.orderSn};
 			}

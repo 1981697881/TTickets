@@ -873,7 +873,7 @@
 				},{
 					"path": "group-ticket",
 					"style": {
-						"navigationBarTitleText": "团体票"
+						"navigationBarTitleText": "兑换"
 					},
 					"meta": {
 						"auth": true,

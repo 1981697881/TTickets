@@ -121,19 +121,27 @@ export default {
 		payMeal(val){
 			console.log(123)
 			let that = this;
-			uni.showLoading({ title: '加载中' });
-			let parArray = [];
-			//测试订单
-			let params = {
-				coinPaymoney: val.goodsPrice,
-				goodsId: val.goodsId,
-			};
-			/* uni.showToast({
-				icon: 'none',
-				title: '此功能尚未开放....敬请期待'
-			}) */
-			let pay = new AppPay(that.payType, val, 'goods.payCoinMoney', params,2);
-			uni.hideLoading();
+			if(that.balInfo.custId){
+					uni.showLoading({ title: '加载中' });
+					let parArray = [];
+					//测试订单
+					let params = {
+						coinPaymoney: val.goodsPrice,
+						goodsId: val.goodsId,
+					};
+					/* uni.showToast({
+						icon: 'none',
+						title: '此功能尚未开放....敬请期待'
+					}) */
+					let pay = new AppPay(that.payType, val, 'goods.payCoinMoney', params,2);
+					uni.hideLoading();
+			}else{
+				uni.showToast({
+					icon: 'none',
+					title: '新用戶暂还没开放充值，敬请期待'
+				})
+			}
+			
 		},
 		//积分充值
 		integral(){

@@ -395,7 +395,7 @@ export default {
 						if (that.activeviewindex == ai) {
 							that.$emit('clickimg', that.sviewlst.imgsview[that.activeviewindex]);
 						}
-					}, 300);
+					}, 500);
 				}
 			});
 		},

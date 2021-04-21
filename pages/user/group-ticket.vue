@@ -1,13 +1,13 @@
 <template>
 	<view class="page_box">
-		<view class="head_box">
+		<!-- <view class="head_box">
 			<view class="tab-box x-f">
 				<view class="tab-item" @tap="onTab(tab.id)" :class="{ 'tab-active': tabCurrent === tab.id }" v-for="tab in tabList" :key="tab.id">
 					<text class="tab-title">{{ tab.title }}</text>
 					<text v-show="tabCurrent === tab.id" class="tab-triangle"></text>
 				</view>
 			</view>
-		</view>
+		</view> -->
 		<view class="content_box">
 				<gz-exchange :tabId="tabCurrent" v-if="tabCurrent=='ended'"></gz-exchange>
 				<gz-purchase :tabId="tabCurrent" v-if="tabCurrent=='ing'"></gz-purchase>

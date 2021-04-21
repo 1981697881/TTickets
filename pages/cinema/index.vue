@@ -95,6 +95,9 @@ export default {
 			PhoneList: [{
 				Name:'客服电话(1)',
 				Phone: '182-8809-0152'
+			},{
+				Name:'客服电话(2)',
+				Phone: '189-8814-9921'
 			}],
 			swiperList: [
 				

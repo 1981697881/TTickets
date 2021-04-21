@@ -191,7 +191,6 @@ export default class AppPay {
 			signType: payData.signType,
 			paySign: payData.paySign,
 			success: function(res) {
-				
 					let orderResult
 					if(that.reType==1){
 					orderResult = {...that.order};
