@@ -146,7 +146,21 @@ export default {
 	},
 	watch: {},
 	onUnload(options){
-		this.escOrder()
+		let that = this
+		that.isSubOrder = true
+		let seats = []
+		that.perGoodsList.seats.forEach((item)=>{
+			let obj = {}
+			obj.seatId = item.seatId
+			seats.push(obj)
+		})
+		let params = {
+			scheduleId: that.perGoodsList.scheduleId,
+			lockOrderId: that.perGoodsList.lockOrderId,
+			seats: seats,
+		}
+		uni.$emit('escLoack',params)
+		
 	},
 	onBackPress(options) {
 		console.log(options);
@@ -212,9 +226,10 @@ export default {
 			console.log(35.3 *Number(that.perGoodsList.seats.length))
 			console.log(35.2 *Number(10))
 			if(e.detail.value == 'wallet'){
- 				if(Number(that.ticketPaymoney) <= Number(that.balInfo.Money) ){
+				let countPrce = Number(that.perGoodsList.schedule.settleprice) *Number(that.perGoodsList.seats.length)
+ 				if(Number(countPrce) <= Number(that.balInfo.Money) ){
 					that.payType = e.detail.value;
-					that.ticketPaymoney=Number(that.perGoodsList.schedule.settleprice) *Number(that.perGoodsList.seats.length)
+					that.ticketPaymoney=countPrce
 				}else{
 				uni.showToast({
 					icon: 'none',
@@ -336,6 +351,7 @@ export default {
 				seats: seats,
 			}).then(res => {
 				if (res.flag) {
+					
 					console.log(res);
 				}
 			});
@@ -359,6 +375,7 @@ export default {
 				ticketList: ticketList,
 			}).then(res => {
 				if(res.flag){
+					uni.$off('escLoack')
 					/* uni.showToast({
 						icon: 'none',
 						title: res.msg

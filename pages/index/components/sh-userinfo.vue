@@ -1,7 +1,7 @@
 <template>
 	<view>
 		<view class="sh-userinfo-box" :style="{ backgroundColor: detail.color }">
-			<image class="user-bg" :src="detail.image" mode=""></image>
+			<view class="user-bg"></view>
 			<view class="head-wrap">
 				<view class="titleNav pad">
 					<view class="status-bar"></view>
@@ -145,6 +145,7 @@ export default {
 	height: 250rpx;
 	.user-bg {
 		width: 100%;
+		background:linear-gradient(90deg, rgba(123, 120, 97, 1), rgba(138, 104, 137, 1), rgba(208, 174, 137, 1));
 		height: 250rpx;
 	}
 	.head-wrap {

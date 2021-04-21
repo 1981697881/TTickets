@@ -191,16 +191,8 @@ export default class AppPay {
 			signType: payData.signType,
 			paySign: payData.paySign,
 			success: function(res) {
-				console.log({
-						orderSn: that.order,
-						params: that.params,
-						url: that.url,
-						type: that.payment,
-						pay: 1
-					})
+				
 					let orderResult
-					console.log(that.reType==1)
-					console.log(that.reType)
 					if(that.reType==1){
 					orderResult = {...that.order};
 					orderResult.schedule = JSON.stringify(orderResult.schedule)
@@ -228,6 +220,7 @@ export default class AppPay {
 						}).then(rescin => {
 							if(rescin.flag){
 								console.log(orderResult)
+								uni.$off('escLoack')
 								Router.replace({
 									path: '/pages/order/payment/result',
 									query: {

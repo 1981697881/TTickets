@@ -1,18 +1,18 @@
 <template>
 	<view class="container">
-		<view class="wallet-list x-f" v-for="item in walletList" :key="item.id">
-			<image class="head-img" :src="item.avatar" mode=""></image>
+		<view class="wallet-list x-f" v-for="(item,index) in walletList" :key="index">
+			<!-- <image class="head-img" :src="item.avatar" mode=""></image> -->
 			<view class="list-content y-f">
 				<view class="title-box x-bc">
-					<text class="title one-t">{{ item.type_name }}{{ item.title ? '-' + item.title : '' }}</text>
+					<text class="title one-t">{{ item.transactionType == 1?'充值':'消费' }}</text>
 					<view class="money">
-						<text v-if="item.wallet >= 0" class="add">+{{ item.wallet }}</text>
-						<text v-else class="minus">{{ item.wallet }}</text>
+						<text v-if="item.transactionType == 1" class="add">+{{ item.qty }}</text>
+						<text v-else class="minus">-{{ item.qty }}</text>
 					</view>
 				</view>
 				<view class="tip-box x-bc">
-					<text class="time">{{ tools.dateFormat('YYYY-mm-dd HH:MM', new Date(item.createtime * 1000)) }}</text>
-					<text class="from"></text>
+					<text class="time">{{ item.createDatetime }}</text>
+					<text class="from">交易{{item.status==0?'成功':'失败'}}</text>
 				</view>
 			</view>
 		</view>
@@ -29,12 +29,6 @@ export default {
 			tools: this.$tools,
 			isBottom: false,
 			walletList: [],
-			type: {
-				income: '收入',
-				withdraw: '提现',
-				consume: '消费',
-				transfer: '余额互转'
-			},
 			loadStatus: '', //loading,over
 			currentPage: 1,
 			lastPage: 1
@@ -63,7 +57,7 @@ export default {
 				phoneNumber: that.userInfo.phoneNumber
 			}).then(res => {
 				if (res.flag) {
-					that.walletList = [...that.walletList, ...res.data.data];
+					that.walletList = [...that.walletList, ...res.data];
 					that.lastPage = res.data.last_page;
 					if (that.currentPage < res.data.last_page) {
 						that.loadStatus = '';

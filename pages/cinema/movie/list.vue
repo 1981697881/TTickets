@@ -158,7 +158,8 @@ export default {
 			seatList: [], //接口获取的原始位置
 			mArr: [], //排数提示
 			optArr: [], //选中的座位数组。
-			isWXAPP: false
+			isWXAPP: false,
+			isEsc: true,
 		};
 	},
 	computed: {
@@ -173,11 +174,29 @@ export default {
 		}
 	},
 	onShow() {
-		this.SelectNum = 0;
-		this.totalPrice = 0;
-		this.optArr = [];
-		this.isSubOrder = false;
-		this.initData();
+		let that = this
+		uni.$once('escLoack',function(data){
+			that.isEsc = false;
+			that.SelectNum = 0;
+			that.totalPrice = 0;
+			that.optArr = [];
+			that.isSubOrder = false;
+			that.$api('cinema.escSeats', data).then(res => {
+				if (res.flag) {
+					that.initData();
+					console.log(res);
+				}
+			});
+		    })
+			console.log(that.isEsc)
+			if(that.isEsc){
+				that.SelectNum = 0;
+				that.totalPrice = 0;
+				that.optArr = [];
+				that.isSubOrder = false;
+				that.initData();
+			}
+		
 	},
 	onLoad() {
 		this.isSubOrder = false;
@@ -231,6 +250,7 @@ export default {
 						row = parseInt(i.y) > row ? parseInt(i.y) : row;
 						col = parseInt(i.x) > col ? parseInt(i.x) : col;
 					}
+					that.isEsc = true;
 					that.seatList = arr;
 					that.seatRow = row - minRow + 1;
 					that.seatCol = col - minCol + 3;

@@ -169,38 +169,38 @@
 				"name": "",
 				"list": [{
 					"name": "我的订单",
-					"image": "https://api.7wpp.com/uploads/20200929/7aff2a07472660035e99c4f341bdfd85.png",
+					"image": "https://i.postimg.cc/tT8R5Qfj/all-order.png",
 					"path": "/pages/index/wallet",
 					"path_name": "优惠券",
 					"path_type": 1
 					},{
 					"name": "兑换券",
-					"image": "https://api.7wpp.com/uploads/20200929/7aff2a07472660035e99c4f341bdfd85.png",
+					"image": "https://i.postimg.cc/GhF3kfxW/a329a448d7cb7fd2ff46a9ab0e9f5ac0.png",
 					"path": "/pages/user/group-ticket",
 					"path_name": "优惠券",
 					"path_type": 1
 					},
 					{
 					"name": "积分商城",
-					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/ab05b484afd9e2a21977adc79d0c456e.png",
+					"image": "https://i.postimg.cc/8cb3CLL0/ab05b484afd9e2a21977adc79d0c456e.png",
 					"path": "/pages/app/score/list",
 					"path_name": "积分商城",
 					"path_type": 1
 				}, {
 					"name": "常见问题",
-					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/555ef0a1151e83014610b288e53827c2.png",
+					"image": "https://i.postimg.cc/zvptN8rm/555ef0a1151e83014610b288e53827c2.png",
 					"path": "/pages/public/faq",
 					"path_name": "常见问题",
 					"path_type": 1
 				}, {
 					"name": "系统设置",
-					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/a37d85ca8d8e7f1ca90874f89f524886.png",
+					"image": "https://i.postimg.cc/28ccXkGh/a37d85ca8d8e7f1ca90874f89f524886.png",
 					"path": "/pages/user/set",
 					"path_name": "系统设置",
 					"path_type": 1
 				}, {
 					"name": "联系客服",
-					"image": "https://api.7wpp.com/uploads/20200929/7aff2a07472660035e99c4f341bdfd85.png",
+					"image": "https://i.postimg.cc/q75pJHp3/5d53a6e7f940c5ef925f63c1810c8429.png",
 					"path": "/pages/public/kefu/index",
 					"path_name": "客服",
 					"path_type": 2
@@ -214,7 +214,7 @@
 			"name": "自定义商品",
 			"content": {
 				"ids": "2,3,5,10",
-				"image": "https://api.7wpp.com",
+				"image": "",
 				"name": ""
 			},
 			"decorate_id": 1
@@ -282,104 +282,6 @@
 					"page_name": ["商城-首页"],
 					"path_type": 1,
 					"style": 1
-				}]
-			},
-			"decorate_id": 1
-		}],
-		"float-button": [{
-			"id": 17963,
-			"type": "float-button",
-			"category": "float-button",
-			"name": "悬浮按钮",
-			"content": {
-				"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/f6b9c9d20d21df541ac52e9548486e1a.png",
-				"list": [{
-					"name": "客服",
-					"style": 2,
-					"image": "",
-					"btnimage": "https://api.7wpp.com/uploads/20200930/0c3cf0897521ae06fd4da6aec958b68e.png",
-					"path": "/pages/public/kefu/index",
-					"path_name": "客服",
-					"path_type": 1,
-					"page": ["/pages/app/coupon/list", "/pages/app/coupon/detail", "/pages/goods/search", "/pages/index/index",
-						"/pages/index/category", "/pages/index/cart", "/pages/goods/list", "/pages/goods/detail/index",
-						"/pages/public/feedback", "/pages/index/find", "/pages/app/score/list", "/pages/app/live/list",
-						"/pages/activity/groupon/list", "/pages/activity/seckill/list", "/pages/activity/groupon/my-groupon",
-						"/pages/index/user", "/pages/order/list", "/pages/public/forgot", "/pages/public/login",
-						"/pages/public/register", "/pages/user/log", "/pages/user/address/list", "/pages/user/edit-password",
-						"/pages/user/favorite", "/pages/user/info", "/pages/user/edit-phone", "/pages/user/wallet/index",
-						"/pages/user/wallet/bind-bank", "/pages/user/wallet/log", "/pages/user/wallet/score-balance",
-						"/pages/user/wallet/UserDefinedFilling", "/pages/user/wallet/customhistory",
-						"/pages/user/wallet/personalHistory", "/pages/user/wallet/fillingHistory",
-						"/pages/user/wallet/FillInTheForm", "/pages/user/wallet/newsNotice", "/pages/user/wallet/StatisticalReport",
-						"/pages/user/wallet/ProcessApproval", "/pages/user/wallet/approval", "/pages/user/wallet/reject",
-						"/pages/app/merchant/index", "/pages/app/merchant/info", "/pages/user/wallet/history", "/pages/index/view",
-						"/pages/public/richtext", "/pages/public/poster/index", "/pages/public/faq", "/pages/user/sign/index",
-						"/pages/user/set", "/pages/public/kefu/index"
-					]
-				}, {
-					"name": "关注",
-					"style": 1,
-					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/ff3fba3ef6a402aa770bde5a60e7f49f.png",
-					"btnimage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/875dd6d2b1980dbccbec0895f757cdff.png",
-					"path": "",
-					"path_name": "",
-					"path_type": 1,
-					"page": ["/pages/index/index", "/pages/index/category", "/pages/index/cart", "/pages/index/user",
-						"/pages/goods/list", "/pages/goods/detail/index", "/pages/activity/groupon/list",
-						"/pages/activity/seckill/list", "/pages/activity/groupon/my-groupon", "/pages/app/coupon/list",
-						"/pages/app/coupon/detail", "/pages/app/score/list", "/pages/order/list", "/pages/public/richtext",
-						"/pages/public/feedback", "/pages/public/forgot", "/pages/public/login", "/pages/public/register",
-						"/pages/public/poster/index", "/pages/public/faq", "/pages/user/log", "/pages/user/sign/index",
-						"/pages/user/address/list", "/pages/user/set", "/pages/user/edit-password", "/pages/user/favorite",
-						"/pages/user/info", "/pages/user/edit-phone", "/pages/user/wallet/index", "/pages/user/wallet/bind-bank",
-						"/pages/user/wallet/log", "/pages/user/wallet/score-balance"
-					],
-					"page_name": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17",
-						"18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32"
-					]
-				}, {
-					"name": "购物车",
-					"style": 2,
-					"image": "",
-					"btnimage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/c72f2c4f452d72e4ad82f38c72911ce4.png",
-					"path": "/pages/index/cart",
-					"path_name": "购物车",
-					"path_type": 1,
-					"page": ["/pages/index/index", "/pages/index/category", "/pages/index/cart", "/pages/index/user",
-						"/pages/goods/list", "/pages/goods/detail/index", "/pages/activity/groupon/list",
-						"/pages/activity/seckill/list", "/pages/activity/groupon/my-groupon", "/pages/app/coupon/list",
-						"/pages/app/coupon/detail", "/pages/app/score/list", "/pages/order/list", "/pages/public/richtext",
-						"/pages/public/feedback", "/pages/public/forgot", "/pages/public/login", "/pages/public/register",
-						"/pages/public/poster/index", "/pages/public/faq", "/pages/user/log", "/pages/user/sign/index",
-						"/pages/user/address/list", "/pages/user/set", "/pages/user/edit-password", "/pages/user/favorite",
-						"/pages/user/info", "/pages/user/edit-phone", "/pages/user/wallet/index", "/pages/user/wallet/bind-bank",
-						"/pages/user/wallet/log", "/pages/user/wallet/score-balance"
-					],
-					"page_name": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17",
-						"18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32"
-					]
-				}, {
-					"name": "活动",
-					"style": 2,
-					"image": "",
-					"btnimage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/8153f1d85f462b277d024baf812814a6.png",
-					"path": "/pages/activity/seckill/list",
-					"path_name": "限时秒杀",
-					"path_type": 1,
-					"page": ["/pages/index/index", "/pages/index/category", "/pages/index/cart", "/pages/index/user",
-						"/pages/goods/list", "/pages/goods/detail/index", "/pages/activity/groupon/list",
-						"/pages/activity/seckill/list", "/pages/activity/groupon/my-groupon", "/pages/app/coupon/list",
-						"/pages/app/coupon/detail", "/pages/app/score/list", "/pages/order/list", "/pages/public/richtext",
-						"/pages/public/feedback", "/pages/public/forgot", "/pages/public/login", "/pages/public/register",
-						"/pages/public/poster/index", "/pages/public/faq", "/pages/user/log", "/pages/user/sign/index",
-						"/pages/user/address/list", "/pages/user/set", "/pages/user/edit-password", "/pages/user/favorite",
-						"/pages/user/info", "/pages/user/edit-phone", "/pages/user/wallet/index", "/pages/user/wallet/bind-bank",
-						"/pages/user/wallet/log", "/pages/user/wallet/score-balance"
-					],
-					"page_name": ["1", "2", "3", "4", "5", "6", "7", "8", "9", "10", "11", "12", "13", "14", "15", "16", "17",
-						"18", "19", "20", "21", "22", "23", "24", "25", "26", "27", "28", "29", "30", "31", "32"
-					]
 				}]
 			},
 			"decorate_id": 1
