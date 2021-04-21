@@ -7,7 +7,7 @@ import Wechat from '@/common/wechat/wechat'
 // #endif
 import Router from '@/common/router';
 
-
+import { mapMutations, mapActions, mapState } from 'vuex';
 
 export default class AppPay {
 
@@ -243,7 +243,7 @@ export default class AppPay {
 								if (resve.flag) {
 									api('goods.veIntegral', { qty: that.order.integral,custId:store.state.user.balInfo.custId,phoneNumber:store.state.user.userInfo.phoneNumber }).then(resal => {
 										if (resal.flag) {
-											store.state.user.getUserBalance()
+											store.dispatch('getUserBalance')
 											uni.showToast({
 												icon: 'none',
 												title: '购买成功'
@@ -264,7 +264,7 @@ export default class AppPay {
 										icon: 'none',
 										title: '充值成功'
 									})
-									store.state.user.getUserBalance()
+									store.dispatch('getUserBalance')
 								}else{
 									uni.showToast({
 										icon: 'none',

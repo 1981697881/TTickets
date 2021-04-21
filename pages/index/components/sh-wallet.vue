@@ -4,7 +4,7 @@
 		<view class="x-f wallet-left">
 			<view class="wallet-item y-f" @tap="jump('/pages/user/wallet/index')">
 				<text class="wallet-item__detail item-balance">{{ balInfo.Money || '0.00' }}</text>
-				<text class="wallet-item__title">账户余额</text>
+				<text class="wallet-item__title">会员余额</text>
 			</view>
 			<view class="wallet-item y-f" @tap="jump('/pages/user/wallet/score-balance')">
 				<text class="wallet-item__detail item-score">{{ balInfo.score || '0' }}</text>

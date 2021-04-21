@@ -1,8 +1,8 @@
 <template>
 	<view class="page_box">
 		<view class="head_box margin-top">
-			<view class="cu-form-group text-xl text-bold text-brown">我的账户：cs1234</view>
-			<view class="cu-form-group text-grey">我的账户余额：{{ balInfo.Money || "0.00" }} 元</view>
+			<view class="cu-form-group text-xl text-bold text-brown">我的账户：</view>
+			<view class="cu-form-group text-grey">我的余额：{{ balInfo.Money || "0.00" }} 元</view>
 			<view class="cu-form-group text-bold">充值金额：</view>
 		</view>
 		<view class="content_box">
@@ -214,6 +214,7 @@ export default {
 	.money {
 		text-align: center;
 		width: 220rpx;
+		padding: 0 !important;
 		margin: 15rpx;
 		height: 120rpx;
 		box-shadow: 1px 1px 1px 1px #a5a5a5;
@@ -221,7 +222,7 @@ export default {
 		line-height: 120rpx;
 		color: #778899;
 		background: #f8f8ff;
-		font-size: 60rpx;
+		font-size: 55rpx;
 		&::before {
 			content: '￥';
 			font-size: 46rpx;
