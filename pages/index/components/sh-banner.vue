@@ -39,7 +39,7 @@ export default {
 		// 轮播切换
 		swiperChange(e) {
 			this.swiperCurrent = e.detail.current;
-			this.initBgColor();
+			/* this.initBgColor(); */
 		},
 		// 初始化背景颜色，轮播图没滚动前
 		initBgColor() {

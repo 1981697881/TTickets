@@ -1,5 +1,5 @@
 <template>
-	<view class="adv-box mx20 mb10" @tap="routerTo('https://mp.weixin.qq.com/s/gCc876ut4AtVd59JM_xY0w')">
+	<view class="adv-box mb10" @tap="routerTo('https://mp.weixin.qq.com/s/gCc876ut4AtVd59JM_xY0w')">
 		<!-- 模板1-->
 		<view class="x-f" v-if="detail.style == 1">
 			<image src="https://i.postimg.cc/C1yRTTzZ/20210422191833.png" mode="scaleToFill" lazy-load></image>
@@ -51,7 +51,7 @@ export default {
 		}
 	}
 	image {
-		width:710rpx;
+		width:100%;
 		height: 350rpx;
 		// background-color: #ccc;
 	}

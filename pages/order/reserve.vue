@@ -243,7 +243,7 @@ export default {
 		selPay(e) {
 			let that = this
 			if(e.detail.value == 'wallet'){
-				let countPrce = Number(that.perGoodsList.schedule.settleprice) *Number(that.perGoodsList.seats.length)
+				let countPrce = Number(that.perGoodsList.schedule.lowestprice) *Number(that.perGoodsList.seats.length)
  				if(Number(countPrce) <= Number(that.balInfo.Money) ){
 					that.payType = e.detail.value;
 					that.ticketPaymoney = countPrce
