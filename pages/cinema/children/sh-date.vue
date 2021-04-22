@@ -33,7 +33,8 @@ export default {
 		let date =new Date()
 		let year=date.getFullYear();
 		let month=date.getMonth()+1;
-		let lastDay=new Date(year,month,0).getDate()
+		/* let lastDay=new Date(year,month,0).getDate() */
+		let lastDay=7
 		let arr=[]
 		for(let i = 0;i<lastDay;i++){
 			let obj = tools.getDayList('',i)

@@ -175,11 +175,9 @@ export default {
 	},
 	onShow() {
 		let that = this
+		uni.showLoading({ title: '加载中' });
 		uni.$once('escLoack',function(data){
 			that.isEsc = false;
-			that.SelectNum = 0;
-			that.totalPrice = 0;
-			that.optArr = [];
 			that.isSubOrder = false;
 			that.$api('cinema.escSeats', data).then(res => {
 				if (res.flag) {
@@ -235,15 +233,18 @@ export default {
 				return 'white';
 			}
 		},
-		initData: function() {
+		 initData: function() {
 			let that = this;
 			//假数据说明：sid座位编号，rowNum-行号，columnNum-纵号，y-Y坐标，x-X坐标，status-状态
 			let row = 0;
 			let col = 0;
 			that.$api('cinema.SchedulesSoldSeats', this.listParams).then(reso => {
 			if (reso.flag) { 
-			that.$api('cinema.seatsLists', this.listParams).then(res => {
+			 that.$api('cinema.seatsLists', this.listParams).then(res => {
 				if (res.flag) { 
+					that.SelectNum = 0;
+					that.totalPrice = 0;
+					that.optArr = [];
 					let arr = res.data.scheduleSeats;
 					let minCol = parseInt(arr[0].x);
 					let minRow = parseInt(arr[0].y);
@@ -260,6 +261,7 @@ export default {
 					that.minRow = minRow;
 					that.minCol = minCol - 1;
 					that.initSeatArray();
+					uni.hideLoading();
 				}else{
 					uni.showToast({
 						icon: 'none',

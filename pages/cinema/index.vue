@@ -4,7 +4,7 @@
 			  	<view class="cu-dialog" @tap.stop="">
 			  		<radio-group class="block" @change="RadioChange">
 			  		<view class="cu-list menu text-left">
-			  	<view class="cu-item" v-for="(item,index) in PhoneList">
+			  	<view class="cu-item" v-for="(item,index) in PhoneList" :key="index">
 			  	<label class="flex justify-between align-center flex-sub">
 			  	<view class="flex-sub" @tap="CallPhone(item.Phone)">{{item.Name}}:{{item.Phone}}</view>
 			  		</label>
@@ -28,7 +28,7 @@
 					<view>影院客服</view>
 					</view>
 			</view>
-			<ynGallery
+			<!-- <ynGallery
 				:galleryheight="165"
 				bkstart="#C6E2FF"
 				bkend="#828282"
@@ -41,7 +41,28 @@
 				:showdec="true"
 				:images="swiperList"
 				@clickimg="onclickimg"
-			></ynGallery>
+			></ynGallery> -->
+			<swiper class="card-swiper" :current="activeItem" :class="dotStyle ? 'square-dot' : 'round-dot'" :circular="true" duration="500" @change="cardSwiper">
+				<swiper-item v-for="(item, cindex) in swiperList" :key="cindex" :class="cardCur == cindex ? 'cur' : ''" style="padding: 15rpx 0 30rpx">
+					<view class="swiper-item">
+						<image :src="item.url" mode="aspectFill" v-if="item.type == 'image'"></image>
+						<video :src="item.url" autoplay loop muted :show-play-btn="false" :controls="false" objectFit="cover" v-if="item.type == 'video'"></video>
+						<view class="cir_group">
+							<view class="cir_logo">
+								<view class="tag" >{{item.dimensional}}</view>
+								<image :src="item.filmPhoto" mode="aspectFill"></image>
+							</view>
+							<view class="text-white cir_detail">
+								<view class="text-cut de_name">{{ item.filmName }}</view>
+								<view class="de_pin">评分：暂无</view>
+								<view class="text-orange de_info">{{ item.filmLong || ''}}分钟 | {{ item.filmSortid || ''}}</view>
+								<view class="text-orange de_info">导演：{{ item.filmDirector || '' }}</view>
+								<view class="text-orange de_info">主演：{{ item.filmPlay || ''}}</view>
+							</view>
+						</view>
+					</view>
+				</swiper-item>
+			</swiper>
 			<sh-date @subClickFtn="fatherMethod"></sh-date>
 		</view>
 		<scroll-view :style="{ height: headHeight + 'px' }" class="scroll-box" scroll-y enable-back-to-top scroll-with-animation @scrolltolower="loadMore">
@@ -86,12 +107,17 @@ export default {
 	},
 	data() {
 		return {
+			cardCur: 0,
+			activeItem: 0,
 			Msg: '0',
 			cinemaName: '',
 			cinemaAddress: '',
 			circuit: '',
 			cinemaList: [],
 			modalName:null,
+			dotStyle: false,
+			towerStart: 0,
+			direction: '',
 			PhoneList: [{
 				Name:'客服电话(1)',
 				Phone: '182-8809-0152'
@@ -152,6 +178,14 @@ export default {
 		this.getCinemaList()
 	},
 	methods: {
+		cardSwiper(e) {
+			this.circuit = this.swiperList[e.detail.current].filmName;
+			this.listParams.filmId = this.swiperList[e.detail.current].filmId;
+			this.cardCur = e.detail.current;
+			this.listParams.page = 1;
+			this.goodsList = [];
+			this.getGoodsList();
+		},
 		// 路由跳转
 		jump(path, parmas) {
 			this.$Router.push({ path: path, query: parmas });
@@ -308,12 +342,70 @@ export default {
 </script>
 
 <style lang="scss">
-/* .tower-swiper {
+/* 指示点 */
+.wx-swiper-dots .wx-swiper-dot {
+  display: none;
+}
+.card-swiper {
 	height: 350upx !important;
 }
-.tower-swiper uni-swiper-item {
-	padding: 5px 0 15px !important;
-} */
+.card-swiper uni-swiper-item {
+	padding: 15rpx 0 30rpx !important;
+}
+.cir_group {
+	width: 100%;
+	height: 100%;
+	background-color: red; /* 对于不支持渐变的浏览器*/
+	background-image: linear-gradient(#2b4055, #5c92c1, #2b4055); /* 标准语法(必须是最后一个) */
+	display: flex;
+	.cir_logo {
+		display: inline-flex;
+		width: 40%;
+		padding: 20rpx;
+		image {
+			border-radius: 15rpx;
+			width: 100%;
+		}
+		.tag {
+			position: absolute;
+			left: 10rpx;
+			top: 40rpx;
+			z-index: 2;
+			line-height: 30rpx;
+			background: linear-gradient(132deg, rgba(28, 28, 28, 1), rgba(54, 54, 54, 1), rgba(236, 190, 96, 1));
+			border-radius: 0px 18rpx 18rpx 0px;
+			padding: 0 10rpx;
+			-webkit-transform: scale(0.8);
+			font-family: PingFang SC;
+			color: white;
+		}
+	}
+	.cir_detail {
+		width: 60%;
+		padding: 20rpx;
+		padding-left: 0;
+		font-family: PingFang SC;
+		display: inline-block;
+		.de_name {
+			width: 100%;
+			font-size: 40rpx;
+			line-height: 60rpx;
+		}
+		.de_pin {
+			line-height: 40rpx;
+			width: 100%;
+		}
+		.de_info {
+			line-height: 40rpx;
+			width: 100%;
+		}
+	}
+}
+.tower-swiper .tower-item {
+	transform: scale(calc(0.5 + var(--index) / 10));
+	margin-left: calc(var(--left) * 100upx - 150upx);
+	z-index: var(--index);
+}
 .page_box {
 	height: auto;
 	display: inline-block;
