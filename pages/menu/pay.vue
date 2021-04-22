@@ -78,7 +78,7 @@
 		<view class="w-100 pay-box position-fixed fixed-bottom d-flex align-items-center justify-content-between bg-white">
 			<view class="font-size-sm" style="margin-left: 20rpx;">合计：</view>
 			<view class="font-size-lg flex-fill">￥{{ amount }}</view>
-			<view class="bg-primary h-100 d-flex align-items-center just-content-center text-color-white font-size-base" style="padding: 0 60rpx;" @tap="submit">付款</view>
+			<button :disabled="isSubOrder" class="bg-primary h-100 d-flex align-items-center just-content-center text-color-white font-size-base" style="padding: 0 60rpx;" @tap="combuy">付款</button>
 		</view>
 	</view>
 </template>
@@ -109,6 +109,7 @@ export default {
 			orderType: 'dinein',
 			address: '123',
 			store: '1',
+			isSubOrder: false,
 			ensureAddressModalVisible: false
 		};
 	},
@@ -130,6 +131,17 @@ export default {
 		remark && this.$set(this.form, 'remark', remark);
 	},
 	methods: {
+		combuy(){
+			uni.showToast({
+				icon: 'none',
+				title: '此功能尚未开放....敬请期待'
+			})
+			/* if(this.payType=='wallet'){
+				this.blanBuy()
+			}else{
+				this.pay()
+			} */
+		},
 		// 选择优惠券
 		selCoupon() {
 			if (this.pickerData.couponList.length) {
@@ -139,7 +151,19 @@ export default {
 			}
 		},
 		selPay(e) {
-			this.payType = e.detail.value;
+			if(e.detail.value == 'wallet'){
+				if(Number(this.amount) <= Number(that.balInfo.Money) ){
+					that.payType = e.detail.value;
+				}else{
+					that.payType = 'wechat';
+				return uni.showToast({
+					icon: 'none',
+					title: '余额不足以支付本次费用，请选择其他支付方式'
+				})
+				}
+			}else{
+				that.payType = 'wechat';
+			}
 		},
 		submit() {
 			if (this.orderType == 'takeout') {
@@ -148,10 +172,44 @@ export default {
 				this.pay();
 			}
 		},
+		//余额购买
+		blanBuy(){
+			let ticketList = []
+			let that = this;
+			if(that.userInfo.phoneNumber){
+				that.isSubOrder = true
+				let params = {
+					ticketId: that.perGoodsList.ticketId,
+					qty: that.amount+"",
+					custId: that.balInfo.custId,
+					phoneNumber: that.userInfo.phoneNumber,
+				}
+				this.$api('user.deduction', params).then(res => {
+					if(res.flag){
+						that.jump('/pages/index/wallet', res.data);
+					}else{
+						uni.showToast({
+							icon: 'none',
+							title: res.msg
+						})
+					}
+				});
+				
+			}else{
+				uni.showToast({
+					icon: 'none',
+					title: '手机号码为必填项'
+				})
+			}
+			
+		},
+		//线上支付
 		pay() {
 			let that = this;
+			if(that.userInfo.phoneNumber){
 			uni.showLoading({ title: '加载中' });
 			let parArray = [];
+			that.isSubOrder = true
 			that.cart.forEach((item, index) => {
 				let obj = {};
 				obj.goodsId = item.goodsId;
@@ -165,13 +223,16 @@ export default {
 				goodsPaymoney: that.amount,
 				memberGoodsDetailPojos: parArray
 			};
-			/* uni.showToast({
-				icon: 'none',
-				title: '此功能尚未开放....敬请期待'
-			}) */
+			
 			let pay = new AppPay(that.payType, that.cart, 'goods.payGoodsMoney', params);
 			uni.removeStorageSync('cart');
 			uni.hideLoading();
+			}else{
+				uni.showToast({
+					icon: 'none',
+					title: '手机号码为必填项'
+				})
+			}
 		}
 	}
 };

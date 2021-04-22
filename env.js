@@ -8,10 +8,9 @@ import store from '@/common/store/index'
 // #ifdef H5
 let protocol = window.location.protocol;
 // #endif
-// https://api.7wpp.com
 const ENV_BASE_URL = {
-	development: 'http://test.gzfzdev.com', //开发环境
-	production: 'http://test.gzfzdev.com', //生产环境
+	development: 'http://cfzx.gzfzdev.com', //开发环境
+	production: 'http://cfzx.gzfzdev.com', //生产环境
 }
 // /addons/shopro
 const ENV_API_URL = {

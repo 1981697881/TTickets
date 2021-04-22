@@ -71,7 +71,7 @@ export default {
 			payType: 'wechat',
 			options: {},
 			checkItem: 0,
-			checkPrice: 100,
+			checkPrice: 200,
 			orderDetail: {},
 			isAndroid: uni.getStorageSync('isAndroid'),
 			platform: uni.getStorageSync('platform')

@@ -229,9 +229,9 @@ export default {
 	async onShow() {
 		await this.init();
 	},
-	async onLoad() {
+	/* async onLoad() {
 		await this.init();
-	},
+	}, */
 	computed: {
 		goodCartNum() {
 			//计算单个饮品添加到购物车的数量

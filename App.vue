@@ -3,7 +3,7 @@ import Vue from 'vue';
 import { mapMutations, mapActions, mapState } from 'vuex';
 import Wechat from './common/wechat/wechat';
 import store from '@/common/store';
-
+import api from '@/common/request/index'
 export default {
 	methods: {
 		//应用初始化,获取模板,获取页面路由,获取用户信息,保存用户Token并返回初始进入页面
@@ -182,7 +182,18 @@ export default {
 	onShow: function() {
 		this.$store.commit('CART_NUM');
 	},
-	onHide: function() {}
+	onHide: function() {
+		console.log('小程序关闭')
+		let that = this
+		uni.$once('escLoack',function(data){
+			console.log(123)
+			api('cinema.escSeats', data).then(res => {
+				if (res.flag) {
+					console.log('释放座位');
+				}
+			});
+		    })
+	}
 };
 </script>
 

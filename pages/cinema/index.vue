@@ -132,7 +132,7 @@ export default {
 	mounted() {
 		this.getScrHeight()
 	},
-	onLoad() {
+	onShow() {
 		this.setimgs();
 		this.listParams.showDatetime = tools.getDayList('', 0).day;
 		if (this.$Route.query.filmId) {

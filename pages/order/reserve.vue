@@ -23,7 +23,7 @@
 						<text class="cuIcon-roundclose text-red padding-xs">不可退票</text>
 					</view>
 					<view class="x-f">
-						<view class="detail">共{{perGoodsList.seats.length}}张 原价 ￥{{Number(perGoodsList.schedule.standardprice) *Number(perGoodsList.seats.length)}}</view>
+						<view class="detail">共{{perGoodsList.seats.length}}张 原价 ￥{{Number(perGoodsList.schedule.settleprice) *Number(perGoodsList.seats.length)}}</view>
 					</view>
 				</view>
 			</view>
@@ -141,10 +141,28 @@ export default {
 		/* ticketPaymoney(){
 			console.log('進入')
 			let that = this
-			return Number(that.perGoodsList.schedule.standardprice) *Number(that.perGoodsList.seats.length)
+			return Number(that.perGoodsList.schedule.settleprice) *Number(that.perGoodsList.seats.length)
 		} */
 	},
 	watch: {},
+	onHide() {
+		console.log('页面关闭')
+		let that = this
+		that.isSubOrder = true
+		let seats = []
+		console.log(that.perGoodsList)
+		that.perGoodsList.seats.forEach((item)=>{
+			let obj = {}
+			obj.seatId = item.seatId
+			seats.push(obj)
+		})
+		let params = {
+			scheduleId: that.perGoodsList.scheduleId,
+			lockOrderId: that.perGoodsList.lockOrderId,
+			seats: seats,
+		}
+		uni.$emit('escLoack',params)
+	},
 	onUnload(options){
 		let that = this
 		that.isSubOrder = true
@@ -209,7 +227,7 @@ export default {
 		this.orderType = this.$Route.query.orderType;
 		this.grouponBuyType = this.$Route.query.grouponBuyType;
 		this.grouponId = this.$Route.query.grouponId;*/
-		this.ticketPaymoney= Number(this.perGoodsList.schedule.standardprice) *Number(this.perGoodsList.seats.length)
+		this.ticketPaymoney= Number(this.perGoodsList.schedule.settleprice) *Number(this.perGoodsList.seats.length)
 		this.initDate();
 	},
 	onShow() {},
@@ -224,22 +242,20 @@ export default {
 		},
 		selPay(e) {
 			let that = this
-			console.log(35.3 *Number(that.perGoodsList.seats.length))
-			console.log(35.2 *Number(10))
 			if(e.detail.value == 'wallet'){
 				let countPrce = Number(that.perGoodsList.schedule.settleprice) *Number(that.perGoodsList.seats.length)
  				if(Number(countPrce) <= Number(that.balInfo.Money) ){
 					that.payType = e.detail.value;
-					that.ticketPaymoney=countPrce
+					that.ticketPaymoney = countPrce
 				}else{
-				uni.showToast({
-					icon: 'none',
-					title: '余额不足以支付本次费用，请选择其他支付方式'
-				})
+					uni.showToast({
+						icon: 'none',
+						title: '余额不足以支付本次费用，请选择其他支付方式'
+					})
 				}
 			}else{
 				that.payType = e.detail.value;
-				that.ticketPaymoney= Number(that.perGoodsList.schedule.standardprice) *Number(that.perGoodsList.seats.length)
+				that.ticketPaymoney= Number(that.perGoodsList.schedule.settleprice) *Number(that.perGoodsList.seats.length)
 			}
 			
 		},
@@ -365,7 +381,7 @@ export default {
 				let obj = {}
 				obj.seatId = item.seatId
 				obj.ticketFee = item.ticketfee
-				obj.ticketPrice = item.standardprice
+				obj.ticketPrice = item.settleprice
 				ticketList.push(obj)
 			})
 			this.$api('cinema.confirmOrder', {

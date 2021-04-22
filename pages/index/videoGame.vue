@@ -129,11 +129,11 @@ export default {
 						coinPaymoney: val.goodsPrice,
 						goodsId: val.goodsId,
 					};
-					/* uni.showToast({
+					uni.showToast({
 						icon: 'none',
 						title: '此功能尚未开放....敬请期待'
-					}) */
-					let pay = new AppPay(that.payType, val, 'goods.payCoinMoney', params,2);
+					})
+					/* let pay = new AppPay(that.payType, val, 'goods.payCoinMoney', params,2); */
 					uni.hideLoading();
 			}else{
 				uni.showToast({

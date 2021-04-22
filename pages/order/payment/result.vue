@@ -29,18 +29,16 @@ export default {
 	},
 	computed: {},
 	onLoad() {
-		console.log(this.$Route.query)
 		if(this.$Route.query){
 			if(this.$Route.query.reType ==1){
-				this.orderDetail = {...this.$Route.query.orderSn}
+				this.orderDetail = {...this.$Route.query}
 				this.orderDetail.schedule = JSON.parse(this.orderDetail.schedule); 
 				this.orderDetail.locationHall = JSON.parse(this.orderDetail.locationHall); 
 				this.orderDetail.seats = JSON.parse(this.orderDetail.seats); 
 			}else{
-				this.orderDetail = {...this.$Route.query.orderSn};
+				this.orderDetail = {...this.$Route.query};
 			}
 		}
-		console.log(this.orderDetail)
 		this.pay = this.$Route.query.pay;
 		this.ticketId = this.$Route.query.ticketId;
 		this.ticketPaymoney = this.$Route.query.ticketPaymoney;

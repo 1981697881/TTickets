@@ -183,6 +183,7 @@ export default class AppPay {
 		let that = this;
 		let result = await this.prepay();
 		let payData = result.data;
+		uni.$off('escLoack')
 		uni.requestPayment({
 			provider: 'wxpay',
 			timeStamp: payData.timeStamp,
@@ -207,7 +208,7 @@ export default class AppPay {
 							let obj = {}
 							obj.seatId = item.seatId
 							obj.ticketFee = item.ticketfee
-							obj.ticketPrice = item.standardprice
+							obj.ticketPrice = item.settleprice
 							ticketList.push(obj)
 						})
 						api('cinema.confirmOrder', {
@@ -219,7 +220,6 @@ export default class AppPay {
 						}).then(rescin => {
 							if(rescin.flag){
 								console.log(orderResult)
-								uni.$off('escLoack')
 								Router.replace({
 									path: '/pages/order/payment/result',
 									query: {

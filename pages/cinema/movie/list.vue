@@ -188,7 +188,6 @@ export default {
 				}
 			});
 		    })
-			console.log(that.isEsc)
 			if(that.isEsc){
 				that.SelectNum = 0;
 				that.totalPrice = 0;
@@ -308,7 +307,7 @@ export default {
 				arr[parseInt(seat[num].y) - this.minRow][parseInt(seat[num].x) - this.minCol] = {
 					type: status,
 					sid: seat[num].seatId,
-					money: seat[num].standardprice,
+					money: seat[num].settleprice,
 					rowNum: seat[num].y,
 					columnNum: seat[num].x
 				};

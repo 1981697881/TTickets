@@ -11,7 +11,7 @@
 				<view><text class="text-gray">{{detail.hallName}}</text></view>
 			</view>
 			<view class="cont_three">
-				<view class="o_price text-xxl">{{detail.standardprice}}</view>
+				<view class="o_price text-xxl">{{detail.settleprice}}</view>
 				<view class="text-olive text-xs">会员<text class="o_price2">{{detail.lowestprice}}</text>起</view>
 			</view>
 			<view class="cont_four"><button class="cu-btn bg-pink round ">购票</button></view>

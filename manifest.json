@@ -1,5 +1,5 @@
 {
-    "name" : "TTickets",
+    "name" : "财富中心嘉年华",
     "appid" : "__UNI__1EBB285",
     "description" : "",
     "versionName" : "Shopro 1.1.2",
@@ -166,7 +166,7 @@
         "usingComponents" : {
             "subscribe" : "plugin-private://wx2b03c6e691cd7370/components/subscribe/subscribe"
         },
-        "appid" : "wx08dc2f03038fb9f9",
+        "appid" : "wx0f0958a85adea6b8",
         "setting" : {
             "urlCheck" : false,
             "es6" : false,

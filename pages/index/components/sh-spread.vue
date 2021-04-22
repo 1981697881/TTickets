@@ -1,13 +1,13 @@
 <template>
-	<view class="adv-box mx20 mb10">
+	<view class="adv-box mx20 mb10" @tap="routerTo('https://mp.weixin.qq.com/s/gCc876ut4AtVd59JM_xY0w')">
 		<!-- 模板1-->
 		<view class="x-f" v-if="detail.style == 1">
-			<image src="https://i.postimg.cc/gj3t4Fwr/u-1942294908-891367187-fm-26-gp-0.jpg" mode="scaleToFill"></image>
+			<image src="https://i.postimg.cc/C1yRTTzZ/20210422191833.png" mode="scaleToFill" lazy-load></image>
 		</view>
-		<view class="box-fot flex flex-wrap justify-between ">
+		<view class="box-fot flex flex-wrap justify-between " >
 			<view class="fot-left">
 				<view class="text-xl padding-xs text-black text-bold">电影推荐</view>
-				<view class="padding-xs">04/01/2021 00:00</view>
+				<view class="padding-xs">05/01/2021 00:00</view>
 			</view>
 			<view class="fot-right">
 				<button class="cu-btn round sm bg-blue margin-right">正在进行</button>
@@ -20,7 +20,9 @@
 export default {
 	components: {},
 	data() {
-		return {};
+		return {
+			routerTo: this.$tools.routerTo
+		};
 	},
 	props: {
 		detail: {}
@@ -50,7 +52,7 @@ export default {
 	}
 	image {
 		width:710rpx;
-		height: 220rpx;
+		height: 350rpx;
 		// background-color: #ccc;
 	}
 }
