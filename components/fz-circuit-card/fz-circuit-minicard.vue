@@ -1,18 +1,18 @@
 <template>
 	<view class="goods-box" v-if="detail">
-		<view class="content-box" @tap="jump('/pages/cinema/movie/list', { sectionId: detail.sectionId,scheduleId: detail.scheduleId,schedulekey:detail.scheduleKey,language: detail.language,dimensional: detail.dimensional,filmName:detail.filmName,showDatetime:detail.showDatetime})">
+		<view class="content-box" @tap="jump('/pages/cinema/movie/list', { sectionId: detail.sectionId,scheduleId: detail.scheduleId,schedulekey:detail.scheduleKey,language: detail.language,dimensional: detail.dimensional,filmName:detail.filmName,filmId:detail.filmId,showDatetime:detail.showDatetime,hallName:detail.hallName})">
 			<text v-if="isTag && detail.status" class="tag-star"><text class="lg text-red cuIcon-favorfill"></text></text>
 			<view class="cont_one">
 				<view><text class="text-xl text-bold">{{detail.showDatetime.substring(11,16)}}</text></view>
 				<view><text class="text-gray">{{detail.language}} {{detail.dimensional}}</text></view>
 			</view>
 			<view class="cont_two">
-				<view><text class="text-xs text-bold">{{detail.hallType}}</text></view>
+				<view><text class="text-xs text-bold">{{detail.sectionName}}</text></view>
 				<view><text class="text-gray">{{detail.hallName}}</text></view>
 			</view>
 			<view class="cont_three">
-				<view class="o_price text-xxl">{{detail.settleprice}}</view>
-				<view class="text-olive text-xs">会员<text class="o_price2">{{detail.lowestprice}}</text>起</view>
+				<view class="o_price">会员{{detail.lowestprice.replace('.00','')}}元</view>
+				<view class="text-olive text-xs">￥{{detail.settleprice.replace('.00','')}}</view>
 			</view>
 			<view class="cont_four"><button class="cu-btn bg-pink round ">购票</button></view>
 		</view>
@@ -62,11 +62,11 @@ export default {
 <style scoped lang="scss">
 .o_price {
 	color: rgba(225, 33, 43, 1);
-	&:before {
+	/* &:before {
 		content: '￥';
 		color: rgba(225, 33, 43, 1);
 		font-size: 26rpx;
-	}
+	} */
 }
 .o_price2 {
 	&:before {

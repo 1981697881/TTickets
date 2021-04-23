@@ -48,7 +48,7 @@
 						<image :src="item.url" mode="aspectFill" v-if="item.type == 'image'"></image>
 						<video :src="item.url" autoplay loop muted :show-play-btn="false" :controls="false" objectFit="cover" v-if="item.type == 'video'"></video>
 						<view class="cir_group">
-							<view class="cir_logo">
+							<view class="cir_logo" @tap="jump('/pages/cinema/detail/index', { filmId: item.filmId })">
 								<view class="tag" >{{item.dimensional}}</view>
 								<image :src="item.filmPhoto" mode="aspectFill"></image>
 							</view>
@@ -159,6 +159,13 @@ export default {
 		this.getScrHeight()
 	},
 	onShow() {
+		let that = this
+		uni.$once('escUpload',function(data){
+			that.listParams.filmId = data.filmId
+			that.getGoodsList(that.listParams);
+		})
+	},
+	onLoad() {
 		this.setimgs();
 		this.listParams.showDatetime = tools.getDayList('', 0).day;
 		if (this.$Route.query.filmId) {
@@ -175,6 +182,7 @@ export default {
 			this.listParams.keywords = this.$Route.query.keywords;
 			this.searchVal = this.$Route.query.keywords;
 		}
+		
 		this.getCinemaList()
 	},
 	methods: {
@@ -272,13 +280,12 @@ export default {
 		},// 获取影城影片
 		getMoviesList() {
 			let that = this;
-			that.$api('cinema.locationMovies', {cinemalinkId: that.listParams.cinemalinkId, filmId: that.listParams.filmId }).then(res => {
+			that.$api('cinema.locationMovies', {cinemalinkId: that.listParams.cinemalinkId,  }).then(res => {
 				if (res.flag) {
 					that.swiperList = res.data;
 					if (that.$Route.query.filmId == null) {
 						that.listParams.filmId = that.swiperList[0].filmId;
 					}
-					console.log(that.listParams.filmId)
 					that.getGoodsList();
 				}
 			});
@@ -291,7 +298,7 @@ export default {
 			that.$api('cinema.locationSchedules', that.listParams).then(res => {
 				if (res.flag) {
 					that.isLoading = false;
-					that.goodsList = [...that.goodsList, ...res.data];
+					that.goodsList = [...res.data];
 					that.lastPage = res.data.last_page;
 					if (that.listParams.page < res.data.last_page) {
 						that.loadStatus = '';

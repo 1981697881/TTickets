@@ -96,9 +96,10 @@ export default {
 	onLoad() {
 		/* this.getApplyRules(); */
 		/* this.getUserInfo(); */
+		this.getUserBalance()
 	},
 	methods: {
-		...mapActions(['getUserInfo']),
+		...mapActions(['getUserInfo','getUserBalance']),
 		jump(path, parmas) {
 			this.$Router.push({
 				path: path,

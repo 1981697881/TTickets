@@ -77,7 +77,7 @@ export default {
 		}
 	},
 	methods: {
-		...mapActions(['getUserDetails']),
+		...mapActions(['getUserDetails','getUserBalance']),
 		jump(path, query) {
 			this.$Router.push({
 				path: path,
@@ -121,7 +121,7 @@ export default {
 				this.$store.commit('FORCE_OAUTH', true);
 			}
 		},
-		bindPhone(e){
+		 bindPhone(e){
 			console.log(e)
 			let me = this
 			me.$api('user.getWxMiniPhoneNumber', {sessionKey: uni.getStorageSync('session_key'),
@@ -130,6 +130,7 @@ export default {
 				iv: e.detail.iv}).then(res => {
 				if (res.flag) {
 					me.getUserDetails();
+					
 					/* me.jump('/pages/user/edit-phone', { fromType: 'bind',phone:res.data }) */
 				}
 			});

@@ -135,6 +135,7 @@ export default {
 			currentSkuText: '', //选中规格
 			detailType: '',
 			showShare: false,
+			filmId: '',
 			buyType: 'sku',
 			grouponBuyType: 'alone', //拼团购买方式。
 			showSku: false,
@@ -172,6 +173,7 @@ export default {
 	computed: {},
 	onLoad() {
 		const type = this.$Route.query.type;
+		this.filmId = this.$Route.query.filmId
 		this.detailType = type;
 		switch (type) {
 			case 'score':
@@ -180,6 +182,13 @@ export default {
 			default:
 				this.getGoodsDetail();
 		}
+	},
+	onUnload(options){
+		let that = this
+		let params = {
+				filmId: that.filmId
+			}
+		uni.$emit('escUpload',params)
 	},
 	onReady() {},
 	methods: {

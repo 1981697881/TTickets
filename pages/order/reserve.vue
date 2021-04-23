@@ -11,7 +11,7 @@
 									<text>{{ perGoodsList.schedule.filmName }} ({{perGoodsList.schedule.language}})</text>
 								</view>
 								<view class="goods-num">
-									<text v-for="(item, index) in perGoodsList.seats" :key="index">{{ item.y }}排{{ item.x }}座</text>
+									<text v-for="(item, index) in perGoodsList.seats" :key="index">{{ item.rowId }}排{{ item.columnId }}座</text>
 								</view>
 							</view>
 						</block>

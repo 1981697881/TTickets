@@ -3,7 +3,7 @@
 		<view class="bg-f1 h-100vh">
 			<view class="pt-f left-0 w-100 p-0-32 bg-white z1000" :style="'height: 162rpx;top:0'">
 				<view>
-					<view class="fz-34 fw-b pt-20">{{ head.filmName }}</view>
+					<view class="fz-34 fw-b pt-20">{{ head.filmName }}({{ head.hallName }})</view>
 					<view class="mt-10 fz-28 color-666">{{ head.showDatetime}}</view>
 				</view>
 			</view>
@@ -123,6 +123,7 @@ export default {
 		return {
 			loadModal: false,
 			isSubOrder: false,
+			filmId: '',
 			//缩略图是否显示
 			topthumbnail: 0, // 单位rem
 			leftthumbnail: 0, // 单位rem
@@ -195,9 +196,18 @@ export default {
 			}
 		
 	},
+	onUnload(){
+		let that = this
+		let params = {
+				filmId: that.filmId
+			}
+		uni.$emit('escUpload',params)
+		
+	},
 	onLoad() {
 		this.isSubOrder = false;
 		this.head = this.$Route.query;
+		this.filmId = this.$Route.query.filmId
 		this.head.showDatetime = decodeURI(this.head.showDatetime)
 		this.listParams.scheduleId = this.$Route.query.scheduleId;
 		this.listParams.schedulekey = this.$Route.query.schedulekey;
@@ -310,8 +320,8 @@ export default {
 					type: status,
 					sid: seat[num].seatId,
 					money: seat[num].settleprice,
-					rowNum: seat[num].y,
-					columnNum: seat[num].x
+					rowNum: seat[num].rowId,
+					columnNum: seat[num].columnId
 				};
 			}
 			this.seatArray = arr.slice();
