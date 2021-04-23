@@ -185,14 +185,14 @@ export default {
 	onHide: function() {
 		console.log('小程序关闭')
 		let that = this
-		uni.$once('escLoack',function(data){
-			console.log(123)
-			api('cinema.escSeats', data).then(res => {
-				if (res.flag) {
-					console.log('释放座位');
-				}
-			});
-		    })
+			uni.$once('escLoack',function(data){
+				console.log(123)
+				api('cinema.escSeats', data).then(res => {
+					if (res.flag) {
+						console.log('释放座位');
+					}
+				});
+			    })
 	}
 };
 </script>

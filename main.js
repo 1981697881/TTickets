@@ -20,6 +20,7 @@ import api from '@/common/request/index'
 Vue.prototype.$store = store;
 Vue.prototype.$api = api;
 Vue.prototype.$tools = tools;
+Vue.prototype.$isPreviewApi = false;
 Vue.prototype.$API_URL = API_URL;
 //状态栏高度
 Vue.prototype.statusBarHeight = uni.getSystemInfoSync().statusBarHeight;

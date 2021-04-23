@@ -146,11 +146,10 @@ export default {
 	},
 	watch: {},
 	onHide() {
-		console.log('页面关闭')
+		console.log('页面隐藏')
 		let that = this
 		that.isSubOrder = true
 		let seats = []
-		console.log(that.perGoodsList)
 		that.perGoodsList.seats.forEach((item)=>{
 			let obj = {}
 			obj.seatId = item.seatId
@@ -161,13 +160,18 @@ export default {
 			lockOrderId: that.perGoodsList.lockOrderId,
 			seats: seats,
 		}
-		uni.$emit('escLoack',params)
+		if(that.$isPreviewApi){
+			that.$isPreviewApi = false
+		}else{
+			uni.$emit('escLoack',params)
+		}
+		
 	},
 	onUnload(options){
 		let that = this
+		console.log('页面关闭')
 		that.isSubOrder = true
 		let seats = []
-		console.log(that.perGoodsList)
 		that.perGoodsList.seats.forEach((item)=>{
 			let obj = {}
 			obj.seatId = item.seatId
@@ -230,7 +234,9 @@ export default {
 		this.ticketPaymoney= Number(this.perGoodsList.schedule.settleprice) *Number(this.perGoodsList.seats.length)
 		this.initDate();
 	},
-	onShow() {},
+	onShow() {
+		/* this.$isPreviewApi = true */
+	},
 	methods: {
 		...mapActions(['getUserDetails']),
 		combuy(){
@@ -381,7 +387,7 @@ export default {
 				let obj = {}
 				obj.seatId = item.seatId
 				obj.ticketFee = item.ticketfee
-				obj.ticketPrice = item.settleprice
+				obj.ticketPrice = item.lowestprice
 				ticketList.push(obj)
 			})
 			this.$api('cinema.confirmOrder', {

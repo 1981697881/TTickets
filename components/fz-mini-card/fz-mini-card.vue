@@ -1,7 +1,7 @@
 <template>
 	<view class="">
 		<view class="goods-box x-start">
-			<image class="goods-img" :src="'http://119.29.76.106:8081/movie/uploadFiles/image/'+detail.filmPhoto" mode="aspectFill"></image>
+			<image class="goods-img" :src="'https://cfzx.gzfzdev.com/movie/uploadFiles/image/'+detail.filmPhoto" mode="aspectFill"></image>
 			<view class="y-start">
 				<view class="goods-title more-t">
 					<view class="item-title">{{ detail.locationHall.hallName }}</view>
@@ -96,7 +96,7 @@ export default {
 		// 倒计时
 		countDown() {
 			let that = this;
-			let maxtime = 10 * 60;
+			let maxtime = 10 * 30;
 			let timer = setInterval(() => {
 				if (maxtime >= 0) {
 					let minutes = Math.floor(maxtime / 60);

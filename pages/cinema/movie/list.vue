@@ -176,17 +176,21 @@ export default {
 	},
 	onShow() {
 		let that = this
+		console.log('来过')
 		uni.showLoading({ title: '加载中' });
-		uni.$once('escLoack',function(data){
-			that.isEsc = false;
-			that.isSubOrder = false;
-			that.$api('cinema.escSeats', data).then(res => {
-				if (res.flag) {
-					that.initData();
-					console.log(res);
-				}
-			});
-		    })
+		
+			uni.$once('escLoack',function(data){
+				that.isEsc = false;
+				that.isSubOrder = false;
+				that.$api('cinema.escSeats', data).then(res => {
+					if (res.flag) {
+						that.initData();
+						console.log(res);
+					}
+				});
+			    })
+		
+		
 			if(that.isEsc){
 				that.SelectNum = 0;
 				that.totalPrice = 0;
@@ -401,6 +405,9 @@ export default {
 					that.getUserBalance();
 					that.loadModal = false;
 					let result = { ...res.data };
+					if(result.filmPhoto==null){
+						delete result.filmPhoto
+					}
 					result.schedule = JSON.stringify(result.schedule)
 					result.seats= JSON.stringify(result.seats)
 					result.locationHall= JSON.stringify(result.locationHall)
