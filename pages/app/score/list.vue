@@ -67,13 +67,13 @@ export default {
 			let res = scoreList
 			if (res.code == 1) {
 				that.isLoading = false;
-				that.scoreList = [...that.scoreList, ...res.data.data];
+				/* that.scoreList = [...that.scoreList, ...res.data.data];
 				that.lastPage = res.data.last_page;
 				if (that.currentPage < res.data.last_page) {
 					that.loadStatus = '';
 				} else {
 					that.loadStatus = 'over';
-				}
+				} */
 			}
 			/* that.$api('score.list', {
 				page: that.currentPage

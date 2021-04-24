@@ -222,6 +222,7 @@ export default class AppPay {
 							ticketList: ticketList,
 						}).then(rescin => {
 							if(rescin.flag){
+								Vue.prototype.$isPreviewApi = false
 								console.log(orderResult)
 								Router.replace({
 									path: '/pages/order/payment/result',

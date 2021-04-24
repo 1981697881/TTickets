@@ -29,7 +29,7 @@
 						<!-- 优惠券 -->
 						<!-- <sh-coupon v-if="item.type === 'coupons'" :detail="item.content"></sh-coupon> -->
 						<!-- 秒杀 -->
-						<sh-seckill v-if="item.type === 'seckill'" :detail="item.content"></sh-seckill>
+						<!-- <sh-seckill v-if="item.type === 'seckill'" :detail="item.content"></sh-seckill> -->
 						<!-- 拼团 -->
 						<!-- <sh-groupon v-if="item.type === 'groupon'" :detail="item.content"></sh-groupon> -->
 						<!-- 富文本 -->

@@ -2,7 +2,7 @@
 	<view class="adv-box mb10" @tap="routerTo('https://mp.weixin.qq.com/s/gCc876ut4AtVd59JM_xY0w')">
 		<!-- 模板1-->
 		<view class="x-f" v-if="detail.style == 1">
-			<image src="https://i.postimg.cc/C1yRTTzZ/20210422191833.png" mode="scaleToFill" lazy-load></image>
+			<image src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/20210424172919.jpg" mode="scaleToFill" lazy-load></image>
 		</view>
 		<view class="box-fot flex flex-wrap justify-between " >
 			<view class="fot-left">

@@ -160,9 +160,8 @@ export default {
 			lockOrderId: that.perGoodsList.lockOrderId,
 			seats: seats,
 		}
-		if(that.$isPreviewApi){
-			that.$isPreviewApi = false
-		}else{
+		console.log(that.$isPreviewApi)
+		if(!that.$isPreviewApi){
 			uni.$emit('escLoack',params)
 		}
 		

@@ -441,10 +441,18 @@ export default {
 				this.totalPrice = this.totalPrice - 1 * Number(seat.money);
 				this.getOptArr(newArray[row][col], 0);
 			} else if (seatValue === 0) {
-				newArray[row][col].type = 1;
-				this.SelectNum++;
-				this.totalPrice = this.totalPrice + 1 * Number(seat.money);
-				this.getOptArr(newArray[row][col], 1);
+				if(this.optArr.length<=3){
+					newArray[row][col].type = 1;
+					this.SelectNum++;
+					this.totalPrice = this.totalPrice + 1 * Number(seat.money);
+					this.getOptArr(newArray[row][col], 1);
+				}else{
+					uni.showToast({
+						icon: 'none',
+						title: '一次只可选择4个座位'
+					})
+				}
+				
 			}
 			//必须整体更新二维数组，Vue无法检测到数组某一项更新,必须slice复制一个数组才行
 			this.seatArray = newArray.slice();
