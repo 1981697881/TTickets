@@ -211,7 +211,7 @@ export default class AppPay {
 							let obj = {}
 							obj.seatId = item.seatId
 							obj.ticketFee = item.ticketfee
-							obj.ticketPrice = item.settleprice
+							obj.ticketPrice = item.standardprice
 							ticketList.push(obj)
 						})
 						api('cinema.confirmOrder', {

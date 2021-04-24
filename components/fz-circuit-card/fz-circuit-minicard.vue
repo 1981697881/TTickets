@@ -11,8 +11,8 @@
 				<view><text class="text-gray">{{detail.hallName}}</text></view>
 			</view>
 			<view class="cont_three">
-				<view class="o_price">会员{{detail.lowestprice.replace('.00','')}}元</view>
-				<view class="text-olive text-xs">￥{{detail.settleprice.replace('.00','')}}</view>
+				<view class="o_price">会员{{detail.settleprice.replace('.00','')}}元</view>
+				<view class="text-olive text-xs">￥{{detail.standardprice.replace('.00','')}}</view>
 			</view>
 			<view class="cont_four"><button class="cu-btn bg-pink round ">购票</button></view>
 		</view>

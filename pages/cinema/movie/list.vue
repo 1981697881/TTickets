@@ -323,7 +323,7 @@ export default {
 				arr[parseInt(seat[num].y) - this.minRow][parseInt(seat[num].x) - this.minCol] = {
 					type: status,
 					sid: seat[num].seatId,
-					money: seat[num].settleprice,
+					money: seat[num].standardprice,
 					rowNum: seat[num].rowId,
 					columnNum: seat[num].columnId
 				};

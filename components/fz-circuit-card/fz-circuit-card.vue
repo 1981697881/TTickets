@@ -31,7 +31,7 @@
 							<view class="y-f text-black">
 								<text class="text-bold seckill-current">{{goods.showDatetime.substring(11,16)}}</text>
 								<text class="seckill-lau text-grey">{{goods.language}} {{goods.dimensional}}</text>
-								<text class="original text-red">￥{{ goods.settleprice }}</text>
+								<text class="original text-red">￥{{ goods.standardprice }}</text>
 							</view>
 						</view>
 						<view class="title"><slot name="titleText"></slot></view>

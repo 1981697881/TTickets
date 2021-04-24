@@ -36,7 +36,7 @@
 				translateValue: -160, // 位移距离
 				//#endif
 				//#ifndef H5
-				translateValue: -150, // 位移距离
+				translateValue: -160, // 位移距离
 				//#endif
 				timer: null,
 				iftoggle: false,
@@ -70,13 +70,12 @@
 		},
 		mounted(){
 			if(this.showPop){
-				// console.log(222);
 				this.show();
 			}
 		},
 		watch:{
 			showPop(value){
-				console.log(value)
+				console.log(123)
 				if(value){
 					this.show();
 				}else{

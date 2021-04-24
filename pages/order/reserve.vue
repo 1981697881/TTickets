@@ -23,7 +23,7 @@
 						<text class="cuIcon-roundclose text-red padding-xs">不可退票</text>
 					</view>
 					<view class="x-f">
-						<view class="detail">共{{perGoodsList.seats.length}}张 原价 ￥{{Number(perGoodsList.schedule.settleprice) *Number(perGoodsList.seats.length)}}</view>
+						<view class="detail">共{{perGoodsList.seats.length}}张 原价 ￥{{Number(perGoodsList.schedule.standardprice) *Number(perGoodsList.seats.length)}}</view>
 					</view>
 				</view>
 			</view>
@@ -141,7 +141,7 @@ export default {
 		/* ticketPaymoney(){
 			console.log('進入')
 			let that = this
-			return Number(that.perGoodsList.schedule.settleprice) *Number(that.perGoodsList.seats.length)
+			return Number(that.perGoodsList.schedule.standardprice) *Number(that.perGoodsList.seats.length)
 		} */
 	},
 	watch: {},
@@ -230,7 +230,7 @@ export default {
 		this.orderType = this.$Route.query.orderType;
 		this.grouponBuyType = this.$Route.query.grouponBuyType;
 		this.grouponId = this.$Route.query.grouponId;*/
-		this.ticketPaymoney= Number(this.perGoodsList.schedule.settleprice) *Number(this.perGoodsList.seats.length)
+		this.ticketPaymoney= Number(this.perGoodsList.schedule.standardprice) *Number(this.perGoodsList.seats.length)
 		this.initDate();
 	},
 	onShow() {
@@ -248,7 +248,7 @@ export default {
 		selPay(e) {
 			let that = this
 			if(e.detail.value == 'wallet'){
-				let countPrce = Number(that.perGoodsList.schedule.lowestprice) *Number(that.perGoodsList.seats.length)
+				let countPrce = Number(that.perGoodsList.schedule.settleprice) *Number(that.perGoodsList.seats.length)
  				if(Number(countPrce) <= Number(that.balInfo.Money) ){
 					that.payType = e.detail.value;
 					that.ticketPaymoney = countPrce
@@ -260,7 +260,7 @@ export default {
 				}
 			}else{
 				that.payType = e.detail.value;
-				that.ticketPaymoney= Number(that.perGoodsList.schedule.settleprice) *Number(that.perGoodsList.seats.length)
+				that.ticketPaymoney= Number(that.perGoodsList.schedule.standardprice) *Number(that.perGoodsList.seats.length)
 			}
 			
 		},
@@ -386,7 +386,7 @@ export default {
 				let obj = {}
 				obj.seatId = item.seatId
 				obj.ticketFee = item.ticketfee
-				obj.ticketPrice = item.lowestprice
+				obj.ticketPrice = item.settleprice
 				ticketList.push(obj)
 			})
 			this.$api('cinema.confirmOrder', {
@@ -397,12 +397,12 @@ export default {
 				ticketList: ticketList,
 			}).then(res => {
 				if(res.flag){
+					uni.hideLoading();
 					uni.$off('escLoack')
 					/* uni.showToast({
 						icon: 'none',
 						title: res.msg
 					}) */
-					
 					that.jump('/pages/index/wallet', res.data);
 				}else{
 					uni.showToast({
@@ -415,6 +415,7 @@ export default {
 		blanBuy(){
 			let ticketList = []
 			let that = this;
+			uni.showLoading({ title: '出票中~~为了避免购票失败，请勿退出！' });
 			if(that.userInfo.phoneNumber){
 				that.isSubOrder = true
 				let params = {
