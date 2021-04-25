@@ -232,6 +232,8 @@ export default {
 		this.grouponId = this.$Route.query.grouponId;*/
 		this.ticketPaymoney= Number(this.perGoodsList.schedule.standardprice) *Number(this.perGoodsList.seats.length)
 		this.initDate();
+		this.getCoupons();
+		
 	},
 	onShow() {
 		/* this.$isPreviewApi = true */
@@ -492,7 +494,11 @@ export default {
 		// 可用优惠券
 		getCoupons() {
 			let that = this;
-			that.$api('order.coupons', {
+			let res = prompt
+			if (res.code === 1) {
+				that.pickerData.couponList = res.data;
+			}
+			/* that.$api('order.coupons', {
 				goods_list: that.goodsList,
 				from: that.from,
 				address_id: that.addressId,
@@ -502,7 +508,7 @@ export default {
 				if (res.code === 1) {
 					that.pickerData.couponList = res.data;
 				}
-			});
+			}); */
 		},
 		// 选择优惠券
 		selCoupon() {

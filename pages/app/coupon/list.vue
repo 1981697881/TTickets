@@ -25,6 +25,7 @@
 
 <script>
 import appCoupon from '@/components/app-coupon/app-coupon.vue';
+import prompt from '@/csJson/prompt.json';
 export default {
 	components: {
 		appCoupon
@@ -71,13 +72,17 @@ export default {
 		},
 		getCouponList() {
 			let that = this;
-			that.$api('coupons.list', {
+			let res = prompt
+			if (res.code === 1) {
+				that.couponList = res.data;
+			}
+			/* that.$api('coupons.list', {
 				type: that.stateCurrent
 			}).then(res => {
 				if (res.code === 1) {
 					that.couponList = res.data;
 				}
-			});
+			}); */
 		},
 
 		//跳转优惠券详情
