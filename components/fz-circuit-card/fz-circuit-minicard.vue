@@ -4,10 +4,10 @@
 			<text v-if="isTag && detail.status" class="tag-star"><text class="lg text-red cuIcon-favorfill"></text></text>
 			<view class="cont_one">
 				<view><text class="text-xl text-bold">{{detail.showDatetime.substring(11,16)}}</text></view>
-				<view><text class="text-gray">{{detail.language}} {{detail.dimensional}}</text></view>
+				<view><text class="text-gray">{{endDateTime}}</text></view>
 			</view>
 			<view class="cont_two">
-				<view><text class="text-xs text-bold">{{detail.sectionName}}</text></view>
+				<view><text class="text-xs text-bold">{{detail.language}} {{detail.dimensional}}</text></view>
 				<view><text class="text-gray">{{detail.hallName}}</text></view>
 			</view>
 			<view class="cont_three">
@@ -39,10 +39,13 @@ export default {
 			default: null
 		}
 	},
-	created() {
-		
+	computed:{
+		endDateTime:function () {
+		  return this.$tools.dateFormat('HH:MM', new Date(new Date(this.detail.showDatetime).getTime()+Number(this.detail.duration*60000)))
+		}
 	},
-	computed: {},
+	created() {
+	},
 	methods: {
 		swiperChange(e) {
 			this.swiperCurrent = e.detail.current;
@@ -88,15 +91,15 @@ export default {
 		font-family: PingFang SC;
 		flex-direction: row;
 		.cont_one {
-			width: 200rpx;
+			width: 170rpx;
 		}
 		.cont_two {
 			padding-top: 8rpx;
-			width: 150rpx;
+			width: 200rpx;
 		}
 		.cont_three {
 			text-align: right;
-			width: 250rpx;
+			width: 230rpx;
 		}
 		.cont_four {
 			padding-top: 20rpx;

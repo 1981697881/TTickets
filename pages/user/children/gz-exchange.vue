@@ -50,9 +50,11 @@ export default {
 			});
 		},
 		getCode() {
+			let that = this
 			uni.scanCode({
 				success: function(res) {
-					this.code.value= res.result
+					console.log(res.result)
+					that.code.value= res.result
 				}
 			});
 		}
