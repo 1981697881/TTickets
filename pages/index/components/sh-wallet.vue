@@ -11,7 +11,7 @@
 				<text class="wallet-item__title">积分</text>
 			</view>
 			<view class="wallet-item y-f" @tap="jump('/pages/app/coupon/list')">
-				<text class="wallet-item__detail item-coupon">{{ balInfo.coupons_num || '0' }}</text>
+				<text class="wallet-item__detail item-coupon">{{ userInfo.couponCount || '0' }}</text>
 				<text class="wallet-item__title">优惠券</text>
 			</view>
 		</view>

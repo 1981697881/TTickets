@@ -33,14 +33,19 @@ export default {
 	data() {
 		return {
 			stateCurrent: 0,
+			listParams:{
+				couponType: 0,
+				openId: uni.getStorageSync('openid'),
+				status: 0
+			},
 			couponsState: [
 				{
 					id: 0,
-					title: '领券中心'
+					title: '抵用券'
 				},
 				{
 					id: 1,
-					title: '可使用'
+					title: '优惠券'
 				},
 				{
 					id: 2,
@@ -62,6 +67,19 @@ export default {
 		onNav(id) {
 			this.stateCurrent = id;
 			this.couponList = [];
+			if(this.stateCurrent==0){
+				this.listParams.couponType = 0
+				this.listParams.status = 0
+			}else if(this.stateCurrent==1){
+				this.listParams.couponType = 1
+				this.listParams.status = 0
+			}else if(this.stateCurrent==2){
+				this.listParams.couponType = null
+				this.listParams.status = 1
+			}else{
+				this.listParams.couponType = null
+				this.listParams.status = 2
+			}	
 			this.getCouponList();
 		},
 		jump(path, parmas) {
@@ -72,26 +90,25 @@ export default {
 		},
 		getCouponList() {
 			let that = this;
-			let res = prompt
+			/* let res = prompt
 			if (res.code === 1) {
 				that.couponList = res.data;
-			}
-			/* that.$api('coupons.list', {
-				type: that.stateCurrent
-			}).then(res => {
-				if (res.code === 1) {
+			} */
+			that.$api('coupons.list', that.listParams).then(res => {
+				if (res.flag) {
 					that.couponList = res.data;
 				}
-			}); */
+			});
 		},
 
 		//跳转优惠券详情
 		toCouponDetail(data) {
-			if (data.user_coupons_id) {
+			this.jump('/pages/app/coupon/detail', data);
+			/* if (data.user_coupons_id) {
 				this.jump('/pages/app/coupon/detail', { id: data.id, userCouponId: data.user_coupons_id });
 			} else {
 				this.jump('/pages/app/coupon/detail', { id: data.id });
-			}
+			} */
 		}
 	}
 };

@@ -868,9 +868,9 @@ export default {
 	/** 优惠券 ↓ **/
 	coupons: {
 		list: {
-			url: 'web/coupons',
+			url: 'web/memberCouponDetail/list',
 			auth: true,
-			method: 'GET',
+			method: 'POST',
 			// desc: '个人中心优惠券列表',
 		},
 		lists: {

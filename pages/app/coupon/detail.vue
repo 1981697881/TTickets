@@ -11,19 +11,19 @@
 				<view class="coupon-box">
 					<view class="top y-f">
 						<view class="img-box x-c"><image class="coupon-img" src="http://shopro.7wpp.com/imgs/coupon.png" mode=""></image></view>
-						<view class="title">{{ couponDetail.amount }}元优惠券</view>
-						<view class="tip">满{{ couponDetail.enough }}元可用</view>
+						<view class="title">{{ options.couponName }}</view>
+						<!-- <view class="tip">满{{ couponDetail.enough }}元可用</view>
 						<button class="cu-btn " :class="btnStataus == 'no_use' || !btnStataus ? 'use-btn' : 'fail-btn'" @tap="goScroll">
 							{{ btnStatusText[btnStataus] || '立即领取' }}
-						</button>
+						</button> -->
 						<view class="time" v-if="couponDetail.usetime">
-							有效期：{{ tools.timestamp(couponDetail.usetime.start) }} 至 {{ tools.timestamp(couponDetail.usetime.end) }}
+							有效期：2021-05-05 至 2022-05-05
 						</view>
 					</view>
 					<view class="bottom y-start">
 						<view class="notice-item y-start">
 							<view class="notice-title">优惠券说明</view>
-							<text class="notice-detail">{{ couponDetail.description }}</text>
+							<text class="notice-detail">{{ options.description }}</text>
 						</view>
 					</view>
 				</view>
@@ -71,8 +71,8 @@ export default {
 	computed: {},
 	onLoad() {
 		this.options = this.$Route.query;
-		this.getCouponDetail();
-		this.getCouponGoods();
+		/* this.getCouponDetail();
+		this.getCouponGoods(); */
 	},
 	methods: {
 		// 领取优惠劵
@@ -204,7 +204,7 @@ export default {
 		padding: 40rpx 30rpx;
 		.notice-item {
 			border-bottom: 1rpx solid #eeeeee;
-			height: 90rpx;
+			height: 250rpx;
 			width: 100%;
 			.notice-title {
 				font-weight: 500;

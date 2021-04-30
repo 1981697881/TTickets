@@ -39,17 +39,24 @@
 			<radio-group @change="selPay" class="pay-box">
 				<label class="x-bc pay-item" >
 					<view class="x-f">
-						<image class="pay-img" src="http://shopro.7wpp.com/imgs/wx_pay.png" mode=""></image>
+						<image class="pay-img" src="https://i.postimg.cc/bw6zsHsf/wx-pay.png" mode=""></image>
 						<text>微信支付</text>
 					</view>
 					<radio value="wechat" :class="{ checked: payType === 'wechat' }" class=" pay-radio orange" :checked="payType === 'wechat'"></radio>
 				</label>
 				<label class="x-bc pay-item" >
 					<view class="x-f">
-						<image class="pay-img" src="http://shopro.7wpp.com/imgs/wallet_pay.png" mode=""></image>
+						<image class="pay-img" src="https://i.postimg.cc/QdN88nNq/wallet-pay.png" mode=""></image>
 						<text>余额支付<text class="text-red padding-left">{{balInfo.Money==0 ||balInfo.Money==null?'余额不足':''}}({{balInfo.Money || "0.00"}})  </text></text>
 					</view>
 					<radio value="wallet" :class="{ checked: payType === 'wallet' }" :disabled="balInfo.Money==0 ||balInfo.Money==null?true:false" class="pay-radio orange" :checked="payType === 'wallet'"></radio>
+				</label>
+				<label class="x-bc pay-item" >
+					<view class="x-f">
+						<image class="pay-img" src="https://i.postimg.cc/L8F9c6wG/purse-42-59410430839px-1282590-easyicon-net.png" mode=""></image>
+						<text>抵用券支付<text class="text-red padding-left">{{cashPay?'无可用抵用券':''}}</text></text>
+					</view>
+					<radio value="casht" :class="{ checked: payType === 'casht' }" :disabled="cashPay" class="pay-radio orange" :checked="payType === 'casht'"></radio>
 				</label>
 			</radio-group>
 			<!-- 手机号码 -->
@@ -86,6 +93,8 @@
 		</view>
 		<!-- pricker -->
 		<sh-picker-modal v-if="pickerData.couponList" @changeCoupon="changeCoupon" v-model="showPicker" :pickerData="pickerData"></sh-picker-modal>
+		<!-- 团体票 -->
+		<fz-picker-group v-if="groupCouponsList" @changeCoupon="changeCoupon" v-model="showGroup" :pickerData="pickerData"></fz-picker-group>
 		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>
 	</view>
@@ -94,6 +103,7 @@
 <script>
 import appMiniCard from '@/components/fz-mini-card/fz-mini-card.vue';
 import shPickerModal from './children/sh-picker-modal.vue';
+import fzPickerGroup from './children/fz-picker-group.vue';
 import AppPay from '@/common/app-pay';
 import { mapMutations, mapActions, mapState } from 'vuex';
 // #ifdef H5
@@ -106,12 +116,15 @@ import goods from '@/csJson/scoreList.json';
 export default {
 	components: {
 		appMiniCard,
+		fzPickerGroup,
 		shPickerModal
 	},
 	data() {
 		return {
 			showPicker: false,
+			showGroup: false,
 			isSubOrder: false,
+			cashPay: true,
 			pickerData: {
 				title: '选择优惠券',
 				couponList: []
@@ -128,6 +141,7 @@ export default {
 			orderPre: {},
 			couponId: 0,
 			ticketPaymoney: 0,
+			groupCouponsList:[],
 			couponPrice: '选择优惠券',
 			getFocus: false, //获取焦点。
 			checkTime: {}
@@ -232,8 +246,7 @@ export default {
 		this.grouponId = this.$Route.query.grouponId;*/
 		this.ticketPaymoney= Number(this.perGoodsList.schedule.standardprice) *Number(this.perGoodsList.seats.length)
 		this.initDate();
-		this.getCoupons();
-		
+		this.getGroupCoupons();
 	},
 	onShow() {
 		/* this.$isPreviewApi = true */
@@ -243,6 +256,8 @@ export default {
 		combuy(){
 			if(this.payType=='wallet'){
 				this.blanBuy()
+			}else if(this.payType=='casht'){
+				this.confirmPay()
 			}else{
 				this.confirmPay()
 			}
@@ -260,6 +275,9 @@ export default {
 						title: '余额不足以支付本次费用，请选择其他支付方式'
 					})
 				}
+			}else if(e.detail.value == 'casht'){
+				that.showGroup = true;
+				that.payType = e.detail.value;
 			}else{
 				that.payType = e.detail.value;
 				that.ticketPaymoney= Number(that.perGoodsList.schedule.standardprice) *Number(that.perGoodsList.seats.length)
@@ -509,6 +527,23 @@ export default {
 					that.pickerData.couponList = res.data;
 				}
 			}); */
+		},// 可用团体票
+		getGroupCoupons() {
+			let that = this;
+			that.$api('coupons.list', {
+				couponType: 0,
+				openId: uni.getStorageSync('openid'),
+				status: 0
+			}).then(res => {
+				if (res.flag) {
+					that.groupCouponsList = res.data;
+					if(res.data.length>0){
+						that.cashPay = false
+					}else{
+						that.cashPay = true
+					}
+				}
+			});
 		},
 		// 选择优惠券
 		selCoupon() {

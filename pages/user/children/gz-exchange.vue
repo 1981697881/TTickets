@@ -1,17 +1,13 @@
 <template>
 	<view class="bank-wrap">
 		<view class="form-box">
-			<label>
 				<view class="form-item flex align-center justify-between">
-					<label>
 						<view class="x-f">
 							<view class="item-title">兑换码:</view>
 							<input class="item-input flex-sub" type="text" v-model="code.value" placeholder="请输入兑换码" placeholder-class="pl-input" />
 						</view>
 						<button class="cu-btn code-btn" @tap.stop="getCode"><text class="cuIcon-scan"></text></button>
-					</label>
 				</view>
-			</label>
 		</view>
 		<view class="btn-box flex align-center justify-center"><button class="cu-btn confirem-btn" @tap="exchange">兑换</button></view>
 	</view>
@@ -39,9 +35,10 @@ export default {
 			let that = this;
 			that.$api('user.exchangeCdKey', {
 				openId: uni.getStorageSync('openid'),
-				cdkeyCode: that.code.value
+				memberCdkeyShare: that.code.value
 			}).then(res => {
 				if (res.flag) {
+					that.code.value= ''
 					that.$tools.toast('兑换成功');
 					/* that.getUserInfo(); */
 				}else{

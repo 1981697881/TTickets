@@ -1,7 +1,22 @@
 <template>
 	<view class="" v-if="couponData">
 		<!-- 未领取，已领取 -->
-		<view class="coupon-wrap" v-if="state !== 3">
+		<view class="coupon-wrap" v-if="state === 0">
+			<view class="coupon-item x-bc">
+				<view class="coupon-left y-start ">
+					<view class="sum-box">
+						<text class="sub">{{ couponData.couponName }}</text>
+					</view>
+					<view class="notice" v-if="couponData.couponId==1">使用提醒：除普通厅外需补差价</view>
+					<view class="notice" v-if="couponData.couponId==2">使用提醒：全场影厅通用</view>
+					<view class="notice">有效期：2021-05-05 至 2022-05-05</view>
+				</view>
+				<view class="coupon-right y-f">
+					<button class="cu-btn get-btn" v-if="state === 0">查看详情</button>
+				</view>
+			</view>
+		</view>
+		<view class="coupon-wrap" v-if="state !== 3 && state !== 0">
 			<view class="coupon-item x-bc">
 				<view class="coupon-left y-start ">
 					<view class="sum-box">
@@ -13,10 +28,8 @@
 					<view class="notice">有效期：{{ tools.timestamp(couponData.usetime.start) }} 至 {{ tools.timestamp(couponData.usetime.end) }}</view>
 				</view>
 				<view class="coupon-right y-f">
-					<button class="cu-btn get-btn" v-if="state === 0" @tap.stop="getCoupon">立即领取</button>
-					<button class="cu-btn get-btn" v-if="state === 1">去使用</button>
+					<button class="cu-btn get-btn" v-if="state === 1">查看详情</button>
 					<button class="cu-btn get-btn" v-if="state === 2">查看详情</button>
-					<view class="surplus-num" v-if="state === 0">仅剩{{ couponData.stock }}张</view>
 				</view>
 			</view>
 		</view>
