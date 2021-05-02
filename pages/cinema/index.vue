@@ -49,17 +49,18 @@
 					</view>
 				</swiper-item>
 			</swiper> -->
-			<view class="backgroud" :style="'background:url('+img+')'">
+			<!-- <view class="backgroud" :style="'background:url('+img+')'">
 					</view>
 					<view class="header">
-					  <v-swiper class="swiper-container" :options="swiperOption" ref="mySwiper">
-					    <v-swiper-slide class="swiper-slide" v-for="(item, cindex) in swiperList" :key="cindex"><image :src="item.filmPhoto" mode="aspectFill"></image></v-swiper-slide>
-					  </v-swiper>
+					  <u-swiper class="swiper-container" :options="swiperOption" ref="mySwiper">
+					    <u-swiper-slide class="swiper-slide" v-for="(item, cindex) in swiperList" :key="cindex"><image :src="item.filmPhoto" mode="aspectFill"></image></u-swiper-slide>
+					  </u-swiper>
 					</view>
 					<view class="movie-info" @tap="jump('/pages/cinema/detail/index', { filmId: cardInfo.filmId })">
 						<view class="info-name text-bold text-xl">{{cardInfo.filmName}}</view>
 						<view class="info-detaild text-grey">{{cardInfo.filmLong}} 分钟 | {{cardInfo.filmSortid}} | 导演:{{cardInfo.filmDirector}}<text class='cuIcon-right'></text></view>
-					</view>
+					</view> -->
+				<fz-gallery @clickSwiper="cardSwiper" ref="cardSwiper" :swiperList="swiperList" :cardInfo="cardInfo" :img="img"></fz-gallery>
 			<sh-date @subClickFtn="fatherMethod"></sh-date>
 		</view>
 		<scroll-view :style="{ height: headHeight + 'px' }" class="scroll-box" scroll-y enable-back-to-top scroll-with-animation @scrolltolower="loadMore">
@@ -85,25 +86,24 @@
 		<app-login-modal></app-login-modal>
 	</view>
 </template>
-
 <script>
 import shDate from './children/sh-date.vue';
 import fzCircuitCard from '@/components/fz-circuit-card/fz-circuit-minicard.vue';
 import appEmpty from '@/components/app-empty/app-empty.vue';
+import fzGallery from '@/components/fz-gallery/fz-gallery.vue';
 import { mapMutations, mapActions, mapState } from 'vuex';
 import moreGoodList from '@/csJson/moreGoodList.json';
-import ynGallery from '@/components/YnComponents/ynGallery/ynGallery.vue';
 import tools from '@/common/utils/tools';
-import { Swiper, SwiperSlide } from "vue-awesome-swiper";
-import "swiper/dist/css/swiper.css";
+
+/* import { Swiper, SwiperSlide } from "@/common/vue-awesome-swiper/vue-awesome-swiper.js";
+import "swiper/dist/css/swiper.css"; */
 let timer = null;
-let vmt = null;
 export default {
 	components: {
 		shDate,
-		vSwiper:Swiper,
-		vSwiperSlide:SwiperSlide,
-		ynGallery,
+		fzGallery,
+		/* uSwiper:Swiper,
+		uSwiperSlide:SwiperSlide, */
 		fzCircuitCard,
 		appEmpty
 	},
@@ -116,26 +116,6 @@ export default {
 				filmName:'',
 				filmSortid:'',
 			},
-			swiperOption: {
-					slideToClickedSlide: true,
-					centeredSlides : true,
-					slidesPerView : 3,
-					observer: true,
-					observerParents: true,
-					width:300,
-					on: {
-						/* init:()=>{
-							vmt.$nextTick(() => {
-								console.log(vmt.$refs.mySwiper.$swiper)
-							})
-						}, */
-						slideChangeTransitionEnd:()=>{
-							vmt.$nextTick(() => {
-								vmt.cardSwiper(vmt.$refs.mySwiper.$swiper.activeIndex)
-							})
-						}
-					}
-			      },
 				  img: '',
 			cardCur: 0,
 			activeItem: 0,
@@ -176,9 +156,6 @@ export default {
 			loadStatus: '', //loading,over
 			lastPage: 1
 		};
-	},
-	created() {
-		vmt = this
 	},
 	computed: {},
 	// 触底加载更多
@@ -328,14 +305,23 @@ export default {
 							filmId:that.swiperList[0].filmId,
 							filmName:that.swiperList[0].filmName,
 							filmSortid:that.swiperList[0].filmSortid,
-						},
-						that.img = that.swiperList[0].filmPhoto;
-					}
-					that.swiperList.forEach((item,index)=>{
-						if(that.$Route.query.filmId == item.filmId){
-							that.$refs.mySwiper.$swiper.slideTo(index)
 						}
-					})
+						that.img = that.swiperList[0].filmPhoto;
+					}else{
+						that.swiperList.forEach((item,index)=>{
+							if(that.$Route.query.filmId == item.filmId){
+								that.$refs.cardSwiper.toSwiper(index)
+								that.cardInfo={
+									filmDirector:item.filmDirector,
+									filmLong:item.filmLong,
+									filmId:item.filmId,
+									filmName:item.filmName,
+									filmSortid:item.filmSortid,
+								}
+								that.img = item.filmPhoto;
+							}
+						})
+					}
 					that.getGoodsList();
 				}
 			});
@@ -409,17 +395,7 @@ export default {
 .card-swiper uni-swiper-item {
 	padding: 15rpx 0 30rpx !important;
 }
-.movie-info{
-	width: 100%;
-	height: 100rpx;
-	text-align: center;
-	.info-name{
-		line-height: 70rpx;
-	}
-	.info-detail{
-		
-	}
-}
+
 .cir_group {
 	width: 100%;
 	height: 100%;
@@ -552,55 +528,5 @@ export default {
 		margin-bottom: 20rpx;
 	}
 }
-.backgroud{
-	 width: 750rpx;
-	 height: 350rpx;
-	 background-size: 200% 200%;
-	 background-position: 50% 50%;
-	 background-repeat: no-repeat;
-	 -webkit-filter:blur(40rpx);
-	 position:absolute;
-	 top: 160rpx;
-	 left: 0;
- }
- .header{
-	 width: 750rpx;
-	 height: 350rpx;
-	 background:rgba(0,0,0,0.1);
-	 position: relative;
-	top: 0;
-	left: 0;
-	z-index: 100;
-	overflow-x: hidden;
- }
- .swiper-container{
-	 width: 750rpx;
-	 height: 350rpx;
- }
- .swiper-slide{
-	position: relative;
-	width: 200rpx;
- }
- .swiper-slide image{
- 	 position: absolute;
- 	 width: 180rpx;
- 	 height: 230rpx;
- 	 bottom: 40rpx;
- 	 left: 60rpx;
- }
- .swiper-slide-active image{
-	border: 1px solid #acacac;
-	 animation: mymove 0.6s forwards;
-	 transform-origin: 0 300rpx 0;
-	 border-radius: 10rpx;
- }
- 
- @keyframes mymove{
- 	from{
-		transform: scale(1,1) translateZ(0px);
-	}
- 	to{
-		transform: scale(1.1,1.1) translateZ(0px);
-	}
- }
+
 </style>

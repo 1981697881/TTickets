@@ -343,8 +343,9 @@
 				},{
 					"path": "circuit/index",
 					"style": {
-						"navigationBarTitleText": "电影",
-						"navigationStyle": "custom"
+						"navigationBarTitleText": "电影 +",
+						"navigationBarBackgroundColor": "#060210",
+						"navigationBarTextStyle": "white"
 					},
 					"meta": {
 						"auth": false,

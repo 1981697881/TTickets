@@ -4,15 +4,15 @@
 		"dev": {
 			"mp-weixin": "cross-env NODE_ENV=development UNI_PLATFORM=mp-weixin vue-cli-service uni-build --watch --minimize"
 		},
+		"eslint": "^5.0.0",
 		"jweixin-module": "^1.6.0",
 		"miniapp-color-thief": "^1.0.5",
+		"swiper": "^4.5.1",
 		"uni-read-pages": "^1.0.5",
 		"uni-simple-router": "1.5.2",
 		"vue-qr": "^2.3.0"
 	},
 	"devDependencies": {
-		"sass-resources-loader": "^2.2.1",
-		"swiper": "^4.5.1",
-		"vue-awesome-swiper": "^4.1.1"
+		"sass-resources-loader": "^2.2.1"
 	}
 }
