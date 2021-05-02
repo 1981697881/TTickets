@@ -94,7 +94,7 @@
 		<!-- pricker -->
 		<sh-picker-modal v-if="pickerData.couponList" @changeCoupon="changeCoupon" v-model="showPicker" :pickerData="pickerData"></sh-picker-modal>
 		<!-- 团体票 -->
-		<fz-picker-group v-if="groupCouponsList" @changeCoupon="changeCoupon" v-model="showGroup" :pickerData="pickerData"></fz-picker-group>
+		<fz-picker-group v-if="groupCouponsList" @changeCoupon="changeCouponGroup" v-model="showGroup" :pickerData="groupCouponsList"></fz-picker-group>
 		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>
 	</view>
@@ -562,6 +562,15 @@ export default {
 				this.couponId = 0;
 				this.pickerData.title = '选择优惠券';
 				this.getPre();
+			}
+		},
+		changeCouponGroup(index) {
+			if (index >= 0) {
+				this.couponId = this.pickerData.couponList[index].user_coupons_id;
+				this.pickerData.title = '-￥' + this.pickerData.couponList[index].amount;
+			} else {
+				this.couponId = 0;
+				this.pickerData.title = '选择优惠券';
 			}
 		},
 		// 更改提交数据

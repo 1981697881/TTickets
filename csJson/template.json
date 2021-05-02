@@ -226,7 +226,7 @@
 					"name": "电影",
 					"image": "https://i.postimg.cc/xTWwc9Wm/20210419143757.png",
 					"activeImage": "https://i.postimg.cc/wxrPG6xr/20210419144423.png",
-					"path": "/pages/cinema/index",
+					"path": "/pages/cinema/circuit/index",
 					"path_name": "电影",
 					"path_type": 1
 				}, {

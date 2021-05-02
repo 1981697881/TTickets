@@ -340,6 +340,18 @@
 						"title": "电影",
 						"group": "电影"
 					}
+				},{
+					"path": "circuit/index",
+					"style": {
+						"navigationBarTitleText": "电影",
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"auth": false,
+						"async": true,
+						"title": "电影",
+						"group": "电影"
+					}
 				},
 				{
 					"path": "movie/list",

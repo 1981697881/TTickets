@@ -28,21 +28,7 @@
 					<view>影院客服</view>
 					</view>
 			</view>
-			<!-- <ynGallery
-				:galleryheight="165"
-				bkstart="#C6E2FF"
-				bkend="#828282"
-				:imgviewwidth="85"
-				:imgviewheight="100"
-				:showbadge="true"
-				badegtype="trian"
-				badegwidth="25"
-				badegheight="25"
-				:showdec="true"
-				:images="swiperList"
-				@clickimg="onclickimg"
-			></ynGallery> -->
-			<swiper class="card-swiper" :current="activeItem" :class="dotStyle ? 'square-dot' : 'round-dot'" :circular="true" duration="500" @change="cardSwiper">
+			<!-- <swiper class="card-swiper" :current="activeItem" :class="dotStyle ? 'square-dot' : 'round-dot'" :circular="true" duration="500" @change="cardSwiper">
 				<swiper-item v-for="(item, cindex) in swiperList" :key="cindex" :class="cardCur == cindex ? 'cur' : ''" style="padding: 15rpx 0 30rpx">
 					<view class="swiper-item">
 						<image :src="item.url" mode="aspectFill" v-if="item.type == 'image'"></image>
@@ -62,7 +48,18 @@
 						</view>
 					</view>
 				</swiper-item>
-			</swiper>
+			</swiper> -->
+			<view class="backgroud" :style="'background:url('+img+')'">
+					</view>
+					<view class="header">
+					  <v-swiper class="swiper-container" :options="swiperOption" ref="mySwiper">
+					    <v-swiper-slide class="swiper-slide" v-for="(item, cindex) in swiperList" :key="cindex"><image :src="item.filmPhoto" mode="aspectFill"></image></v-swiper-slide>
+					  </v-swiper>
+					</view>
+					<view class="movie-info" @tap="jump('/pages/cinema/detail/index', { filmId: cardInfo.filmId })">
+						<view class="info-name text-bold text-xl">{{cardInfo.filmName}}</view>
+						<view class="info-detaild text-grey">{{cardInfo.filmLong}} 分钟 | {{cardInfo.filmSortid}} | 导演:{{cardInfo.filmDirector}}<text class='cuIcon-right'></text></view>
+					</view>
 			<sh-date @subClickFtn="fatherMethod"></sh-date>
 		</view>
 		<scroll-view :style="{ height: headHeight + 'px' }" class="scroll-box" scroll-y enable-back-to-top scroll-with-animation @scrolltolower="loadMore">
@@ -97,16 +94,49 @@ import { mapMutations, mapActions, mapState } from 'vuex';
 import moreGoodList from '@/csJson/moreGoodList.json';
 import ynGallery from '@/components/YnComponents/ynGallery/ynGallery.vue';
 import tools from '@/common/utils/tools';
+import { Swiper, SwiperSlide } from "vue-awesome-swiper";
+import "swiper/dist/css/swiper.css";
 let timer = null;
+let vmt = null;
 export default {
 	components: {
 		shDate,
+		vSwiper:Swiper,
+		vSwiperSlide:SwiperSlide,
 		ynGallery,
 		fzCircuitCard,
 		appEmpty
 	},
 	data() {
 		return {
+			cardInfo:{
+				filmDirector:'',
+				filmId:'',
+				filmLong:'',
+				filmName:'',
+				filmSortid:'',
+			},
+			swiperOption: {
+					slideToClickedSlide: true,
+					centeredSlides : true,
+					slidesPerView : 3,
+					observer: true,
+					observerParents: true,
+					width:300,
+					on: {
+						/* init:()=>{
+							vmt.$nextTick(() => {
+								console.log(vmt.$refs.mySwiper.$swiper)
+							})
+						}, */
+						slideChangeTransitionEnd:()=>{
+							vmt.$nextTick(() => {
+								vmt.cardSwiper(vmt.$refs.mySwiper.$swiper.activeIndex)
+							})
+						}
+					}
+			      },
+				  img: '',
 			cardCur: 0,
 			activeItem: 0,
 			Msg: '0',
@@ -147,6 +177,9 @@ export default {
 			lastPage: 1
 		};
 	},
+	created() {
+		vmt = this
+	},
 	computed: {},
 	// 触底加载更多
 	onReachBottom() {
@@ -182,17 +215,26 @@ export default {
 			this.listParams.keywords = this.$Route.query.keywords;
 			this.searchVal = this.$Route.query.keywords;
 		}
-		
 		this.getCinemaList()
 	},
 	methods: {
 		cardSwiper(e) {
-			this.circuit = this.swiperList[e.detail.current].filmName;
-			this.listParams.filmId = this.swiperList[e.detail.current].filmId;
-			this.cardCur = e.detail.current;
-			this.listParams.page = 1;
-			this.goodsList = [];
-			this.getGoodsList();
+			if(this.swiperList.length>0){
+				this.cardInfo={
+					filmDirector:this.swiperList[e].filmDirector,
+					filmLong:this.swiperList[e].filmLong,
+					filmId:this.swiperList[e].filmId,
+					filmName:this.swiperList[e].filmName,
+					filmSortid:this.swiperList[e].filmSortid,
+				},
+				this.circuit = this.swiperList[e].filmName;
+				this.listParams.filmId = this.swiperList[e].filmId;
+				this.img = this.swiperList[e].filmPhoto;
+				this.cardCur = e;
+				this.listParams.page = 1;
+				this.goodsList = [];
+				this.getGoodsList();
+			}
 		},
 		// 路由跳转
 		jump(path, parmas) {
@@ -219,7 +261,7 @@ export default {
 					let info = uni.createSelectorQuery().select('.head_box');
 					info.boundingClientRect(function(data) {
 						//data - 各种参数
-						me.headHeight = res.windowHeight - data.height - 35;
+						me.headHeight = res.windowHeight - data.height -10;
 					}).exec();
 				}
 			});
@@ -231,12 +273,7 @@ export default {
 				this.getGoodsList();
 			}
 		},
-		onclickimg(imgviewobj) {
-			this.listParams.filmId = imgviewobj.filmId
-			this.goodsList = [];
-			this.getGoodsList();
-			if (imgviewobj.index != undefined) this.Msg = `${imgviewobj.index}`;
-		},
+	
 		setimgs() {
 			var imgs = [];
 			for (let i in this.testimgs) {
@@ -285,12 +322,25 @@ export default {
 					that.swiperList = res.data;
 					if (that.$Route.query.filmId == null) {
 						that.listParams.filmId = that.swiperList[0].filmId;
+						this.cardInfo={
+							filmDirector:that.swiperList[0].filmDirector,
+							filmLong:that.swiperList[0].filmLong,
+							filmId:that.swiperList[0].filmId,
+							filmName:that.swiperList[0].filmName,
+							filmSortid:that.swiperList[0].filmSortid,
+						},
+						that.img = that.swiperList[0].filmPhoto;
 					}
+					that.swiperList.forEach((item,index)=>{
+						if(that.$Route.query.filmId == item.filmId){
+							that.$refs.mySwiper.$swiper.slideTo(index)
+						}
+					})
 					that.getGoodsList();
 				}
 			});
 		},
-		// 商品列表
+		// 场次列表
 		getGoodsList() {
 			let that = this;
 			that.isLoading = true;
@@ -358,6 +408,17 @@ export default {
 }
 .card-swiper uni-swiper-item {
 	padding: 15rpx 0 30rpx !important;
+}
+.movie-info{
+	width: 100%;
+	height: 100rpx;
+	text-align: center;
+	.info-name{
+		line-height: 70rpx;
+	}
+	.info-detail{
+		
+	}
 }
 .cir_group {
 	width: 100%;
@@ -491,4 +552,55 @@ export default {
 		margin-bottom: 20rpx;
 	}
 }
+.backgroud{
+	 width: 750rpx;
+	 height: 350rpx;
+	 background-size: 200% 200%;
+	 background-position: 50% 50%;
+	 background-repeat: no-repeat;
+	 -webkit-filter:blur(40rpx);
+	 position:absolute;
+	 top: 160rpx;
+	 left: 0;
+ }
+ .header{
+	 width: 750rpx;
+	 height: 350rpx;
+	 background:rgba(0,0,0,0.1);
+	 position: relative;
+	top: 0;
+	left: 0;
+	z-index: 100;
+	overflow-x: hidden;
+ }
+ .swiper-container{
+	 width: 750rpx;
+	 height: 350rpx;
+ }
+ .swiper-slide{
+	position: relative;
+	width: 200rpx;
+ }
+ .swiper-slide image{
+ 	 position: absolute;
+ 	 width: 180rpx;
+ 	 height: 230rpx;
+ 	 bottom: 40rpx;
+ 	 left: 60rpx;
+ }
+ .swiper-slide-active image{
+	border: 1px solid #acacac;
+	 animation: mymove 0.6s forwards;
+	 transform-origin: 0 300rpx 0;
+	 border-radius: 10rpx;
+ }
+ 
+ @keyframes mymove{
+ 	from{
+		transform: scale(1,1) translateZ(0px);
+	}
+ 	to{
+		transform: scale(1.1,1.1) translateZ(0px);
+	}
+ }
 </style>

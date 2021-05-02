@@ -1,18 +1,18 @@
 <template>
-	<view class="activity-goods-box x-bc" @tap="jump('/pages/wallet/detail/index', { id: cardId })">
-		<view class="img-box">
+	<view class="activity-goods-box x-bc" >
+		<view class="img-box" @tap="jump('/pages/cinema/detail/index', { filmId: detail.filmId })">
 			<slot name="tag"></slot>
-			<image class="img" :src="img" mode="scaleToFill"></image>
+			<image class="img" :src="detail.filmPhoto" mode="scaleToFill"></image>
 		</view>
-		<view class="goods-right y-bc" >
-			<view class="title text-bold text-xl">{{ title }}</view>
+		<view class="goods-right y-bc" @tap="jump('/pages/cinema/detail/index', { filmId: detail.filmId })">
+			<view class="title text-bold text-xl">{{ detail.filmName }}</view>
 			<view class="tip">暂无评分</view>
-			<view class="slod-end text-gray">导演：凌雪松</view>
-			<view class="slod-end text-gray">主演：郭秋成 李艳</view>
-			<view class="slod-end text-gray">下周一上映</view>
+			<view class="slod-end text-gray">导演：{{detail.filmDirector.trim()}}</view>
+			<view class="slod-end text-gray">主演：{{detail.filmPlay.trim()}}</view>
+			<view class="slod-end text-gray">类型：{{detail.filmSortid}}</view>
 		</view>
 		<view class="btn-right" >
-			<button class="cu-btn buy-btn bg-blue">预售</button>
+			<button class="cu-btn buy-btn bg-pink" @tap="jump('/pages/cinema/index', { filmId: detail.filmId })">购票</button>
 		</view>
 	</view>
 </template>
@@ -25,16 +25,12 @@ export default {
 		return {};
 	},
 	props: {
-		cardId: 0,
-		img: '',
-		title: '',
-		subtitle: '',
-		price: '',
-		tabId: '',
-		originalPrice: ''
+		detail: {
+			type: Object,
+			default: null
+		}
 	},
 	mounted() {
-		console.log(this.tabId)
 	},
 	computed: {},
 	created() {},
@@ -85,5 +81,8 @@ export default {
 	.btn-right{
 		padding-right: 15rpx;
 	}
+}
+.activity-goods-box:nth-child(odd){
+	margin-bottom: 0;
 }
 </style>

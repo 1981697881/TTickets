@@ -11,6 +11,8 @@
 		"vue-qr": "^2.3.0"
 	},
 	"devDependencies": {
-		"sass-resources-loader": "^2.2.1"
+		"sass-resources-loader": "^2.2.1",
+		"swiper": "^4.5.1",
+		"vue-awesome-swiper": "^4.1.1"
 	}
 }
