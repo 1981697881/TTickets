@@ -2,7 +2,7 @@
 	<view class="page_box">
 		<view class="content_box">
 			<!-- 确认订单商品卡片 -->
-			<view class="goods-list">
+			<!-- <view class="goods-list">
 				<view class="goods-card">
 					<app-mini-card @overTime="escOrder" :detail="perGoodsList" :type="'sku'">
 						<block slot="goodsBottom">
@@ -26,20 +26,12 @@
 						<view class="detail">共{{perGoodsList.seats.length}}张 原价 ￥{{Number(perGoodsList.schedule.standardprice) *Number(perGoodsList.seats.length)}}</view>
 					</view>
 				</view>
-			</view>
-			<!-- 配送方式 -->
-			<view class="logistic item-list x-bc" @tap="onSelExpressType(g)">
-				<view class="x-f"><view class="item-title">配送方式</view></view>
-				<view class="x-f" >
-					<view class="detail">{{getCurGoodsExpress(g)}}</view>
-					<text class="cuIcon-right"></text>
-				</view>
-			</view>
+			</view> -->
 			<!-- 优惠券 -->
-			<view class="coupon x-bc item-list" v-if="!orderPre.activity_type && orderType !== 'score'">
+			<view class="coupon x-bc item-list" >
 				<view class="item-title">优惠券</view>
 				<view class="x-f" @tap="selCoupon">
-					<text class="price" v-if="pickerData.couponList.length">{{ pickerData.title }}</text>
+					<text class="price" v-if="groupCouponsList.length">{{ pickerData.title }}</text>
 					<text class="sel-coupon" v-else>暂无优惠券</text>
 					<text class="cuIcon-right"></text>
 				</view>
@@ -92,15 +84,11 @@
 				立即购买
 			</button>
 		</view>
-		<!-- pricker -->
-		<sh-picker-modal v-if="pickerData.couponList" @changeCoupon="changeCoupon" v-model="showPicker" :pickerData="pickerData"></sh-picker-modal>
-		<!-- 团体票 -->
-		<fz-picker-group v-if="groupCouponsList" @changeCoupon="changeCouponGroup" v-model="showGroup" :pickerData="groupCouponsList"></fz-picker-group>
 		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>
 		<app-modal v-model="showExpressType" :modalType="'bottom-modal'">
 			<block slot="modalContent">
-				<!-- 配送方式 -->
+				<!-- 选择优惠券 -->
 				<view class="express-type page_box">
 					<view class="express-type__head head-box">
 						<view
@@ -108,45 +96,16 @@
 							v-for="(nav, index) in expressType"
 							:key="nav.id"
 							@tap="changeExpressType(nav.value)"
-							v-if="inExpressType.includes(nav.value)"
 						>
 							<text class="head-nav__title" :class="{ 'head-nav__title--active':expressTypeCur === nav.value }">{{ nav.title }}</text>
 							<view :class="expressClass" v-show="expressTypeCur === nav.value"></view>
 						</view>
 					</view>
 					<view class="express-type__content content_box">
-						<view class="empty-address" v-if="!addressId && expressTypeCur !== 'selfetch' && expressTypeCur !== 'autosend'" @tap="jump('/pages/user/address/list', { from: 'order' })">
-							请选择收货地址
-							<text class="cuIcon-right"></text>
-						</view>
-						<!-- 快递 -->
-						<view class="express-address" v-if="expressTypeCur == 'express' && addressId">
-							<view class="express-top x-bc" @tap="jump('/pages/user/address/list', { from: 'order' })">
-								<view class="">
-									<text class="tag" v-if="address.is_default == 1">默认</text>
-									<text class="address">{{ address.province_name }}{{ address.city_name }}{{ address.area_name }}{{ address.address }}</text>
-									<text class="cuIcon-right address-guide"></text>
-								</view>
-		
-								<view class="address-location">
-									<image class="location-img" src="/static/imgs/order/e0.png" mode=""></image>
-									<text class="location-text">物流快递</text>
-								</view>
-							</view>
-							<view class="express-content">
-								<view class="phone-box1">
-									<text class="name">{{ address.consignee }}</text>
-									<text class="phone">{{ address.phone }}</text>
-								</view>
-							</view>
-							<view class="express-bottom"></view>
-						</view>
+						<fz-group-card :pickerData="groupCouponsList" v-if="expressTypeCur == 'express'"></fz-group-card>
+						<!-- <fz-coupon-card :pickerData="groupCouponsList" v-if="expressTypeCur == 'selfetch'"></fz-coupon-card> -->
 					</view>
-					<view class="express-type__bottom x-bc" v-if="expressTypeCur !== 'selfetch'">
-						<button class="cu-btn cancel-btn" @tap="hideExpressType">取消</button>
-						<button class="cu-btn save-btn" @tap="saveExpressType">确定</button>
-					</view>
-					<view class="express-type__bottom x-bc" v-if="expressTypeCur == 'selfetch' &&  lat">
+					<view class="express-type__bottom x-bc">
 						<button class="cu-btn cancel-btn" @tap="hideExpressType">取消</button>
 						<button class="cu-btn save-btn" @tap="saveExpressType">确定</button>
 					</view>
@@ -158,8 +117,8 @@
 
 <script>
 import appMiniCard from '@/components/fz-mini-card/fz-mini-card.vue';
-import shPickerModal from './children/sh-picker-modal.vue';
-import fzPickerGroup from './children/fz-picker-group.vue';
+import fzGroupCard from './children/fz-group-card.vue';
+import fzCouponCard from './children/fz-coupon-card.vue';
 import AppPay from '@/common/app-pay';
 import { mapMutations, mapActions, mapState } from 'vuex';
 // #ifdef H5
@@ -171,9 +130,7 @@ import permision from '@/common/permission.js';
 import goods from '@/csJson/scoreList.json';
 export default {
 	components: {
-		appMiniCard,
-		fzPickerGroup,
-		shPickerModal
+		appMiniCard,fzGroupCard,fzCouponCard,
 	},
 	data() {
 		return {
@@ -201,14 +158,12 @@ export default {
 			couponPrice: '选择优惠券',
 			getFocus: false, //获取焦点。
 			checkTime: {},
-			showExpressType: false, //配送方式弹窗
-			expressTypeCur: '',
-			showCheckTime: false, //配送时间弹窗。
+			showExpressType: false, //优惠券弹窗
+			expressTypeCur: 'express',
 			inExpressType: [], //当前商品支持的配送方式。
 			expressTypeMap:{
 				express:'抵用券',
-				selfetch:'selfetch',
-						
+				selfetch:'express',
 			},
 			expressType: [
 				//快递方式
@@ -241,6 +196,17 @@ export default {
 			userInfo: state => state.user.userInfo,
 			balInfo: state => state.user.balInfo
 		}),
+		expressClass() {
+			let cl = 'head-nav--active';
+			const { expressType, expressTypeCur } = this;
+			if (expressTypeCur === 0) {
+				cl = 'head-nav__left--active';
+			}
+			if (expressTypeCur === expressType.length - 1) {
+				cl = 'head-nav__right--active';
+			}
+			return cl;
+		}
 		/* ticketPaymoney(){
 			console.log('進入')
 			let that = this
@@ -342,6 +308,11 @@ export default {
 	},
 	methods: {
 		...mapActions(['getUserDetails']),
+		async	changeExpressType(cur) {
+					this.expressTypeCur = cur;
+					this.getFocus = false;
+					
+				},
 		// 显示配送方式弹窗
 		async onSelExpressType(goods) {
 					this.showExpressType = true;
@@ -641,18 +612,13 @@ export default {
 			}).then(res => {
 				if (res.flag) {
 					that.groupCouponsList = res.data;
-					if(res.data.length>0){
-						that.cashPay = false
-					}else{
-						that.cashPay = true
-					}
 				}
 			});
 		},
 		// 选择优惠券
 		selCoupon() {
-			if (this.pickerData.couponList.length) {
-				this.showPicker = true;
+			if (this.groupCouponsList.length) {
+				this.showExpressType = true;
 			} else {
 				this.$tools.toast('暂无优惠券');
 			}
@@ -1336,4 +1302,326 @@ export default {
 		}
 	}
 }
+.express-type {
+	width: 750rpx;
+	background-color: #fff;
+	border-radius: 20rpx 20rpx 0 0;
+	height: 700rpx;
+	overflow: visible;
+	.express-type__head {
+		width: 100%;
+		height: 74rpx;
+		background: #F8E3BD;
+		@include flex($align: center);
+		border-radius: 20rpx 20rpx 0 0;
+		&-nav {
+			width: (750rpx/4);
+			@include flex($align: center, $justify: center);
+			position: relative;
+			height: 100%;
+		}
+		.head-nav--active {
+			position: absolute;
+			left: 50%;
+			transform: translateX(-50%);
+			bottom: 0;
+			background: #fff;
+			width: 100%;
+			height: 80rpx;
+			background-color: #fff;
+			border-radius: 20rpx 20rpx 0px 0px;
+			&::after {
+				content: '';
+				display: block;
+				width: 40rpx;
+				height: 80rpx;
+				position: absolute;
+				transform: skewX(20deg);
+				background: #fff;
+				border-top-right-radius: 20rpx;
+				top: 0;
+				right: -15rpx;
+			}
+			&::before {
+				content: '';
+				display: block;
+				width: 40rpx;
+				height: 80rpx;
+				position: absolute;
+				transform: skewX(-20deg);
+				background: #fff;
+				border-top-left-radius: 20rpx;
+				top: 0;
+				left: -15rpx;
+			}
+		}
+		.head-nav__left--active {
+			position: absolute;
+			left: 50%;
+			transform: translateX(-50%);
+			bottom: 0;
+			background: #fff;
+			width: 100%;
+			height: 74rpx;
+			background-color: #fff;
+			border-radius: 20rpx 20rpx 0px 0px;
+			&::after {
+				content: '';
+				display: block;
+				width: 40rpx;
+				height: 74rpx;
+				position: absolute;
+				transform: skewX(20deg);
+				background: #fff;
+				border-top-right-radius: 20rpx;
+				top: 0;
+				right: -15rpx;
+			}
+		}
+		.head-nav__right--active {
+			position: absolute;
+			left: 50%;
+			transform: translateX(-50%);
+			bottom: 0;
+			background: #fff;
+			width: 100%;
+			height: 74rpx;
+			background-color: #fff;
+			border-radius: 20rpx 20rpx 0px 0px;
+			&::before {
+				content: '';
+				display: block;
+				width: 40rpx;
+				height: 74rpx;
+				position: absolute;
+				transform: skewX(-20deg);
+				background: #fff;
+				border-top-left-radius: 20rpx;
+				top: 0;
+				left: -15rpx;
+			}
+		}
+		.head-nav__title {
+			font-size: 24rpx;
+			font-weight: 500;
+			color: #666;
+			position: relative;
+			z-index: 6;
+		}
+		.head-nav__title--active {
+			color: #a8700d;
+			font-size: 26rpx;
+		}
+	}
+	.express-type__content {
+		.empty-address {
+			height: 120rpx;
+			padding: 0 25rpx;
+			@include flex($justify: null, $align: center, $direction: null, $warp: null, $warpAlign: null);
+			font-size: 28rpx;
+			font-family: PingFang SC;
+			font-weight: 400;
+			color: rgba(153, 153, 153, 1);
+		}
+		// 无定位
+	.location-box{
+		height: 500rpx;
+		justify-content: center;
+		.nolocation-img{
+			width: 74rpx;
+			height: 90rpx;
+			margin-bottom: 40rpx;
+		}
+		.location-title{
+			font-size:35rpx;
+			font-family:PingFang SC;
+			font-weight:bold;
+			color:rgba(70,53,27,1);
+			margin-bottom: 20rpx;
+		}
+		.location-tip{
+			font-size:28rpx;
+			font-family:PingFang SC;
+			font-weight:400;
+			color:rgba(153,153,153,1);
+			margin-bottom: 40rpx;
+		}
+		.open-location{
+			width:492rpx;
+			height:70rpx;
+			background:linear-gradient(90deg,rgba(233,180,97,1),rgba(238,204,137,1));
+			box-shadow:0px 7rpx 6rpx 0px rgba(229,138,0,0.22);
+			border-radius:35rpx;
+			font-size:28rpx;
+			font-family:PingFang SC;
+			font-weight:500;
+			color:rgba(255,255,255,1);
+		}
+	}
+		// 快递
+		.express-address {
+			position: relative;
+			padding: 30rpx 25rpx;
+			background: url('http://shopro.7wpp.com/imgs/address_bg.png') no-repeat;
+			background-size: 430rpx 300rpx;
+			background-position: top right;
+			.express-top {
+				margin-bottom: 20rpx;
+				width: 550rpx;
+				text-align: left;
+				.address {
+					font-size: 28rpx;
+					font-family: PingFang SC;
+					font-weight: 500;
+					color: rgba(51, 51, 51, 1);
+					line-height: 40rpx;
+					text-align: left;
+				}
+				.dispatch-notice {
+					font-size: 28rpx;
+					font-family: PingFang SC;
+					font-weight: 500;
+					color: rgba(51, 51, 51, 1);
+					line-height: 40rpx;
+					text-align: left;
+				}
+				.address-location {
+					@include flex($justify: center, $align: center, $direction: column, $warp: null, $warpAlign: null);
+					position: absolute;
+					right: 60rpx;
+					top: 30rpx;
+					.location-img {
+						width: 80rpx;
+						height: 90rpx;
+					}
+					.location-text {
+						font-size: 18rpx;
+						font-family: PingFang SC;
+						font-weight: 500;
+						color: rgba(51, 51, 51, 1);
+					}
+				}
+				.tag {
+					background: rgba(233, 191, 113, 0.2);
+					border-radius: 6rpx;
+					padding: 0 16rpx;
+					line-height: 38rpx;
+					color: #a8700d;
+					font-size: 22rpx;
+					margin-right: 20rpx;
+				}
+				.tag1 {
+					background: rgba(53, 190, 105, 0.2);
+					border-radius: 6rpx;
+					padding: 0 16rpx;
+					line-height: 38rpx;
+					color: #1bbc50;
+					font-size: 22rpx;
+					margin-right: 20rpx;
+				}
+				.address-guide {
+					position: absolute;
+					right: 25rpx;
+					top: 40rpx;
+					color: #999999;
+				}
+			}
+
+			.express-content {
+				@include flex($justify: null, $align: center, $direction: null, $warp: null, $warpAlign: null);
+				margin-bottom: 20rpx;
+				.box-line {
+					width: 1rpx;
+					height: 61rpx;
+					border-left: 1rpx solid rgba(238, 238, 238, 1);
+					margin: 0 40rpx;
+				}
+				.phone-box1 {
+					.name,
+					.phone {
+						font-size: 26rpx;
+						font-family: PingFang SC;
+						font-weight: 400;
+						color: rgba(102, 102, 102, 1);
+					}
+
+					.phone {
+						margin-left: 20rpx;
+					}
+				}
+				.time-box,
+				.phone-box {
+					text-align: left;
+					.box-title {
+						font-size: 24rpx;
+						font-family: PingFang SC;
+						font-weight: 400;
+						color: #666;
+						padding-bottom: 10rpx;
+					}
+					.box-text {
+						font-size: 24rpx;
+						font-family: PingFang SC;
+						font-weight: 500;
+						color: #333;
+					}
+					.edit-phone {
+						width: 160rpx;
+						font-size: 24rpx;
+						font-family: PingFang SC;
+						font-weight: 500;
+						color: #333;
+					}
+					.box-icon {
+						font-size: 28rpx;
+						color: #999;
+						display: inline-block;
+						width: 40rpx;
+						text-align: center;
+						line-height: 40rpx;
+					}
+				}
+			}
+			.express-bottom {
+				.protocol-checkbox {
+					transform: scale(0.7);
+				}
+				.protocol {
+					font-size: 24rpx;
+					font-family: PingFang SC;
+					font-weight: 400;
+					color: rgba(102, 102, 102, 1);
+					.protocol-text {
+						color: #6487a4;
+					}
+				}
+			}
+		}
+	}
+	.express-type__bottom {
+		height: 90rpx;
+		padding: 0 30rpx;
+		.cancel-btn {
+			width: 335rpx;
+			height: 74rpx;
+			background: rgba(238, 238, 238, 1);
+			border-radius: 37rpx;
+			font-size: 28rpx;
+			font-family: PingFang SC;
+			font-weight: 400;
+			color: rgba(51, 51, 51, 1);
+		}
+		.save-btn {
+			width: 335rpx;
+			height: 74rpx;
+			background: linear-gradient(90deg, rgba(233, 180, 97, 1), rgba(238, 204, 137, 1));
+			border-radius: 37rpx;
+			font-size: 28rpx;
+			font-family: PingFang SC;
+			font-weight: 400;
+			color: rgba(255, 255, 255, 1);
+		}
+	}
+}
+
 </style>

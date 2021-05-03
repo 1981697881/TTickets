@@ -2,15 +2,15 @@
 	<view class="container">
 		<view class="user-list x-bc">
 			<text class="list-name">头像</text>
-			<view class="x-f" @tap="onChooseImg">
-				<image class="avatar" :src="userData.avatar" mode=""></image>
+			<view class="x-f">
+				<image class="avatar" :src="userData.avatarUrl" mode=""></image>
 				<text class="cuIcon-right"></text>
 			</view>
 		</view>
 		<view class="user-list x-bc">
 			<text class="list-name">昵称</text>
 			<view class="x-f">
-				<input class="list-val" v-model="userData.nickname" />
+				<input class="list-val" v-model="userData.username" />
 				<text class="cuIcon-right"></text>
 			</view>
 		</view>
@@ -22,11 +22,11 @@
 					<text class="cuIcon-right"></text>
 				</view>
 			</view>
-		</picker>
-		<view class="user-list x-bc" @tap="jump('/pages/user/edit-phone')">
+		</picker><!-- @tap="jump('/pages/user/edit-phone')" -->
+		<view class="user-list x-bc" >
 			<text class="list-name">修改手机号</text>
 			<view class="x-f">
-				<text class="list-val">{{ userData.mobile }}</text>
+				<text class="list-val">{{ userData.phoneNumber }}</text>
 				<text class="cuIcon-right"></text>
 			</view>
 		</view>
