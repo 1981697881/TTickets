@@ -28,6 +28,8 @@
 					<view>影院客服</view>
 					</view>
 			</view>
+			<view class="backgroud" :style="'background:url('+img+')'">
+					</view>
 			<!-- <swiper class="card-swiper" :current="activeItem" :class="dotStyle ? 'square-dot' : 'round-dot'" :circular="true" duration="500" @change="cardSwiper">
 				<swiper-item v-for="(item, cindex) in swiperList" :key="cindex" :class="cardCur == cindex ? 'cur' : ''" style="padding: 15rpx 0 30rpx">
 					<view class="swiper-item">
@@ -49,6 +51,17 @@
 					</view>
 				</swiper-item>
 			</swiper> -->
+			<swiper class="card-swiper" :current="activeItem" previous-margin="210rpx" :class="dotStyle ? 'square-dot' : 'round-dot'" :circular="false" duration="300" acceleration=true @change="cardSwiper">
+				<swiper-item v-for="(item, cindex) in swiperList" :key="cindex" :class="cardCur == cindex ? 'cur' : ''" style="padding: 15rpx 0 30rpx">
+					<view class="swiper-item">
+						<image class="swi-image" :src="item.filmPhoto" mode="aspectFill"></image>
+					</view>
+				</swiper-item>
+			</swiper>
+			<view class="movie-info" @tap="jump('/pages/cinema/detail/index', { filmId: cardInfo.filmId })">
+				<view class="info-name text-bold text-xxl">{{cardInfo.filmName}}</view>
+				<view class="info-detaild text-gray text-bold">{{cardInfo.filmLong}} 分钟 | {{cardInfo.filmSortid}} | 导演:{{cardInfo.filmDirector}}<text class='cuIcon-right'></text></view>
+			</view>
 			<!-- <view class="backgroud" :style="'background:url('+img+')'">
 					</view>
 					<view class="header">
@@ -60,7 +73,7 @@
 						<view class="info-name text-bold text-xl">{{cardInfo.filmName}}</view>
 						<view class="info-detaild text-grey">{{cardInfo.filmLong}} 分钟 | {{cardInfo.filmSortid}} | 导演:{{cardInfo.filmDirector}}<text class='cuIcon-right'></text></view>
 					</view> -->
-				<fz-gallery @clickSwiper="cardSwiper" ref="cardSwiper" :swiperList="swiperList" :cardInfo="cardInfo" :img="img"></fz-gallery>
+				<!-- <fz-gallery @clickSwiper="cardSwiper" ref="cardSwiper" :swiperList="swiperList" :cardInfo="cardInfo" :img="img"></fz-gallery> -->
 			<sh-date @subClickFtn="fatherMethod"></sh-date>
 		</view>
 		<scroll-view :style="{ height: headHeight + 'px' }" class="scroll-box" scroll-y enable-back-to-top scroll-with-animation @scrolltolower="loadMore">
@@ -90,18 +103,15 @@
 import shDate from './children/sh-date.vue';
 import fzCircuitCard from '@/components/fz-circuit-card/fz-circuit-minicard.vue';
 import appEmpty from '@/components/app-empty/app-empty.vue';
-import fzGallery from '@/components/fz-gallery/fz-gallery.vue';
+/* import fzGallery from '@/components/fz-gallery/fz-gallery.vue'; */
 import { mapMutations, mapActions, mapState } from 'vuex';
 import moreGoodList from '@/csJson/moreGoodList.json';
 import tools from '@/common/utils/tools';
-
-/* import { Swiper, SwiperSlide } from "@/common/vue-awesome-swiper/vue-awesome-swiper.js";
-import "swiper/dist/css/swiper.css"; */
 let timer = null;
 export default {
 	components: {
 		shDate,
-		fzGallery,
+		/* fzGallery, */
 		/* uSwiper:Swiper,
 		uSwiperSlide:SwiperSlide, */
 		fzCircuitCard,
@@ -198,16 +208,16 @@ export default {
 		cardSwiper(e) {
 			if(this.swiperList.length>0){
 				this.cardInfo={
-					filmDirector:this.swiperList[e].filmDirector,
-					filmLong:this.swiperList[e].filmLong,
-					filmId:this.swiperList[e].filmId,
-					filmName:this.swiperList[e].filmName,
-					filmSortid:this.swiperList[e].filmSortid,
+					filmDirector:this.swiperList[e.detail.current].filmDirector,
+					filmLong:this.swiperList[e.detail.current].filmLong,
+					filmId:this.swiperList[e.detail.current].filmId,
+					filmName:this.swiperList[e.detail.current].filmName,
+					filmSortid:this.swiperList[e.detail.current].filmSortid,
 				},
-				this.circuit = this.swiperList[e].filmName;
-				this.listParams.filmId = this.swiperList[e].filmId;
-				this.img = this.swiperList[e].filmPhoto;
-				this.cardCur = e;
+				this.circuit = this.swiperList[e.detail.current].filmName;
+				this.listParams.filmId = this.swiperList[e.detail.current].filmId;
+				this.img = this.swiperList[e.detail.current].filmPhoto;
+				this.cardCur = e.detail.current;
 				this.listParams.page = 1;
 				this.goodsList = [];
 				this.getGoodsList();
@@ -310,7 +320,8 @@ export default {
 					}else{
 						that.swiperList.forEach((item,index)=>{
 							if(that.$Route.query.filmId == item.filmId){
-								that.$refs.cardSwiper.toSwiper(index)
+								that.cardCur =index
+								that.activeItem =index
 								that.cardInfo={
 									filmDirector:item.filmDirector,
 									filmLong:item.filmLong,
@@ -344,7 +355,7 @@ export default {
 				}
 			});
 		},
-		// towerSwiper触摸开始
+		/* // towerSwiper触摸开始
 		TowerStart(e) {
 			this.towerStart = e.touches[0].pageX;
 		},
@@ -379,21 +390,52 @@ export default {
 			}
 			this.direction = '';
 			this.swiperList = this.swiperList;
-		}
+		} */
 	}
 };
 </script>
 
 <style lang="scss">
+	.backgroud{
+		 width: 750rpx;
+		 height: 280rpx;
+		 background-size: 200% 200%;
+		 background-position: 50% 50%;
+		 background-repeat: no-repeat;
+		 -webkit-filter:blur(40rpx);
+		 position:absolute;
+		 top: 160rpx;
+		 left: 0;
+	 }
+	 .movie-info{
+	 	width: 100%;
+	 	height: 100rpx;
+	 	text-align: center;
+	 	.info-name{
+	 		line-height: 70rpx;
+	 	}
+	 	.info-detail{
+	 		
+	 	}
+	 }
+	 .swi-image{
+		 border: 1px solid #acacac;
+		 border-radius: 10rpx;
+	 }
 /* 指示点 */
 .wx-swiper-dots .wx-swiper-dot {
   display: none;
 }
 .card-swiper {
-	height: 350upx !important;
+	height: 280upx !important;
 }
 .card-swiper uni-swiper-item {
-	padding: 15rpx 0 30rpx !important;
+	padding: 0 !important;
+	width: 200upx !important;
+}
+.card-swiper swiper-item {
+	padding: 0 !important;
+	width: 200upx !important;
 }
 
 .cir_group {

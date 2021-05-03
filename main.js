@@ -5,13 +5,11 @@ import cuCustom from '@/static/colorui/components/cu-custom.vue'
 import router from '@/common/router'
 import tools from '@/common/utils/tools'
 import '@/common/utils/sdk/sdk-h5.js'
-import VueAwesomeSwiper from "@/static/vue-awesome-swiper.js"
 import {
 	API_URL
 } from './env.js'
 import appShare from '@/common/mixins/app-share'
 Vue.mixin(appShare);
-
 import {
 	RouterMount
 } from 'uni-simple-router'
@@ -24,7 +22,6 @@ Vue.prototype.$API_URL = API_URL;
 //状态栏高度
 Vue.prototype.statusBarHeight = uni.getSystemInfoSync().statusBarHeight;
 Vue.component('cu-custom', cuCustom);
-Vue.use(VueAwesomeSwiper);
 Vue.config.productionTip = false;
 App.mpType = 'app';
 const app = new Vue({

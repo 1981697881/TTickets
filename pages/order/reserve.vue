@@ -27,6 +27,14 @@
 					</view>
 				</view>
 			</view>
+			<!-- 配送方式 -->
+			<view class="logistic item-list x-bc" @tap="onSelExpressType(g)">
+				<view class="x-f"><view class="item-title">配送方式</view></view>
+				<view class="x-f" >
+					<view class="detail">{{getCurGoodsExpress(g)}}</view>
+					<text class="cuIcon-right"></text>
+				</view>
+			</view>
 			<!-- 优惠券 -->
 			<view class="coupon x-bc item-list" v-if="!orderPre.activity_type && orderType !== 'score'">
 				<view class="item-title">优惠券</view>
@@ -50,13 +58,6 @@
 						<text>余额支付<text class="text-red padding-left">{{balInfo.Money==0 ||balInfo.Money==null?'余额不足':''}}({{balInfo.Money || "0.00"}})  </text></text>
 					</view>
 					<radio value="wallet" :class="{ checked: payType === 'wallet' }" :disabled="balInfo.Money==0 ||balInfo.Money==null?true:false" class="pay-radio orange" :checked="payType === 'wallet'"></radio>
-				</label>
-				<label class="x-bc pay-item" >
-					<view class="x-f">
-						<image class="pay-img" src="https://i.postimg.cc/L8F9c6wG/purse-42-59410430839px-1282590-easyicon-net.png" mode=""></image>
-						<text>抵用券支付<text class="text-red padding-left">{{cashPay?'无可用抵用券':''}}</text></text>
-					</view>
-					<radio value="casht" :class="{ checked: payType === 'casht' }" :disabled="cashPay" class="pay-radio orange" :checked="payType === 'casht'"></radio>
 				</label>
 			</radio-group>
 			<!-- 手机号码 -->
@@ -97,6 +98,113 @@
 		<fz-picker-group v-if="groupCouponsList" @changeCoupon="changeCouponGroup" v-model="showGroup" :pickerData="groupCouponsList"></fz-picker-group>
 		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>
+		<app-modal v-model="showExpressType" :modalType="'bottom-modal'">
+			<block slot="modalContent">
+				<!-- 配送方式 -->
+				<view class="express-type page_box">
+					<view class="express-type__head head-box">
+						<view
+							class="express-type__head-nav"
+							v-for="(nav, index) in expressType"
+							:key="nav.id"
+							@tap="changeExpressType(nav.value)"
+							v-if="inExpressType.includes(nav.value)"
+						>
+							<text class="head-nav__title" :class="{ 'head-nav__title--active':expressTypeCur === nav.value }">{{ nav.title }}</text>
+							<view :class="expressClass" v-show="expressTypeCur === nav.value"></view>
+						</view>
+					</view>
+					<view class="express-type__content content_box">
+						<view class="empty-address" v-if="!addressId && expressTypeCur !== 'selfetch' && expressTypeCur !== 'autosend'" @tap="jump('/pages/user/address/list', { from: 'order' })">
+							请选择收货地址
+							<text class="cuIcon-right"></text>
+						</view>
+						<!-- 快递 -->
+						<view class="express-address" v-if="expressTypeCur == 'express' && addressId">
+							<view class="express-top x-bc" @tap="jump('/pages/user/address/list', { from: 'order' })">
+								<view class="">
+									<text class="tag" v-if="address.is_default == 1">默认</text>
+									<text class="address">{{ address.province_name }}{{ address.city_name }}{{ address.area_name }}{{ address.address }}</text>
+									<text class="cuIcon-right address-guide"></text>
+								</view>
+		
+								<view class="address-location">
+									<image class="location-img" src="/static/imgs/order/e0.png" mode=""></image>
+									<text class="location-text">物流快递</text>
+								</view>
+							</view>
+							<view class="express-content">
+								<view class="phone-box1">
+									<text class="name">{{ address.consignee }}</text>
+									<text class="phone">{{ address.phone }}</text>
+								</view>
+							</view>
+							<view class="express-bottom"></view>
+						</view>
+						<!-- 自提  -->
+						<view class="express-address" v-if="expressTypeCur == 'selfetch'">
+							<!-- 定位 -->
+							<view class="y-f location-box" v-if="!hasLocation">
+								<image class="nolocation-img" src="/static/imgs/order/location.png" mode=""></image>
+								<text class="location-title">开启定位服务</text>
+								<text class="location-tip">为你推荐更精准的位置信息噢~</text>
+								<button class="cu-btn open-location" @tap="getLocation">去开启</button>
+							</view>
+							<!-- 已定位 -->
+							<view class="" v-else>
+								<view class="express-top x-bc" @tap="jump('/pages/order/business-address', {goodsId:currentGoodsId,lat:lat,lng:lng,storeId:storeInfo.id })">
+									<view class="">
+										<text class="tag1" v-if="address.is_default == 1">最近</text>
+										<text class="address">{{storeInfo.name || '暂无自提点'}}</text>
+										<text class="cuIcon-right address-guide"></text>
+									</view>
+									<view class="address-location">
+										<image class="location-img" src="/static/imgs/order/e1.png" mode=""></image>
+										<text class="location-text">距您{{storeInfo.distance_text ||　0}}</text>
+									</view>
+								</view>
+								<view class="express-content">
+									<view class="time-box">
+										<text class="box-title">到店时间</text>
+										<view class="box-content" @tap="checkExpressTime('selfetch')">
+											<text class="box-text">{{ checkTime['day'][checkDayCur].title }}{{ checkTime['time'][checkTimeCur] }}</text>
+											<text class="cuIcon-right box-icon"></text>
+										</view>
+									</view>
+									<view class="box-line"></view>
+									<view class="phone-box">
+										<text class="box-title">预留电话</text>
+										<view class="box-content x-f">
+											<input class="edit-phone" :focus="getFocus"  type="number" v-model="selfPhone " />
+											<text class="cuIcon-write box-icon" @tap="onInput"></text>
+										</view>
+									</view>
+								</view>
+								<view class="express-bottom">
+									<label class="x-f" @tap="checkProtocol">
+										<checkbox class="round protocol-checkbox orange" :class="{ checked: isProtocol }" :checked="true"></checkbox>
+										<view class="protocol">
+											同意并接受
+											<text class="protocol-text" @tap.stop="jump('/pages/public/richtext', { id: 3 })">《到店自提服务协议》</text>
+										</view>
+									</label>
+								</view>
+							</view>
+		
+						</view>
+					</view>
+					<view class="express-type__bottom x-bc" v-if="expressTypeCur !== 'selfetch'">
+						<button class="cu-btn cancel-btn" @tap="hideExpressType">取消</button>
+						<button class="cu-btn save-btn" @tap="saveExpressType">确定</button>
+					</view>
+					<view class="express-type__bottom x-bc" v-if="expressTypeCur == 'selfetch' &&  lat">
+						<button class="cu-btn cancel-btn" @tap="hideExpressType">取消</button>
+						<button class="cu-btn save-btn" @tap="saveExpressType">确定</button>
+					</view>
+				</view>
+			</block>
+		</app-modal>
+		
 	</view>
 </template>
 
@@ -144,7 +252,52 @@ export default {
 			groupCouponsList:[],
 			couponPrice: '选择优惠券',
 			getFocus: false, //获取焦点。
-			checkTime: {}
+			checkTime: {},
+			showExpressType: false, //配送方式弹窗
+			expressTypeCur: '',
+			showCheckTime: false, //配送时间弹窗。
+			inExpressType: [], //当前商品支持的配送方式。
+			expressTypeMap:{
+				express:'物流快递',
+				selfetch:'到店/自提',
+				store:'商家配送',
+				autosend:'自动发货'
+						
+			},
+			expressType: [
+				//快递方式
+				{
+					id: 'e1',
+					title: '物流快递',
+					value: 'express'
+				},
+				{
+					id: 'e2',
+					title: '到店/自提',
+					value: 'selfetch'
+				},
+				{
+					id: 'e3',
+					title: '商家配送',
+					value: 'store'
+				},
+				{
+					id: 'e4',
+					title: '自动发货',
+					value: 'autosend'
+				}
+			],
+			isProtocol: true, //自提协议。
+			selfPhone: 0, //编辑手机号
+			getFocus:false,//获取焦点。
+			checkType: '自提',
+			checkTime:{},
+			checkTimeCur: 0, //默认选中时间。
+			checkTimeId: 'c1',//锚点用
+			checkDayCur: 0,//默认日期
+			hasLocation:false,//是否已经授权过
+			lat:0,
+			lng:0
 		};
 	},
 	computed: {
@@ -253,11 +406,55 @@ export default {
 	},
 	methods: {
 		...mapActions(['getUserDetails']),
+		// 显示配送方式弹窗
+		async	onSelExpressType(goods) {
+					this.showExpressType = true;
+					this.inExpressType = goods.detail.dispatch_type_arr;
+					this.currentGoodsId = goods.goods_id;
+					this.currentSkuId = goods.sku_price_id;
+						this.goodsList.forEach(item => {
+							if(item.goods_id == this.currentGoodsId &&  this.currentSkuId == item.sku_price_id  ){
+								this.expressTypeCur = item.dispatch_type;
+								this.selfPhone =  item.dispatch_phone?item.dispatch_phone:this.address && this.address.phone;
+								this.checkDayCur = item.checkDayCur ? item.checkDayCur : 0 ;
+								this.checkTimeCur = item.checkTimeCur ? item.checkTimeCur : 0;
+								if (this.expressTypeCur == 'selfetch') {
+										// #ifdef MP-WEIXIN
+									 this.getSetting().then(res =>{
+										 	 res == 1 && this.openLocation()
+									 });
+									 	// #endif
+									this.storeList.forEach(store => {
+										if(item.store_id == store.id ){
+											this.storeInfo = store;
+										}
+									})
+								}
+							}
+						})
+				},
+				// 关闭配送方式弹窗
+				hideExpressType() {
+					this.showExpressType = false;
+					this.changeGoodsList()
+				},
+				// 保存配送方式
+				saveExpressType(){
+					this.showExpressType = false;
+					this.changeGoodsList()
+					this.getPre();
+				},
+		// 获取当前商品配送方式
+		getCurGoodsExpress(goods){
+			for( let item of this.goodsList){
+				if(item.goods_id == goods.goods_id &&  goods.sku_price_id == item.sku_price_id  ){
+					return this.expressTypeMap[item.dispatch_type];
+				}
+			}
+		},
 		combuy(){
 			if(this.payType=='wallet'){
 				this.blanBuy()
-			}else if(this.payType=='casht'){
-				this.confirmPay()
 			}else{
 				this.confirmPay()
 			}
@@ -275,9 +472,6 @@ export default {
 						title: '余额不足以支付本次费用，请选择其他支付方式'
 					})
 				}
-			}else if(e.detail.value == 'casht'){
-				that.showGroup = true;
-				that.payType = e.detail.value;
 			}else{
 				that.payType = e.detail.value;
 				that.ticketPaymoney= Number(that.perGoodsList.schedule.standardprice) *Number(that.perGoodsList.seats.length)
