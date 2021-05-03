@@ -6,7 +6,7 @@
 		</view>
 		<view class="goods-right y-bc" @tap="jump('/pages/cinema/detail/index', { filmId: detail.filmId })">
 			<view class="title text-bold text-xl">{{ detail.filmName }}</view>
-			<view class="tip">暂无评分</view>
+			<!-- <view class="tip">暂无评分</view> -->
 			<view class="slod-end text-gray">导演：{{detail.filmDirector.trim()}}</view>
 			<view class="slod-end text-gray">主演：{{detail.filmPlay.trim()}}</view>
 			<view class="slod-end text-gray">类型：{{detail.filmSortid}}</view>
@@ -45,9 +45,9 @@ export default {
 
 <style lang="scss">
 .activity-goods-box {
-	margin: 30rpx;
+	margin: 20rpx;
 	height: 280rpx;
-	box-shadow: 1px 2px 2px 2px #f6f6f6;
+	box-shadow: 1px 2px 2px 2px #CCCCCC;
 	border-radius: 10rpx;
 	background: #fff;
 	flex-wrap: wrap;
@@ -65,7 +65,6 @@ export default {
 		}
 	}
 	.goods-right {
-		padding: 20rpx;
 		width: 350rpx;
 		min-height: 230rpx;
 		position: relative;

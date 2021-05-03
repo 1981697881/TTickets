@@ -141,57 +141,6 @@
 							</view>
 							<view class="express-bottom"></view>
 						</view>
-						<!-- 自提  -->
-						<view class="express-address" v-if="expressTypeCur == 'selfetch'">
-							<!-- 定位 -->
-							<view class="y-f location-box" v-if="!hasLocation">
-								<image class="nolocation-img" src="/static/imgs/order/location.png" mode=""></image>
-								<text class="location-title">开启定位服务</text>
-								<text class="location-tip">为你推荐更精准的位置信息噢~</text>
-								<button class="cu-btn open-location" @tap="getLocation">去开启</button>
-							</view>
-							<!-- 已定位 -->
-							<view class="" v-else>
-								<view class="express-top x-bc" @tap="jump('/pages/order/business-address', {goodsId:currentGoodsId,lat:lat,lng:lng,storeId:storeInfo.id })">
-									<view class="">
-										<text class="tag1" v-if="address.is_default == 1">最近</text>
-										<text class="address">{{storeInfo.name || '暂无自提点'}}</text>
-										<text class="cuIcon-right address-guide"></text>
-									</view>
-									<view class="address-location">
-										<image class="location-img" src="/static/imgs/order/e1.png" mode=""></image>
-										<text class="location-text">距您{{storeInfo.distance_text ||　0}}</text>
-									</view>
-								</view>
-								<view class="express-content">
-									<view class="time-box">
-										<text class="box-title">到店时间</text>
-										<view class="box-content" @tap="checkExpressTime('selfetch')">
-											<text class="box-text">{{ checkTime['day'][checkDayCur].title }}{{ checkTime['time'][checkTimeCur] }}</text>
-											<text class="cuIcon-right box-icon"></text>
-										</view>
-									</view>
-									<view class="box-line"></view>
-									<view class="phone-box">
-										<text class="box-title">预留电话</text>
-										<view class="box-content x-f">
-											<input class="edit-phone" :focus="getFocus"  type="number" v-model="selfPhone " />
-											<text class="cuIcon-write box-icon" @tap="onInput"></text>
-										</view>
-									</view>
-								</view>
-								<view class="express-bottom">
-									<label class="x-f" @tap="checkProtocol">
-										<checkbox class="round protocol-checkbox orange" :class="{ checked: isProtocol }" :checked="true"></checkbox>
-										<view class="protocol">
-											同意并接受
-											<text class="protocol-text" @tap.stop="jump('/pages/public/richtext', { id: 3 })">《到店自提服务协议》</text>
-										</view>
-									</label>
-								</view>
-							</view>
-		
-						</view>
 					</view>
 					<view class="express-type__bottom x-bc" v-if="expressTypeCur !== 'selfetch'">
 						<button class="cu-btn cancel-btn" @tap="hideExpressType">取消</button>
@@ -204,7 +153,6 @@
 				</view>
 			</block>
 		</app-modal>
-		
 	</view>
 </template>
 
@@ -258,34 +206,22 @@ export default {
 			showCheckTime: false, //配送时间弹窗。
 			inExpressType: [], //当前商品支持的配送方式。
 			expressTypeMap:{
-				express:'物流快递',
-				selfetch:'到店/自提',
-				store:'商家配送',
-				autosend:'自动发货'
+				express:'抵用券',
+				selfetch:'selfetch',
 						
 			},
 			expressType: [
 				//快递方式
 				{
 					id: 'e1',
-					title: '物流快递',
+					title: '抵用券',
 					value: 'express'
 				},
 				{
 					id: 'e2',
-					title: '到店/自提',
+					title: '优惠券',
 					value: 'selfetch'
 				},
-				{
-					id: 'e3',
-					title: '商家配送',
-					value: 'store'
-				},
-				{
-					id: 'e4',
-					title: '自动发货',
-					value: 'autosend'
-				}
 			],
 			isProtocol: true, //自提协议。
 			selfPhone: 0, //编辑手机号
@@ -407,50 +343,24 @@ export default {
 	methods: {
 		...mapActions(['getUserDetails']),
 		// 显示配送方式弹窗
-		async	onSelExpressType(goods) {
+		async onSelExpressType(goods) {
 					this.showExpressType = true;
-					this.inExpressType = goods.detail.dispatch_type_arr;
-					this.currentGoodsId = goods.goods_id;
-					this.currentSkuId = goods.sku_price_id;
-						this.goodsList.forEach(item => {
-							if(item.goods_id == this.currentGoodsId &&  this.currentSkuId == item.sku_price_id  ){
-								this.expressTypeCur = item.dispatch_type;
-								this.selfPhone =  item.dispatch_phone?item.dispatch_phone:this.address && this.address.phone;
-								this.checkDayCur = item.checkDayCur ? item.checkDayCur : 0 ;
-								this.checkTimeCur = item.checkTimeCur ? item.checkTimeCur : 0;
-								if (this.expressTypeCur == 'selfetch') {
-										// #ifdef MP-WEIXIN
-									 this.getSetting().then(res =>{
-										 	 res == 1 && this.openLocation()
-									 });
-									 	// #endif
-									this.storeList.forEach(store => {
-										if(item.store_id == store.id ){
-											this.storeInfo = store;
-										}
-									})
-								}
-							}
-						})
 				},
 				// 关闭配送方式弹窗
 				hideExpressType() {
 					this.showExpressType = false;
-					this.changeGoodsList()
 				},
 				// 保存配送方式
 				saveExpressType(){
 					this.showExpressType = false;
-					this.changeGoodsList()
-					this.getPre();
 				},
 		// 获取当前商品配送方式
 		getCurGoodsExpress(goods){
-			for( let item of this.goodsList){
+			/* for( let item of this.goodsList){
 				if(item.goods_id == goods.goods_id &&  goods.sku_price_id == item.sku_price_id  ){
 					return this.expressTypeMap[item.dispatch_type];
 				}
-			}
+			} */
 		},
 		combuy(){
 			if(this.payType=='wallet'){

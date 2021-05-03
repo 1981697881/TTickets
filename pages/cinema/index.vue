@@ -54,13 +54,14 @@
 			<swiper class="card-swiper" :current="activeItem" previous-margin="210rpx" :class="dotStyle ? 'square-dot' : 'round-dot'" :circular="false" duration="300" acceleration=true @change="cardSwiper">
 				<swiper-item v-for="(item, cindex) in swiperList" :key="cindex" :class="cardCur == cindex ? 'cur' : ''" style="padding: 15rpx 0 30rpx">
 					<view class="swiper-item">
+						<view class="tag text-white" v-if="item.dimensiona">{{item.dimensional}}</view>
 						<image class="swi-image" :src="item.filmPhoto" mode="aspectFill"></image>
 					</view>
 				</swiper-item>
 			</swiper>
 			<view class="movie-info" @tap="jump('/pages/cinema/detail/index', { filmId: cardInfo.filmId })">
 				<view class="info-name text-bold text-xxl">{{cardInfo.filmName}}</view>
-				<view class="info-detaild text-gray text-bold">{{cardInfo.filmLong}} 分钟 | {{cardInfo.filmSortid}} | 导演:{{cardInfo.filmDirector}}<text class='cuIcon-right'></text></view>
+				<view class="info-detaild text-gray">{{cardInfo.filmLong}} 分钟 | {{cardInfo.filmSortid}} | 导演:{{cardInfo.filmDirector}}  <text class='cuIcon-right'></text></view>
 			</view>
 			<!-- <view class="backgroud" :style="'background:url('+img+')'">
 					</view>
@@ -412,7 +413,7 @@ export default {
 	 	height: 100rpx;
 	 	text-align: center;
 	 	.info-name{
-	 		line-height: 70rpx;
+	 		line-height: 60rpx;
 	 	}
 	 	.info-detail{
 	 		
@@ -422,6 +423,21 @@ export default {
 		 border: 1px solid #acacac;
 		 border-radius: 10rpx;
 	 }
+	 .tag {
+			position: absolute;
+			left: 10rpx;
+			width: 100rpx;
+			height: 40rpx;
+			top: 10rpx;
+			z-index: 22;
+			line-height: 40rpx;
+			background: linear-gradient(132deg, rgba(28, 28, 28, 1), rgba(54, 54, 54, 1), rgba(236, 190, 96, 1));
+			border-radius: 0px 18rpx 18rpx 0px;
+			padding: 0 10rpx;
+			-webkit-transform: scale(0.8);
+			font-family: PingFang SC;
+			color: white;
+		}
 /* 指示点 */
 .wx-swiper-dots .wx-swiper-dot {
   display: none;
@@ -448,7 +464,7 @@ export default {
 		display: inline-flex;
 		width: 40%;
 		padding: 20rpx;
-		image {
+		/* image {
 			border-radius: 15rpx;
 			width: 100%;
 		}
@@ -464,7 +480,7 @@ export default {
 			-webkit-transform: scale(0.8);
 			font-family: PingFang SC;
 			color: white;
-		}
+		} */
 	}
 	.cir_detail {
 		width: 60%;
@@ -496,7 +512,7 @@ export default {
 	height: auto;
 	display: inline-block;
 }
-.tag {
+/* .tag {
 	position: absolute;
 	left: 35rpx;
 	top: 35rpx;
@@ -508,7 +524,7 @@ export default {
 	font-size: 18rpx;
 	font-family: PingFang SC;
 	color: white;
-}
+} */
 .tower-swiper .tower-item {
 	transform: scale(calc(0.5 + var(--index) / 10));
 	margin-left: calc(var(--left) * 100upx - 150upx);
