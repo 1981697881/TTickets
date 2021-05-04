@@ -66,8 +66,7 @@ export default {
 			}else{
 				that.checkId.push(index)
 			}
-			/* this.radioId = index;
-			this.$emit('changeCoupon', this.radioId - 1); */
+			this.$emit('changeCouponGroup', that.checkId);
 		},
 	}
 };

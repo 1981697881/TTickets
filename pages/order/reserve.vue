@@ -102,7 +102,7 @@
 						</view>
 					</view>
 					<view class="express-type__content content_box">
-						<fz-group-card :hallLength="hallLength" :pickerData="groupCouponsList" v-if="expressTypeCur == 'express'"></fz-group-card>
+						<fz-group-card @changeCouponGroup="changeCouponGroup" :hallLength="hallLength" :pickerData="groupCouponsList" v-if="expressTypeCur == 'express'"></fz-group-card>
 						<!-- <fz-coupon-card :pickerData="groupCouponsList" v-if="expressTypeCur == 'selfetch'"></fz-coupon-card> -->
 					</view>
 					<view class="express-type__bottom x-bc">
@@ -157,6 +157,7 @@ export default {
 			couponId: 0,
 			ticketPaymoney: 0,
 			groupCouponsList:[],
+			couponArray:[],
 			couponPrice: '选择优惠券',
 			getFocus: false, //获取焦点。
 			checkTime: {},
@@ -232,7 +233,6 @@ export default {
 			lockOrderId: that.perGoodsList.lockOrderId,
 			seats: seats,
 		}
-		console.log(that.$isPreviewApi)
 		if(!that.$isPreviewApi){
 			uni.$emit('escLoack',params)
 		}
@@ -313,7 +313,7 @@ export default {
 	},
 	methods: {
 		...mapActions(['getUserDetails']),
-		async	changeExpressType(cur) {
+		async changeExpressType(cur) {
 					this.expressTypeCur = cur;
 					this.getFocus = false;
 					
@@ -639,12 +639,13 @@ export default {
 				this.getPre();
 			}
 		},
-		changeCouponGroup(index) {
-			if (index >= 0) {
-				this.couponId = this.pickerData.couponList[index].user_coupons_id;
-				this.pickerData.title = '-￥' + this.pickerData.couponList[index].amount;
+		changeCouponGroup(val) {
+			if (val.length > 0) {
+				this.couponArray = val;
+				console.log(this.couponArray)
+				this.pickerData.title = '-￥' +this.hallImbalance;
 			} else {
-				this.couponId = 0;
+				this.couponArray = [];
 				this.pickerData.title = '选择优惠券';
 			}
 		},
