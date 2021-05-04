@@ -102,7 +102,7 @@
 						</view>
 					</view>
 					<view class="express-type__content content_box">
-						<fz-group-card :pickerData="groupCouponsList" v-if="expressTypeCur == 'express'"></fz-group-card>
+						<fz-group-card :hallLength="hallLength" :pickerData="groupCouponsList" v-if="expressTypeCur == 'express'"></fz-group-card>
 						<!-- <fz-coupon-card :pickerData="groupCouponsList" v-if="expressTypeCur == 'selfetch'"></fz-coupon-card> -->
 					</view>
 					<view class="express-type__bottom x-bc">
@@ -137,6 +137,8 @@ export default {
 			showPicker: false,
 			showGroup: false,
 			isSubOrder: false,
+			hallImbalance: 0,
+			hallLength: 0,
 			cashPay: true,
 			pickerData: {
 				title: '选择优惠券',
@@ -158,13 +160,14 @@ export default {
 			couponPrice: '选择优惠券',
 			getFocus: false, //获取焦点。
 			checkTime: {},
-			showExpressType: false, //优惠券弹窗
+			showExpressType: true, //优惠券弹窗
 			expressTypeCur: 'express',
 			inExpressType: [], //当前商品支持的配送方式。
 			expressTypeMap:{
 				express:'抵用券',
 				selfetch:'express',
 			},
+			
 			expressType: [
 				//快递方式
 				{
@@ -294,6 +297,8 @@ export default {
 			this.perGoodsList.locationHall = JSON.parse(this.perGoodsList.locationHall); 
 			this.perGoodsList.seats = JSON.parse(this.perGoodsList.seats); 
 		}
+		this.hallLength = this.perGoodsList.seats.length
+		this.hallImbalance = this.perGoodsList.locationHall.hallImbalance
 		/* this.goodsList = JSON.parse(this.$Route.query.goodsList); 
 		this.from = this.$Route.query.from;
 		this.orderType = this.$Route.query.orderType;
