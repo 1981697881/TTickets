@@ -18,10 +18,11 @@ export default class AppPay {
 	// 			wallet			v							v					v						v
 
 
-	constructor(payment, order,url="pay.prepay",params,reType=0) {
+	constructor(payment, order,url="pay.prepay",params,reType=0,confirmParam) {
 		this.payment = payment;
 		this.order = order;
 		this.reType = reType;
+		this.confirmParam = confirmParam;
 		this.url = url || "pay.prepay";
 		this.params = params
 		this.platform = uni.getStorageSync('platform');
@@ -191,10 +192,7 @@ export default class AppPay {
 			package: payData.package,
 			signType: payData.signType,
 			paySign: payData.paySign,
-			success: function(res) {
-				console.log(res)
-				console.log(123123)
-				
+			success: function(res) {	
 					let orderResult
 					if(that.reType==1){
 					orderResult = {...that.order};
@@ -206,20 +204,20 @@ export default class AppPay {
 					}
 					uni.$off('escLoack')
 					if(that.reType==1){
-						let ticketList = []
+						/* let ticketList = []
 						that.order.seats.forEach((item)=>{
 							let obj = {}
 							obj.seatId = item.seatId
 							obj.ticketFee = item.ticketfee
 							obj.ticketPrice = item.standardprice
 							ticketList.push(obj)
-						})
+						}) */
 						api('cinema.confirmOrder', {
 							lockOrderId: that.order.lockOrderId,
 							scheduleId: that.order.scheduleId,
 							scheduleKey: that.order.scheduleKey,
 							mobile: store.state.user.userInfo.phoneNumber,
-							ticketList: ticketList,
+							ticketList: that.confirmParam,
 						}).then(rescin => {
 							if(rescin.flag){
 								Vue.prototype.$isPreviewApi = false

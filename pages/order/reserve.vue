@@ -2,7 +2,7 @@
 	<view class="page_box">
 		<view class="content_box">
 			<!-- 确认订单商品卡片 -->
-			<!-- <view class="goods-list">
+			<view class="goods-list">
 				<view class="goods-card">
 					<app-mini-card @overTime="escOrder" :detail="perGoodsList" :type="'sku'">
 						<block slot="goodsBottom">
@@ -26,9 +26,9 @@
 						<view class="detail">共{{perGoodsList.seats.length}}张 原价 ￥{{Number(perGoodsList.schedule.standardprice) *Number(perGoodsList.seats.length)}}</view>
 					</view>
 				</view>
-			</view> -->
+			</view>
 			<!-- 优惠券 -->
-			<view class="coupon x-bc item-list" >
+			<view class="coupon x-bc item-list">
 				<view class="item-title">优惠券</view>
 				<view class="x-f" @tap="selCoupon">
 					<text class="price" v-if="groupCouponsList.length">{{ pickerData.title }}</text>
@@ -37,19 +37,28 @@
 				</view>
 			</view>
 			<radio-group @change="selPay" class="pay-box">
-				<label class="x-bc pay-item" >
+				<label class="x-bc pay-item">
 					<view class="x-f">
 						<image class="pay-img" src="https://i.postimg.cc/bw6zsHsf/wx-pay.png" mode=""></image>
 						<text>微信支付</text>
 					</view>
 					<radio value="wechat" :class="{ checked: payType === 'wechat' }" class=" pay-radio orange" :checked="payType === 'wechat'"></radio>
 				</label>
-				<label class="x-bc pay-item" >
+				<label class="x-bc pay-item">
 					<view class="x-f">
 						<image class="pay-img" src="https://i.postimg.cc/QdN88nNq/wallet-pay.png" mode=""></image>
-						<text>余额支付<text class="text-red padding-left">{{balInfo.Money==0 ||balInfo.Money==null?'余额不足':''}}({{balInfo.Money || "0.00"}})  </text></text>
+						<text>
+							余额支付
+							<text class="text-red padding-left">{{ balInfo.Money == 0 || balInfo.Money == null ? '余额不足' : '' }}({{ balInfo.Money || '0.00' }})</text>
+						</text>
 					</view>
-					<radio value="wallet" :class="{ checked: payType === 'wallet' }" :disabled="balInfo.Money==0 ||balInfo.Money==null?true:false" class="pay-radio orange" :checked="payType === 'wallet'"></radio>
+					<radio
+						value="wallet"
+						:class="{ checked: payType === 'wallet' }"
+						:disabled="balInfo.Money == 0 || balInfo.Money == null ? true : false"
+						class="pay-radio orange"
+						:checked="payType === 'wallet'"
+					></radio>
 				</label>
 			</radio-group>
 			<!-- 手机号码 -->
@@ -75,10 +84,7 @@
 		</view>
 		<view class="foot_box x-f">
 			<text class="num">共1件</text>
-			<view class="all-money">
-				<text>合计：</text>
-				<text class="price">￥{{ticketPaymoney || '0.00' }}</text>
-			</view>
+			<view class="all-money"><text>合计：</text></view>
 			<button class="cu-btn sub-btn bg-red" @tap="combuy" :disabled="isSubOrder">
 				<text v-if="isSubOrder" class="cuIcon-loading2 cuIconfont-spin"></text>
 				立即购买
@@ -91,18 +97,19 @@
 				<!-- 选择优惠券 -->
 				<view class="express-type page_box">
 					<view class="express-type__head head-box">
-						<view
-							class="express-type__head-nav"
-							v-for="(nav, index) in expressType"
-							:key="nav.id"
-							@tap="changeExpressType(nav.value)"
-						>
-							<text class="head-nav__title" :class="{ 'head-nav__title--active':expressTypeCur === nav.value }">{{ nav.title }}</text>
+						<view class="express-type__head-nav" v-for="(nav, index) in expressType" :key="nav.id" @tap="changeExpressType(nav.value)">
+							<text class="head-nav__title" :class="{ 'head-nav__title--active': expressTypeCur === nav.value }">{{ nav.title }}</text>
 							<view :class="expressClass" v-show="expressTypeCur === nav.value"></view>
 						</view>
 					</view>
 					<view class="express-type__content content_box">
-						<fz-group-card :checkId="couponArray" @changeCouponGroup="changeCouponGroup" :hallLength="hallLength" :pickerData="groupCouponsList" v-if="expressTypeCur == 'express'"></fz-group-card>
+						<fz-group-card
+							ref="groupCard"
+							@changeCouponGroup="changeCouponGroup"
+							:hallLength="hallLength"
+							:pickerData="groupCouponsList"
+							v-if="expressTypeCur == 'express'"
+						></fz-group-card>
 						<!-- <fz-coupon-card :pickerData="groupCouponsList" v-if="expressTypeCur == 'selfetch'"></fz-coupon-card> -->
 					</view>
 					<view class="express-type__bottom x-bc">
@@ -130,7 +137,9 @@ import permision from '@/common/permission.js';
 import goods from '@/csJson/scoreList.json';
 export default {
 	components: {
-		appMiniCard,fzGroupCard,fzCouponCard,
+		appMiniCard,
+		fzGroupCard,
+		fzCouponCard
 	},
 	data() {
 		return {
@@ -156,84 +165,22 @@ export default {
 			orderPre: {},
 			couponId: 0,
 			ticketPaymoney: 0,
-			groupCouponsList:[
-				{
-					id: 2,
-					openId: 'ooazj5HdF1kyXhOzw27Pp28nllx8',
-					description:
-						'注意事项：该券为普通抵用券，可适用于全场普通影厅的影片播放场次，若需选择普通影厅外的特殊，可购买“通用电影抵用券”或在选择影片支付时额外补交其他影厅的所需的费用',
-					deductionAmount: '15',
-					couponType: '0',
-					status: '0',
-					couponId: 1,
-					couponName: '团体电子普通电影抵用券'
-				},
-				{
-					id: 3,
-					openId: 'ooazj5HdF1kyXhOzw27Pp28nllx8',
-					description:
-						'注意事项：该券为普通抵用券，可适用于全场普通影厅的影片播放场次，若需选择普通影厅外的特殊，可购买“通用电影抵用券”或在选择影片支付时额外补交其他影厅的所需的费用',
-					deductionAmount: '15',
-					couponType: '0',
-					status: '0',
-					couponId: 1,
-					couponName: '团体电子普通电影抵用券'
-				},
-				{
-					id: 4,
-					openId: 'ooazj5HdF1kyXhOzw27Pp28nllx8',
-					description:
-						'注意事项：该券为普通抵用券，可适用于全场普通影厅的影片播放场次，若需选择普通影厅外的特殊，可购买“通用电影抵用券”或在选择影片支付时额外补交其他影厅的所需的费用',
-					deductionAmount: '15',
-					couponType: '0',
-					status: '0',
-					couponId: 1,
-					couponName: '团体电子普通电影抵用券'
-				},
-				{
-					id: 5,
-					openId: 'ooazj5HdF1kyXhOzw27Pp28nllx8',
-					description:
-						'注意事项：该券为普通抵用券，可适用于全场普通影厅的影片播放场次，若需选择普通影厅外的特殊，可购买“通用电影抵用券”或在选择影片支付时额外补交其他影厅的所需的费用',
-					deductionAmount: '15',
-					couponType: '0',
-					status: '0',
-					couponId: 1,
-					couponName: '团体电子普通电影抵用券'
-				},
-				{
-					id: 6,
-					openId: 'ooazj5HdF1kyXhOzw27Pp28nllx8',
-					description: '注意事项：该券为通用抵用券，使用于全场所有影厅，所有影片，但该券为特殊影厅而设，若只是普通观影，请选择“普通电影抵用券”，避免造成不必要的浪费',
-					deductionAmount: '30',
-					couponType: '0',
-					status: '0',
-					couponId: 2,
-					couponName: '团体电子通用电影抵用券'
-				},
-				{
-					id: 7,
-					openId: 'ooazj5HdF1kyXhOzw27Pp28nllx8',
-					description: '注意事项：该券为通用抵用券，使用于全场所有影厅，所有影片，但该券为特殊影厅而设，若只是普通观影，请选择“普通电影抵用券”，避免造成不必要的浪费',
-					deductionAmount: '30',
-					couponType: '0',
-					status: '0',
-					couponId: 2,
-					couponName: '团体电子通用电影抵用券'
-				}
+			preferentialAmount: 0,
+			groupCouponsList: [
+				
 			],
-			couponArray:[],
+			couponArray: [],
 			couponPrice: '选择优惠券',
 			getFocus: false, //获取焦点。
 			checkTime: {},
-			showExpressType: true, //优惠券弹窗
+			showExpressType: false, //优惠券弹窗
 			expressTypeCur: 'express',
 			inExpressType: [], //当前商品支持的配送方式。
-			expressTypeMap:{
-				express:'抵用券',
-				selfetch:'express',
+			expressTypeMap: {
+				express: '抵用券',
+				selfetch: 'express'
 			},
-			
+
 			expressType: [
 				//快递方式
 				{
@@ -245,19 +192,19 @@ export default {
 					id: 'e2',
 					title: '优惠券',
 					value: 'selfetch'
-				},
+				}
 			],
 			isProtocol: true, //自提协议。
 			selfPhone: 0, //编辑手机号
-			getFocus:false,//获取焦点。
+			getFocus: false, //获取焦点。
 			checkType: '自提',
-			checkTime:{},
+			checkTime: {},
 			checkTimeCur: 0, //默认选中时间。
-			checkTimeId: 'c1',//锚点用
-			checkDayCur: 0,//默认日期
-			hasLocation:false,//是否已经授权过
-			lat:0,
-			lng:0
+			checkTimeId: 'c1', //锚点用
+			checkDayCur: 0, //默认日期
+			hasLocation: false, //是否已经授权过
+			lat: 0,
+			lng: 0
 		};
 	},
 	computed: {
@@ -284,53 +231,51 @@ export default {
 	},
 	watch: {},
 	onHide() {
-		console.log('页面隐藏')
-		let that = this
-		that.isSubOrder = true
-		let seats = []
-		that.perGoodsList.seats.forEach((item)=>{
-			let obj = {}
-			obj.seatId = item.seatId
-			seats.push(obj)
-		})
+		console.log('页面隐藏');
+		let that = this;
+		that.isSubOrder = true;
+		let seats = [];
+		that.perGoodsList.seats.forEach(item => {
+			let obj = {};
+			obj.seatId = item.seatId;
+			seats.push(obj);
+		});
 		let params = {
 			scheduleId: that.perGoodsList.scheduleId,
 			lockOrderId: that.perGoodsList.lockOrderId,
-			seats: seats,
+			seats: seats
+		};
+		if (!that.$isPreviewApi) {
+			uni.$emit('escLoack', params);
 		}
-		if(!that.$isPreviewApi){
-			uni.$emit('escLoack',params)
-		}
-		
 	},
-	onUnload(options){
-		let that = this
-		console.log('页面关闭')
-		that.isSubOrder = true
-		let seats = []
-		that.perGoodsList.seats.forEach((item)=>{
-			let obj = {}
-			obj.seatId = item.seatId
-			seats.push(obj)
-		})
+	onUnload(options) {
+		let that = this;
+		console.log('页面关闭');
+		that.isSubOrder = true;
+		let seats = [];
+		that.perGoodsList.seats.forEach(item => {
+			let obj = {};
+			obj.seatId = item.seatId;
+			seats.push(obj);
+		});
 		let params = {
 			scheduleId: that.perGoodsList.scheduleId,
 			lockOrderId: that.perGoodsList.lockOrderId,
-			seats: seats,
-		}
-		uni.$emit('escLoack',params)
-		
+			seats: seats
+		};
+		uni.$emit('escLoack', params);
 	},
 	onBackPress(options) {
 		console.log(options);
-		console.log("触发返回");
+		console.log('触发返回');
 		if (e.from == 'backbutton') {
 			uni.showModal({
 				title: '提示',
 				content: '还没付款，是否退出',
 				success: function(res) {
 					if (res.confirm) {
-						this.escOrder()
+						this.escOrder();
 						uni.showToast({
 							title: '用户点击确定',
 							duration: 1000
@@ -351,25 +296,27 @@ export default {
 	},
 	async onLoad(options) {
 		this.options = options;
+		let that = this
 		if (options.openid) {
 			//检测到回传openid
 			uni.setStorageSync('openid', options.openid);
 		}
-		if(this.$Route.query){
-			this.perGoodsList = {...this.$Route.query}
-			this.perGoodsList.schedule = JSON.parse(this.$Route.query.schedule); 
-			this.perGoodsList.schedule.showDatetime=decodeURI(this.perGoodsList.schedule.showDatetime); 
-			this.perGoodsList.locationHall = JSON.parse(this.perGoodsList.locationHall); 
-			this.perGoodsList.seats = JSON.parse(this.perGoodsList.seats); 
+		if (this.$Route.query) {
+			this.perGoodsList = { ...this.$Route.query };
+			this.perGoodsList.schedule = JSON.parse(this.$Route.query.schedule);
+			this.perGoodsList.schedule.showDatetime = decodeURI(this.perGoodsList.schedule.showDatetime);
+			this.perGoodsList.locationHall = JSON.parse(this.perGoodsList.locationHall);				this.perGoodsList.seats = JSON.parse(this.perGoodsList.seats);
+			this.hallLength = this.perGoodsList.seats.length;
+			this.hallImbalance = this.perGoodsList.locationHall.hallImbalance;
+			console.log(this.perGoodsList)
+			this.ticketPaymoney = Number(this.perGoodsList.schedule.standardprice) * Number(this.perGoodsList.seats.length);
 		}
-		this.hallLength = this.perGoodsList.seats.length
-		this.hallImbalance = this.perGoodsList.locationHall.hallImbalance
 		/* this.goodsList = JSON.parse(this.$Route.query.goodsList); 
 		this.from = this.$Route.query.from;
 		this.orderType = this.$Route.query.orderType;
 		this.grouponBuyType = this.$Route.query.grouponBuyType;
 		this.grouponId = this.$Route.query.grouponId;*/
-		this.ticketPaymoney= Number(this.perGoodsList.schedule.standardprice) *Number(this.perGoodsList.seats.length)
+		
 		this.initDate();
 		this.getGroupCoupons();
 	},
@@ -379,55 +326,82 @@ export default {
 	methods: {
 		...mapActions(['getUserDetails']),
 		async changeExpressType(cur) {
-					this.expressTypeCur = cur;
-					this.getFocus = false;
-					
-				},
-		// 显示配送方式弹窗
-		async onSelExpressType(goods) {
-					this.showExpressType = true;
-				},
-				// 关闭配送方式弹窗
-				hideExpressType() {
-					this.showExpressType = false;
-				},
-				// 保存配送方式
-				saveExpressType(){
-					this.showExpressType = false;
-				},
-		// 获取当前商品配送方式
-		getCurGoodsExpress(goods){
-			/* for( let item of this.goodsList){
-				if(item.goods_id == goods.goods_id &&  goods.sku_price_id == item.sku_price_id  ){
-					return this.expressTypeMap[item.dispatch_type];
-				}
-			} */
+			this.expressTypeCur = cur;
+			this.getFocus = false;
 		},
-		combuy(){
-			if(this.payType=='wallet'){
-				this.blanBuy()
+		// 显示弹窗
+		async onSelExpressType(goods) {
+			this.showExpressType = true;
+		},
+		// 关闭弹窗
+		hideExpressType() {
+			this.showExpressType = false;
+		},
+		// 保存方式
+		saveExpressType() {
+			this.showExpressType = false;
+		},
+		combuy() {
+			let that = this
+			if(that.ticketPaymoney == 0 && this.couponArray.length>0){
+					let ticketList = []
+					that.perGoodsList.seats.forEach(item => {
+						let obj = {};
+						obj.seatId = item.seatId;
+						obj.ticketFee = item.lowestprice;
+						obj.ticketPrice = item.settleprice;
+						ticketList.push(obj);
+					});
+					if(that.ticketPaymoney == 0){
+						that.confirmOrder(ticketList);
+					}else{
+						if (that.payType == 'wallet') {
+							that.blanBuy(ticketList);
+						} else {
+							that.confirmPay(ticketList);
+						}
+					}
 			}else{
-				this.confirmPay()
+				if (that.payType == 'wallet') {
+					let ticketList = []
+					that.perGoodsList.seats.forEach(item => {
+						let obj = {};
+						obj.seatId = item.seatId;
+						obj.ticketFee = item.ticketfee;
+						obj.ticketPrice = item.settleprice;
+						ticketList.push(obj);
+					});
+					that.blanBuy(ticketList);
+				} else {
+					let ticketList = []
+					that.perGoodsList.seats.forEach((item)=>{
+						let obj = {}
+						obj.seatId = item.seatId
+						obj.ticketFee = item.ticketfee
+						obj.ticketPrice = item.standardprice
+						ticketList.push(obj)
+					})
+					that.confirmPay(ticketList);
+				}
 			}
 		},
 		selPay(e) {
-			let that = this
-			if(e.detail.value == 'wallet'){
-				let countPrce = Number(that.perGoodsList.schedule.settleprice) *Number(that.perGoodsList.seats.length)
- 				if(Number(countPrce) <= Number(that.balInfo.Money) ){
+			let that = this;
+			if (e.detail.value == 'wallet') {
+				let countPrce = Number(that.perGoodsList.schedule.settleprice) * Number(that.perGoodsList.seats.length) - that.preferentialAmount;
+				if (Number(countPrce) <= Number(that.balInfo.Money)) {
 					that.payType = e.detail.value;
-					that.ticketPaymoney = countPrce
-				}else{
+					that.ticketPaymoney = countPrce;
+				} else {
 					uni.showToast({
 						icon: 'none',
 						title: '余额不足以支付本次费用，请选择其他支付方式'
-					})
+					});
 				}
-			}else{
+			} else {
 				that.payType = e.detail.value;
-				that.ticketPaymoney= Number(that.perGoodsList.schedule.standardprice) *Number(that.perGoodsList.seats.length)
+				that.ticketPaymoney = Number(that.perGoodsList.schedule.standardprice) * Number(that.perGoodsList.seats.length) - that.preferentialAmount;
 			}
-			
 		},
 		bindPhone(e) {
 			let me = this;
@@ -454,31 +428,29 @@ export default {
 			});
 		},
 		// 发起支付
-		confirmPay() {
+		confirmPay(confirmParam) {
 			let that = this;
-			if(that.ticketPaymoney>0){
-				if(that.userInfo.phoneNumber){
+			if (that.ticketPaymoney > 0) {
+				if (that.userInfo.phoneNumber) {
 					let params = {
 						ticketId: that.perGoodsList.ticketId,
 						ticketPaymoney: that.ticketPaymoney
-					}
-					let pay = new AppPay(that.payType, that.perGoodsList,null,params,1);
-					that.isSubOrder = true
+					};
+					let pay = new AppPay(that.payType, that.perGoodsList, null, params, 1,confirmParam);
+					that.isSubOrder = true;
 					/* that.confirmOrder() */
-				}else{
+				} else {
 					uni.showToast({
 						icon: 'none',
 						title: '手机号码为必填项'
-					})
+					});
 				}
-			}else{
+			} else {
 				uni.showToast({
 					icon: 'none',
 					title: '金额不能为零'
-				})
+				});
 			}
-			
-			
 		},
 		jump(path, parmas) {
 			this.$Router.replace({
@@ -523,91 +495,82 @@ export default {
 			this.checkTime = obj;
 		},
 		escOrder() {
-			console.log('进入取消订单流程')
+			console.log('进入取消订单流程');
 			let that = this;
-			that.isSubOrder = true
-			let seats = []
-			that.perGoodsList.seats.forEach((item)=>{
-				let obj = {}
-				obj.seatId = item.seatId
-				seats.push(obj)
-			})
+			that.isSubOrder = true;
+			let seats = [];
+			that.perGoodsList.seats.forEach(item => {
+				let obj = {};
+				obj.seatId = item.seatId;
+				seats.push(obj);
+			});
 			that.$api('cinema.escSeats', {
 				scheduleId: that.perGoodsList.scheduleId,
 				lockOrderId: that.perGoodsList.lockOrderId,
-				seats: seats,
+				seats: seats
 			}).then(res => {
 				if (res.flag) {
-					
 					console.log(res);
 				}
 			});
 		},
 		//确认订单
-		confirmOrder(){
-			let ticketList = []
-			let that = this
-			this.perGoodsList.seats.forEach((item)=>{
-				let obj = {}
-				obj.seatId = item.seatId
-				obj.ticketFee = item.ticketfee
-				obj.ticketPrice = item.settleprice
-				ticketList.push(obj)
-			})
+		confirmOrder(array) {
+			let that = this;
+			let ticketList = [];
+			
 			this.$api('cinema.confirmOrder', {
 				lockOrderId: this.perGoodsList.lockOrderId,
 				scheduleId: this.perGoodsList.scheduleId,
 				scheduleKey: this.perGoodsList.scheduleKey,
 				mobile: this.userInfo.phoneNumber,
-				ticketList: ticketList,
+				ticketList: array
 			}).then(res => {
-				if(res.flag){
+				if (res.flag) {
 					uni.hideLoading();
-					uni.$off('escLoack')
+					uni.$off('escLoack');
 					/* uni.showToast({
 						icon: 'none',
 						title: res.msg
 					}) */
 					that.jump('/pages/index/wallet', res.data);
-				}else{
+				} else {
 					uni.showToast({
 						icon: 'none',
 						title: res.msg
-					})
+					});
 				}
 			});
-		},	//余额购买
-		blanBuy(){
-			let ticketList = []
+		}, //余额购买
+		blanBuy(confirmParam) {
+			let ticketList = [];
 			let that = this;
 			uni.showLoading({ title: '出票中~~为了避免购票失败，请勿退出！' });
-			if(that.userInfo.phoneNumber){
-				that.isSubOrder = true
+			if (that.userInfo.phoneNumber) {
+				that.isSubOrder = true;
 				let params = {
 					ticketId: that.perGoodsList.ticketId,
-					qty: that.ticketPaymoney+"",
+					qty: that.ticketPaymoney + '',
 					custId: that.balInfo.custId,
-					phoneNumber: that.userInfo.phoneNumber,
-				}
+					phoneNumber: that.userInfo.phoneNumber
+				};
 				this.$api('user.deduction', params).then(res => {
-					if(res.flag){
-						that.confirmOrder()
-					}else{
+					if (res.flag) {
+						that.confirmOrder(confirmParam);
+					} else {
 						uni.showToast({
 							icon: 'none',
 							title: res.msg
-						})
+						});
 					}
 				});
-				
-			}else{
+			} else {
 				uni.showToast({
 					icon: 'none',
 					title: '手机号码为必填项'
-				})
+				});
 			}
-			
-		},	
+		},
 		// 订单信息
 		getPre() {
 			let that = this;
@@ -657,7 +620,7 @@ export default {
 		// 可用优惠券
 		getCoupons() {
 			let that = this;
-			let res = prompt
+			let res = prompt;
 			if (res.code === 1) {
 				that.pickerData.couponList = res.data;
 			}
@@ -672,9 +635,9 @@ export default {
 					that.pickerData.couponList = res.data;
 				}
 			}); */
-		},// 可用团体票
+		}, // 可用团体票
 		getGroupCoupons() {
-			/* let that = this;
+			let that = this;
 			that.$api('coupons.list', {
 				couponType: 0,
 				openId: uni.getStorageSync('openid'),
@@ -683,7 +646,7 @@ export default {
 				if (res.flag) {
 					that.groupCouponsList = res.data;
 				}
-			}); */
+			});
 		},
 		// 选择优惠券
 		selCoupon() {
@@ -705,10 +668,40 @@ export default {
 			}
 		},
 		changeCouponGroup(val) {
+			console.log(111111)
+			let that = this;
+			let countPrice = 0;
 			if (val.length > 0) {
 				this.couponArray = val;
-				console.log(this.couponArray)
-				this.pickerData.title = '-￥' +this.hallImbalance;
+				val.forEach(item => {
+					that.groupCouponsList.forEach((items, index) => {
+						if (item == items.id) {
+							console.log(items);
+							if (that.payType == 'wallet') {
+								if (items.couponId == '2') {
+									countPrice += Number(that.perGoodsList.schedule.settleprice);
+								} else {
+									countPrice += Number(that.perGoodsList.schedule.settleprice);
+									countPrice = countPrice - Number(that.hallImbalance);
+								}
+							} else {
+								if (items.couponId == '2') {
+									countPrice += Number(that.perGoodsList.schedule.standardprice);
+								} else {
+									countPrice += Number(that.perGoodsList.schedule.standardprice);
+									countPrice = countPrice - Number(that.hallImbalance);
+								}
+							}
+						}
+					});
+				});
+				if (that.payType == 'wallet') {
+					this.ticketPaymoney = Number(that.perGoodsList.schedule.settleprice) * Number(that.perGoodsList.seats.length) - countPrice;
+				} else {
+					this.ticketPaymoney = Number(that.perGoodsList.schedule.standardprice) * Number(that.perGoodsList.seats.length) - countPrice;
+				}
+				this.pickerData.title = '-￥' + countPrice;
+				this.preferentialAmount = countPrice
 			} else {
 				this.couponArray = [];
 				this.pickerData.title = '选择优惠券';
@@ -1382,7 +1375,7 @@ export default {
 	.express-type__head {
 		width: 100%;
 		height: 74rpx;
-		background: #F8E3BD;
+		background: #f8e3bd;
 		@include flex($align: center);
 		border-radius: 20rpx 20rpx 0 0;
 		&-nav {
@@ -1495,40 +1488,40 @@ export default {
 			color: rgba(153, 153, 153, 1);
 		}
 		// 无定位
-	.location-box{
-		height: 500rpx;
-		justify-content: center;
-		.nolocation-img{
-			width: 74rpx;
-			height: 90rpx;
-			margin-bottom: 40rpx;
+		.location-box {
+			height: 500rpx;
+			justify-content: center;
+			.nolocation-img {
+				width: 74rpx;
+				height: 90rpx;
+				margin-bottom: 40rpx;
+			}
+			.location-title {
+				font-size: 35rpx;
+				font-family: PingFang SC;
+				font-weight: bold;
+				color: rgba(70, 53, 27, 1);
+				margin-bottom: 20rpx;
+			}
+			.location-tip {
+				font-size: 28rpx;
+				font-family: PingFang SC;
+				font-weight: 400;
+				color: rgba(153, 153, 153, 1);
+				margin-bottom: 40rpx;
+			}
+			.open-location {
+				width: 492rpx;
+				height: 70rpx;
+				background: linear-gradient(90deg, rgba(233, 180, 97, 1), rgba(238, 204, 137, 1));
+				box-shadow: 0px 7rpx 6rpx 0px rgba(229, 138, 0, 0.22);
+				border-radius: 35rpx;
+				font-size: 28rpx;
+				font-family: PingFang SC;
+				font-weight: 500;
+				color: rgba(255, 255, 255, 1);
+			}
 		}
-		.location-title{
-			font-size:35rpx;
-			font-family:PingFang SC;
-			font-weight:bold;
-			color:rgba(70,53,27,1);
-			margin-bottom: 20rpx;
-		}
-		.location-tip{
-			font-size:28rpx;
-			font-family:PingFang SC;
-			font-weight:400;
-			color:rgba(153,153,153,1);
-			margin-bottom: 40rpx;
-		}
-		.open-location{
-			width:492rpx;
-			height:70rpx;
-			background:linear-gradient(90deg,rgba(233,180,97,1),rgba(238,204,137,1));
-			box-shadow:0px 7rpx 6rpx 0px rgba(229,138,0,0.22);
-			border-radius:35rpx;
-			font-size:28rpx;
-			font-family:PingFang SC;
-			font-weight:500;
-			color:rgba(255,255,255,1);
-		}
-	}
 		// 快递
 		.express-address {
 			position: relative;
@@ -1694,5 +1687,4 @@ export default {
 		}
 	}
 }
-
 </style>

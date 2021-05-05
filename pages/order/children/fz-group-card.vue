@@ -5,9 +5,15 @@
 			<radio class="orange coupon-radio" :class="{ checked: radioId === 0 }" :checked="radioId === 0"></radio>
 		</label> -->
 		<checkbox-group class="check-box" @change="selCoupon">
-			<label class="radio-item x-bc" v-if="pickerData.length > 0" v-for="(radio, index) in pickerData" :key="index" >
+			<label class="radio-item x-bc" v-if="pickerData.length > 0" v-for="(radio, index) in pickerData" :key="index">
 				<text class="coupon-title">{{ radio.couponName }}</text>
-				<checkbox class="orange coupon-radio" :value="radio.id.toString()" :disabled="radio.disabled" :class="{ checked: checkArray.includes(radio.id.toString()) }" :checked="checkArray.includes(radio.id.toString())"></checkbox>
+				<checkbox
+					class="orange coupon-radio"
+					:value="radio.id.toString()"
+					:disabled="radio.disabled"
+					:class="{ checked: checkArray.includes(radio.id.toString()) }"
+					:checked="checkArray.includes(radio.id.toString())"
+				></checkbox>
 			</label>
 		</checkbox-group>
 		<!-- 空白页 -->
@@ -35,10 +41,6 @@ export default {
 			type: Array,
 			default: []
 		},
-		checkId: {
-			type: Array,
-			default: []
-		},
 		hallLength: {
 			type: Number,
 			default: 0
@@ -48,48 +50,41 @@ export default {
 	methods: {
 		selCoupon(e) {
 			let that = this;
-			 // 判断选中项长度是否超过指定长度
-			      if (e.detail.value.length > this.hallLength) {
-			        // 禁用其余复选框
-			        const checked = e.detail.value.toString();
-			        this.pickerData.forEach((element, index) => {
-			          // 不包含选中项时禁用组件
-			          if (checked.indexOf(element.id) == -1) {
-			            element.disabled = true;
-			          }
-			        });
-			        // 取出最后一位选中项的值
-			        const lastChecked = e.detail.value.pop();
-			        // 获取所有复选框标签的dom的集合
-			        const labels = document.getElementsByClassName("uni-label-pointer");
-			        // 判断选中项的标签
-			        labels.forEach(element => {
-			          if (element.innerText == lastChecked) {
-			            // 获取到选中项标签中关闭选中样式的集合
-			            const lastInput = element.getElementsByClassName(
-			              "uni-checkbox-input"
-			            );
-			            // 定时器延时清除,实时清除的话,dom元素还未生成
-			            setTimeout(() => {
-			              lastInput[0].classList.remove("uni-checkbox-input-checked");
-			            }, 100);
-			          }
-			        });
-			        // 提示用户
-			        that.$tools.toast("最多选择"+that.hallLength+"张抵用券");
-			      } else {
-			        // 还原复选框状态
-			        this.pickerData.forEach(element => {
-			          element.disabled = false;
-			        });
-			      }
-				  that.checkArray = [...e.detail.value];
-				  that.pickerData.forEach((item,index)=>{
-					  if(that.checkArray.indexOf(item.id.toString)!=-1){
-						  that.checkId.push(item)
-					  }
-				  })
-				  console.log(that.checkId)
+			// 判断选中项长度是否超过指定长度
+			if (e.detail.value.length > that.hallLength) {
+				// 取出最后一位选中项的值
+				// 禁用其余复选框
+				const checked = e.detail.value;
+				this.pickerData.forEach((element, index) => {
+					// 不包含选中项时禁用组件
+					if (checked.indexOf(element.id.toString()) == -1) {
+						element.disabled = true;
+					}
+				});
+				/*const lastChecked = e.detail.value.pop();
+				 // 获取所有复选框标签的dom的集合
+				const labels = document.getElementsByClassName('uni-label-pointer');
+				// 判断选中项的标签
+				labels.forEach(element => {
+					if (element.innerText == lastChecked) {
+						// 获取到选中项标签中关闭选中样式的集合
+						const lastInput = element.getElementsByClassName('uni-checkbox-input');
+						// 定时器延时清除,实时清除的话,dom元素还未生成
+							that.$nextTick(()=>{
+								lastInput[0].classList.remove('uni-checkbox-input-checked');
+							})
+					}
+				}); */
+				// 提示用户
+				that.$tools.toast('最多选择' + that.hallLength + '张抵用券');
+			} else {
+				// 还原复选框状态
+				this.pickerData.forEach(element => {
+					element.disabled = false;
+				});
+			}
+			that.checkArray = e.detail.value;
+			that.$emit('changeCouponGroup', that.checkArray);
 			/* if (that.checkId.length > 0) {
 				if (that.checkId.length < that.hallLength) {
 					if (that.checkId.indexOf(index) == -1) {
@@ -110,7 +105,8 @@ export default {
 			}
 			console.log(that.checkId);
 			this.$emit('changeCouponGroup', that.checkId); */
-		}
+		},
+		
 	}
 };
 </script>
