@@ -102,7 +102,7 @@
 						</view>
 					</view>
 					<view class="express-type__content content_box">
-						<fz-group-card @changeCouponGroup="changeCouponGroup" :hallLength="hallLength" :pickerData="groupCouponsList" v-if="expressTypeCur == 'express'"></fz-group-card>
+						<fz-group-card :checkId="couponArray" @changeCouponGroup="changeCouponGroup" :hallLength="hallLength" :pickerData="groupCouponsList" v-if="expressTypeCur == 'express'"></fz-group-card>
 						<!-- <fz-coupon-card :pickerData="groupCouponsList" v-if="expressTypeCur == 'selfetch'"></fz-coupon-card> -->
 					</view>
 					<view class="express-type__bottom x-bc">
@@ -156,7 +156,72 @@ export default {
 			orderPre: {},
 			couponId: 0,
 			ticketPaymoney: 0,
-			groupCouponsList:[],
+			groupCouponsList:[
+				{
+					id: 2,
+					openId: 'ooazj5HdF1kyXhOzw27Pp28nllx8',
+					description:
+						'注意事项：该券为普通抵用券，可适用于全场普通影厅的影片播放场次，若需选择普通影厅外的特殊，可购买“通用电影抵用券”或在选择影片支付时额外补交其他影厅的所需的费用',
+					deductionAmount: '15',
+					couponType: '0',
+					status: '0',
+					couponId: 1,
+					couponName: '团体电子普通电影抵用券'
+				},
+				{
+					id: 3,
+					openId: 'ooazj5HdF1kyXhOzw27Pp28nllx8',
+					description:
+						'注意事项：该券为普通抵用券，可适用于全场普通影厅的影片播放场次，若需选择普通影厅外的特殊，可购买“通用电影抵用券”或在选择影片支付时额外补交其他影厅的所需的费用',
+					deductionAmount: '15',
+					couponType: '0',
+					status: '0',
+					couponId: 1,
+					couponName: '团体电子普通电影抵用券'
+				},
+				{
+					id: 4,
+					openId: 'ooazj5HdF1kyXhOzw27Pp28nllx8',
+					description:
+						'注意事项：该券为普通抵用券，可适用于全场普通影厅的影片播放场次，若需选择普通影厅外的特殊，可购买“通用电影抵用券”或在选择影片支付时额外补交其他影厅的所需的费用',
+					deductionAmount: '15',
+					couponType: '0',
+					status: '0',
+					couponId: 1,
+					couponName: '团体电子普通电影抵用券'
+				},
+				{
+					id: 5,
+					openId: 'ooazj5HdF1kyXhOzw27Pp28nllx8',
+					description:
+						'注意事项：该券为普通抵用券，可适用于全场普通影厅的影片播放场次，若需选择普通影厅外的特殊，可购买“通用电影抵用券”或在选择影片支付时额外补交其他影厅的所需的费用',
+					deductionAmount: '15',
+					couponType: '0',
+					status: '0',
+					couponId: 1,
+					couponName: '团体电子普通电影抵用券'
+				},
+				{
+					id: 6,
+					openId: 'ooazj5HdF1kyXhOzw27Pp28nllx8',
+					description: '注意事项：该券为通用抵用券，使用于全场所有影厅，所有影片，但该券为特殊影厅而设，若只是普通观影，请选择“普通电影抵用券”，避免造成不必要的浪费',
+					deductionAmount: '30',
+					couponType: '0',
+					status: '0',
+					couponId: 2,
+					couponName: '团体电子通用电影抵用券'
+				},
+				{
+					id: 7,
+					openId: 'ooazj5HdF1kyXhOzw27Pp28nllx8',
+					description: '注意事项：该券为通用抵用券，使用于全场所有影厅，所有影片，但该券为特殊影厅而设，若只是普通观影，请选择“普通电影抵用券”，避免造成不必要的浪费',
+					deductionAmount: '30',
+					couponType: '0',
+					status: '0',
+					couponId: 2,
+					couponName: '团体电子通用电影抵用券'
+				}
+			],
 			couponArray:[],
 			couponPrice: '选择优惠券',
 			getFocus: false, //获取焦点。
@@ -609,7 +674,7 @@ export default {
 			}); */
 		},// 可用团体票
 		getGroupCoupons() {
-			let that = this;
+			/* let that = this;
 			that.$api('coupons.list', {
 				couponType: 0,
 				openId: uni.getStorageSync('openid'),
@@ -618,7 +683,7 @@ export default {
 				if (res.flag) {
 					that.groupCouponsList = res.data;
 				}
-			});
+			}); */
 		},
 		// 选择优惠券
 		selCoupon() {
