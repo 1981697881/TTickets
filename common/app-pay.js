@@ -18,10 +18,11 @@ export default class AppPay {
 	// 			wallet			v							v					v						v
 
 
-	constructor(payment, order,url="pay.prepay",params,reType=0,confirmParam) {
+	constructor(payment, order,url="pay.prepay",params,reType=0,confirmParam={},couponArray=[]) {
 		this.payment = payment;
 		this.order = order;
 		this.reType = reType;
+		this.couponArray = couponArray;
 		this.confirmParam = confirmParam;
 		this.url = url || "pay.prepay";
 		this.params = params
@@ -218,6 +219,7 @@ export default class AppPay {
 							scheduleKey: that.order.scheduleKey,
 							mobile: store.state.user.userInfo.phoneNumber,
 							ticketList: that.confirmParam,
+							Ids: that.couponArray
 						}).then(rescin => {
 							if(rescin.flag){
 								Vue.prototype.$isPreviewApi = false

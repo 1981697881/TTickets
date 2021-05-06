@@ -1,20 +1,7 @@
 <template>
 	<view class="page_box">
 		<view class="head_box">
-			<view class="ci-header">
-				<view class="header-info">
-					<view class="text-bold text-xxl">{{cinemaName}}</view>
-					<view class="info-local text-black padding-xs">
-						<view class="local-adr text-cut">{{cinemaAddress}}</view>
-						<!-- <view>· 0.1km</view> -->
-					</view>
-					<!-- <view class="text-gray">好评度 88% {{detail.keysWord.toString() ||""}}</view> -->
-				</view>
-				<view class="locate-logo" @tap="showModal" data-target="RadioModal">
-					<image class="logo-img" src="https://i.postimg.cc/YCNMFFBt/customer-service-96px-1187377-easyicon-net.png" mode="aspectFill"></image>
-					<view>影院客服</view>
-					</view>
-			</view>
+			<image class="logo-img" src="http://139.159.136.187:50080/uploadFiles/image/32a545c356d8054f42612132a3535d31.jpeg" mode="scaleToFill"></image>
 		</view>
 		<scroll-view :style="{ height: headHeight + 'px' }" class="scroll-box" scroll-y enable-back-to-top scroll-with-animation @scrolltolower="loadMore">
 			<view class="content-box">
@@ -234,6 +221,12 @@ export default {
 	top: 0;
 	z-index: 998;
 	background: linear-gradient(#060210, #fff 20%);
+	.logo-img {
+		top: 5rpx;
+		height: 170rpx;
+		width: 100%;
+		box-shadow: 0 0 10rpx 0 #A5A5A5;
+	}
 	.ci-header {
 		background: #fff;
 		border-radius: 10rpx;

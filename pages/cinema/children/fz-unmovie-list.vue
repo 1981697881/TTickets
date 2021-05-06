@@ -12,7 +12,7 @@
 			<view class="slod-end text-gray">类型：{{detail.filmSortid}}</view>
 		</view>
 		<view class="btn-right" >
-			<button class="cu-btn buy-btn bg-pink" @tap="jump('/pages/cinema/index', { filmId: detail.filmId })">购票</button>
+			<button class="cu-btn buy-btn bg-orange" @tap="jump('/pages/cinema/index', { filmId: detail.filmId })">购票</button>
 		</view>
 	</view>
 </template>
@@ -52,15 +52,16 @@ export default {
 	background: #fff;
 	flex-wrap: wrap;
 	.img-box {
-		padding: 20rpx;
+		padding: 0px 20rpx 20rpx 20rpx;
 		padding-bottom: 0;
 		width: 200rpx;
 		overflow: hidden;
 		position: relative;
 		.img {
 			width: 200rpx;
+			box-shadow: 2px 2px 2px 2px #CCCCCC;
 			border-radius: 15rpx;
-			height: 200rpx;
+			height: 220rpx;
 			background-color: #ccc;
 		}
 	}

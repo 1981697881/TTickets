@@ -84,7 +84,10 @@
 		</view>
 		<view class="foot_box x-f">
 			<text class="num">共1件</text>
-			<view class="all-money"><text>合计：</text></view>
+			<view class="all-money">
+				<text>合计：</text>
+				<text class="price">￥{{ticketPaymoney || '0.00' }}</text>
+				</view>
 			<button class="cu-btn sub-btn bg-red" @tap="combuy" :disabled="isSubOrder">
 				<text v-if="isSubOrder" class="cuIcon-loading2 cuIconfont-spin"></text>
 				立即购买
@@ -105,6 +108,8 @@
 					<view class="express-type__content content_box">
 						<fz-group-card
 							ref="groupCard"
+							:checkArray="couponArray"
+							:hallImbalance="hallImbalance"
 							@changeCouponGroup="changeCouponGroup"
 							:hallLength="hallLength"
 							:pickerData="groupCouponsList"
@@ -267,7 +272,6 @@ export default {
 		uni.$emit('escLoack', params);
 	},
 	onBackPress(options) {
-		console.log(options);
 		console.log('触发返回');
 		if (e.from == 'backbutton') {
 			uni.showModal({
@@ -308,7 +312,6 @@ export default {
 			this.perGoodsList.locationHall = JSON.parse(this.perGoodsList.locationHall);				this.perGoodsList.seats = JSON.parse(this.perGoodsList.seats);
 			this.hallLength = this.perGoodsList.seats.length;
 			this.hallImbalance = this.perGoodsList.locationHall.hallImbalance;
-			console.log(this.perGoodsList)
 			this.ticketPaymoney = Number(this.perGoodsList.schedule.standardprice) * Number(this.perGoodsList.seats.length);
 		}
 		/* this.goodsList = JSON.parse(this.$Route.query.goodsList); 
@@ -348,12 +351,19 @@ export default {
 					that.perGoodsList.seats.forEach(item => {
 						let obj = {};
 						obj.seatId = item.seatId;
-						obj.ticketFee = item.lowestprice;
-						obj.ticketPrice = item.settleprice;
+						obj.ticketFee = item.ticketfee;
+						obj.ticketPrice = item.lowestprice;
 						ticketList.push(obj);
 					});
 					if(that.ticketPaymoney == 0){
-						that.confirmOrder(ticketList);
+						if (that.userInfo.phoneNumber) {
+							that.confirmOrder(ticketList);
+						} else {
+							uni.showToast({
+								icon: 'none',
+								title: '手机号码为必填项'
+							});
+						}
 					}else{
 						if (that.payType == 'wallet') {
 							that.blanBuy(ticketList);
@@ -364,21 +374,33 @@ export default {
 			}else{
 				if (that.payType == 'wallet') {
 					let ticketList = []
-					that.perGoodsList.seats.forEach(item => {
+					that.perGoodsList.seats.forEach((item,index) => {
 						let obj = {};
-						obj.seatId = item.seatId;
-						obj.ticketFee = item.ticketfee;
-						obj.ticketPrice = item.settleprice;
+						if(index+1>that.couponArray.length){
+							obj.seatId = item.seatId;
+							obj.ticketFee = item.ticketfee;
+							obj.ticketPrice = item.settleprice;
+						}else{
+							obj.seatId = item.seatId;
+							obj.ticketFee = item.ticketfee;
+							obj.ticketPrice = item.lowestprice;
+						}
 						ticketList.push(obj);
 					});
 					that.blanBuy(ticketList);
 				} else {
 					let ticketList = []
-					that.perGoodsList.seats.forEach((item)=>{
+					that.perGoodsList.seats.forEach((item,index)=>{
 						let obj = {}
-						obj.seatId = item.seatId
-						obj.ticketFee = item.ticketfee
-						obj.ticketPrice = item.standardprice
+						if(index+1>that.couponArray.length){
+							obj.seatId = item.seatId;
+							obj.ticketFee = item.ticketfee;
+							obj.ticketPrice = item.standardprice;
+						}else{
+							obj.seatId = item.seatId;
+							obj.ticketFee = item.ticketfee;
+							obj.ticketPrice = item.lowestprice;
+						}
 						ticketList.push(obj)
 					})
 					that.confirmPay(ticketList);
@@ -402,6 +424,8 @@ export default {
 				that.payType = e.detail.value;
 				that.ticketPaymoney = Number(that.perGoodsList.schedule.standardprice) * Number(that.perGoodsList.seats.length) - that.preferentialAmount;
 			}
+			//切换支付方式重新计算优惠
+			that.calculateBenefits(that.couponArray)
 		},
 		bindPhone(e) {
 			let me = this;
@@ -436,7 +460,7 @@ export default {
 						ticketId: that.perGoodsList.ticketId,
 						ticketPaymoney: that.ticketPaymoney
 					};
-					let pay = new AppPay(that.payType, that.perGoodsList, null, params, 1,confirmParam);
+					let pay = new AppPay(that.payType, that.perGoodsList, null, params, 1,confirmParam,that.couponArray);
 					that.isSubOrder = true;
 					/* that.confirmOrder() */
 				} else {
@@ -518,13 +542,14 @@ export default {
 		confirmOrder(array) {
 			let that = this;
 			let ticketList = [];
-			
+			that.isSubOrder = true;
 			this.$api('cinema.confirmOrder', {
 				lockOrderId: this.perGoodsList.lockOrderId,
 				scheduleId: this.perGoodsList.scheduleId,
 				scheduleKey: this.perGoodsList.scheduleKey,
 				mobile: this.userInfo.phoneNumber,
-				ticketList: array
+				ticketList: array,
+				Ids: that.couponArray
 			}).then(res => {
 				if (res.flag) {
 					uni.hideLoading();
@@ -667,43 +692,47 @@ export default {
 				this.getPre();
 			}
 		},
-		changeCouponGroup(val) {
-			console.log(111111)
-			let that = this;
+		//计算优惠
+		calculateBenefits(val){
+			let that = this
 			let countPrice = 0;
+		val.forEach(item => {
+			that.groupCouponsList.forEach((items, index) => {
+				if (item == items.id) {
+					if (that.payType == 'wallet') {
+						if (items.couponId == '2') {
+							countPrice += Number(that.perGoodsList.schedule.settleprice);
+						} else {
+							countPrice += Number(that.perGoodsList.schedule.settleprice);
+							countPrice = countPrice - Number(that.hallImbalance);
+						}
+					} else {
+						if (items.couponId == '2') {
+							countPrice += Number(that.perGoodsList.schedule.standardprice);
+						} else {
+							countPrice += Number(that.perGoodsList.schedule.standardprice);
+							countPrice = countPrice - Number(that.hallImbalance);
+						}
+					}
+				}
+			});
+		});
+		if (that.payType == 'wallet') {
+			this.ticketPaymoney = Number(that.perGoodsList.schedule.settleprice) * Number(that.perGoodsList.seats.length) - countPrice;
+		} else {
+			this.ticketPaymoney = Number(that.perGoodsList.schedule.standardprice) * Number(that.perGoodsList.seats.length) - countPrice;
+		}
+		this.pickerData.title = '-￥' + countPrice;
+		this.preferentialAmount = countPrice
+		},
+		changeCouponGroup(val) {
+			let that = this;
 			if (val.length > 0) {
 				this.couponArray = val;
-				val.forEach(item => {
-					that.groupCouponsList.forEach((items, index) => {
-						if (item == items.id) {
-							console.log(items);
-							if (that.payType == 'wallet') {
-								if (items.couponId == '2') {
-									countPrice += Number(that.perGoodsList.schedule.settleprice);
-								} else {
-									countPrice += Number(that.perGoodsList.schedule.settleprice);
-									countPrice = countPrice - Number(that.hallImbalance);
-								}
-							} else {
-								if (items.couponId == '2') {
-									countPrice += Number(that.perGoodsList.schedule.standardprice);
-								} else {
-									countPrice += Number(that.perGoodsList.schedule.standardprice);
-									countPrice = countPrice - Number(that.hallImbalance);
-								}
-							}
-						}
-					});
-				});
-				if (that.payType == 'wallet') {
-					this.ticketPaymoney = Number(that.perGoodsList.schedule.settleprice) * Number(that.perGoodsList.seats.length) - countPrice;
-				} else {
-					this.ticketPaymoney = Number(that.perGoodsList.schedule.standardprice) * Number(that.perGoodsList.seats.length) - countPrice;
-				}
-				this.pickerData.title = '-￥' + countPrice;
-				this.preferentialAmount = countPrice
+				that.calculateBenefits(val)
 			} else {
 				this.couponArray = [];
+				that.calculateBenefits(val)
 				this.pickerData.title = '选择优惠券';
 			}
 		},

@@ -1,24 +1,24 @@
 <template>
 	<view class="page_box">
-		 <view class="cu-modal" :class="modalName=='RadioModal'?'show':''" @tap="hideModal">
-			  	<view class="cu-dialog" @tap.stop="">
-			  		<radio-group class="block" @change="RadioChange">
-			  		<view class="cu-list menu text-left">
-			  	<view class="cu-item" v-for="(item,index) in PhoneList" :key="index">
-			  	<label class="flex justify-between align-center flex-sub">
-			  	<view class="flex-sub" @tap="CallPhone(item.Phone)">{{item.Name}}:{{item.Phone}}</view>
-			  		</label>
-			  			</view>
-			  		</view>
-			  	</radio-group>
-			  </view>
-		  </view>
+		<view class="cu-modal" :class="modalName == 'RadioModal' ? 'show' : ''" @tap="hideModal">
+			<view class="cu-dialog" @tap.stop="">
+				<radio-group class="block" @change="RadioChange">
+					<view class="cu-list menu text-left">
+						<view class="cu-item" v-for="(item, index) in PhoneList" :key="index">
+							<label class="flex justify-between align-center flex-sub">
+								<view class="flex-sub" @tap="CallPhone(item.Phone)">{{ item.Name }}:{{ item.Phone }}</view>
+							</label>
+						</view>
+					</view>
+				</radio-group>
+			</view>
+		</view>
 		<view class="head_box">
 			<view class="ci-header">
 				<view class="header-info">
-					<view class="text-bold text-xxl">{{cinemaName}}</view>
+					<view class="text-bold text-xxl">{{ cinemaName }}</view>
 					<view class="info-local text-black padding-xs">
-						<view class="local-adr text-cut">{{cinemaAddress}}</view>
+						<view class="local-adr text-cut">{{ cinemaAddress }}</view>
 						<!-- <view>· 0.1km</view> -->
 					</view>
 					<!-- <view class="text-gray">好评度 88% {{detail.keysWord.toString() ||""}}</view> -->
@@ -26,10 +26,9 @@
 				<view class="locate-logo" @tap="showModal" data-target="RadioModal">
 					<image class="logo-img" src="https://i.postimg.cc/YCNMFFBt/customer-service-96px-1187377-easyicon-net.png" mode="aspectFill"></image>
 					<view>影院客服</view>
-					</view>
+				</view>
 			</view>
-			<view class="backgroud" :style="'background:url('+img+')'">
-					</view>
+			<view class="backgroud" :style="'background:url(' + img + ')'"></view>
 			<!-- <swiper class="card-swiper" :current="activeItem" :class="dotStyle ? 'square-dot' : 'round-dot'" :circular="true" duration="500" @change="cardSwiper">
 				<swiper-item v-for="(item, cindex) in swiperList" :key="cindex" :class="cardCur == cindex ? 'cur' : ''" style="padding: 15rpx 0 30rpx">
 					<view class="swiper-item">
@@ -51,17 +50,35 @@
 					</view>
 				</swiper-item>
 			</swiper> -->
-			<swiper class="card-swiper" :current="activeItem" previous-margin="210rpx" :class="dotStyle ? 'square-dot' : 'round-dot'" :circular="false" duration="300" acceleration=true @change="cardSwiper">
-				<swiper-item v-for="(item, cindex) in swiperList" :key="cindex" :class="cardCur == cindex ? 'cur' : ''" style="padding: 15rpx 0 30rpx">
+			<swiper
+				class="card-swiper"
+				:current="activeItem"
+				previous-margin="210rpx"
+				:class="dotStyle ? 'square-dot' : 'round-dot'"
+				:circular="false"
+				duration="300"
+				acceleration="true"
+				@change="cardSwiper"
+			>
+				<swiper-item
+					v-for="(item, cindex) in swiperList"
+					@tap.stop="onClickSwiper(cindex)"
+					:key="cindex"
+					:class="cardCur == cindex ? 'cur' : ''"
+					style="padding: 15rpx 0 30rpx"
+				>
 					<view class="swiper-item">
-						<view class="tag text-white" v-if="item.dimensiona">{{item.dimensional}}</view>
+						<view class="tag text-white" v-if="item.dimensiona">{{ item.dimensional }}</view>
 						<image class="swi-image" :src="item.filmPhoto" mode="aspectFill"></image>
 					</view>
 				</swiper-item>
 			</swiper>
 			<view class="movie-info" @tap="jump('/pages/cinema/detail/index', { filmId: cardInfo.filmId })">
-				<view class="info-name text-bold text-xxl">{{cardInfo.filmName}}</view>
-				<view class="info-detaild text-gray">{{cardInfo.filmLong}} 分钟 | {{cardInfo.filmSortid}} | 导演:{{cardInfo.filmDirector}}  <text class='cuIcon-right'></text></view>
+				<view class="info-name text-bold text-xxl">{{ cardInfo.filmName }}</view>
+				<view class="info-detaild text-gray">
+					{{ cardInfo.filmLong }} 分钟 | {{ cardInfo.filmSortid }} | 导演:{{ cardInfo.filmDirector }}
+					<text class="cuIcon-right"></text>
+				</view>
 			</view>
 			<!-- <view class="backgroud" :style="'background:url('+img+')'">
 					</view>
@@ -74,7 +91,7 @@
 						<view class="info-name text-bold text-xl">{{cardInfo.filmName}}</view>
 						<view class="info-detaild text-grey">{{cardInfo.filmLong}} 分钟 | {{cardInfo.filmSortid}} | 导演:{{cardInfo.filmDirector}}<text class='cuIcon-right'></text></view>
 					</view> -->
-				<!-- <fz-gallery @clickSwiper="cardSwiper" ref="cardSwiper" :swiperList="swiperList" :cardInfo="cardInfo" :img="img"></fz-gallery> -->
+			<!-- <fz-gallery @clickSwiper="cardSwiper" ref="cardSwiper" :swiperList="swiperList" :cardInfo="cardInfo" :img="img"></fz-gallery> -->
 			<sh-date @subClickFtn="fatherMethod"></sh-date>
 		</view>
 		<scroll-view :style="{ height: headHeight + 'px' }" class="scroll-box" scroll-y enable-back-to-top scroll-with-animation @scrolltolower="loadMore">
@@ -120,14 +137,14 @@ export default {
 	},
 	data() {
 		return {
-			cardInfo:{
-				filmDirector:'',
-				filmId:'',
-				filmLong:'',
-				filmName:'',
-				filmSortid:'',
+			cardInfo: {
+				filmDirector: '',
+				filmId: '',
+				filmLong: '',
+				filmName: '',
+				filmSortid: ''
 			},
-				  img: '',
+			img: '',
 			cardCur: 0,
 			activeItem: 0,
 			Msg: '0',
@@ -135,20 +152,21 @@ export default {
 			cinemaAddress: '',
 			circuit: '',
 			cinemaList: [],
-			modalName:null,
+			modalName: null,
 			dotStyle: false,
 			towerStart: 0,
 			direction: '',
-			PhoneList: [{
-				Name:'客服电话(1)',
-				Phone: '182-8809-0152'
-			},{
-				Name:'客服电话(2)',
-				Phone: '189-8814-9921'
-			}],
-			swiperList: [
-				
+			PhoneList: [
+				{
+					Name: '客服电话(1)',
+					Phone: '182-8809-0152'
+				},
+				{
+					Name: '客服电话(2)',
+					Phone: '189-8814-9921'
+				}
 			],
+			swiperList: [],
 			emptyData: {
 				img: '/static/imgs/empty/empty_goods.png',
 				tip: '当前选择日期,没有可观影影片,选择其他日期试试~'
@@ -162,7 +180,6 @@ export default {
 				keywords: '',
 				page: 1
 			},
-			
 			isLoading: false, //loading和空白页。
 			loadStatus: '', //loading,over
 			lastPage: 1
@@ -177,23 +194,23 @@ export default {
 		}
 	},
 	mounted() {
-		this.getScrHeight()
+		this.getScrHeight();
 	},
 	onShow() {
-		let that = this
-		uni.$once('escUpload',function(data){
-			that.listParams.filmId = data.filmId
+		let that = this;
+		uni.$once('escUpload', function(data) {
+			that.listParams.filmId = data.filmId;
 			that.getGoodsList(that.listParams);
-		})
+		});
 	},
 	onLoad() {
 		this.setimgs();
 		this.listParams.showDatetime = tools.getDayList('', 0).day;
 		if (this.$Route.query.filmId) {
 			this.listParams.filmId = this.$Route.query.filmId;
-		} 
+		}
 		if (this.$Route.query) {
-			this.detail = this.$Route.query
+			this.detail = this.$Route.query;
 			this.listParams.cinemaId = this.$Route.query.cinemaId;
 		}
 		if (this.$Route.query) {
@@ -203,19 +220,23 @@ export default {
 			this.listParams.keywords = this.$Route.query.keywords;
 			this.searchVal = this.$Route.query.keywords;
 		}
-		this.getCinemaList()
+		this.getCinemaList();
 	},
 	methods: {
+		onClickSwiper(cindex) {
+			this.cardCur = cindex;
+			this.activeItem = cindex;
+		},
 		cardSwiper(e) {
-			if(this.swiperList.length>0){
-				this.cardInfo={
-					filmDirector:this.swiperList[e.detail.current].filmDirector,
-					filmLong:this.swiperList[e.detail.current].filmLong,
-					filmId:this.swiperList[e.detail.current].filmId,
-					filmName:this.swiperList[e.detail.current].filmName,
-					filmSortid:this.swiperList[e.detail.current].filmSortid,
-				},
-				this.circuit = this.swiperList[e.detail.current].filmName;
+			if (this.swiperList.length > 0) {
+				(this.cardInfo = {
+					filmDirector: this.swiperList[e.detail.current].filmDirector,
+					filmLong: this.swiperList[e.detail.current].filmLong,
+					filmId: this.swiperList[e.detail.current].filmId,
+					filmName: this.swiperList[e.detail.current].filmName,
+					filmSortid: this.swiperList[e.detail.current].filmSortid
+				}),
+					(this.circuit = this.swiperList[e.detail.current].filmName);
 				this.listParams.filmId = this.swiperList[e.detail.current].filmId;
 				this.img = this.swiperList[e.detail.current].filmPhoto;
 				this.cardCur = e.detail.current;
@@ -230,26 +251,26 @@ export default {
 		},
 		//第二部分  模态框的显示与隐藏
 		showModal(e) {
-			this.modalName = e.currentTarget.dataset.target
+			this.modalName = e.currentTarget.dataset.target;
 		},
 		hideModal(e) {
-			this.modalName = null
+			this.modalName = null;
 		},
 		/*拨打电话*/
-		CallPhone(e){
-		    uni.makePhoneCall({
+		CallPhone(e) {
+			uni.makePhoneCall({
 				phoneNumber: e
 			});
 		},
 		getScrHeight() {
-			let me = this
+			let me = this;
 			uni.getSystemInfo({
 				success: function(res) {
 					// res - 各种参数
 					let info = uni.createSelectorQuery().select('.head_box');
 					info.boundingClientRect(function(data) {
 						//data - 各种参数
-						me.headHeight = res.windowHeight - data.height -10;
+						me.headHeight = res.windowHeight - data.height - 10;
 					}).exec();
 				}
 			});
@@ -261,7 +282,7 @@ export default {
 				this.getGoodsList();
 			}
 		},
-	
+
 		setimgs() {
 			var imgs = [];
 			for (let i in this.testimgs) {
@@ -293,46 +314,46 @@ export default {
 		// 获取影城
 		getCinemaList() {
 			let that = this;
-			that.$api('cinema.locationList', {cinemalinkId: that.listParams.cinemalinkId, filmId: that.listParams.filmId }).then(res => {
+			that.$api('cinema.locationList', { cinemalinkId: that.listParams.cinemalinkId, filmId: that.listParams.filmId }).then(res => {
 				if (res.flag) {
 					that.cinemaList = res.data;
 					that.cinemaName = res.data[0].cinemaName;
 					that.cinemaAddress = res.data[0].cinemaAddress;
-					that.listParams.cinemalinkId = res.data[0].cinemalinkId
+					that.listParams.cinemalinkId = res.data[0].cinemalinkId;
 					that.getMoviesList();
 				}
 			});
-		},// 获取影城影片
+		}, // 获取影城影片
 		getMoviesList() {
 			let that = this;
-			that.$api('cinema.locationMovies', {cinemalinkId: that.listParams.cinemalinkId,  }).then(res => {
+			that.$api('cinema.locationMovies', { cinemalinkId: that.listParams.cinemalinkId }).then(res => {
 				if (res.flag) {
 					that.swiperList = res.data;
 					if (that.$Route.query.filmId == null) {
 						that.listParams.filmId = that.swiperList[0].filmId;
-						this.cardInfo={
-							filmDirector:that.swiperList[0].filmDirector,
-							filmLong:that.swiperList[0].filmLong,
-							filmId:that.swiperList[0].filmId,
-							filmName:that.swiperList[0].filmName,
-							filmSortid:that.swiperList[0].filmSortid,
-						}
+						this.cardInfo = {
+							filmDirector: that.swiperList[0].filmDirector,
+							filmLong: that.swiperList[0].filmLong,
+							filmId: that.swiperList[0].filmId,
+							filmName: that.swiperList[0].filmName,
+							filmSortid: that.swiperList[0].filmSortid
+						};
 						that.img = that.swiperList[0].filmPhoto;
-					}else{
-						that.swiperList.forEach((item,index)=>{
-							if(that.$Route.query.filmId == item.filmId){
-								that.cardCur =index
-								that.activeItem =index
-								that.cardInfo={
-									filmDirector:item.filmDirector,
-									filmLong:item.filmLong,
-									filmId:item.filmId,
-									filmName:item.filmName,
-									filmSortid:item.filmSortid,
-								}
+					} else {
+						that.swiperList.forEach((item, index) => {
+							if (that.$Route.query.filmId == item.filmId) {
+								that.cardCur = index;
+								that.activeItem = index;
+								that.cardInfo = {
+									filmDirector: item.filmDirector,
+									filmLong: item.filmLong,
+									filmId: item.filmId,
+									filmName: item.filmName,
+									filmSortid: item.filmSortid
+								};
 								that.img = item.filmPhoto;
 							}
-						})
+						});
 					}
 					that.getGoodsList();
 				}
@@ -355,7 +376,7 @@ export default {
 					}
 				}
 			});
-		},
+		}
 		/* // towerSwiper触摸开始
 		TowerStart(e) {
 			this.towerStart = e.touches[0].pageX;
@@ -397,50 +418,49 @@ export default {
 </script>
 
 <style lang="scss">
-	.backgroud{
-		 width: 750rpx;
-		 height: 280rpx;
-		 background-size: 200% 200%;
-		 background-position: 50% 50%;
-		 background-repeat: no-repeat;
-		 -webkit-filter:blur(40rpx);
-		 position:absolute;
-		 top: 160rpx;
-		 left: 0;
-	 }
-	 .movie-info{
-	 	width: 100%;
-	 	height: 100rpx;
-	 	text-align: center;
-	 	.info-name{
-	 		line-height: 60rpx;
-	 	}
-	 	.info-detail{
-	 		
-	 	}
-	 }
-	 .swi-image{
-		 border: 1px solid #acacac;
-		 border-radius: 10rpx;
-	 }
-	 .tag {
-			position: absolute;
-			left: 10rpx;
-			width: 100rpx;
-			height: 40rpx;
-			top: 10rpx;
-			z-index: 22;
-			line-height: 40rpx;
-			background: linear-gradient(132deg, rgba(28, 28, 28, 1), rgba(54, 54, 54, 1), rgba(236, 190, 96, 1));
-			border-radius: 0px 18rpx 18rpx 0px;
-			padding: 0 10rpx;
-			-webkit-transform: scale(0.8);
-			font-family: PingFang SC;
-			color: white;
-		}
+.backgroud {
+	width: 750rpx;
+	height: 280rpx;
+	background-size: 200% 200%;
+	background-position: 50% 50%;
+	background-repeat: no-repeat;
+	-webkit-filter: blur(0rpx);
+	position: absolute;
+	top: 160rpx;
+	left: 0;
+}
+.movie-info {
+	width: 100%;
+	height: 100rpx;
+	text-align: center;
+	.info-name {
+		line-height: 60rpx;
+	}
+	.info-detail {
+	}
+}
+.swi-image {
+	border: 1px solid #acacac;
+	border-radius: 10rpx;
+}
+.tag {
+	position: absolute;
+	left: 10rpx;
+	width: 100rpx;
+	height: 40rpx;
+	top: 10rpx;
+	z-index: 22;
+	line-height: 40rpx;
+	background: linear-gradient(132deg, rgba(28, 28, 28, 1), rgba(54, 54, 54, 1), rgba(236, 190, 96, 1));
+	border-radius: 0px 18rpx 18rpx 0px;
+	padding: 0 10rpx;
+	-webkit-transform: scale(0.8);
+	font-family: PingFang SC;
+	color: white;
+}
 /* 指示点 */
 .wx-swiper-dots .wx-swiper-dot {
-  display: none;
+	display: none;
 }
 .card-swiper {
 	height: 280upx !important;
@@ -551,11 +571,11 @@ export default {
 			}
 		}
 		.locate-logo {
-			border-radius:0 10rpx 0 0;
-			background-color: #8B4513;
+			border-radius: 0 10rpx 0 0;
+			background-color: #8b4513;
 			padding-top: 10rpx;
 			width: 150rpx;
-			color: #FFFFFF;
+			color: #ffffff;
 			text-align: center;
 			.logo-img {
 				top: 5rpx;
@@ -586,5 +606,4 @@ export default {
 		margin-bottom: 20rpx;
 	}
 }
-
 </style>

@@ -6,7 +6,7 @@
 		</label> -->
 		<checkbox-group class="check-box" @change="selCoupon">
 			<label class="radio-item x-bc" v-if="pickerData.length > 0" v-for="(radio, index) in pickerData" :key="index">
-				<text class="coupon-title">{{ radio.couponName }}</text>
+				<text class="coupon-title">{{ radio.couponName }}<text class="text-red padding-left">(需补{{ radio.couponId == '2'? '0': hallImbalance}}元)</text></text>
 				<checkbox
 					class="orange coupon-radio"
 					:value="radio.id.toString()"
@@ -28,7 +28,6 @@ export default {
 		return {
 			isLoading: false, //loading和空白页。
 			radioId: 0,
-			checkArray: [],
 			emptyData: {
 				img: '/static/imgs/empty/empty_goods.png',
 				tip: '抱歉，当前没有可用抵用券~'
@@ -40,18 +39,37 @@ export default {
 		pickerData: {
 			type: Array,
 			default: []
+		},checkArray: {
+			type: Array,
+			default: []
 		},
 		hallLength: {
 			type: Number,
 			default: 0
+		},
+		hallImbalance: {
+			type: Number,
+			default: 0
 		}
 	},
+	mounted() {
+		console.log(123)
+	},
+	created() {
+		this.pickerData.forEach((element, index) => {
+			// 不包含选中项时禁用组件
+			if (this.checkArray.indexOf(element.id.toString()) == -1) {
+				element.disabled = true;
+			}
+		});
+	},
 	computed: {},
+	
 	methods: {
 		selCoupon(e) {
 			let that = this;
 			// 判断选中项长度是否超过指定长度
-			if (e.detail.value.length > that.hallLength) {
+			if (that.hallLength <= e.detail.value.length) {
 				// 取出最后一位选中项的值
 				// 禁用其余复选框
 				const checked = e.detail.value;
@@ -61,20 +79,22 @@ export default {
 						element.disabled = true;
 					}
 				});
-				/*const lastChecked = e.detail.value.pop();
-				 // 获取所有复选框标签的dom的集合
-				const labels = document.getElementsByClassName('uni-label-pointer');
-				// 判断选中项的标签
-				labels.forEach(element => {
-					if (element.innerText == lastChecked) {
-						// 获取到选中项标签中关闭选中样式的集合
-						const lastInput = element.getElementsByClassName('uni-checkbox-input');
-						// 定时器延时清除,实时清除的话,dom元素还未生成
-							that.$nextTick(()=>{
-								lastInput[0].classList.remove('uni-checkbox-input-checked');
-							})
-					}
-				}); */
+				if(e.detail.value.length > that.hallLength){
+					const lastChecked = e.detail.value.pop();
+					 // 获取所有复选框标签的dom的集合
+					const labels = document.getElementsByClassName('uni-label-pointer');
+					// 判断选中项的标签
+					labels.forEach(element => {
+						if (element.innerText == lastChecked) {
+							// 获取到选中项标签中关闭选中样式的集合
+							const lastInput = element.getElementsByClassName('uni-checkbox-input');
+							// 定时器延时清除,实时清除的话,dom元素还未生成
+								that.$nextTick(()=>{
+									lastInput[0].classList.remove('uni-checkbox-input-checked');
+								})
+						}
+					});
+				}
 				// 提示用户
 				that.$tools.toast('最多选择' + that.hallLength + '张抵用券');
 			} else {
@@ -83,8 +103,8 @@ export default {
 					element.disabled = false;
 				});
 			}
-			that.checkArray = e.detail.value;
-			that.$emit('changeCouponGroup', that.checkArray);
+			console.log(e.detail.value)
+			that.$emit('changeCouponGroup', e.detail.value);
 			/* if (that.checkId.length > 0) {
 				if (that.checkId.length < that.hallLength) {
 					if (that.checkId.indexOf(index) == -1) {
