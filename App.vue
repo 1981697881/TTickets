@@ -158,8 +158,6 @@ export default {
 			},
 		]
 		//获取坐标
-
-		console.log(1);
 		if (options.query.mode === 'save') {
 			//截图模式
 			uni.setStorageSync('screenShot', true);

@@ -26,7 +26,8 @@ export default {
 	data() {
 		return {
 			goodsList: [],
-			swiperCurrent: 0
+			swiperCurrent: 0,
+			platform: uni.getStorageSync('platform'),
 		};
 	},
 	props: {
@@ -41,7 +42,8 @@ export default {
 	},
 	computed:{
 		endDateTime:function () {
-		  return this.$tools.dateFormat('HH:MM', new Date(new Date(this.detail.showDatetime).getTime()+Number(this.detail.duration*60000)))
+		  let that = this
+		  return that.$tools.dateFormat('HH:MM', new Date(Date.parse(that.detail.showDatetime.replace(/-/g,'/'))+Number(that.detail.duration*60000))) 
 		}
 	},
 	created() {

@@ -543,6 +543,7 @@ export default {
 			let that = this;
 			let ticketList = [];
 			that.isSubOrder = true;
+			uni.$off('escLoack');
 			this.$api('cinema.confirmOrder', {
 				lockOrderId: this.perGoodsList.lockOrderId,
 				scheduleId: this.perGoodsList.scheduleId,
@@ -552,8 +553,8 @@ export default {
 				Ids: that.couponArray
 			}).then(res => {
 				if (res.flag) {
+					that.$isPreviewApi =  false
 					uni.hideLoading();
-					uni.$off('escLoack');
 					/* uni.showToast({
 						icon: 'none',
 						title: res.msg

@@ -120,7 +120,8 @@ export default {
 	position: relative;
 	.goods-img {
 		height: 180rpx;
-		width: 180rpx;
+		width: 200rpx;
+		box-shadow: 2px 2px 2px 2px #CCCCCC;
 		background-color: #ccc;
 		margin-right: 25rpx;
 	}

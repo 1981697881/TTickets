@@ -128,7 +128,6 @@ const actions = {
 				})
 				res.data.home[2].content.list=data
 			})
-			console.log(res)
 			uni.setStorageSync('templateData', res.data);
 			commit('TEMPLATE_DATA', res.data);
 			if(res.code == 0){

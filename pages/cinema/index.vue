@@ -424,7 +424,7 @@ export default {
 	background-size: 200% 200%;
 	background-position: 50% 50%;
 	background-repeat: no-repeat;
-	-webkit-filter: blur(0rpx);
+	-webkit-filter: blur(40rpx);
 	position: absolute;
 	top: 160rpx;
 	left: 0;
@@ -554,6 +554,7 @@ export default {
 	position: -webkit-sticky;
 	position: sticky;
 	top: 0;
+	overflow: hidden;
 	z-index: 998;
 	background: linear-gradient(#060210, #fff 20%);
 	.ci-header {
