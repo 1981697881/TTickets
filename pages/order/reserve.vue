@@ -4,7 +4,7 @@
 			<!-- 确认订单商品卡片 -->
 			<view class="goods-list">
 				<view class="goods-card">
-					<app-mini-card @overTime="escOrder" :detail="perGoodsList" :type="'sku'">
+					<app-mini-card @overTime="escOrder" ref="appMini" :detail="perGoodsList" :type="'sku'">
 						<block slot="goodsBottom">
 							<view class="goods-price">
 								<view class="goods-hald">
@@ -151,6 +151,7 @@ export default {
 			showPicker: false,
 			showGroup: false,
 			isSubOrder: false,
+			ifCdkeyPay: false,
 			hallImbalance: 0,
 			hallLength: 0,
 			cashPay: true,
@@ -238,6 +239,7 @@ export default {
 	onHide() {
 		console.log('页面隐藏');
 		let that = this;
+		that.$refs.appMini.clearTime()
 		that.isSubOrder = true;
 		let seats = [];
 		that.perGoodsList.seats.forEach(item => {
@@ -257,6 +259,7 @@ export default {
 	onUnload(options) {
 		let that = this;
 		console.log('页面关闭');
+		that.$refs.appMini.clearTime()
 		that.isSubOrder = true;
 		let seats = [];
 		that.perGoodsList.seats.forEach(item => {
@@ -346,66 +349,78 @@ export default {
 		},
 		combuy() {
 			let that = this
-			if(that.ticketPaymoney == 0 && this.couponArray.length>0){
-					let ticketList = []
-					that.perGoodsList.seats.forEach(item => {
-						let obj = {};
-						obj.seatId = item.seatId;
-						obj.ticketFee = item.ticketfee;
-						obj.ticketPrice = item.lowestprice;
-						ticketList.push(obj);
-					});
-					if(that.ticketPaymoney == 0){
-						if (that.userInfo.phoneNumber) {
-							that.confirmOrder(ticketList);
-						} else {
-							uni.showToast({
-								icon: 'none',
-								title: '手机号码为必填项'
-							});
+			if(new Date().getTime()<new Date(Date.parse(that.perGoodsList.schedule.showDatetime.replace(/-/g,'/'))).getTime()){
+				if(that.ticketPaymoney == 0 && this.couponArray.length>0){
+						let ticketList = []
+						that.perGoodsList.seats.forEach(item => {
+							let obj = {};
+							obj.seatId = item.seatId;
+							obj.ticketFee = item.ticketfee;
+							obj.ticketPrice = item.lowestprice;
+							ticketList.push(obj);
+						});
+						if(that.ticketPaymoney == 0){
+							that.ifCdkeyPay = true
+							if (that.userInfo.phoneNumber) {
+								that.isSubOrder = true;
+								that.confirmOrder(ticketList);
+							} else {
+								uni.showToast({
+									icon: 'none',
+									title: '手机号码为必填项'
+								});
+							}
+						}else{
+							if (that.payType == 'wallet') {
+								that.blanBuy(ticketList);
+							} else {
+								that.confirmPay(ticketList);
+							}
 						}
-					}else{
-						if (that.payType == 'wallet') {
-							that.blanBuy(ticketList);
-						} else {
-							that.confirmPay(ticketList);
-						}
+				}else{
+					that.ifCdkeyPay = false
+					if (that.payType == 'wallet') {
+						let ticketList = []
+						that.perGoodsList.seats.forEach((item,index) => {
+							let obj = {};
+							if(index+1>that.couponArray.length){
+								obj.seatId = item.seatId;
+								obj.ticketFee = item.ticketfee;
+								obj.ticketPrice = item.settleprice;
+							}else{
+								obj.seatId = item.seatId;
+								obj.ticketFee = item.ticketfee;
+								obj.ticketPrice = item.lowestprice;
+							}
+							ticketList.push(obj);
+						});
+						that.blanBuy(ticketList);
+					} else {
+						let ticketList = []
+						that.perGoodsList.seats.forEach((item,index)=>{
+							let obj = {}
+							if(index+1>that.couponArray.length){
+								obj.seatId = item.seatId;
+								obj.ticketFee = item.ticketfee;
+								obj.ticketPrice = item.standardprice;
+							}else{
+								obj.seatId = item.seatId;
+								obj.ticketFee = item.ticketfee;
+								obj.ticketPrice = item.lowestprice;
+							}
+							ticketList.push(obj)
+						})
+						that.confirmPay(ticketList);
 					}
-			}else{
-				if (that.payType == 'wallet') {
-					let ticketList = []
-					that.perGoodsList.seats.forEach((item,index) => {
-						let obj = {};
-						if(index+1>that.couponArray.length){
-							obj.seatId = item.seatId;
-							obj.ticketFee = item.ticketfee;
-							obj.ticketPrice = item.settleprice;
-						}else{
-							obj.seatId = item.seatId;
-							obj.ticketFee = item.ticketfee;
-							obj.ticketPrice = item.lowestprice;
-						}
-						ticketList.push(obj);
-					});
-					that.blanBuy(ticketList);
-				} else {
-					let ticketList = []
-					that.perGoodsList.seats.forEach((item,index)=>{
-						let obj = {}
-						if(index+1>that.couponArray.length){
-							obj.seatId = item.seatId;
-							obj.ticketFee = item.ticketfee;
-							obj.ticketPrice = item.standardprice;
-						}else{
-							obj.seatId = item.seatId;
-							obj.ticketFee = item.ticketfee;
-							obj.ticketPrice = item.lowestprice;
-						}
-						ticketList.push(obj)
-					})
-					that.confirmPay(ticketList);
 				}
+			}else{
+				that.isSubOrder = true;
+				uni.showToast({
+					icon: 'none',
+					title: '电影已开场，无法再购票'
+				});
 			}
+			
 		},
 		selPay(e) {
 			let that = this;
@@ -550,6 +565,7 @@ export default {
 				scheduleKey: this.perGoodsList.scheduleKey,
 				mobile: this.userInfo.phoneNumber,
 				ticketList: array,
+				ifCdkeyPay: that.ifCdkeyPay,
 				Ids: that.couponArray
 			}).then(res => {
 				if (res.flag) {

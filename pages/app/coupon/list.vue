@@ -74,10 +74,10 @@ export default {
 				this.listParams.couponType = 1
 				this.listParams.status = 0
 			}else if(this.stateCurrent==2){
-				this.listParams.couponType = null
+				delete this.listParams.couponType
 				this.listParams.status = 1
 			}else{
-				this.listParams.couponType = null
+				delete this.listParams.couponType
 				this.listParams.status = 2
 			}	
 			this.getCouponList();

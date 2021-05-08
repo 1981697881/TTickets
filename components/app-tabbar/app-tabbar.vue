@@ -14,7 +14,7 @@
 				</view>
 
 				<view
-					class="tabbar-text"
+					class="tabbar-text text-bold"
 					v-if="tabbarData.style == 1 || tabbarData.style == 3"
 					:style="{ color: currentPath == tab.path ? tabbarData.activeColor : tabbarData.color }"
 				>
@@ -93,7 +93,7 @@ export default {
 
 <style lang="scss">
 .app-tabbar-wrap {
-	height: calc(100rpx + env(safe-area-inset-bottom) / 2);
+	height: calc(120rpx + env(safe-area-inset-bottom) / 2);
 	padding-bottom: calc(env(safe-area-inset-bottom) / 2);
 	position: relative;
 	width: 100%;
@@ -104,7 +104,7 @@ export default {
 		display: flex;
 		align-items: center;
 		width: 100%;
-		height: calc(100rpx + env(safe-area-inset-bottom) / 2);
+		height: calc(120rpx + env(safe-area-inset-bottom) / 2);
 		border-top: 1rpx solid #eeeeee;
 		background-color: #fff;
 		z-index: 998;
@@ -128,12 +128,13 @@ export default {
 			}
 
 			.tabbar-icon {
-				width: 50rpx;
-				height: 50rpx;
+				width: 55rpx;
+				height: 55rpx;
+				
 			}
 
 			.tabbar-text {
-				font-size: 20rpx;
+				font-size: 35rpx;
 			}
 		}
 	}

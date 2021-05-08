@@ -49,6 +49,8 @@ export default {
 		type: ''
 	},
 	mounted() {
+		clearInterval(timer);
+		timer = null
 		this.countDown();
 		this.initDate(this.detail.schedule.showDatetime);
 	},
@@ -56,11 +58,14 @@ export default {
 		
 	},
 	onHide() {
-		clearInterval(timer);
-		this.$emit('overTime')
+		
 	},
 	computed: {},
 	methods: {
+		clearTime(){
+			clearInterval(timer);
+			timer = null
+		},
 		initDate(dval) {
 			let that = this
 			let date =new Date()
@@ -97,7 +102,7 @@ export default {
 		countDown() {
 			let that = this;
 			let maxtime = 10 * 30;
-			let timer = setInterval(() => {
+			timer = setInterval(() => {
 				if (maxtime >= 0) {
 					let minutes = Math.floor(maxtime / 60);
 					let seconds = Math.floor(maxtime % 60);
@@ -105,6 +110,8 @@ export default {
 					--maxtime;
 				} else {
 					clearInterval(timer);
+					timer = null
+					console.log('订单过期')
 					that.timeText = '订单已过期!';
 					that.isPast = false;
 					 that.$emit('overTime')

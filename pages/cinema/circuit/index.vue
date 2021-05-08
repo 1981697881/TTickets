@@ -3,19 +3,22 @@
 		<view class="head_box">
 			<image class="logo-img" src="http://139.159.136.187:50080/uploadFiles/image/32a545c356d8054f42612132a3535d31.jpeg" mode="scaleToFill"></image>
 		</view>
-		<scroll-view :style="{ height: headHeight + 'px' }" class="scroll-box" scroll-y enable-back-to-top scroll-with-animation @scrolltolower="loadMore">
-			<view class="content-box">
-				<view class="goods-list x-f">
-					<view class="goods-item" v-for="goods in goodsList" :key="goods.filmId"><fz-unmovie-list :detail="goods" :isTag="true"></fz-unmovie-list></view>
+		<view class="content_box">
+			<scroll-view :style="{ height: headHeight + 'px' }" class="scroll-box" scroll-y enable-back-to-top scroll-with-animation @scrolltolower="loadMore">
+				<view class="content-box">
+					<view class="goods-list x-f">
+						<view class="goods-item" v-for="goods in goodsList" :key="goods.filmId"><fz-unmovie-list :detail="goods" :isTag="true"></fz-unmovie-list></view>
+					</view>
+					<!-- 空白页 -->
+					<app-empty :isFixed="false" v-if="!goodsList.length && !isLoading" :emptyData="emptyData"></app-empty>
+					<!-- 加载更多 -->
+					<view v-if="goodsList.length" class="cu-load text-gray" :class="loadStatus"></view>
+					<!-- load -->
+					<app-load v-model="isLoading"></app-load>
 				</view>
-				<!-- 空白页 -->
-				<app-empty :isFixed="false" v-if="!goodsList.length && !isLoading" :emptyData="emptyData"></app-empty>
-				<!-- 加载更多 -->
-				<view v-if="goodsList.length" class="cu-load text-gray" :class="loadStatus"></view>
-				<!-- load -->
-				<app-load v-model="isLoading"></app-load>
-			</view>
-		</scroll-view>
+			</scroll-view>
+		</view>
+		<view class="foot_box"></view>
 		<!-- 自定义底部导航 -->
 		<app-tabbar></app-tabbar>
 		<!-- 关注弹窗 -->
@@ -111,7 +114,7 @@ export default {
 					let info = uni.createSelectorQuery().select('.head_box');
 					info.boundingClientRect(function(data) {
 						//data - 各种参数
-						me.headHeight = res.windowHeight - data.height -50;
+						me.headHeight = res.windowHeight - data.height -30;
 					}).exec();
 				}
 			});
@@ -140,7 +143,14 @@ export default {
 			let that = this;
 			that.$api('cinema.locationMovies', {cinemalinkId: that.listParams.cinemalinkId,  }).then(res => {
 				if (res.flag) {
+					that.isLoading = false;
 					that.goodsList = res.data;
+					that.lastPage = res.data.last_page;
+					if (that.listParams.page < res.data.last_page) {
+						that.loadStatus = '';
+					} else {
+						that.loadStatus = 'over';
+					}
 				}
 			});
 		},	

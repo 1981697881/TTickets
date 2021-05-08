@@ -220,8 +220,8 @@
 			"name": "底部导航",
 			"content": {
 				"style": 1,
-				"color": "#000",
-				"activeColor": "#999",
+				"color": "#999",
+				"activeColor": "#999000",
 				"list": [{
 					"name": "电影",
 					"image": "https://i.postimg.cc/xTWwc9Wm/20210419143757.png",

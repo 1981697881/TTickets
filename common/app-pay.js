@@ -219,7 +219,8 @@ export default class AppPay {
 							scheduleKey: that.order.scheduleKey,
 							mobile: store.state.user.userInfo.phoneNumber,
 							ticketList: that.confirmParam,
-							Ids: that.couponArray
+							Ids: that.couponArray,
+							ifCdkeyPay: false,
 						}).then(rescin => {
 							if(rescin.flag){
 								Vue.prototype.$isPreviewApi = false
