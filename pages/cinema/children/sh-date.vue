@@ -24,36 +24,48 @@ export default {
 			this.TabCur = e.currentTarget.dataset.id;
 			this.$emit('subClickFtn',{day: this.detail[this.TabCur].day})
 			this.scrollLeft = (e.currentTarget.dataset.id - 1) * 60
+		},getDateList(){
+			let date =new Date()
+			let that = this
+			let year=date.getFullYear();
+			let month=date.getMonth()+1;
+			/* let lastDay=new Date(year,month,0).getDate() */
+			let lastDay=15
+			let arr=[]
+			for(let i = 0;i<lastDay;i++){
+				let obj = tools.getDayList('',i)
+				that.movieDates.forEach((item,index)=>{
+					if(item == obj.day){
+						if(i==0){
+							obj.week = '今天'
+							arr.push(obj)
+						}else if(i==1){
+							obj.week = '明天'
+							arr.push(obj)
+						}else if(i==2){
+							obj.week = '后天'
+							arr.push(obj)
+						}else{
+							arr.push(obj)
+						}
+					}
+					
+				})
+			}
+			this.detail = arr
 		}
 	},
 	props: {
-	
+		movieDates: {
+			type: Array,
+			default: []
+		}
 	},
 	created(){ 
-		let date =new Date()
-		let year=date.getFullYear();
-		let month=date.getMonth()+1;
-		/* let lastDay=new Date(year,month,0).getDate() */
-		let lastDay=7
-		let arr=[]
-		for(let i = 0;i<lastDay;i++){
-			let obj = tools.getDayList('',i)
-			if(i==0){
-				obj.week = '今天'
-				arr.push(obj)
-			}else if(i==1){
-				obj.week = '明天'
-				arr.push(obj)
-			}else if(i==2){
-				obj.week = '后天'
-				arr.push(obj)
-			}else{
-				arr.push(obj)
-			}
-		}
-		this.detail = arr
+		
 	},
 	computed: {},
+	
 };
 </script>
 

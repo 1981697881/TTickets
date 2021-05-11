@@ -92,7 +92,7 @@
 						<view class="info-detaild text-grey">{{cardInfo.filmLong}} 分钟 | {{cardInfo.filmSortid}} | 导演:{{cardInfo.filmDirector}}<text class='cuIcon-right'></text></view>
 					</view> -->
 			<!-- <fz-gallery @clickSwiper="cardSwiper" ref="cardSwiper" :swiperList="swiperList" :cardInfo="cardInfo" :img="img"></fz-gallery> -->
-			<sh-date @subClickFtn="fatherMethod"></sh-date>
+			<sh-date ref='shDate' :movieDates="movieDates" @subClickFtn="fatherMethod"></sh-date>
 		</view>
 		<scroll-view :style="{ height: headHeight + 'px' }" class="scroll-box" scroll-y enable-back-to-top scroll-with-animation @scrolltolower="loadMore">
 			<view class="content-box">
@@ -167,6 +167,7 @@ export default {
 				}
 			],
 			swiperList: [],
+			movieDates: [],
 			emptyData: {
 				img: '/static/imgs/empty/empty_goods.png',
 				tip: '当前选择日期,没有可观影影片,选择其他日期试试~'
@@ -229,19 +230,23 @@ export default {
 		},
 		cardSwiper(e) {
 			if (this.swiperList.length > 0) {
-				(this.cardInfo = {
+				this.cardInfo = {
 					filmDirector: this.swiperList[e.detail.current].filmDirector,
 					filmLong: this.swiperList[e.detail.current].filmLong,
 					filmId: this.swiperList[e.detail.current].filmId,
 					filmName: this.swiperList[e.detail.current].filmName,
 					filmSortid: this.swiperList[e.detail.current].filmSortid
-				}),
-					(this.circuit = this.swiperList[e.detail.current].filmName);
+				}
+				this.movieDates = this.swiperList[e.detail.current].movieDates
+				this.circuit = this.swiperList[e.detail.current].filmName;
 				this.listParams.filmId = this.swiperList[e.detail.current].filmId;
 				this.img = this.swiperList[e.detail.current].filmPhoto;
 				this.cardCur = e.detail.current;
 				this.listParams.page = 1;
 				this.goodsList = [];
+				this.$nextTick(function(){
+					this.$refs.shDate.getDateList()
+				})
 				this.getGoodsList();
 			}
 		},
@@ -339,6 +344,7 @@ export default {
 							filmSortid: that.swiperList[0].filmSortid
 						};
 						that.img = that.swiperList[0].filmPhoto;
+						that.movieDates = that.swiperList[0].movieDates;
 					} else {
 						that.swiperList.forEach((item, index) => {
 							if (that.$Route.query.filmId == item.filmId) {
@@ -352,9 +358,13 @@ export default {
 									filmSortid: item.filmSortid
 								};
 								that.img = item.filmPhoto;
+								that.movieDates = item.movieDates;
 							}
 						});
 					}
+					this.$nextTick(function(){
+						this.$refs.shDate.getDateList()
+					})
 					that.getGoodsList();
 				}
 			});
