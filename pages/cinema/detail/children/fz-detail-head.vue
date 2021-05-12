@@ -1,12 +1,12 @@
 <template>
 	<view class="ci-header">
 		<view class="locate-logo">
-			<view class="tag">{{detail.dimensional}}</view>
+			<view class="tag">{{detail.dimensional || ''}}</view>
 			<image class="logo-img" :src="detail.filmPhoto"></image>
 		</view>
 		<view class="header-info">
 			<view class="text-bold text-xxl padding-top">{{detail.filmName}}</view>
-			<view class="info-text text-gray">{{detail.filmLong}}分钟 / {{detail.filmSortid || ""}} / {{detail.showArea || ""}}</view>
+			<view class="info-text text-gray">{{detail.filmLong}}分钟 / {{detail.filmSortid || ""}} / {{detail.filmDirector || ""}}</view>
 			<view class="info-text text-gray"></view>
 		</view>
 	</view>
@@ -79,7 +79,7 @@ export default {
 		}
 		.logo-img {
 			width: 180rpx;
-			height: 220rpx;
+			height: 240rpx;
 			border-radius: 10rpx;
 		}
 	}

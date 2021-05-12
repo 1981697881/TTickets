@@ -206,7 +206,6 @@ export default {
 	},
 	onLoad() {
 		this.setimgs();
-		this.listParams.showDatetime = tools.getDayList('', 0).day;
 		if (this.$Route.query.filmId) {
 			this.listParams.filmId = this.$Route.query.filmId;
 		}
@@ -238,6 +237,7 @@ export default {
 					filmSortid: this.swiperList[e.detail.current].filmSortid
 				}
 				this.movieDates = this.swiperList[e.detail.current].movieDates
+				this.listParams.showDatetime = this.swiperList[e.detail.current].movieDates[0];
 				this.circuit = this.swiperList[e.detail.current].filmName;
 				this.listParams.filmId = this.swiperList[e.detail.current].filmId;
 				this.img = this.swiperList[e.detail.current].filmPhoto;
@@ -345,6 +345,7 @@ export default {
 						};
 						that.img = that.swiperList[0].filmPhoto;
 						that.movieDates = that.swiperList[0].movieDates;
+						that.listParams.showDatetime = that.swiperList[0].movieDates[0];
 					} else {
 						that.swiperList.forEach((item, index) => {
 							if (that.$Route.query.filmId == item.filmId) {
@@ -359,6 +360,7 @@ export default {
 								};
 								that.img = item.filmPhoto;
 								that.movieDates = item.movieDates;
+								that.listParams.showDatetime = item.movieDates[0];
 							}
 						});
 					}

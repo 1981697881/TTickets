@@ -24,7 +24,10 @@ export default {
 			this.TabCur = e.currentTarget.dataset.id;
 			this.$emit('subClickFtn',{day: this.detail[this.TabCur].day})
 			this.scrollLeft = (e.currentTarget.dataset.id - 1) * 60
-		},getDateList(){
+		},
+		getDateList(){
+			this.TabCur = 0
+			this.scrollLeft = 0
 			let date =new Date()
 			let that = this
 			let year=date.getFullYear();

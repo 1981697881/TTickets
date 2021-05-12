@@ -89,7 +89,7 @@
 					</view> -->
 				</view>
 				<view class="detail-right">
-					<view class="detail-btn-box x-ac" v-if="!goodsInfo.activity"><button class="cu-btn tool-btn pay-btn" @tap="onBack">立即订票</button></view>
+					<view class="detail-btn-box x-ac" v-if="!goodsInfo.activity"><button class="cu-btn tool-btn pay-btn" @tap="jump('/pages/cinema/index', { filmId: filmId })">立即订票</button></view>
 				</view>
 			</view>
 			<!-- 分享组件 -->
@@ -210,7 +210,7 @@ export default {
 		// 路由跳转
 		jump(path, parmas) {
 			this.showShare = false;
-			this.$Router.push({
+			this.$Router.replace({
 				path: path,
 				query: parmas
 			});

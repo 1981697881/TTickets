@@ -13,8 +13,7 @@
 			</view>
 			<view class="content_box" style="margin-top: -4rpx;overflow: hidden;">
 				<scroll-view class="scroll-box" scroll-y scroll-with-animation enable-back-to-top>
-					<block v-if="template" v-f
-					or="(item, index) in template" :key="index">
+					<block v-if="template" v-for="(item, index) in template" :key="index">
 						<!-- 搜索 -->
 						<!-- <sh-search v-if="item.type === 'search'" :detail="item" :bgcolor="bgcolor"></sh-search> -->
 						<!-- 轮播 -->

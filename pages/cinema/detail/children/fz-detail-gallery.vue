@@ -15,7 +15,7 @@
 						<view :class="type=='still'?'img-boxt':'img-box'"><image class="img" :src="item.starPhotoUrl" mode="scaleToFill"></image></view>
 						<view v-if="type == 'crew'" class="info-box">
 							<view class="y-f">
-								<text class="cr_name text-black">{{item.starName}}</text>
+								<text class="cr_name text-black text-cut">{{item.starName}}</text>
 								<text class="text-gray seckill-current">{{item.roleType}}</text>
 							</view>
 						</view>
@@ -179,6 +179,8 @@ export default {
 					margin-left: 14rpx;
 				}
 				.cr_name {
+					width: 150rpx;
+					text-align: center;
 					font-size: 33rpx;
 				}
 			}

@@ -9,10 +9,10 @@
 						:src="currentPath == tab.path ? tab.activeImage : tab.image"
 						mode="aspectFill"
 					></image>
+					<!-- <view class="tabbar-icon text-center text-xxl"><text class="shadow cuIcon-camerafill text-green"></text></view> -->
 					<!-- 购物车角标 -->
 					<view v-if="tab.path == '/pages/index/cart' && cartNum" class="cu-tag badge">{{ cartNum }}</view>
 				</view>
-
 				<view
 					class="tabbar-text text-bold"
 					v-if="tabbarData.style == 1 || tabbarData.style == 3"
