@@ -176,21 +176,18 @@ export default {
 	},
 	onShow() {
 		let that = this
+		
 		console.log('来过')
 		uni.showLoading({ title: '加载中' });
-		
 			uni.$once('escLoack',function(data){
 				that.isEsc = false;
 				that.isSubOrder = false;
 				that.$api('cinema.escSeats', data).then(res => {
 					if (res.flag) {
 						that.initData();
-						console.log(res);
 					}
 				});
 			    })
-		
-		
 			if(that.isEsc){
 				that.SelectNum = 0;
 				that.totalPrice = 0;
@@ -276,6 +273,9 @@ export default {
 					that.minCol = minCol - 1;
 					that.initSeatArray();
 					uni.hideLoading();
+					if(that.head.dimensional == '3D' || that.head.dimensional == '4D'){
+						that.$tools.toast('请自备3D眼镜或影院前台购买');
+					}
 				}else{
 					uni.showToast({
 						icon: 'none',
