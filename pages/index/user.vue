@@ -36,7 +36,7 @@
 			<app-login-modal></app-login-modal>
 		</view>
 		<!-- 自定义底部导航 -->
-		<app-tabbar></app-tabbar>
+		<!-- <app-tabbar></app-tabbar> -->
 	</view>
 </template>
 

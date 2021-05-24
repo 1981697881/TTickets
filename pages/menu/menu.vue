@@ -183,7 +183,7 @@
 		<view class="loading" v-else><image src="/static/imgs/loading.gif"></image></view>
 		<view class="foot_box"></view>
 		<!-- 自定义底部导航 -->
-		<app-tabbar></app-tabbar>
+		<!-- <app-tabbar></app-tabbar> -->
 		<!-- 关注弹窗 -->
 		<app-float-btn></app-float-btn>
 		<!-- 连续弹窗提醒 -->

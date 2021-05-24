@@ -2,7 +2,7 @@
 	"easycom": { //easycom,按需自动注册组件。原则上可以把所有页面引入组件方法删掉，会自动引入。
 		"autoscan": true,
 		"custom": {
-			"shopro-(.*)": "@/components/shopro-$1/shopro-$1.vue",
+			"shopro-(.*)": "@/components/app-$1/app-$1.vue",
 			"uni-(.*)": "@/components/uni-$1/uni-$1.vue"
 		}
 	},
@@ -994,6 +994,42 @@
 			"color": "#ccc",
 			"height": "1px"
 		}
+	},
+	"tabBar": {
+		"color": "#999",
+		"selectedColor": "#999000",
+		"borderStyle": "black",
+		"backgroundColor": "#ffffff",
+		"height": "50px",
+		"fontSize": "10px",
+		"iconWidth": "24px",
+		"spacing": "3px",
+		"list": [{
+			"pagePath": "pages/cinema/circuit/index",
+			"iconPath": "https://i.postimg.cc/xTWwc9Wm/20210419143757.png",
+			"selectedIconPath": "https://i.postimg.cc/wxrPG6xr/20210419144423.png",
+			"text": "电影"
+		}, {
+			"pagePath": "pages/menu/menu",
+			"iconPath": "https://i.postimg.cc/ZK2WnybL/202104191448131.png",
+			"selectedIconPath": "https://i.postimg.cc/4487CSjq/20210419144813.png",
+			"text": "卖品"
+		}, {
+			"pagePath": "pages/index/index",
+			"iconPath": "https://i.postimg.cc/kgGL1BKL/202104191448133.png",
+			"selectedIconPath": "https://i.postimg.cc/4NBrQz7z/202104191448132.png",
+			"text": "活动"
+		},{
+			"pagePath": "pages/index/videoGame",
+			"iconPath": "https://i.postimg.cc/qvWyP564/202104191448135.png",
+			"selectedIconPath": "https://i.postimg.cc/PfMbCy9Q/202104191448134.png",
+			"text": "电玩"
+		}, {
+			"pagePath": "pages/index/user",
+			"iconPath": "https://i.postimg.cc/9F53fm37/202104191448137.png",
+			"selectedIconPath": "https://i.postimg.cc/7Z9jXS53/202104191448136.png",
+			"text": "我的"
+		}]
 	}
 
 }

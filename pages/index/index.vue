@@ -60,7 +60,7 @@
 			<!-- 登录提示 -->
 			<app-login-modal></app-login-modal>
 			<!-- 自定义底部导航 -->
-			<app-tabbar></app-tabbar>
+			<!-- <app-tabbar></app-tabbar> -->
 			<!-- 关注弹窗 -->
 			<app-float-btn></app-float-btn>
 			<!-- 连续弹窗提醒 -->

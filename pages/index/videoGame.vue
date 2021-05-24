@@ -29,7 +29,7 @@
 		</view>
 		<view class="foot_box"></view>
 		<!-- 自定义底部导航 -->
-		<app-tabbar></app-tabbar>
+		<!-- <app-tabbar></app-tabbar> -->
 		<!-- 关注弹窗 -->
 		<app-float-btn></app-float-btn>
 		<!-- 连续弹窗提醒 -->
@@ -93,7 +93,7 @@ export default {
 					let info = uni.createSelectorQuery().select('.box-head');
 					info.boundingClientRect(function(data) {
 						//data - 各种参数
-						me.hHeight = res.windowHeight - data.height -30;
+						me.hHeight = res.windowHeight - data.height;
 					}).exec();
 				}
 			});
