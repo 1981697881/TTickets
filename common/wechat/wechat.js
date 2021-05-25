@@ -85,6 +85,7 @@ export default class Wechat {
 
 	// #ifdef MP-WEIXIN
 	getWxMiniProgramSessionKey() {
+		console.log('进入')
 		let that = this;
 		let sessionStatus = false;
 		let session_key = '';

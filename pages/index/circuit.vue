@@ -31,10 +31,9 @@
 </template>
 
 <script>
-import fzUnmovieList from '../children/fz-unmovie-list.vue';
+import fzUnmovieList from './components/fz-unmovie-list.vue';
 import appEmpty from '@/components/app-empty/app-empty.vue';
 import { mapMutations, mapActions, mapState } from 'vuex';
-import moreGoodList from '@/csJson/moreGoodList.json';
 import tools from '@/common/utils/tools';
 let timer = null;
 export default {

@@ -4,7 +4,7 @@
 			<view class="pt-f left-0 w-100 p-0-32 bg-white z1000" :style="'height: 162rpx;top:0'">
 				<view>
 					<view class="fz-34 fw-b pt-20">{{ head.filmName }}({{ head.hallName }})</view>
-					<view class="mt-10 fz-28 color-666">{{ head.showDatetime}}</view>
+					<view class="mt-10 fz-28 color-666">{{ head.showDatetime }}</view>
 				</view>
 			</view>
 			<movable-area :style="'height:' + (seatRow * 40 + 350) + 'rpx;width: 100vw;top:' + rpxNum * 132 + 'px'" class="pt-f left-0">
@@ -77,7 +77,13 @@
 							{{ optItem.rowNum + '排' + optItem.columnNum + '座' }}
 						</view>
 					</view>
-					<button :disabled="isSubOrder" style="width: 686rpx;height: 90rpx;" class="dp-f jc-c ai-c br-10 fz-34 color-fff" :class="SelectNum > 0 ? 'bg-red-1' : 'bg-unbtn'" @click="buySeat">
+					<button
+						:disabled="isSubOrder"
+						style="width: 686rpx;height: 90rpx;"
+						class="dp-f jc-c ai-c br-10 fz-34 color-fff"
+						:class="SelectNum > 0 ? 'bg-red-1' : 'bg-unbtn'"
+						@click="buySeat"
+					>
 						{{ SelectNum > 0 ? '￥ ' + totalPrice + ' 确认座位' : '请选座位' }}
 					</button>
 				</view>
@@ -160,7 +166,7 @@ export default {
 			mArr: [], //排数提示
 			optArr: [], //选中的座位数组。
 			isWXAPP: false,
-			isEsc: true,
+			isEsc: true
 		};
 	},
 	computed: {
@@ -175,41 +181,39 @@ export default {
 		}
 	},
 	onShow() {
-		let that = this
-		
-		console.log('来过')
+		let that = this;
+
+		console.log('来过');
 		uni.showLoading({ title: '加载中' });
-			uni.$once('escLoack',function(data){
-				that.isEsc = false;
-				that.isSubOrder = false;
-				that.$api('cinema.escSeats', data).then(res => {
-					if (res.flag) {
-						that.initData();
-					}
-				});
-			    })
-			if(that.isEsc){
-				that.SelectNum = 0;
-				that.totalPrice = 0;
-				that.optArr = [];
-				that.isSubOrder = false;
-				that.initData();
-			}
-		
+		uni.$once('escLoack', function(data) {
+			that.isEsc = false;
+			that.isSubOrder = false;
+			that.$api('cinema.escSeats', data).then(res => {
+				if (res.flag) {
+					that.initData();
+				}
+			});
+		});
+		if (that.isEsc) {
+			that.SelectNum = 0;
+			that.totalPrice = 0;
+			that.optArr = [];
+			that.isSubOrder = false;
+			that.initData();
+		}
 	},
-	onUnload(){
-		let that = this
+	onUnload() {
+		let that = this;
 		let params = {
-				filmId: that.filmId
-			}
-		uni.$emit('escUpload',params)
-		
+			filmId: that.filmId
+		};
+		uni.$emit('escUpload', params);
 	},
 	onLoad() {
 		this.isSubOrder = false;
 		this.head = this.$Route.query;
-		this.filmId = this.$Route.query.filmId
-		this.head.showDatetime = decodeURI(this.head.showDatetime)
+		this.filmId = this.$Route.query.filmId;
+		this.head.showDatetime = decodeURI(this.head.showDatetime);
 		this.listParams.scheduleId = this.$Route.query.scheduleId;
 		this.listParams.schedulekey = this.$Route.query.schedulekey;
 		this.listParams.scheduleKey = this.$Route.query.schedulekey;
@@ -244,15 +248,15 @@ export default {
 				return 'white';
 			}
 		},
-		 initData: function() {
+		initData: function() {
 			let that = this;
 			//假数据说明：sid座位编号，rowNum-行号，columnNum-纵号，y-Y坐标，x-X坐标，status-状态
 			let row = 0;
 			let col = 0;
-			that.$api('cinema.SchedulesSoldSeats', this.listParams).then(reso => {
-			if (reso.flag) { 
-			 that.$api('cinema.seatsLists', this.listParams).then(res => {
-				if (res.flag) { 
+			/* that.$api('cinema.SchedulesSoldSeats', this.listParams).then(reso => {
+				if (reso.flag) { */
+			that.$api('cinema.seatsLists', this.listParams).then(res => {
+				if (res.flag) {
 					that.SelectNum = 0;
 					that.totalPrice = 0;
 					that.optArr = [];
@@ -273,23 +277,23 @@ export default {
 					that.minCol = minCol - 1;
 					that.initSeatArray();
 					uni.hideLoading();
-					if(that.head.dimensional == '3D' || that.head.dimensional == '4D'){
+					if (that.head.dimensional == '3D' || that.head.dimensional == '4D') {
 						that.$tools.toast('请自备3D眼镜或影院前台购买');
 					}
-				}else{
+				} else {
 					uni.showToast({
 						icon: 'none',
 						title: res.msg
-					})
+					});
 				}
-				});
-				}else{
+			});
+			/* } else {
 					uni.showToast({
 						icon: 'none',
 						title: reso.msg
-					})
-				}
-			});
+					});
+				} 
+			});*/
 		},
 		//初始座位数组
 		initSeatArray: function() {
@@ -317,7 +321,7 @@ export default {
 					status = 0;
 				} else if (seat[num].status === '-1') {
 					status = -1;
-				}else if (seat[num].status === 'locked'||seat[num].status === 'selled') {
+				} else if (seat[num].status === 'locked' || seat[num].status === 'selled') {
 					status = 2;
 				}
 				arr[parseInt(seat[num].y) - this.minRow][parseInt(seat[num].x) - this.minCol] = {
@@ -386,7 +390,7 @@ export default {
 		//选定且购买座位
 		buySeat: function() {
 			let that = this;
-			
+
 			if (this.SelectNum === 0) {
 				return;
 			}
@@ -399,24 +403,30 @@ export default {
 					}
 				}
 			}
-			that.$api('cinema.lockSeats', {openId: uni.getStorageSync('openid'), seatIdList: oldArray,scheduleId: this.listParams.scheduleId,scheduleKey: this.listParams.schedulekey,openIdNotNull: 0}).then(res => {
+			that.$api('cinema.lockSeats', {
+				openId: uni.getStorageSync('openid'),
+				seatIdList: oldArray,
+				scheduleId: this.listParams.scheduleId,
+				scheduleKey: this.listParams.schedulekey,
+				openIdNotNull: 0
+			}).then(res => {
 				that.loadModal = true;
 				if (res.flag) {
 					that.getUserBalance();
 					that.loadModal = false;
 					let result = { ...res.data };
-					if(result.filmPhoto==null){
-						delete result.filmPhoto
+					if (result.filmPhoto == null) {
+						delete result.filmPhoto;
 					}
-					result.schedule = JSON.stringify(result.schedule)
-					result.seats= JSON.stringify(result.seats)
-					result.locationHall= JSON.stringify(result.locationHall)
+					result.schedule = JSON.stringify(result.schedule);
+					result.seats = JSON.stringify(result.seats);
+					result.locationHall = JSON.stringify(result.locationHall);
 					that.jump('/pages/order/reserve', result);
-				}else{
+				} else {
 					uni.showToast({
 						icon: 'none',
 						title: res.msg
-					})
+					});
 					that.loadModal = false;
 					that.isSubOrder = false;
 				}
@@ -441,18 +451,17 @@ export default {
 				this.totalPrice = this.totalPrice - 1 * Number(seat.money);
 				this.getOptArr(newArray[row][col], 0);
 			} else if (seatValue === 0) {
-				if(this.optArr.length<=3){
+				if (this.optArr.length <= 3) {
 					newArray[row][col].type = 1;
 					this.SelectNum++;
 					this.totalPrice = this.totalPrice + 1 * Number(seat.money);
 					this.getOptArr(newArray[row][col], 1);
-				}else{
+				} else {
 					uni.showToast({
 						icon: 'none',
 						title: '一次只可选择4个座位'
-					})
+					});
 				}
-				
 			}
 			//必须整体更新二维数组，Vue无法检测到数组某一项更新,必须slice复制一个数组才行
 			this.seatArray = newArray.slice();

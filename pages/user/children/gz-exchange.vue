@@ -17,6 +17,9 @@
 import { mapMutations, mapActions, mapState } from 'vuex';
 export default {
 	components: {},
+	props: {
+		exchangeCode: '',
+	},
 	data() {
 		return {
 			code: {
@@ -28,6 +31,11 @@ export default {
 	},
 	computed: {},
 	onLoad() {},
+	created() {
+		console.log('测试色石色')
+		console.log(this.exchangeCode)
+		this.code.value = this.exchangeCode
+	},
 	methods: {
 		...mapActions(['getUserInfo']),
 		//兑换

@@ -9,7 +9,7 @@
 			</view>
 		</view> -->
 		<view class="content_box">
-				<gz-exchange :tabId="tabCurrent" v-if="tabCurrent=='ended'"></gz-exchange>
+				<gz-exchange :tabId="tabCurrent" :exchangeCode="exchangeCode" v-if="tabCurrent=='ended'"></gz-exchange>
 				<gz-purchase :tabId="tabCurrent" v-if="tabCurrent=='ing'"></gz-purchase>
 				<gz-purchased :tabId="tabCurrent" v-if="tabCurrent=='nostart'"></gz-purchased>
 		</view>
@@ -64,10 +64,18 @@ export default {
 		};
 	},
 	computed: {},
-	onLoad() {
-		
+	onLoad(option) {
+		let that = this
+		console.log(option)
+		console.log(12333)
+		if(JSON.stringify(option) != "{}"){
+			if(option.exchangeCode != null){
+				that.exchangeCode = option.exchangeCode
+			}
+		}
 	},
 	mounted() {
+		
 	},
 	methods: {
 		jump(path, parmas) {

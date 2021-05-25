@@ -38,6 +38,20 @@
 			}
 		},
 		{
+			"path": "pages/index/circuit",
+			"style": {
+				"navigationBarTitleText": "电影 +",
+				"navigationBarBackgroundColor": "#060210",
+				"navigationBarTextStyle": "white"
+			},
+			"meta": {
+				"auth": false,
+				"async": true,
+				"title": "电影",
+				"group": "电影"
+			}
+		},
+		{
 			"path": "pages/index/wallet",
 			"name": "wallet",
 			"style": {
@@ -333,19 +347,6 @@
 					"style": {
 						"navigationBarTitleText": "电影",
 						"navigationStyle": "custom"
-					},
-					"meta": {
-						"auth": false,
-						"async": true,
-						"title": "电影",
-						"group": "电影"
-					}
-				},{
-					"path": "circuit/index",
-					"style": {
-						"navigationBarTitleText": "电影 +",
-						"navigationBarBackgroundColor": "#060210",
-						"navigationBarTextStyle": "white"
 					},
 					"meta": {
 						"auth": false,
@@ -1005,29 +1006,29 @@
 		"iconWidth": "24px",
 		"spacing": "3px",
 		"list": [{
-			"pagePath": "pages/cinema/circuit/index",
-			"iconPath": "https://i.postimg.cc/xTWwc9Wm/20210419143757.png",
-			"selectedIconPath": "https://i.postimg.cc/wxrPG6xr/20210419144423.png",
+			"pagePath": "pages/index/circuit",
+			"iconPath": "static/tabbar/_202105251003589.png",
+			"selectedIconPath": "static/tabbar/_202105251003588.png",
 			"text": "电影"
 		}, {
 			"pagePath": "pages/menu/menu",
-			"iconPath": "https://i.postimg.cc/ZK2WnybL/202104191448131.png",
-			"selectedIconPath": "https://i.postimg.cc/4487CSjq/20210419144813.png",
+			"iconPath": "static/tabbar/_202105251003581.png",
+			"selectedIconPath": "static/tabbar/_202105251003580.png",
 			"text": "卖品"
 		}, {
 			"pagePath": "pages/index/index",
-			"iconPath": "https://i.postimg.cc/kgGL1BKL/202104191448133.png",
-			"selectedIconPath": "https://i.postimg.cc/4NBrQz7z/202104191448132.png",
+			"iconPath": "static/tabbar/_202105251003583.png",
+			"selectedIconPath": "static/tabbar/_202105251003582.png",
 			"text": "活动"
 		},{
 			"pagePath": "pages/index/videoGame",
-			"iconPath": "https://i.postimg.cc/qvWyP564/202104191448135.png",
-			"selectedIconPath": "https://i.postimg.cc/PfMbCy9Q/202104191448134.png",
+			"iconPath": "static/tabbar/_2021052510035862.png",
+			"selectedIconPath": "static/tabbar/_202105251003584.png",
 			"text": "电玩"
 		}, {
 			"pagePath": "pages/index/user",
-			"iconPath": "https://i.postimg.cc/9F53fm37/202104191448137.png",
-			"selectedIconPath": "https://i.postimg.cc/7Z9jXS53/202104191448136.png",
+			"iconPath": "static/tabbar/_202105251003587.png",
+			"selectedIconPath": "static/tabbar/_2021052510035861.png",
 			"text": "我的"
 		}]
 	}
