@@ -9,16 +9,16 @@
 			</view>
 		</view> -->
 		<view class="content_box">
-				<gz-exchange :tabId="tabCurrent" :exchangeCode="exchangeCode" v-if="tabCurrent=='ended'"></gz-exchange>
-				<gz-purchase :tabId="tabCurrent" v-if="tabCurrent=='ing'"></gz-purchase>
-				<gz-purchased :tabId="tabCurrent" v-if="tabCurrent=='nostart'"></gz-purchased>
+			<gz-exchange :tabId="tabCurrent" :exchangeCode="exchangeCode" v-if="tabCurrent == 'ended'"></gz-exchange>
+			<gz-purchase :tabId="tabCurrent" v-if="tabCurrent == 'ing'"></gz-purchase>
+			<gz-purchased :tabId="tabCurrent" v-if="tabCurrent == 'nostart'"></gz-purchased>
 		</view>
 		<view class="foot_box"></view>
 		<!-- 自定义底部导航 -->
 		<app-tabbar></app-tabbar>
 		<!-- 关注弹窗 -->
 		<app-float-btn></app-float-btn>
-		<!-- 连续弹窗提醒 --> 
+		<!-- 连续弹窗提醒 -->
 		<app-notice-modal></app-notice-modal>
 		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>
@@ -44,14 +44,15 @@ export default {
 			loadStatus: '', //loading,over
 			lastPage: 1,
 			currentPage: 1,
+			exchangeCode: '',
 			tabCurrent: 'ended',
 			goodsList: [],
 			loading: false,
-			tabList: [ 
+			tabList: [
 				{
 					id: 'ended',
 					title: '兑换'
-				},
+				}
 				/* {
 					id: 'ing',
 					title: '购买'
@@ -64,25 +65,36 @@ export default {
 		};
 	},
 	computed: {},
-	onLoad(option) {
-		let that = this
-		console.log(option)
-		console.log(12333)
-		if(JSON.stringify(option) != "{}"){
-			if(option.exchangeCode != null){
-				that.exchangeCode = option.exchangeCode
-			}
+	onLoad(options) {
+		let that = this;
+		let q = decodeURIComponent(options.q);
+		if (typeof that.GetRequest(q).exchangeCode != "undefined") {
+			that.exchangeCode = that.GetRequest(q).exchangeCode
 		}
 	},
-	mounted() {
-		
-	},
+	mounted() {},
 	methods: {
 		jump(path, parmas) {
 			this.$Router.push({
 				path: path,
 				query: parmas
 			});
+		},
+		GetRequest(urlStr) {
+			if (typeof urlStr == 'undefined') {
+				var url = decodeURI(location.search); //获取url中"?"符后的字符串
+			} else {
+				var url = '?' + urlStr.split('?')[1];
+			}
+			var theRequest = new Object();
+			if (url.indexOf('?') != -1) {
+				var str = url.substr(1);
+				var strs = str.split('&');
+				for (var i = 0; i < strs.length; i++) {
+					theRequest[strs[i].split('=')[0]] = decodeURI(strs[i].split('=')[1]);
+				}
+			}
+			return theRequest;
 		},
 		onTab(id) {
 			this.tabCurrent = id;
@@ -105,8 +117,7 @@ export default {
 			if (this.currentPage < this.lastPage) {
 				this.currentPage += 1;
 			}
-		},
-		
+		}
 	}
 };
 </script>
@@ -158,15 +169,15 @@ export default {
 		font-size: 20rpx;
 		margin-left: 25rpx;
 	}
-	.fot-text{
+	.fot-text {
 		width: 100%;
 		height: 70rpx;
 		line-height: 70rpx;
 		display: flex;
-		.text-grey{
+		.text-grey {
 			width: 50%;
 		}
-		.fot-btn{
+		.fot-btn {
 			text-align: right;
 			width: 50%;
 			height: 60rpx;
@@ -180,17 +191,17 @@ export default {
 				padding: 0;
 			}
 			.btn-end {
-				background: linear-gradient(90deg, #C6E2FF, #B9D3EE);
+				background: linear-gradient(90deg, #c6e2ff, #b9d3ee);
 				box-shadow: 1px 1px 1px 1px rgba(229, 138, 0, 0.22);
 				color: white;
 			}
 			.btn-nostart {
-				background: linear-gradient(90deg, #FFEC8B, #EEDC82);
+				background: linear-gradient(90deg, #ffec8b, #eedc82);
 				box-shadow: 1px 1px 1px 1px rgba(229, 138, 0, 0.22);
-				color: #FF8247;
+				color: #ff8247;
 			}
 			.btn-ing {
-				background: linear-gradient(90deg, #FFF0F5, #FFE4E1);
+				background: linear-gradient(90deg, #fff0f5, #ffe4e1);
 				box-shadow: 1px 1px 1px 1px rgba(229, 138, 0, 0.22);
 				color: rgba(238, 99, 99, 1);
 			}

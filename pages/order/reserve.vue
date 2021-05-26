@@ -386,8 +386,7 @@ export default {
 							if (index + 1 > that.couponArray.length) {
 								obj.seatId = item.seatId;
 								obj.ticketFee = item.ticketfee;
-								/* obj.ticketPrice = item.settleprice; */
-								obj.ticketPrice = item.lowestprice;
+								obj.ticketPrice = item.settleprice;
 							} else {
 								obj.seatId = item.seatId;
 								obj.ticketFee = item.ticketfee;
@@ -403,8 +402,7 @@ export default {
 							if (index + 1 > that.couponArray.length) {
 								obj.seatId = item.seatId;
 								obj.ticketFee = item.ticketfee;
-								/* obj.ticketPrice = item.standardprice; */
-								obj.ticketPrice = item.lowestprice;
+								obj.ticketPrice = item.standardprice;
 							} else {
 								obj.seatId = item.seatId;
 								obj.ticketFee = item.ticketfee;

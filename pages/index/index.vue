@@ -211,7 +211,6 @@ export default {
 			});
 		}
 		// #endif
-		
 	},
 	methods: {
 		...mapMutations(['CART_NUM']),
@@ -222,7 +221,7 @@ export default {
 				uni.stopPullDownRefresh();
 			});
 		},
-
+		
 		// 获取轮播背景色
 		getbgcolor(e) {
 			this.bgcolor = e;
