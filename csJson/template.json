@@ -48,15 +48,6 @@
 			"category": "home",
 			"name": "二级广告",
 			"content": {
-				"name": "",
-				"style": 1,
-				"list": [{
-					"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/0669a6adec3f35d45ec66a082e03774f.png",
-					"name": "",
-					"path": "/pages/app/coupon/list",
-					"path_name": "优惠券-优惠劵中心",
-					"path_type": 1
-				}]
 			},
 			"decorate_id": 1
 		},{

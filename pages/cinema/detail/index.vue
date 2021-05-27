@@ -70,12 +70,12 @@
 
 			<!-- 其他商品foot -->
 			<view class="detail-foot_box  x-f" v-if="!showSku && !showServe && detailType !== 'score'">
-				<view class="left x-f">
+				<!-- <view class="left x-f">
 					<view class="tools-item y-f" @tap="goHome">
 						<image class="tool-img shopro-selector-circular" src="http://shopro.7wpp.com/imgs/tabbar/tab_home_sel.png" mode=""></image>
 						<text class="tool-title shopro-selector-rect">首页</text>
 					</view>
-					<!-- <view class="tools-item y-f" @tap="onFavorite(goodsInfo.id)">
+					<view class="tools-item y-f" @tap="onFavorite(goodsInfo.id)">
 						<image
 							class="tool-img"
 							:src="Boolean(goodsInfo.favorite) ? 'http://shopro.7wpp.com/imgs/favorite_end.png' : 'http://shopro.7wpp.com/imgs/favorite.png'"
@@ -86,8 +86,8 @@
 					<view class="tools-item y-f" @tap="onShare">
 						<image class="tool-img" src="http://shopro.7wpp.com/imgs/share.png" mode=""></image>
 						<text class="tool-title">分享</text>
-					</view> -->
-				</view>
+					</view> 
+				</view>-->
 				<view class="detail-right">
 					<view class="detail-btn-box x-ac" v-if="!goodsInfo.activity"><button class="cu-btn tool-btn pay-btn" @tap="jump('/pages/cinema/index', { filmId: filmId })">立即订票</button></view>
 				</view>
@@ -217,7 +217,9 @@ export default {
 		},
 		// 回到首页
 		goHome() {
-			this.$tools.routerTo('/pages/index/index');
+			this.$Router.replace({
+				path: '/pages/index/circuit',
+			});
 		},
 		// 轮播图切换
 		swiperChange(e) {

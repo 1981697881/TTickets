@@ -101,7 +101,7 @@ const actions = {
 			let res = template
 			api('posterList').then(reso => {
 				let data = []
-				reso.data.forEach((v)=>{
+				reso.data.A.forEach((v)=>{
 					let obj = {
 					"name": v.posterName,
 					"bgcolor": "#2B4055",
@@ -113,6 +113,7 @@ const actions = {
 					data.push(obj)
 				})
 				res.data.home[1].content.list=data
+				res.data.home[4].content.list=reso.data.B
 			})
 			api('menuList').then(reso => {
 				let data = []

@@ -14,47 +14,14 @@
 			<view class="content_box" style="margin-top: -4rpx;overflow: hidden;">
 				<scroll-view class="scroll-box" scroll-y scroll-with-animation enable-back-to-top>
 					<block v-if="template" v-for="(item, index) in template" :key="index">
-						<!-- 搜索 -->
-						<!-- <sh-search v-if="item.type === 'search'" :detail="item" :bgcolor="bgcolor"></sh-search> -->
 						<!-- 轮播 -->
 						<sh-banner v-if="item.type === 'banner'" :detail="item.content"></sh-banner>
-						<!-- 菜单 -->
-						<!-- <sh-menu v-if="item.type === 'menu'" :detail="item.content" :menu="item.content.style" :imgW="94"></sh-menu> -->
-						<!-- 推荐商品 -->
-						<!-- <sh-adv v-if="item.type === 'adv'" :detail="item.content"></sh-adv> -->
 						<!-- 二级广告 -->
 						<sh-spread v-if="item.type === 'spread'" :detail="item.content"></sh-spread>
-						<!-- <sh-hot-goods v-if="item.type === 'goods-list' || item.type === 'goods-group'" :detail="item.content"></sh-hot-goods> -->
-						<!-- 广告魔方 -->
-						<!-- 优惠券 -->
-						<!-- <sh-coupon v-if="item.type === 'coupons'" :detail="item.content"></sh-coupon> -->
-						<!-- 秒杀 -->
-						<!-- <sh-seckill v-if="item.type === 'seckill'" :detail="item.content"></sh-seckill> -->
-						<!-- 拼团 -->
-						<!-- <sh-groupon v-if="item.type === 'groupon'" :detail="item.content"></sh-groupon> -->
-						<!-- 富文本 -->
-						<sh-richtext v-if="item.type === 'rich-text'" :detail="item.content"></sh-richtext>
-						<!-- 功能列表 -->
-						<sh-nav v-if="item.type === 'nav-list'" :detail="item.content"></sh-nav>
-						<!-- 九宫格列表 -->
-						<sh-grid v-if="item.type === 'grid-list'" :detail="item.content"></sh-grid>
-						<!-- 功能标题 -->
-						<!-- <sh-title-card v-if="item.type === 'title-block'" :detail="item.content"></sh-title-card> -->
-						<!-- 个人信息 -->
-						<sh-userinfo v-if="item.type === 'user'" :detail="item.content"></sh-userinfo>
-						<!-- 钱包 -->
-						<sh-wallet v-if="item.type === 'wallet-card'" :detail="item.content"></sh-wallet>
-						<!-- 订单卡片 -->
-						<sh-order v-if="item.type === 'order-card'" :detail="item.content"></sh-order>
-						<!-- 直播 -->
-						<!-- #ifdef MP-WEIXIN -->
-						<sh-live v-if="item.type === 'live' && HAS_LIVE" :detail="item.content"></sh-live>
-						<!-- #endif -->
 					</block>
 				</scroll-view>
 			</view>
 			<view class="foot_box"></view>
-
 			<!-- 骨架屏 -->
 			<app-skeleton :showSkeleton="!template"></app-skeleton>
 			<!-- 登录提示 -->
@@ -62,7 +29,7 @@
 			<!-- 自定义底部导航 -->
 			<!-- <app-tabbar></app-tabbar> -->
 			<!-- 关注弹窗 -->
-			<app-float-btn></app-float-btn>
+			<!-- <app-float-btn></app-float-btn> -->
 			<!-- 连续弹窗提醒 -->
 			<app-notice-modal v-if="!showPrivacy && showNoticeModal"></app-notice-modal>
 			<!-- 隐私协议 -->
@@ -90,22 +57,9 @@
 </template>
 
 <script>
-import shSearch from './components/sh-search.vue';
 import shBanner from './components/sh-banner.vue';
-import shHotGoods from './components/sh-hot-goods.vue';
-import shMenu from './components/sh-menu.vue';
-import shAdv from './components/sh-adv.vue';
 import shSpread from './components/sh-spread.vue';
-import shCoupon from './components/sh-coupon.vue';
-import shSeckill from './components/sh-seckill.vue';
-import shGroupon from './components/sh-groupon.vue';
-import shRichtext from './components/sh-richtext.vue';
 import shNav from './components/sh-nav.vue';
-import shUserinfo from './components/sh-userinfo.vue';
-import shGrid from './components/sh-grid.vue';
-import shTitleCard from './components/sh-title-card.vue';
-import shOrder from './components/sh-order.vue';
-import shWallet from './components/sh-wallet.vue';
 import appNoticeModal from '@/components/app-notice-modal/app-notice-modal.vue';
 import appSkeletons from '@/components/app-skeletons/app-skeletons.vue';
 // #ifdef MP-WEIXIN
@@ -124,21 +78,8 @@ let handle = function(e) {
 
 export default {
 	components: {
-		shSearch,
 		shBanner,
-		shUserinfo,
-		shHotGoods,
-		shTitleCard,
-		shOrder,
-		shWallet,
-		shMenu,
-		shAdv,
 		shSpread,
-		shGrid,
-		shCoupon,
-		shSeckill,
-		shGroupon,
-		shRichtext,
 		shNav,
 		appNoticeModal,
 		appSkeletons,

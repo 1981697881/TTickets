@@ -1,13 +1,13 @@
 <template>
-	<view class="adv-box mb10" @tap="routerTo('https://mp.weixin.qq.com/s/gCc876ut4AtVd59JM_xY0w')">
+	<view class="adv-box mb10" @tap="routerTo(detail.list[0].posterUrl)">
 		<!-- 模板1-->
-		<view class="x-f" v-if="detail.style == 1">
-			<image src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/20210424172919.jpg" mode="scaleToFill" lazy-load></image>
+		<view class="x-f">
+			<image :src="'https://cfzx.gzfzdev.com/movie/uploadFiles/image/'+detail.list[0].posterPhoto" mode="scaleToFill" lazy-load></image>
 		</view>
 		<view class="box-fot flex flex-wrap justify-between " >
 			<view class="fot-left">
-				<view class="text-xl padding-xs text-black text-bold">电影推荐</view>
-				<view class="padding-xs">05/01/2021 00:00</view>
+				<view class="text-xl padding-xs text-black text-bold">{{detail.list[0].posterName}}</view>
+				<view class="padding-xs">{{detail.list[0].posterContent}}</view>
 			</view>
 			<view class="fot-right">
 				<button class="cu-btn round sm bg-blue margin-right">正在进行</button>
@@ -28,7 +28,9 @@ export default {
 		detail: {}
 	},
 	computed: {},
-	created() {},
+	created() {
+		console.log(this.detail)
+	},
 	methods: {
 		// 路由跳转
 		jump(path) {
