@@ -1,5 +1,5 @@
 <template>
-	<view class="adv-box mb10" @tap="routerTo(detail.list[0].posterUrl)">
+	<view class="adv-box mb10" v-if="detail.list.length>0" @tap="routerTo(detail.list[0].posterUrl)">
 		<!-- 模板1-->
 		<view class="x-f">
 			<image :src="'https://cfzx.gzfzdev.com/movie/uploadFiles/image/'+detail.list[0].posterPhoto" mode="scaleToFill" lazy-load></image>

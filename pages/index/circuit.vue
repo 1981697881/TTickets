@@ -1,7 +1,7 @@
 <template>
 	<view class="page_box">
 		<view class="head_box">
-			<image class="logo-img" src="http://139.159.136.187:50080/uploadFiles/image/32a545c356d8054f42612132a3535d31.jpeg" mode="scaleToFill"></image>
+			<image class="logo-img" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/_20210531145946.jpg" mode="scaleToFill"></image>
 		</view>
 		<view class="content_box">
 			<scroll-view :style="{ height: headHeight + 'px' }" class="scroll-box" scroll-y enable-back-to-top scroll-with-animation @scrolltolower="loadMore">
