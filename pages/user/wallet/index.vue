@@ -8,7 +8,7 @@
 			<!-- <image class="resale-bg" src="/static/resale_bg.png" mode=""></image> -->
 			<view class="card-box x-end x-bc">
 				<view class="left y-start">
-					<text class="title">账户</text>
+					<text class="title">账户 {{balInfo.Number || ''}}</text>
 					<text class="money-num">{{balInfo.Money || "0.00"}}</text>
 					<text class="add">温馨提示: 任何冒充工作人员索要您帐号信息的私信均为诈骗信息,请您提高警惕,切勿上当受骗。</text>
 				</view>
@@ -16,13 +16,13 @@
 			</view>
 		</view>
 		<view class="content_box">
-			<!-- <view class="resale-list x-bc" @tap="jump('/pages/user/wallet/bind-bank')">
+			<view class="resale-list x-bc" @tap="jump('/pages/user/wallet/bind-bank')">
 				<view class="x-f">
 					<text class=" cuicon cuIcon-vipcard"></text>
-					<text>绑定银行卡</text>
+					<text>绑定会员卡</text>
 				</view>
 				<text class="cuIcon-right"></text>
-			</view> -->
+			</view>
 			<view class="resale-list x-bc" @tap="jump('/pages/user/wallet/recharge')">
 				<view class="x-f">
 					<text class=" cuicon cuIcon-recharge"></text>
@@ -82,7 +82,6 @@ export default {
 	data() {
 		return {
 			showModal: false,
-			
 			money: '',
 			rules: ''
 		};
@@ -221,16 +220,15 @@ export default {
 .head_box {
 	width: 750rpx;
 	height: 480rpx;
-	background: linear-gradient(125deg, rgba(239, 196, 128, 1) 0%, rgba(248, 220, 165, 1) 100%);
+	background: linear-gradient(125deg, rgba(239, 196, 128, 1) 0%, rgba(148, 120, 165, 1) 100%);
 	position: relative;
-
+	color: white;
 	.resale-bg {
 		width: 750rpx;
 		height: 64rpx;
 		position: absolute;
 		bottom: 0;
 	}
-
 	.card-box {
 		width: 695rpx;
 		height: 338rpx;

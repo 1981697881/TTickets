@@ -7,8 +7,8 @@
 				<text class="wallet-item__title">会员余额</text>
 			</view>
 			<view class="wallet-item y-f" @tap="jump('/pages/user/wallet/score-balance')">
-				<text class="wallet-item__detail item-score">{{ balInfo.score || '0' }}</text>
-				<text class="wallet-item__title">积分</text>
+				<text class="wallet-item__detail item-score">{{ balInfo.Coins2 || '0' }}</text>
+				<text class="wallet-item__title">游戏币</text>
 			</view>
 			<view class="wallet-item y-f" @tap="jump('/pages/app/coupon/list')">
 				<text class="wallet-item__detail item-coupon">{{ userInfo.couponCount || '0' }}</text>

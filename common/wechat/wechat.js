@@ -50,7 +50,7 @@ export default class Wechat {
 				success: function(loginRes) {
 					if (loginRes.errMsg === "login:ok") {
 						let authResult = loginRes.authResult;
-						uni.getUserInfo({
+						uni.getUserProfile({
 							provider: 'weixin',
 							success: function(infoRes) {
 								console.log(infoRes)

@@ -5,9 +5,7 @@
 			<view class="head-wrap">
 				<view class="titleNav pad">
 					<view class="status-bar"></view>
-					<text class="nav-title x-f">
-						<!-- <text @tap="onService" class="cuIcon-servicefill"></text> -->
-					</text>
+					<text class="nav-title x-f"><!-- <text @tap="onService" class="cuIcon-servicefill"></text> --></text>
 				</view>
 				<view class="user-head x-bc">
 					<view class="x-f">
@@ -15,9 +13,14 @@
 						<view class="info-box">
 							<view class="x-f">
 								<view class="head-img-wrap">
-									<image class="head-img" @tap.stop="jump('/pages/user/info')" :src="userInfo.avatarUrl || '/static/imgs/base_avatar.png'" mode="aspectFill"></image>
+									<image
+										class="head-img"
+										@tap.stop="jump('/pages/user/info')"
+										:src="userInfo.avatarUrl || '/static/imgs/base_avatar.png'"
+										mode="aspectFill"
+									></image>
 									<block v-if="platform !== 'H5'">
-										<button v-if="platform === 'wxMiniProgram'" open-type="getUserInfo" @getuserinfo="refreshWechatUser" class="cu-btn refresh-btn x-c">
+										<button v-if="platform === 'wxMiniProgram'" @click="refreshWechatUser" class="cu-btn refresh-btn x-c">
 											<text class="cuIcon-refresh" :class="{ 'refresh-rotate': isRefresh }"></text>
 										</button>
 										<button v-if="platform === 'wxOfficialAccount'" @tap="refreshWechatUser" class="cu-btn refresh-btn x-c">
@@ -28,17 +31,15 @@
 								<text @tap.stop="jump('/pages/user/info')" class="user-name one-t">{{ userInfo.username || '请登录~' }}</text>
 							</view>
 						</view>
-						<view class="grade-tag tag-box x-f" v-if="userInfo.group">
+						<!-- <view class="grade-tag tag-box x-f" v-if="userInfo.group">
 							<image class="tag-img" :src="userInfo.group.image" mode=""></image>
 							<text class="tag-title">{{ userInfo.group.name }}</text>
-						</view>
+						</view> -->
 					</view>
-					<!-- <view class="x-f">
-						<button class="cu-btn code-btn" v-if="userInfo.avatarUrl" @tap="jump('/pages/public/poster/index', { posterType: 'user' })">
-							<text class="cuIcon-qr_code"></text>
-						</button>
-						<button v-if="userInfo.is_store" @tap="goStore" class="cu-btn merchant-btn">切换商家版</button>
-					</view> -->
+					<view class="x-f">
+						<button class="cu-btn code-btn" v-if="balInfo.CustID" @tap="jump('/pages/user/personal')"><text class="cuIcon-qr_code"></text></button>
+						<!-- <button v-if="userInfo.is_store" @tap="goStore" class="cu-btn merchant-btn">切换商家版</button> -->
+					</view>
 				</view>
 			</view>
 		</view>
@@ -67,7 +68,8 @@ export default {
 	},
 	computed: {
 		...mapState({
-			userInfo: state => state.user.userInfo
+			userInfo: state => state.user.userInfo,
+			balInfo: state => state.user.balInfo
 		})
 	},
 	props: {
@@ -77,7 +79,7 @@ export default {
 		}
 	},
 	methods: {
-		...mapActions(['getUserDetails','getUserBalance']),
+		...mapActions(['getUserDetails']),
 		jump(path, query) {
 			this.$Router.push({
 				path: path,
@@ -113,28 +115,35 @@ export default {
 			}, 200);
 		},
 		refreshWechatUser(e) {
+			const that = this;
 			this.onRefresh();
 			if (this.platform === 'wxOfficialAccount') {
 				let wechat = new Wechat();
 				wechat.login();
 			} else if (this.platform === 'wxMiniProgram') {
-				this.$store.commit('FORCE_OAUTH', true);
+				uni.getUserProfile({
+					desc: 'Wexin', // 这个参数是必须的
+					success: res => {
+						that.$store.commit('FORCE_OAUTH', true);
+					}
+				});
 			}
 		},
-		 bindPhone(e){
-			console.log(e)
-			let me = this
-			me.$api('user.getWxMiniPhoneNumber', {sessionKey: uni.getStorageSync('session_key'),
+		bindPhone(e) {
+			console.log(e);
+			let me = this;
+			me.$api('user.getWxMiniPhoneNumber', {
+				sessionKey: uni.getStorageSync('session_key'),
 				openid: uni.getStorageSync('openid'),
 				encryptedData: e.detail.encryptedData,
-				iv: e.detail.iv}).then(res => {
+				iv: e.detail.iv
+			}).then(res => {
 				if (res.flag) {
 					me.getUserDetails();
-					
+
 					/* me.jump('/pages/user/edit-phone', { fromType: 'bind',phone:res.data }) */
 				}
 			});
-			
 		}
 	}
 };
@@ -146,7 +155,7 @@ export default {
 	height: 250rpx;
 	.user-bg {
 		width: 100%;
-		background:linear-gradient(90deg, rgba(123, 120, 97, 1), rgba(138, 104, 137, 1), rgba(208, 174, 137, 1));
+		background: linear-gradient(90deg, rgba(123, 120, 97, 1), rgba(138, 104, 137, 1), rgba(208, 174, 137, 1));
 		height: 250rpx;
 	}
 	.head-wrap {

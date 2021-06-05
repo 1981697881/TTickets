@@ -177,13 +177,8 @@
 					"path": "/pages/app/score/list",
 					"path_name": "积分商城",
 					"path_type": 1
-				},{
-					"name": "系统设置",
-					"image": "https://i.postimg.cc/28ccXkGh/a37d85ca8d8e7f1ca90874f89f524886.png",
-					"path": "/pages/user/set",
-					"path_name": "系统设置",
-					"path_type": 1
-				}, {
+				},
+				{
 					"name": "联系客服",
 					"image": "https://i.postimg.cc/q75pJHp3/5d53a6e7f940c5ef925f63c1810c8429.png",
 					"path": "/pages/public/kefu/index",

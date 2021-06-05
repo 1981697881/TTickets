@@ -124,7 +124,7 @@ export default {
 		confirmPay() {
 			let that = this;
 			if(that.userInfo.phoneNumber){
-			if(that.balInfo.custId){
+			if(that.balInfo.CustID){
 				
 					/* uni.showToast({
 						icon: 'none',
@@ -133,7 +133,7 @@ export default {
 					let params ={
 						rechargeMoney: that.checkPrice+"",
 						openId:uni.getStorageSync('openid'),
-						custId:that.balInfo.custId,
+						custId:that.balInfo.CustID,
 					}
 					let pay = new AppPay(that.payType, that.orderDetail,"user.payRecharge",params,3);
 				
@@ -155,7 +155,7 @@ export default {
 			let ticketList = []
 			let that = this
 			this.$api('user.recharge', {
-				custId: this.balInfo.custId,
+				custId: this.balInfo.CustID,
 				qty: that.checkPrice,
 				phoneNumber: this.userInfo.phoneNumber,
 			}).then(res => {

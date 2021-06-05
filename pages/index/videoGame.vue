@@ -10,14 +10,8 @@
 			<scroll-view :style="{ height: hHeight + 'px' }" class="scroll-box bg-white" scroll-y enable-back-to-top scroll-with-animation @scrolltolower="loadMore">
 				<view class="content-box">
 					<view class="goods-list x-f">
-						<view class="goods-item" v-for="(goods, index) in goodsList" :key="index" @tap="payMeal(goods)">
-							<fz-circuit-meal
-								
-								:detail="goods"
-								:colorItem="colorList[index].name"
-								:tabId="tabId"
-								:isTag="true"
-							></fz-circuit-meal>
+						<view class="goods-item" v-for="(goods, index) in goodsList" :key="index" @tap="jump('/pages/order/payment/chargeMoney', { goodsDescribe: goods.goodsDescribe,coinCount: goods.coinCount,goodsName: goods.goodsName,goodsPrice: goods.goodsPrice,goodsId: goods.goodsId,integral:goods.integral, })">
+							<fz-circuit-meal :detail="goods" :colorItem="colorList[index].name" :tabId="tabId" :isTag="true"></fz-circuit-meal>
 						</view>
 					</view>
 					<!-- 加载更多 -->
@@ -31,7 +25,7 @@
 		<!-- 自定义底部导航 -->
 		<!-- <app-tabbar></app-tabbar> -->
 		<!-- 关注弹窗 -->
-		<app-float-btn></app-float-btn>
+		<!-- <app-float-btn></app-float-btn> -->
 		<!-- 连续弹窗提醒 -->
 		<app-notice-modal></app-notice-modal>
 		<!-- 登录提示 -->
@@ -74,7 +68,7 @@ export default {
 		...mapState({
 			balInfo: state => state.user.balInfo,
 			userInfo: state => state.user.userInfo
-		}),
+		})
 	},
 	created() {},
 	methods: {
@@ -98,7 +92,6 @@ export default {
 				}
 			});
 		},
-
 		// 商品列表
 		getGoodsList() {
 			let me = this;
@@ -118,52 +111,13 @@ export default {
 				}
 			});
 		},
-		payMeal(val){
-			console.log(123)
-			let that = this;
-			if(that.balInfo.custId){
-					uni.showLoading({ title: '加载中' });
-					let parArray = [];
-					//测试订单
-					let params = {
-						coinPaymoney: val.goodsPrice,
-						goodsId: val.goodsId,
-					};
-					uni.showToast({
-						icon: 'none',
-						title: '此功能尚未开放....敬请期待'
-					})
-					/* let pay = new AppPay(that.payType, val, 'goods.payCoinMoney', params,2); */
-					uni.hideLoading();
-			}else{
-				uni.showToast({
-					icon: 'none',
-					title: '新用戶暂还没开放充值，敬请期待'
-				})
-			}
-			
-		},
-		//积分充值
-		integral(){
-			let that = this;
-			that.$api('goods.veIntegral', { qty: 1,custId:that.balInfo.custId,phoneNumber:that.userInfo.phoneNumber }).then(res => {
-				if (res.flag) {
-					
-				}
-			});
-		},
-		//游戏币充值
-		currency(){
-		let that = this;
-		that.$api('goods.veCoin', { qty: 1,custId:that.balInfo.custId,phoneNumber:that.userInfo.phoneNumber }).then(res => {
-			if (res.flag) {
-				
-			}
-		});
-		},
+		
 		// 路由跳转
 		jump(path, parmas) {
-			this.$Router.push({ path: path, query: parmas });
+			this.$Router.push({
+				path: path,
+				query: parmas
+			});
 		}
 	}
 };

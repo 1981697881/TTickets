@@ -45,7 +45,7 @@
 				</button>
 				<!-- #endif -->
 				<!-- #ifdef MP-WEIXIN -->
-				<button class="cu-btn wx-logo-box y-f" open-type="getUserInfo" @getuserinfo="getuserinfo">
+				<button class="cu-btn wx-logo-box y-f"  @click="getuserinfo">
 					<image class="auto-login" src="http://shopro.7wpp.com/imgs/auto_login.png" mode=""></image>
 					<view class="">微信一键登录</view>
 				</button>
@@ -94,10 +94,16 @@ export default {
 		...mapActions(['getUserInfo', 'setTokenAndBack']),
 		// #ifdef MP-WEIXIN
 		async getuserinfo(e) {
-			var wechat = new Wechat();
-			let token = await wechat.wxMiniProgramLogin(e);
-			store.commit('FORCE_OAUTH', false);
-			this.setTokenAndBack(token);
+			await uni.getUserProfile({
+				desc: 'Wexin', // 这个参数是必须的
+				success: res => {
+					var wechat = new Wechat();
+					let token = wechat.wxMiniProgramLogin(e);
+					store.commit('FORCE_OAUTH', false);
+					this.setTokenAndBack(token);
+				}
+			});
+			
 		},
 		// #endif
 		async wxLogin() {

@@ -21,7 +21,6 @@ export default {
 	},
 	methods: {
 		tabSelect(e) {
-			console.log(this.detail)
 			this.TabCur = e.currentTarget.dataset.id;
 			this.$emit('subClickFtn',{day: this.detail[this.TabCur].day})
 			this.scrollLeft = (e.currentTarget.dataset.id - 1) * 60

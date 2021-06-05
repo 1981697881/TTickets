@@ -6,7 +6,7 @@
 			<open-data class="user-avatar" type="userAvatarUrl"></open-data>
 			<open-data class="user-name" type="userNickName"></open-data>
 			<view class="login-notice">为了提供更优质的服务，需要获取您的头像昵称</view>
-			<button class="cu-btn author-btn" @getuserinfo="getuserinfo" open-type="getUserInfo">授权并查看</button>
+			<button class="cu-btn author-btn" @click="getuserinfo">授权并查看</button>
 			<button class="cu-btn close-btn" @tap="closeAuth">暂不授权</button>
 		</view>
 	</view>
@@ -25,10 +25,15 @@ export default {
 	methods: {
 		...mapActions(['setTokenAndBack']),
 		async getuserinfo(e) {
-			var wechat = new Wechat();
-			let token = await wechat.wxMiniProgramLogin(e);
-			store.commit('FORCE_OAUTH', false);
-			this.setTokenAndBack(token);
+			await uni.getUserProfile({
+				desc: 'Wexin', // 这个参数是必须的
+				success: res => {
+					var wechat = new Wechat();
+					let token = wechat.wxMiniProgramLogin(res);
+					store.commit('FORCE_OAUTH', false);
+					this.setTokenAndBack(token);
+				}
+			});
 		},
 		closeAuth() {
 			store.commit('FORCE_OAUTH', false);

@@ -25,17 +25,17 @@ export default {
 		};
 	},
 	props: {
-		detail: {}
+		detail: {
+			type: Object,
+			default: {}
+		}
 	},
 	computed: {},
 	created() {
 		console.log(this.detail)
 	},
 	methods: {
-		// 路由跳转
-		jump(path) {
-			this.$tools.routerTo(path);
-		}
+		
 	}
 };
 </script>

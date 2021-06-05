@@ -250,7 +250,8 @@
 				{
 					"path": "score/list",
 					"style": {
-						"navigationBarTitleText": "积分商城"
+						"navigationBarTitleText": "积分商城",
+						"navigationStyle": "custom"
 					},
 					"meta": {
 						"auth": false,
@@ -634,6 +635,16 @@
 						"auth": true,
 						"async": false
 					}
+				},{
+					"path": "payment/chargeMoney",
+					"style": {
+						"navigationBarTitleText": "支付方式"
+
+					},
+					"meta": {
+						"auth": true,
+						"async": false
+					}
 				},
 				{
 					"path": "payment/result",
@@ -743,19 +754,7 @@
 						"group": "用户"
 					}
 				},
-				{
-					"path": "poster/index",
-					"style": {
-						"navigationBarTitleText": "海报"
-
-					},
-					"meta": {
-						"auth": true,
-						"async": true,
-						"title": "海报",
-						"group": "通用"
-					}
-				},
+				
 				{
 					"path": "faq",
 					"style": {
@@ -802,29 +801,7 @@
 						"group": "通用"
 					}
 				},
-				{
-					"path": "address/edit",
-					"style": {
-						"navigationBarTitleText": "编辑地址"
-					},
-					"meta": {
-						"auth": true,
-						"async": false
-					}
-				},
-				{
-					"path": "address/list",
-					"style": {
-						"navigationBarTitleText": "收货地址"
-
-					},
-					"meta": {
-						"auth": true,
-						"async": true,
-						"title": "收货地址",
-						"group": "用户"
-					}
-				},
+				
 				{
 					"path": "set",
 					"style": {
@@ -836,7 +813,8 @@
 						"title": "系统设置",
 						"group": "通用"
 					}
-				}, {
+				}, 
+				{
 					"path": "edit-password",
 					"style": {
 						"navigationBarTitleText": "修改密码"
@@ -845,6 +823,18 @@
 						"auth": true,
 						"async": true,
 						"title": "修改密码",
+						"group": "用户"
+
+					}
+				},{
+					"path": "personal",
+					"style": {
+						"navigationBarTitleText": "个人二维码"
+					},
+					"meta": {
+						"auth": true,
+						"async": true,
+						"title": "二维码",
 						"group": "用户"
 
 					}
@@ -911,6 +901,7 @@
 					"path": "wallet/index",
 					"style": {
 						"navigationBarTitleText": "我的钱包",
+						"navigationBarTextStyle": "white",
 						"navigationStyle": "custom"
 
 					},

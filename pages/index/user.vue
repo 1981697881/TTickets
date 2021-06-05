@@ -2,8 +2,6 @@
 	<view class="wrap-box">
 		<view class="user-box">
 			<block v-if="template.length" v-for="(item, index) in template" :key="index">
-				<!-- 轮播 -->
-				<sh-banner v-if="item.type === 'banner'" :detail="item.content" @getbgcolor="getbgcolor"></sh-banner>
 				<!-- 菜单 -->
 				<sh-menu v-if="item.type === 'menu'" :detail="item.content" :menu="item.content.style" :imgW="94"></sh-menu>
 				<!-- 个人信息 -->
@@ -29,7 +27,7 @@
 				</view>
 			</view>
 			<!-- 关注弹窗 -->
-			<app-float-btn></app-float-btn>
+			<!-- <app-float-btn></app-float-btn> -->
 			<!-- 连续弹窗提醒 -->
 			<app-notice-modal></app-notice-modal>
 			<!-- 登录提示 -->
@@ -42,14 +40,8 @@
 
 <script>
 import Wechat from '@/common/wechat/wechat';
-import shSearch from './components/sh-search.vue';
-import shBanner from './components/sh-banner.vue';
-import shHotGoods from './components/sh-hot-goods.vue';
 import shMenu from './components/sh-menu.vue';
 import shAdv from './components/sh-adv.vue';
-import shCoupon from './components/sh-coupon.vue';
-import shSeckill from './components/sh-seckill.vue';
-import shGroupon from './components/sh-groupon.vue';
 import shRichtext from './components/sh-richtext.vue';
 import shNav from './components/sh-nav.vue';
 import shUserinfo from './components/sh-userinfo.vue';
@@ -61,14 +53,8 @@ import appNoticeModal from '@/components/app-notice-modal/app-notice-modal.vue';
 import { mapMutations, mapActions, mapState } from 'vuex';
 export default {
 	components: {
-		shSearch,
-		shBanner,
-		shHotGoods,
 		shMenu,
 		shAdv,
-		shCoupon,
-		shSeckill,
-		shGroupon,
 		shRichtext,
 		shNav,
 		shUserinfo,

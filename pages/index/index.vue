@@ -55,7 +55,6 @@
 		</view>
 	</view>
 </template>
-
 <script>
 import shBanner from './components/sh-banner.vue';
 import shSpread from './components/sh-spread.vue';
@@ -67,7 +66,6 @@ import { HAS_LIVE } from '@/env';
 import shLive from './components/sh-live.vue';
 // #endif
 import { mapMutations, mapActions, mapState } from 'vuex';
-
 // #ifdef H5
 import html2canvas from '@/common/utils/sdk/html2canvas.js';
 let listenMove = document.body; //禁止手机h5下拉刷新带动整个页面。
@@ -110,7 +108,7 @@ export default {
 			city: state => state.init.city,
 			template: state => state.init.templateData?.home,
 			hasTemplate: state => state.init.hasTemplate,
-			cartNum: state => state.cart.cartNum,
+			/* cartNum: state => state.cart.cartNum, */
 			forceOauth: state => state.user.forceOauth
 		}),
 		popupIndex() {
@@ -137,24 +135,20 @@ export default {
 		// #endif
 	},
 	mounted() {
-		// #ifdef H5
-		if (uni.getStorageSync('screenShot')) {
-			this.screenShotPreviewImage();
-		}
-		// #endif
+		
 	},
 	onShow() {
 		/* this.$store.commit('CART_NUM', this.cartNum); */
 		// #ifndef MP-WEIXIN
-		if (this.info && this.info.name) {
+		/* if (this.info && this.info.name) {
 			uni.setNavigationBarTitle({
 				title: this.info.name
 			});
-		}
+		} */
 		// #endif
 	},
 	methods: {
-		...mapMutations(['CART_NUM']),
+		/* ...mapMutations(['CART_NUM']), */
 		...mapActions(['getAppInit', 'getTemplate', 'getUserBalance']),
 		// 初始化
 		init() {
@@ -162,12 +156,10 @@ export default {
 				uni.stopPullDownRefresh();
 			});
 		},
-		
 		// 获取轮播背景色
 		getbgcolor(e) {
 			this.bgcolor = e;
 		},
-
 		// 路由跳转
 		jump(path, parmas) {
 			this.$Router.push({
@@ -175,44 +167,12 @@ export default {
 				query: parmas
 			});
 		},
-
 		// #ifdef APP-PLUS
 		// 同意协议
 		Agree() {
 			plus.runtime.agreePrivacy();
 			this.showPrivacy = false;
 		},
-		// #endif
-
-		// #ifdef H5
-		//装修模式屏幕截图
-		screenShotPreviewImage() {
-			let that = this;
-			let div = window.window.document.getElementsByClassName('page_box');
-			html2canvas(div[0], {
-				x: 0,
-				y: 0,
-				scrollX: 0,
-				scrollY: 0,
-				backgroundColor: '#f6f6f6',
-				foreignObjectRendering: true,
-				allowTaint: false,
-				taintTest: true,
-				scale: 1,
-				width: div[0].offsetWidth,
-				height: div[0].offsetHeight,
-				useCORS: true //保证跨域图片的显示，如果为不添加改属性，或者值为false, 跨域的图片显示灰背景
-			}).then(canvas => {
-				let screenShotBase64 = canvas.toDataURL();
-				that.$api('uploadBase64', { content: screenShotBase64 }).then(res => {
-					if (res.code === 1) {
-						that.$api('dev.asyncDecorateScreenShot', { shop_id: uni.getStorageSync('shop_id'), image: res.data.url });
-						uni.removeStorageSync('screenShot');
-						uni.removeStorageSync('shop_id');
-					}
-				});
-			});
-		}
 		// #endif
 	}
 };
@@ -238,7 +198,6 @@ export default {
 	width: 610rpx;
 	min-height: 850rpx;
 	border-radius: 20rpx;
-
 	.service-title {
 		font-size: 35rpx;
 		font-family: PingFang SC;
@@ -307,11 +266,9 @@ export default {
 	width: 750rpx;
 	// background: #fff;
 	transition: all linear 0.3s;
-
 	/deep/.cuIcon-back {
 		display: none;
 	}
-
 	.nav-title {
 		font-size: 38rpx;
 		font-family: PingFang SC;

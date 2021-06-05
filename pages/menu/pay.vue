@@ -181,7 +181,7 @@ export default {
 				let params = {
 					ticketId: that.perGoodsList.ticketId,
 					qty: that.amount+"",
-					custId: that.balInfo.custId,
+					custId: that.balInfo.CustID,
 					phoneNumber: that.userInfo.phoneNumber,
 				}
 				this.$api('user.deduction', params).then(res => {
