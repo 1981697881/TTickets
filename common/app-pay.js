@@ -243,7 +243,7 @@ export default class AppPay {
 							}
 						});
 						}else if(that.reType==2){
-							api('goods.veCoin', { qty: that.order.goodsPrice,custId:store.state.user.balInfo.CustID,phoneNumber:store.state.user.userInfo.phoneNumber }).then(resve => {
+							api('goods.veCoin', { qty: that.order.coinCount,custId:store.state.user.balInfo.CustID,phoneNumber:store.state.user.userInfo.phoneNumber }).then(resve => {
 								if (resve.flag) {
 									api('goods.veIntegral', { qty: that.order.integral,custId:store.state.user.balInfo.CustID,phoneNumber:store.state.user.userInfo.phoneNumber }).then(resal => {
 										if (resal.flag) {
@@ -252,6 +252,12 @@ export default class AppPay {
 												icon: 'none',
 												title: '购买成功'
 											})
+											setInterval(() => {
+												uni.switchTab({
+													url: '/pages/index/videoGame',
+												})
+											}, 1500);
+											
 										}
 									});
 								}

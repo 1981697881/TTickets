@@ -2,11 +2,10 @@
 	<view class="content">
 		<image class="bg_img" src="http://shopro.7wpp.com/imgs/poster/invite_poster.png" mode=""></image>
 		<view class="poster-box y-f">
-			<image :src="poster.finalPath" mode="widthFix" class="posterImage"></image>
-			<view class="share-box" v-if="poster.finalPath">
-				<view class="share-list-box x-f">
+			<view class="share-box">
+				<view class="share-list-box">
 					<tki-qrcode
-						ref="qrcode"
+						ref="userCode"
 						:cid="cid"
 						class="img"
 						:val="scanId"
@@ -38,9 +37,9 @@ export default {
 			cid: 'userCode',
 			ifShow: true,
 			val: '', // 要生成的二维码值
-			size: 200, // 二维码大小
+			size: 400, // 二维码大小
 			unit: 'upx', // 单位
-			icon: '', // 二维码图标
+			icon: require('@/static/imgs/logo/basicprofile.png'), // 二维码图标
 			iconsize: 40, // 二维码图标大小
 			lv: 3, // 二维码容错级别 ， 一般不用设置，默认就行
 			onval: false, // val值变化时自动重新生成二维码

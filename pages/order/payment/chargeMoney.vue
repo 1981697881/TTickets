@@ -24,7 +24,7 @@
 				</label>
 			</radio-group>
 			<view class="x-c">
-				<button class="cu-btn pay-btn" @tap="confirmPay">确认支付 ￥{{ total_fee }}</button>
+				<button :disabled="isSubOrder" class="cu-btn pay-btn" @tap="confirmPay">确认支付 ￥{{ total_fee }}</button>
 			</view>
 		</view>
 		<view class="foot_box"></view>
@@ -46,6 +46,8 @@ export default {
 			orderDetail: {},
 			timeText: '',
 			orderText: '',
+			params: {},
+			isSubOrder: false,
 			total_fee: '',
 			isPast: true, //是否显示订单倒计时。
 			isAndroid: uni.getStorageSync('isAndroid'),
@@ -54,14 +56,19 @@ export default {
 	},
 	computed: {
 		...mapState({
-			payment: state => state.init.initData.payment
+			userInfo: state => state.user.userInfo,
+			payment: state => state.init.initData.payment,
+			balInfo: state => state.user.balInfo
 		})
 	},
 	onLoad(options) {
+		clearInterval(timer);
+		timer = null
 		this.options = options;
 		if(this.$Route.query){
 			this.total_fee = this.$Route.query.goodsPrice
-			this.orderText = this.$Route.query.coinCount + '('+this.$Route.query.integral+')'
+			this.orderText = this.$Route.query.goodsName + '('+this.$Route.query.goodsDescribe+')'
+			this.params = this.$Route.query
 		}
 		// #ifdef H5
 		if (uni.getStorageSync('platform') === 'wxOfficialAccount' && uni.getSystemInfoSync().platform === 'ios' && !uni.getStorageSync('payReload')) {
@@ -74,8 +81,14 @@ export default {
 		// #endif
 		/* this.init(); */
 	},
-	onShow() {},
+	onShow() {
+		clearInterval(timer);
+		timer = null
+		this.countDown();
+	},
 	onHide() {
+		this.isSubOrder = true;
+		timer = null
 		clearInterval(timer);
 	},
 	methods: {
@@ -86,14 +99,15 @@ export default {
 				let parArray = [];
 				//测试订单
 				let params = {
-					coinPaymoney: val.goodsPrice,
-					goodsId: val.goodsId
+					coinPaymoney: that.$Route.query.goodsPrice,
+					goodsId: that.$Route.query.goodsId
 				};
-				uni.showToast({
+				/* uni.showToast({
 					icon: 'none',
 					title: '此功能尚未开放....敬请期待'
-				});
-				/* let pay = new AppPay(that.payType, val, 'goods.payCoinMoney', params,2); */
+				}); */
+				that.isSubOrder = true;
+				let pay = new AppPay(that.payType, val, 'goods.payCoinMoney', params,2);
 				uni.hideLoading();
 			} else {
 				uni.showToast({
@@ -105,43 +119,92 @@ export default {
 		//积分充值
 		integral() {
 			let that = this;
-			that.$api('goods.veIntegral', { qty: 1, custId: that.balInfo.CustID, phoneNumber: that.userInfo.phoneNumber }).then(res => {
+			that.$api('goods.veIntegral', { qty: that.$Route.query.integral, custId: that.balInfo.CustID, phoneNumber: that.userInfo.phoneNumber }).then(res => {
 				if (res.flag) {
+					uni.showToast({
+						icon: 'success',
+						title: '充值成功'
+					});
+					setInterval(() => {
+						uni.switchTab({
+							url: '/pages/index/videoGame',
+						})
+					}, 1500);
+					
 				}
 			});
 		},
 		//游戏币充值
 		currency() {
 			let that = this;
-			that.$api('goods.veCoin', { qty: 1, custId: that.balInfo.CustID, phoneNumber: that.userInfo.phoneNumber }).then(res => {
+			that.$api('goods.veCoin', { qty: that.$Route.query.coinCount, custId: that.balInfo.CustID, phoneNumber: that.userInfo.phoneNumber }).then(res => {
 				if (res.flag) {
+					that.integral()
 				}
 			});
 		},
 		selPay(e) {
 			this.payType = e.detail.value;
 		},
+		num(n) {
+			return n < 10 ? '0' + n : '' + n;
+		},
 		// 倒计时
 		countDown() {
 			let that = this;
-			let t = parseInt(new Date().getTime() * 1000) - parseInt(new Date().getTime());
-			t = t / 1000;
-			console.log(t)
-			let timer = setInterval(() => {
-				if (t > 0) {
-					let time = that.$tools.format(t);
-					that.timeText = `支付剩余时间 ${time.m}:${time.s}`;
-					t--;
+			let maxtime = 10 * 30;
+			timer = setInterval(() => {
+				if (maxtime >= 0) {
+					let minutes = Math.floor(maxtime / 60);
+					let seconds = Math.floor(maxtime % 60);
+					that.timeText = `${that.num(minutes)}:${that.num(seconds)}`;
+					--maxtime;
 				} else {
 					clearInterval(timer);
+					timer = null
 					that.timeText = '订单已过期!';
+					that.isPast = false;
+					that.isSubOrder = true;
 				}
 			}, 1000);
+		},
+		//余额购买
+		blanBuy(val) {
+			let that = this;
+			uni.showLoading({ title: '购买中~~！' });
+			if (that.userInfo.phoneNumber) {
+				that.isSubOrder = true;
+				let params = {
+					qty: that.$Route.query.goodsPrice+ '',
+					custId: that.balInfo.CustID,
+					phoneNumber: that.userInfo.phoneNumber
+				};
+				this.$api('user.deduction', params).then(res => {
+					if (res.flag) {
+						that.isSubOrder = true;
+						that.currency()
+					} else {
+						uni.showToast({
+							icon: 'none',
+							title: res.msg
+						});
+					}
+				});
+			} else {
+				uni.showToast({
+					icon: 'none',
+					title: '手机号码为必填项'
+				});
+			}
 		},
 		// 发起支付
 		confirmPay() {
 			let that = this;
-			let pay = new AppPay(that.payType, that.orderDetail);
+			if(that.payType=='wallet'){
+				that.blanBuy(that.params)
+			}else{
+				that.payMeal(that.params)
+			}
 		},
 	}
 };
