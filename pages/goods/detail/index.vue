@@ -1,7 +1,7 @@
 <template>
 	<view class="box">
 		<view class="load-box" v-if="!goodsInfo.price"><app-skeletons :type="'detail'"></app-skeletons></view>
-		<view class="detail_box shopro-selector" v-else>
+		<view class="detail_box app-selector" v-else>
 			<view class="detail-content">
 				<view class="goodes_detail_swiper-box">
 					<!-- 拼团滚动提示 -->
@@ -9,7 +9,7 @@
 					<!-- 详情轮播 -->
 					<swiper class="carousel" circular @change="swiperChange" :autoplay="true">
 						<swiper-item @tap="tools.previewImage(goodsInfo.images, swiperCurrent)" v-for="(img, index) in goodsInfo.images" :key="index" class="carousel-item">
-							<image class="swiper-image shopro-selector-rect" :src="img" mode="aspectFill" lazy-load></image>
+							<image class="swiper-image app-selector-rect" :src="img" mode="aspectFill" lazy-load></image>
 						</swiper-item>
 					</swiper>
 					<view v-if="goodsInfo.images" class="swiper-dots">{{ swiperCurrent + 1 }} / {{ goodsInfo.images.length }}</view>
@@ -21,7 +21,7 @@
 				<view class="sub-title more-t">{{ goodsInfo.subtitle }}</view>
 				<!-- 规格选择 -->
 				<view
-					class="sku-box shopro-selector-rect"
+					class="sku-box app-selector-rect"
 					@tap="showSku = true"
 					v-if="activityRules.status !== 'waiting' && checkActivity(goodsInfo.activity_type, 'groupon') && goodsInfo.is_sku"
 				>
@@ -116,8 +116,8 @@
 			<view class="detail-foot_box  x-f" v-if="!showSku && !showServe && detailType !== 'score'">
 				<view class="left x-f">
 					<view class="tools-item y-f" @tap="goHome">
-						<image class="tool-img shopro-selector-circular" src="http://shopro.7wpp.com/imgs/tabbar/tab_home_sel.png" mode=""></image>
-						<text class="tool-title shopro-selector-rect">首页</text>
+						<image class="tool-img app-selector-circular" src="http://shopro.7wpp.com/imgs/tabbar/tab_home_sel.png" mode=""></image>
+						<text class="tool-title app-selector-rect">首页</text>
 					</view>
 					<view class="tools-item y-f" @tap="onFavorite(goodsInfo.id)">
 						<image

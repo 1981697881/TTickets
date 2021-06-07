@@ -4,7 +4,7 @@
 			<text>{{city.cityName}}</text>
 			<text class="cuIcon-triangledownfill"></text>
 		</view>
-		<view class="search-box x-c shopro-selector-rect" @tap="jump('/pages/goods/list', { keywords: detail.content })">
+		<view class="search-box x-c app-selector-rect" @tap="jump('/pages/goods/list', { keywords: detail.content })">
 			<text class="cuIcon-search"></text>
 			<text class="search-val">{{ detail.content || '暂无数据' }}</text>
 		</view>

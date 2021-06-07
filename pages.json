@@ -2,8 +2,8 @@
 	"easycom": { //easycom,按需自动注册组件。原则上可以把所有页面引入组件方法删掉，会自动引入。
 		"autoscan": true,
 		"custom": {
-			"shopro-(.*)": "@/components/app-$1/app-$1.vue",
-			"uni-(.*)": "@/components/uni-$1/uni-$1.vue"
+			"uni-(.*)": "@/components/uni-$1/uni-$1.vue",
+			"^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
 		}
 	},
 	"pages": [{
@@ -96,7 +96,7 @@
 			}
 		},{
 			"path": "pages/menu/menu",
-			"name": "menu",
+			"name": "shoppingMall",
 			"style": {
 				"navigationBarTitleText": "商城"
 			},
@@ -801,6 +801,19 @@
 						"group": "通用"
 					}
 				},
+				{
+					"path": "register",
+					"style": {
+						"navigationBarTitleText": "注册"
+
+					},
+					"meta": {
+						"auth": true,
+						"async": true,
+						"title": "注册",
+						"group": "用户"
+					}
+				},
 				
 				{
 					"path": "set",
@@ -915,14 +928,14 @@
 				{
 					"path": "wallet/bind-bank",
 					"style": {
-						"navigationBarTitleText": "绑定银行卡"
+						"navigationBarTitleText": "绑定会员卡",
+						"navigationStyle": "custom"
 					},
 					"meta": {
 						"auth": true,
 						"async": true,
-						"title": "绑定银行卡",
+						"title": "绑定会员卡",
 						"group": "用户"
-
 					}
 				},{
 					"path": "wallet/recharge",

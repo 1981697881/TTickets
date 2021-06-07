@@ -33,7 +33,7 @@ export default {
 		},
 		selector: {
 			type: String,
-			default: 'shopro-selector'
+			default: 'app-selector'
 		},
 		skeletonBgColor: {
 			type: String,

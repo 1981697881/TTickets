@@ -1,48 +1,118 @@
 <template>
 	<view class="bank-wrap">
-		<view class="form-box">
-			<label>
-				<view class="form-item flex align-center justify-between">
-					<view class="item-title">持卡人:</view>
-					<input class="item-input flex-sub" type="text" v-model="bankInfo.real_name" placeholder="请输入持卡人姓名" placeholder-class="pl-input" />
-				</view>
-			</label>
-			<label>
-				<view class="form-item flex align-center justify-between">
-					<view class="item-title">银行卡号:</view>
-					<input class="item-input flex-sub" type="number" v-model="bankInfo.card_no" placeholder="请输入银行卡号" placeholder-class="pl-input" />
-				</view>
-			</label>
-			<label>
-				<view class="form-item flex align-center justify-between">
-					<view class="item-title">开户行:</view>
-					<input class="item-input flex-sub" type="text" v-model="bankInfo.bank_name" placeholder="请输入开户行" placeholder-class="pl-input" />
-				</view>
-			</label>
+		<view class="head_box">
+			<cu-custom :isBack="true">
+				<block slot="backText"></block>
+				<block slot="content">绑定会员卡</block>
+			</cu-custom>
 		</view>
-
-		<view class="notice flex align-center">请填写持卡人本人的银行卡信息</view>
+		<view class="form-box">
+			<u-form :model="bankInfo" :rules="rules" ref="uForm" :errorType="errorType">
+				<u-form-item class="flex justify-between" :labelStyle="labelStyle" label-width="130" label-position="left" label="卡号:" prop="WechatNo">
+					<u-input style="float: left;width: 500rpx;" placeholder="请输入卡号" :placeholderStyle="placeholderStyle" v-model="bankInfo.WechatNo" type="text"></u-input>
+					<button class="cu-btn code-btn" @tap.stop="getCode"><text class="cuIcon-scan"></text></button>
+				</u-form-item>
+				<u-form-item class="flex justify-between" :labelStyle="labelStyle" label-width="130" label-position="left" label="手机号:" prop="phone">
+					<u-input style="float: left;width: 500rpx;" disabled placeholder="请输入手机号" :placeholderStyle="placeholderStyle" v-model="bankInfo.phone" type="text"></u-input>
+					<button class="cu-btn code-btn" open-type="getPhoneNumber" @getphonenumber="bindPhone"><text class="cuIcon-mobile"></text></button>
+				</u-form-item>
+				<u-form-item class="flex justify-between" :labelStyle="labelStyle" label-width="130" label-position="left" label="密码:" prop="password">
+					<u-input class="pw-input" placeholder="请输入密码" :placeholderStyle="placeholderStyle" v-model="bankInfo.password" type="password"></u-input>
+				</u-form-item>
+			</u-form>
+		</view>
+		<view class="notice flex align-center">请填写本人的会员卡信息</view>
 		<view class="btn-box flex align-center justify-center"><button class="cu-btn confirem-btn" @tap="editBankInfo">确定</button></view>
 	</view>
 </template>
 
 <script>
+import { mapState, mapActions } from 'vuex';
 export default {
 	components: {},
 	data() {
 		return {
 			bankInfo: {
-				real_name: '',
-				card_no: '',
-				bank_name: ''
+				WechatNo: '',
+				phone: '',
+				password: '',
+				WechatId: '',
+				PublicOpenID: ''
+			},
+			labelStyle: {
+				'font-size': '28rpx',
+				'font-weight': '500',
+				color: '#333'
+			},
+			placeholderStyle: 'font-size: 28rpx;color:#c4c4c4;',
+			errorType: ['message'],
+			rules: {
+				WechatNo: [
+					{
+						required: true,
+						message: '请输入卡号',
+						trigger: ['change', 'blur']
+					}
+				],
+				phone: [
+					{
+						required: true,
+						message: '请点击右侧图标，授权手机号码',
+						trigger: ['change', 'blur']
+					}
+				],
+				password: [
+					{
+						required: true,
+						message: '请输入密码',
+						trigger: ['change', 'blur']
+					}
+				]
 			}
 		};
 	},
-	computed: {},
-	onLoad() {
-		this.getBankInfo();
+	onReady() {
+		this.$refs.uForm.setRules(this.rules);
+	},
+	computed: {
+		...mapState({
+			userinfo: state => state.user.userInfo,
+			balInfo: state => state.user.balInfo
+		})
+	},
+	onLoad(option) {
+		if (JSON.stringify(option) != '{}') {
+			this.bankInfo.WechatId = option.WechatId;
+			this.bankInfo.PublicOpenID = option.PublicOpenID;
+		}
+		this.bankInfo.phone = this.userinfo.phoneNumber;
+		console.log(option);
+		/* this.getBankInfo(); */
 	},
 	methods: {
+		...mapActions(['getUserDetails']),
+		bindPhone(e) {
+			let me = this;
+			me.$api('user.getWxMiniPhoneNumber', {
+				sessionKey: uni.getStorageSync('session_key'),
+				openid: uni.getStorageSync('openid'),
+				encryptedData: e.detail.encryptedData,
+				iv: e.detail.iv
+			}).then(res => {
+				if (res.flag) {
+					this.bankInfo.phone = res.data;
+					me.getUserDetails();
+				}
+			});
+		},
+		getCode() {
+			let that = this;
+			uni.scanCode({
+				success: function(res) {
+					that.bankInfo.WechatNo = res.result;
+				}
+			});
+		},
 		//获取银行卡信息
 		getBankInfo() {
 			let that = this;
@@ -54,22 +124,26 @@ export default {
 				}
 			});
 		},
-		//修改银行卡信息
+		//修改会员卡信息
 		editBankInfo() {
 			let that = this;
-			that.$api('user_bank.edit', {
-				real_name: that.bankInfo.real_name,
-				bank_name: that.bankInfo.bank_name,
-				card_no: that.bankInfo.card_no
-			}).then(res => {
-				if (res.code === 1) {
-					that.$tools.toast('保存成功');
-					setTimeout(() => {
-						that.$Router.back();
-						// #ifdef H5
-						window.history.back(-1);
-						// #endif
-					}, 1000);
+			that.$refs.uForm.validate(valid => {
+				if (valid) {
+					that.$api('user.memberBindSimple', that.bankInfo).then(res => {
+						if (res.flag) {
+							that.$tools.toast(res.msg);
+							setTimeout(() => {
+								that.$Router.back();
+								// #ifdef H5
+								window.history.back(-1);
+								// #endif
+							}, 1000);
+						}else{
+							that.$tools.toast(res.msg);
+						}
+					});
+				} else {
+					that.$tools.toast('请完善表单');
 				}
 			});
 		}
@@ -78,6 +152,21 @@ export default {
 </script>
 
 <style lang="scss">
+	.pw-input{
+		.u-input{
+			input{
+				width: 500rpx !important;
+			}
+		}
+	}
+.head_box {
+	background: linear-gradient(125deg, rgba(139, 196, 128, 1) 0%, rgba(148, 120, 165, 1) 100%);
+	position: relative;
+	color: white;
+}
+.u-form-item{
+	margin: 0 20rpx 0 20rpx !important;
+}
 .form-box {
 	background: #fff;
 	.form-item {

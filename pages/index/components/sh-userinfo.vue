@@ -140,7 +140,7 @@ export default {
 			}).then(res => {
 				if (res.flag) {
 					me.getUserDetails();
-
+					
 					/* me.jump('/pages/user/edit-phone', { fromType: 'bind',phone:res.data }) */
 				}
 			});

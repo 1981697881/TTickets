@@ -2,12 +2,12 @@
 	<view class="page_box">
 		<!-- 空白页 -->
 		<app-empty v-if="!hasTemplate" :emptyData="emptyData"></app-empty>
-		<view v-else class="page_box shopro-selector">
+		<view v-else class="page_box app-selector">
 			<!-- 导航栏 -->
 			<view class="head_box active" :style="{ background: bgcolor }">
 				<cu-custom :isBack="true" v-if="info && info.name">
 					<block slot="content">
-						<text class="nav-title shopro-selector-rect text-black">{{ info.name || '推荐' }}</text>
+						<text class="nav-title app-selector-rect text-black">{{ info.name || '推荐' }}</text>
 					</block>
 				</cu-custom>
 			</view>

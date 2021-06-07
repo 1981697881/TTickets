@@ -8,15 +8,23 @@
 			<!-- <image class="resale-bg" src="/static/resale_bg.png" mode=""></image> -->
 			<view class="card-box x-end x-bc">
 				<view class="left y-start">
-					<text class="title">账户 {{balInfo.Number || ''}}</text>
+					<view class="flex">
+						<text class="title">账户：<text class="text-red"> {{balInfo.Number || '您还不是会员!'}}</text></text>
+						<button v-if="!balInfo.Number" class="cu-btn sm round shadow lines-orange margin-left" @tap="routerTo('https://server.zk2016.com/outside/web/auth/miniAuth.do?placeId=77BAF153-CDE4-466E-B394-C69240E79077&redirect_uri=/pages/user/wallet/index')">成为会员</button>
+					</view>
 					<text class="money-num">{{balInfo.Money || "0.00"}}</text>
+					<text class="text-olive">
+						<text>游戏币：{{balInfo.Coins2 || "0"}}</text>
+						<text class="padding-left"> 彩票：{{balInfo.Tickets || "0"}}</text>
+						<text class="padding-left">积分：{{balInfo.Point || "0.00"}}</text>
+						   </text>
 					<text class="add">温馨提示: 任何冒充工作人员索要您帐号信息的私信均为诈骗信息,请您提高警惕,切勿上当受骗。</text>
 				</view>
 				<!-- <button class="cu-btn cash-btn" @tap="onWithdrawals">提现</button> -->
 			</view>
 		</view>
 		<view class="content_box">
-			<view class="resale-list x-bc" @tap="jump('/pages/user/wallet/bind-bank')">
+			<view class="resale-list x-bc" @tap="routerTo('https://server.zk2016.com/outside/web/auth/miniAuth.do?placeId=77BAF153-CDE4-466E-B394-C69240E79077&redirect_uri=/pages/user/wallet/bind-bank')">
 				<view class="x-f">
 					<text class=" cuicon cuIcon-vipcard"></text>
 					<text>绑定会员卡</text>
@@ -83,6 +91,7 @@ export default {
 		return {
 			showModal: false,
 			money: '',
+			routerTo: this.$tools.routerTo,
 			rules: ''
 		};
 	},
@@ -92,7 +101,8 @@ export default {
 			balInfo: state => state.user.balInfo
 		})
 	},
-	onLoad() {
+	onLoad(option) {
+		console.log(option)
 		/* this.getApplyRules(); */
 		/* this.getUserInfo(); */
 		this.getUserBalance()
@@ -105,7 +115,6 @@ export default {
 				query: parmas
 			});
 		},
-		
 		postMoney() {
 			this.apply();
 			this.showModal = false;
@@ -232,7 +241,7 @@ export default {
 	.card-box {
 		width: 695rpx;
 		height: 338rpx;
-		padding: 40rpx;
+		padding: 30rpx;
 		background: url(data:image/png;base64,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)
 			no-repeat;
 		background-size: 100% 100%;
@@ -270,7 +279,7 @@ export default {
 			font-family: Noto Sans S Chinese;
 			font-weight: 400;
 			color: rgba(230, 184, 115, 1);
-			line-height: 30rpx;
+			line-height: 50rpx;
 		}
 
 		.money-num {

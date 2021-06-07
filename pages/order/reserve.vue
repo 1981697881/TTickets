@@ -450,18 +450,9 @@ export default {
 				iv: e.detail.iv
 			}).then(res => {
 				if (res.flag) {
-					me.$api('user.getWxMiniPhoneNumber', {
-						sessionKey: uni.getStorageSync('session_key'),
-						openid: uni.getStorageSync('openid'),
-						encryptedData: e.detail.encryptedData,
-						iv: e.detail.iv
-					}).then(res => {
-						if (res.flag) {
-							me.getUserDetails();
-							/* uni.setStorageSync('phone', res.data);
-							me.jump('/pages/user/edit-phone', { fromType: 'bind', phone: res.data }); */
-						}
-					});
+					me.getUserDetails();
+					/* uni.setStorageSync('phone', res.data);
+					me.jump('/pages/user/edit-phone', { fromType: 'bind', phone: res.data }); */
 				}
 			});
 		},

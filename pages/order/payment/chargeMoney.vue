@@ -63,12 +63,12 @@ export default {
 	},
 	onLoad(options) {
 		clearInterval(timer);
-		timer = null
+		timer = null;
 		this.options = options;
-		if(this.$Route.query){
-			this.total_fee = this.$Route.query.goodsPrice
-			this.orderText = this.$Route.query.goodsName + '('+this.$Route.query.goodsDescribe+')'
-			this.params = this.$Route.query
+		if (this.$Route.query) {
+			this.total_fee = this.$Route.query.goodsPrice;
+			this.orderText = this.$Route.query.goodsName + '(' + this.$Route.query.goodsDescribe + ')';
+			this.params = this.$Route.query;
 		}
 		// #ifdef H5
 		if (uni.getStorageSync('platform') === 'wxOfficialAccount' && uni.getSystemInfoSync().platform === 'ios' && !uni.getStorageSync('payReload')) {
@@ -83,12 +83,12 @@ export default {
 	},
 	onShow() {
 		clearInterval(timer);
-		timer = null
+		timer = null;
 		this.countDown();
 	},
 	onHide() {
 		this.isSubOrder = true;
-		timer = null
+		timer = null;
 		clearInterval(timer);
 	},
 	methods: {
@@ -107,7 +107,7 @@ export default {
 					title: '此功能尚未开放....敬请期待'
 				}); */
 				that.isSubOrder = true;
-				let pay = new AppPay(that.payType, val, 'goods.payCoinMoney', params,2);
+				let pay = new AppPay(that.payType, val, 'goods.payCoinMoney', params, 2);
 				uni.hideLoading();
 			} else {
 				uni.showToast({
@@ -127,10 +127,9 @@ export default {
 					});
 					setInterval(() => {
 						uni.switchTab({
-							url: '/pages/index/videoGame',
-						})
+							url: '/pages/index/videoGame'
+						});
 					}, 1500);
-					
 				}
 			});
 		},
@@ -139,7 +138,7 @@ export default {
 			let that = this;
 			that.$api('goods.veCoin', { qty: that.$Route.query.coinCount, custId: that.balInfo.CustID, phoneNumber: that.userInfo.phoneNumber }).then(res => {
 				if (res.flag) {
-					that.integral()
+					that.integral();
 				}
 			});
 		},
@@ -161,7 +160,7 @@ export default {
 					--maxtime;
 				} else {
 					clearInterval(timer);
-					timer = null
+					timer = null;
 					that.timeText = '订单已过期!';
 					that.isPast = false;
 					that.isSubOrder = true;
@@ -171,41 +170,53 @@ export default {
 		//余额购买
 		blanBuy(val) {
 			let that = this;
+			let params = {
+				qty: val.coinPaymoney + '',
+				custId: that.balInfo.CustID,
+				coinNo: val.coinNo,
+				phoneNumber: that.userInfo.phoneNumber
+			};
+			this.$api('user.deduction', params).then(res => {
+				if (res.flag) {
+					that.currency();
+				} else {
+					uni.showToast({
+						icon: 'none',
+						title: res.msg
+					});
+				}
+			});
+		},
+		// 发起支付
+		confirmPay() {
+			let that = this;
 			uni.showLoading({ title: '购买中~~！' });
 			if (that.userInfo.phoneNumber) {
-				that.isSubOrder = true;
-				let params = {
-					qty: that.$Route.query.goodsPrice+ '',
-					custId: that.balInfo.CustID,
-					phoneNumber: that.userInfo.phoneNumber
-				};
-				this.$api('user.deduction', params).then(res => {
-					if (res.flag) {
-						that.isSubOrder = true;
-						that.currency()
-					} else {
-						uni.showToast({
-							icon: 'none',
-							title: res.msg
-						});
-					}
-				});
+				if (that.payType == 'wallet') {
+					//生成订单
+					this.$api('goods.addCoinOrder', { coinPaymoney: that.$Route.query.goodsPrice, goodsId: that.$Route.query.goodsId, openId: uni.getStorageSync('openid') }).then(
+						res => {
+							if (res.flag) {
+								that.isSubOrder = true;
+								that.blanBuy(res.data);
+							} else {
+								uni.showToast({
+									icon: 'none',
+									title: res.msg
+								});
+							}
+						}
+					);
+				} else {
+					that.payMeal(that.params);
+				}
 			} else {
 				uni.showToast({
 					icon: 'none',
 					title: '手机号码为必填项'
 				});
 			}
-		},
-		// 发起支付
-		confirmPay() {
-			let that = this;
-			if(that.payType=='wallet'){
-				that.blanBuy(that.params)
-			}else{
-				that.payMeal(that.params)
-			}
-		},
+		}
 	}
 };
 </script>

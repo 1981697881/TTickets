@@ -8,8 +8,12 @@ import '@/common/utils/sdk/sdk-h5.js'
 import {
 	API_URL
 } from './env.js'
+//引入全局uView
+import uView from 'uview-ui'
+Vue.use(uView)
 import appShare from '@/common/mixins/app-share'
 Vue.mixin(appShare);
+
 import {
 	RouterMount
 } from 'uni-simple-router'

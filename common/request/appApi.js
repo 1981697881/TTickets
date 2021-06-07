@@ -322,7 +322,12 @@ export default {
 			url: 'WeChat/payCoinMoney',
 			auth: true,
 			method: 'POST',
-			// desc: '游戏币支付',
+			// desc: '游戏币支付微信支付',
+		},addCoinOrder: {
+			url: 'memberCoin/addCoinOrder ',
+			auth: true,
+			method: 'POST',
+			// desc: '游戏币支付余额支付',
 		},veCoin: {
 			url: 'V8/Coin',
 			auth: true,
@@ -423,11 +428,21 @@ export default {
 			auth: true,
 			method: 'GET',
 			// desc: '用户信息',
+		},getMiniAuth: {
+			url: 'V8/getMiniAuth',
+			auth: true,
+			method: 'GET',
+			// desc: '获取智科公众号id',
 		},balance: {
 			url: 'V8/Balance',
 			auth: true,
 			method: 'POST',
 			// desc: '用户余额',
+		},memberBindSimple: {
+			url: 'V8/memberBindSimple',
+			auth: true,
+			method: 'POST',
+			// desc: '用户绑卡',
 		},deduction: {
 			url: 'V8/Deduction',
 			auth: true,
