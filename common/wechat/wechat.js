@@ -53,8 +53,7 @@ export default class Wechat {
 						uni.getUserProfile({
 							provider: 'weixin',
 							success: function(infoRes) {
-								console.log(infoRes)
-								if (infoRes.errMsg === "getUserInfo:ok") {
+								if (infoRes.errMsg === "getUserProfile:ok") {
 									let userInfo = infoRes.userInfo;
 									api('user.wxOpenPlatformLogin', {
 										authResult: authResult,
@@ -124,6 +123,7 @@ export default class Wechat {
 
 	wxMiniProgramLogin(e) {
 		let that = this;
+		console.log(e)
 		return new Promise((resolve, reject) => {
 			if (!uni.getStorageSync('session_key')) {
 				uni.showToast({
@@ -132,15 +132,15 @@ export default class Wechat {
 				})
 				return;
 			}
-			if (e.detail.errMsg === "getUserInfo:ok") {
-				console.log(e.detail)
+			if (e.errMsg === "getUserProfile:ok") {
 				api('user.wxMiniProgramLogin', {
 					sessionKey: uni.getStorageSync('session_key'),
 					openid: uni.getStorageSync('openid'),
-					encryptedData: e.detail.encryptedData,
-					iv: e.detail.iv,
-					signature: e.detail.signature
+					encryptedData: e.encryptedData,
+					iv: e.iv,
+					signature: e.signature
 				}).then(res => {
+					console.log(res)
 					if (res.flag) {
 						resolve(res.data);
 					}

@@ -64,12 +64,10 @@ export default {
 	},
 	methods: {
 		...mapActions(['setTokenAndBack']),
-
 		// 隐藏登录弹窗
 		hideModal() {
 			this.showLogin = false;
 		},
-
 		// 去登录
 		onLogin() {
 			this.showLogin = false;
@@ -78,20 +76,26 @@ export default {
 				path: '/pages/public/login'
 			});
 		},
-
+		getUserProfile(){
+			return new Promise((resolve, reject) => {
+			        uni.getUserProfile({
+			        	desc: 'Wexin', // 这个参数是必须的
+			        	success: res => {
+			        		 resolve(res);
+			        	}
+			        });
+			 })
+		},
 		// 小程序，获取用户信息登录
 		async getuserinfo(e) {
-			await uni.getUserProfile({
-				desc: 'Wexin', // 这个参数是必须的
-				success: res => {
-					var wechat = new Wechat();
-					let token = wechat.wxMiniProgramLogin(e);
-					this.$store.commit('FORCE_OAUTH', false);
-					this.$store.commit('LOGIN_TIP', false);
-					uni.setStorageSync('fromLogin', this.$Route);
-					this.setTokenAndBack(token);
-				}
-			});
+			let that = this
+			var wechat = new Wechat();
+			let res = await that.getUserProfile()
+			let token = await wechat.wxMiniProgramLogin(res);
+			that.$store.commit('FORCE_OAUTH', false);
+			that.$store.commit('LOGIN_TIP', false);
+			uni.setStorageSync('fromLogin', that.$Route);
+			that.setTokenAndBack(token);
 		},
 		// 小程序，取消登录
 		closeAuth() {

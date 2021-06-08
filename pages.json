@@ -804,8 +804,8 @@
 				{
 					"path": "register",
 					"style": {
-						"navigationBarTitleText": "注册"
-
+						"navigationBarTitleText": "注册",
+						"navigationStyle": "custom"
 					},
 					"meta": {
 						"auth": true,
@@ -919,7 +919,7 @@
 
 					},
 					"meta": {
-						"auth": false,
+						"auth": true,
 						"async": true,
 						"title": "我的钱包",
 						"group": "用户"

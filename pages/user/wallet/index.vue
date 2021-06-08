@@ -8,9 +8,9 @@
 			<!-- <image class="resale-bg" src="/static/resale_bg.png" mode=""></image> -->
 			<view class="card-box x-end x-bc">
 				<view class="left y-start">
-					<view class="flex">
+					<view class="flex"><!-- v-if="!balInfo.Number" -->
 						<text class="title">账户：<text class="text-red"> {{balInfo.Number || '您还不是会员!'}}</text></text>
-						<button v-if="!balInfo.Number" class="cu-btn sm round shadow lines-orange margin-left" @tap="routerTo('https://server.zk2016.com/outside/web/auth/miniAuth.do?placeId=77BAF153-CDE4-466E-B394-C69240E79077&redirect_uri=/pages/user/wallet/index')">成为会员</button>
+						<button  class="cu-btn sm round shadow lines-orange margin-left" @tap="register">成为会员</button>
 					</view>
 					<text class="money-num">{{balInfo.Money || "0.00"}}</text>
 					<text class="text-olive">
@@ -24,7 +24,7 @@
 			</view>
 		</view>
 		<view class="content_box">
-			<view class="resale-list x-bc" @tap="routerTo('https://server.zk2016.com/outside/web/auth/miniAuth.do?placeId=77BAF153-CDE4-466E-B394-C69240E79077&redirect_uri=/pages/user/wallet/bind-bank')">
+			<view class="resale-list x-bc" @tap="bindingCard">
 				<view class="x-f">
 					<text class=" cuicon cuIcon-vipcard"></text>
 					<text>绑定会员卡</text>
@@ -73,6 +73,8 @@
 				</view>
 			</block>
 		</app-modal>
+		<!-- 登录提示 -->
+		<app-login-modal></app-login-modal>
 		<!-- 自定义底部导航 -->
 		<app-tabbar></app-tabbar>
 		<!-- 关注弹窗 -->
@@ -97,12 +99,11 @@ export default {
 	},
 	computed: {
 		...mapState({
-			userinfo: state => state.user.userInfo,
+			userInfo: state => state.user.userInfo,
 			balInfo: state => state.user.balInfo
 		})
 	},
 	onLoad(option) {
-		console.log(option)
 		/* this.getApplyRules(); */
 		/* this.getUserInfo(); */
 		this.getUserBalance()
@@ -114,6 +115,28 @@ export default {
 				path: path,
 				query: parmas
 			});
+		},
+		bindingCard(){
+			let that = this
+			if (that.userInfo.phoneNumber) {
+				that.routerTo('https://server.zk2016.com/outside/web/auth/miniAuth.do?placeId=77BAF153-CDE4-466E-B394-C69240E79077&redirect_uri=/pages/user/wallet/bind-bank')
+			} else {
+				uni.showToast({
+					icon: 'none',
+					title: '未检测到手机号码，请回个人中心授权手机号码'
+				});
+			}
+		},
+		register(){
+			let that = this
+			if (that.userInfo.phoneNumber) {
+				that.routerTo('https://server.zk2016.com/outside/web/auth/miniAuth.do?placeId=77BAF153-CDE4-466E-B394-C69240E79077&redirect_uri=/pages/user/register')
+			} else {
+				uni.showToast({
+					icon: 'none',
+					title: '未检测到手机号码，请回个人中心授权手机号码'
+				});
+			}
 		},
 		postMoney() {
 			this.apply();

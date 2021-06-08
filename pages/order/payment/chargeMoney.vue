@@ -122,14 +122,16 @@ export default {
 			that.$api('goods.veIntegral', { qty: that.$Route.query.integral, custId: that.balInfo.CustID, phoneNumber: that.userInfo.phoneNumber }).then(res => {
 				if (res.flag) {
 					uni.showToast({
+						title: '购买成功',
 						icon: 'success',
-						title: '充值成功'
+						duration: 1000,
+						mask: true,
+						success: function() {
+							uni.switchTab({
+								url: '/pages/index/videoGame',
+							})
+						}
 					});
-					setInterval(() => {
-						uni.switchTab({
-							url: '/pages/index/videoGame'
-						});
-					}, 1500);
 				}
 			});
 		},

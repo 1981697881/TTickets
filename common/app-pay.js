@@ -249,15 +249,16 @@ export default class AppPay {
 										if (resal.flag) {
 											store.dispatch('getUserBalance')
 											uni.showToast({
-												icon: 'none',
-												title: '购买成功'
-											})
-											setInterval(() => {
-												uni.switchTab({
-													url: '/pages/index/videoGame',
-												})
-											}, 1500);
-											
+												title: '购买成功',
+												icon: 'success',
+												duration: 1000,
+												mask: true,
+												success: function() {
+													uni.switchTab({
+														url: '/pages/index/videoGame',
+													})
+												}
+											});
 										}
 									});
 								}

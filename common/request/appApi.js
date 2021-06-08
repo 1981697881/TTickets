@@ -443,6 +443,11 @@ export default {
 			auth: true,
 			method: 'POST',
 			// desc: '用户绑卡',
+		},createMember: {
+			url: 'V8/createMember',
+			auth: true,
+			method: 'POST',
+			// desc: '成为会员',
 		},deduction: {
 			url: 'V8/Deduction',
 			auth: true,

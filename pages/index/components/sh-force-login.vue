@@ -24,16 +24,22 @@ export default {
 	},
 	methods: {
 		...mapActions(['setTokenAndBack']),
+		getUserProfile(){
+			return new Promise((resolve, reject) => {
+			        uni.getUserProfile({
+			        	desc: 'Wexin', // 这个参数是必须的
+			        	success: res => {
+			        		 resolve(res);
+			        	}
+			        });
+			 })
+		},
 		async getuserinfo(e) {
-			await uni.getUserProfile({
-				desc: 'Wexin', // 这个参数是必须的
-				success: res => {
-					var wechat = new Wechat();
-					let token = wechat.wxMiniProgramLogin(res);
-					store.commit('FORCE_OAUTH', false);
-					this.setTokenAndBack(token);
-				}
-			});
+			var wechat = new Wechat();
+			let res = await this.getUserProfile();
+			let token = await wechat.wxMiniProgramLogin(res);
+			store.commit('FORCE_OAUTH', false);
+			this.setTokenAndBack(token);
 		},
 		closeAuth() {
 			store.commit('FORCE_OAUTH', false);
