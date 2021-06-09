@@ -10,7 +10,7 @@
 				<view class="left y-start">
 					<view class="flex"><!-- v-if="!balInfo.Number" -->
 						<text class="title">账户：<text class="text-red"> {{balInfo.Number || '您还不是会员!'}}</text></text>
-						<button  class="cu-btn sm round shadow lines-orange margin-left" @tap="register">成为会员</button>
+						<button v-if="!balInfo.Number" class="cu-btn sm round shadow lines-orange margin-left" @tap="register">成为会员</button>
 					</view>
 					<text class="money-num">{{balInfo.Money || "0.00"}}</text>
 					<text class="text-olive">
@@ -103,7 +103,7 @@ export default {
 			balInfo: state => state.user.balInfo
 		})
 	},
-	onLoad(option) {
+	onShow() {
 		/* this.getApplyRules(); */
 		/* this.getUserInfo(); */
 		this.getUserBalance()

@@ -97,9 +97,10 @@ const actions = {
 		commit
 	}) {
 		return new Promise((resolve, reject) => {
-			api('user.balance',{phone: state.userInfo.phoneNumber}).then(res => {
-				commit('BAL_INFO', res.data);
-				uni.setStorageSync('balInfo', res.data);
+			/* phone: state.userInfo.phoneNumber */
+			api('user.balance2',{WechatId: state.userInfo.wechatId,PublicOpenID:state.userInfo.publicOpenId}).then(res => {
+				commit('BAL_INFO', res.data[0]);
+				uni.setStorageSync('balInfo', res.data[0]);
 				resolve(res)
 			}).catch(e => {
 				reject(e)

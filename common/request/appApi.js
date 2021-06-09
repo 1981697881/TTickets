@@ -438,6 +438,11 @@ export default {
 			auth: true,
 			method: 'POST',
 			// desc: '用户余额',
+		},balance2: {
+			url: 'V8/Balance2',
+			auth: true,
+			method: 'POST',
+			// desc: '用户余额',
 		},memberBindSimple: {
 			url: 'V8/memberBindSimple',
 			auth: true,

@@ -88,7 +88,7 @@ export default {
 							duration: 1000,
 							mask: true,
 							success: function() {
-								that.setTokenAndBack(res.data.userinfo.token);
+								that.$Router.back();
 							}
 						});
 					}
