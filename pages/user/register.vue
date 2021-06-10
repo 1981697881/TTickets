@@ -85,7 +85,7 @@ export default {
 						uni.showToast({
 							title: res.msg || '注册成功',
 							icon: 'success',
-							duration: 1000,
+							duration: 2000,
 							mask: true,
 							success: function() {
 								that.$Router.back();

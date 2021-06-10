@@ -19,7 +19,7 @@
 				</view>
 				<view class="logistic item-list x-bc">
 					<view class="x-f">
-						<text class="cuIcon-roundcheck text-red padding-xs">不可改签</text>
+						<text class="cuIcon-roundclose text-red padding-xs">不可改签</text>
 						<text class="cuIcon-roundclose text-red padding-xs">不可退票</text>
 					</view>
 					<view class="x-f">
@@ -583,7 +583,7 @@ export default {
 				let params = {
 					ticketId: that.perGoodsList.ticketId,
 					qty: that.ticketPaymoney + '',
-					custId: that.balInfo.CustID,
+					custId: that.balInfo.custId,
 					phoneNumber: that.userInfo.phoneNumber
 				};
 				this.$api('user.deduction', params).then(res => {

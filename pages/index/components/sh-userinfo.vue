@@ -37,7 +37,7 @@
 						</view> -->
 					</view>
 					<view class="x-f">
-						<button class="cu-btn code-btn" v-if="balInfo.CustID" @tap="jump('/pages/user/personal')"><text class="cuIcon-qr_code"></text></button>
+						<button class="cu-btn code-btn" v-if="balInfo.custId" @tap="jump('/pages/user/personal')"><text class="cuIcon-qr_code"></text></button>
 						<!-- <button v-if="userInfo.is_store" @tap="goStore" class="cu-btn merchant-btn">切换商家版</button> -->
 					</view>
 				</view>

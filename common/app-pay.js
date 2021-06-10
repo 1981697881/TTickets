@@ -243,9 +243,9 @@ export default class AppPay {
 							}
 						});
 						}else if(that.reType==2){
-							api('goods.veCoin', { qty: that.order.coinCount,custId:store.state.user.balInfo.CustID,phoneNumber:store.state.user.userInfo.phoneNumber }).then(resve => {
+							api('goods.veCoin', { qty: that.order.coinCount,custId:store.state.user.balInfo.custId,phoneNumber:store.state.user.userInfo.phoneNumber }).then(resve => {
 								if (resve.flag) {
-									api('goods.veIntegral', { qty: that.order.integral,custId:store.state.user.balInfo.CustID,phoneNumber:store.state.user.userInfo.phoneNumber }).then(resal => {
+									api('goods.veIntegral', { qty: that.order.integral,custId:store.state.user.balInfo.custId,phoneNumber:store.state.user.userInfo.phoneNumber }).then(resal => {
 										if (resal.flag) {
 											store.dispatch('getUserBalance')
 											uni.showToast({
@@ -266,7 +266,7 @@ export default class AppPay {
 							
 					}else if(that.reType==3){
 							api('user.recharge', {
-								custId: store.state.user.balInfo.CustID,
+								custId: store.state.user.balInfo.custId,
 								qty: that.params.rechargeMoney,
 								phoneNumber: store.state.user.userInfo.phoneNumber,
 							}).then(resch => {

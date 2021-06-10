@@ -85,7 +85,7 @@ export default {
 		},
 		getScanCode() {
 			let that = this;
-			that.$api('user.getCustPayQrCode', { CustID: that.balInfo.CustID }).then(res => {
+			that.$api('user.getCustPayQrCode', { CustID: that.balInfo.custId }).then(res => {
 				if (res.flag) {
 					that.$set(that,'scanId',res.data.Data)
 					console.log(that.scanId)

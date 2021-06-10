@@ -94,7 +94,7 @@ export default {
 	methods: {
 		payMeal(val) {
 			let that = this;
-			if (that.balInfo.CustID) {
+			if (that.balInfo.custId) {
 				uni.showLoading({ title: '加载中' });
 				let parArray = [];
 				//测试订单
@@ -119,7 +119,7 @@ export default {
 		//积分充值
 		integral() {
 			let that = this;
-			that.$api('goods.veIntegral', { qty: that.$Route.query.integral, custId: that.balInfo.CustID, phoneNumber: that.userInfo.phoneNumber }).then(res => {
+			that.$api('goods.veIntegral', { qty: that.$Route.query.integral, custId: that.balInfo.custId, phoneNumber: that.userInfo.phoneNumber }).then(res => {
 				if (res.flag) {
 					uni.showToast({
 						title: '购买成功',
@@ -138,7 +138,7 @@ export default {
 		//游戏币充值
 		currency() {
 			let that = this;
-			that.$api('goods.veCoin', { qty: that.$Route.query.coinCount, custId: that.balInfo.CustID, phoneNumber: that.userInfo.phoneNumber }).then(res => {
+			that.$api('goods.veCoin', { qty: that.$Route.query.coinCount, custId: that.balInfo.custId, phoneNumber: that.userInfo.phoneNumber }).then(res => {
 				if (res.flag) {
 					that.integral();
 				}
@@ -174,7 +174,7 @@ export default {
 			let that = this;
 			let params = {
 				qty: val.coinPaymoney + '',
-				custId: that.balInfo.CustID,
+				custId: that.balInfo.custId,
 				coinNo: val.coinNo,
 				phoneNumber: that.userInfo.phoneNumber
 			};

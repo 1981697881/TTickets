@@ -13,7 +13,7 @@
 					<button class="cu-btn code-btn" @tap.stop="getCode"><text class="cuIcon-scan"></text></button>
 				</u-form-item>
 				<u-form-item class="flex justify-between" :labelStyle="labelStyle" label-width="130" label-position="left" label="手机号:" prop="phone">
-					<u-input style="float: left;width: 500rpx;" placeholder="请输入手机号" :placeholderStyle="placeholderStyle" v-model="bankInfo.phone" type="text"></u-input>
+					<u-input style="float: left;width: 500rpx;" disabled placeholder="请输入手机号" :placeholderStyle="placeholderStyle" v-model="bankInfo.phone" type="text"></u-input>
 					<button class="cu-btn code-btn" open-type="getPhoneNumber" @getphonenumber="bindPhone"><text class="cuIcon-mobile"></text></button>
 				</u-form-item>
 				<u-form-item class="flex justify-between" :labelStyle="labelStyle" label-width="130" label-position="left" label="密码:" prop="password">
@@ -134,7 +134,7 @@ export default {
 							uni.showToast({
 								title: res.msg || '绑定成功',
 								icon: 'success',
-								duration: 1000,
+								duration: 2000,
 								mask: true,
 								success: function() {
 									that.$Router.back();
