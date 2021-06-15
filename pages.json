@@ -355,6 +355,30 @@
 						"title": "电影",
 						"group": "电影"
 					}
+				},{
+					"path": "machine/index",
+					"style": {
+						"navigationBarTitleText": "机台列表",
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"auth": false,
+						"async": true,
+						"title": "机台",
+						"group": "电玩"
+					}
+				},{
+					"path": "machine/index",
+					"style": {
+						"navigationBarTitleText": "机台详情",
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"auth": false,
+						"async": true,
+						"title": "机台",
+						"group": "电玩"
+					}
 				},
 				{
 					"path": "movie/list",

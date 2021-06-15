@@ -1,18 +1,18 @@
 <template>
 	<view class="sh-user-menu-box mb10">
-		<view class="cu-modal" :class="modalName=='RadioModal'?'show':''" @tap="hideModal">
-					  	<view class="cu-dialog" @tap.stop="">
-					  		<radio-group class="block" @change="RadioChange">
-					  		<view class="cu-list menu text-left">
-					  	<view class="cu-item" v-for="(item,index) in PhoneList">
-					  	<label class="flex justify-between align-center flex-sub">
-					  	<view class="flex-sub" @tap="CallPhone(item.Phone)">{{item.Name}}:{{item.Phone}}</view>
-					  		</label>
-					  			</view>
-					  		</view>
-					  	</radio-group>
-					  </view>
-		 </view>
+		<view class="cu-modal" :class="modalName == 'RadioModal' ? 'show' : ''" @tap="hideModal">
+			<view class="cu-dialog" @tap.stop="">
+				<radio-group class="block" @change="RadioChange">
+					<view class="cu-list menu text-left">
+						<view class="cu-item" v-for="(item, index) in PhoneList">
+							<label class="flex justify-between align-center flex-sub">
+								<view class="flex-sub" @tap="CallPhone(item.Phone)">{{ item.Name }}:{{ item.Phone }}</view>
+							</label>
+						</view>
+					</view>
+				</radio-group>
+			</view>
+		</view>
 		<view class="menu-list-box">
 			<view class="menu-item x-bc" v-for="(nav, index) in detail.list" :key="index" @tap="onCheck(nav)">
 				<view class="x-f">
@@ -30,14 +30,17 @@ export default {
 	components: {},
 	data() {
 		return {
-			modalName:null,
-			PhoneList: [{
-				Name:'客服电话(1)',
-				Phone: '182-8809-0152'
-			},{
-				Name:'客服电话(2)',
-				Phone: '189-8814-9921'
-			}],
+			modalName: null,
+			PhoneList: [
+				{
+					Name: '客服电话(1)',
+					Phone: '182-8809-0152'
+				},
+				{
+					Name: '客服电话(2)',
+					Phone: '189-8814-9921'
+				}
+			]
 		};
 	},
 	props: {
@@ -50,24 +53,23 @@ export default {
 	methods: {
 		//第二部分  模态框的显示与隐藏
 		showModal(e) {
-			this.modalName = e
+			this.modalName = e;
 		},
 		hideModal(e) {
-			this.modalName = null
+			this.modalName = null;
 		},
 		/*拨打电话*/
-		CallPhone(e){
-		    uni.makePhoneCall({
+		CallPhone(e) {
+			uni.makePhoneCall({
 				phoneNumber: e
 			});
 		},
-		onCheck(data){
-			if(data.path_type ==2){
-				this.showModal('RadioModal')
-			}else{
-				this.jump(data)
+		onCheck(data) {
+			if (data.path_type == 2) {
+				this.showModal('RadioModal');
+			} else {
+				this.jump(data);
 			}
-			
 		},
 		jump(data) {
 			this.$tools.routerTo(data.path);

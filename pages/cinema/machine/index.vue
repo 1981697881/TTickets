@@ -1,12 +1,6 @@
 <template>
 	<view class="page_box">
 		<view class="head_box">
-			<view class="box-head bg-white sh-grid-box">
-				<view class="tool-item y-f" @tap="jump()">
-					<image class="tool-img" src="https://i.postimg.cc/CLLJSwsf/d2b3a41f329684fe1233940e60a2fec4.png" mode="aspectFill"></image>
-					<text class="item-title">机台展示</text>
-				</view>
-			</view>
 			<view class="box-head margin-top bg-white flex flex-wrap justify-between align-center">
 				<view class="padding-sm"><text class="text-xl text-bold text-orange">在线购币</text></view>
 				<view class="padding-sm text-gray">游戏币全场通用</view>
@@ -42,10 +36,6 @@
 			</scroll-view>
 		</view>
 		<view class="foot_box"></view>
-		<!-- 自定义底部导航 -->
-		<!-- <app-tabbar></app-tabbar> -->
-		<!-- 关注弹窗 -->
-		<!-- <app-float-btn></app-float-btn> -->
 		<!-- 连续弹窗提醒 -->
 		<app-notice-modal></app-notice-modal>
 		<!-- 登录提示 -->
@@ -54,7 +44,6 @@
 </template>
 
 <script>
-import moreGoodList from '@/csJson/moreGoodList.json';
 import fzCircuitMeal from '@/components/fz-circuit-card/fz-circuit-meal.vue';
 import AppPay from '@/common/app-pay';
 import { mapMutations, mapActions, mapState } from 'vuex';
@@ -145,30 +134,7 @@ export default {
 
 <style lang="scss">
 // 宫格
-.sh-grid-box {
-	background: #fff;
-	display: flex;
-	flex-wrap: wrap;
-	padding-bottom: 30rpx;
 
-	.tool-item {
-		width: (750rpx/3);
-		.tool-img {
-			width: 100rpx;
-			height: 100rpx;
-			border-radius: 50%;
-			// background: #ccc;
-		}
-
-		.item-title {
-			font-size: 24rpx;
-			font-family: PingFang SC;
-			font-weight: 500;
-			line-height: 24rpx;
-			padding-top: 10rpx;
-		}
-	}
-}
 .card-swiper {
 	height: 350upx !important;
 }
