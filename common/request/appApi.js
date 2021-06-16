@@ -236,6 +236,18 @@ export default {
 			method: 'POST',
 			// desc: '影片列表',
 		},
+		playList: {
+			url: 'app/api/playList',
+			auth: false,
+			method: 'POST',
+			// desc: '机台列表',
+		},
+		playMessage: {
+			url: 'app/api/playMessage',
+			auth: false,
+			method: 'POST',
+			// desc: '机台列表',
+		},
 		filmLists: {
 			url: 'app/api/schedulesByMovie',
 			auth: false,

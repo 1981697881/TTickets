@@ -2,7 +2,7 @@
 	<view class="page_box">
 		<view class="head_box">
 			<view class="box-head bg-white sh-grid-box">
-				<view class="tool-item y-f" @tap="jump()">
+				<view class="tool-item y-f" @tap="jump('/pages/cinema/machine/index')">
 					<image class="tool-img" src="https://i.postimg.cc/CLLJSwsf/d2b3a41f329684fe1233940e60a2fec4.png" mode="aspectFill"></image>
 					<text class="item-title">机台展示</text>
 				</view>
@@ -104,7 +104,7 @@ export default {
 			uni.getSystemInfo({
 				success: function(res) {
 					// res - 各种参数
-					let info = uni.createSelectorQuery().select('.box-head');
+					let info = uni.createSelectorQuery().select('.head_box');
 					info.boundingClientRect(function(data) {
 						//data - 各种参数
 						me.hHeight = res.windowHeight - data.height;

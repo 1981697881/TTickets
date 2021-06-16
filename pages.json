@@ -363,19 +363,19 @@
 					},
 					"meta": {
 						"auth": false,
-						"async": true,
+						"async": false,
 						"title": "机台",
 						"group": "电玩"
 					}
 				},{
-					"path": "machine/index",
+					"path": "machine/detail",
 					"style": {
 						"navigationBarTitleText": "机台详情",
 						"navigationStyle": "custom"
 					},
 					"meta": {
 						"auth": false,
-						"async": true,
+						"async": false,
 						"title": "机台",
 						"group": "电玩"
 					}

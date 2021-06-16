@@ -2,224 +2,93 @@
 	<view class="box">
 		<cu-custom :isBack="true" bgColor="bg-gray">
 			<block slot="backText"></block>
-			<block slot="content">{{ goodsInfo.filmName }}</block>
+			<block slot="content">{{ goodsInfo.playName }}</block>
 		</cu-custom>
-		<view class="load-box" v-if="goodsInfo.type != 'Movie'"><app-skeletons :type="'detail'"></app-skeletons></view>
+		<view class="load-box" v-if="goodsInfo.playId == null"><app-skeletons :type="'detail'"></app-skeletons></view>
 		<view class="detail_box app-selector" v-else>
 			<view class="detail-content">
 				<view class="goodes_detail_swiper-box">
-					<!-- 购买滚动提示 -->
-					<sh-groupon-tip v-if="false"></sh-groupon-tip>
-					<view class="carousel">
-						<!-- <video controls :poster="goodsInfo.filmPhoto" object-fit="fill" class="swiper-image app-selector-rect" :src="goodsInfo.herald"></video> -->
+					<text class="tag-star text-bold text-xl text-white">
+						{{ goodsInfo.playName }}
+					</text>
+					<!-- <view class="carousel">
 						<image class="swiper-image app-selector-rect" :src="goodsInfo.filmPhoto" mode="aspectFill" lazy-load></image>
-					</view>
+					</view> -->
 					<!-- 详情轮播 -->
-					<!-- <swiper class="carousel" circular @change="swiperChange">
-						<swiper-item @tap="tools.previewImage(goodsInfo.images, swiperCurrent)" v-for="(img, index) in goodsInfo.images" :key="index" class="carousel-item">
-							<image class="swiper-image app-selector-rect" :src="img" mode="aspectFill" lazy-load></image>
+					<swiper class="carousel" circular @change="swiperChange">
+						<swiper-item v-for="(img, index) in goodsInfo.playPosterphotoList" :key="index" class="carousel-item">
+							<image class="swiper-image app-selector-rect" :src='"https://cfzx.gzfzdev.com/movie/uploadFiles/image/"+img' mode="aspectFill" lazy-load></image>
 						</swiper-item>
 					</swiper>
-					<view v-if="goodsInfo.images" class="swiper-dots">{{ swiperCurrent + 1 }} / {{ goodsInfo.images.length }}</view> -->
+					<view v-if="goodsInfo.playPosterphotoList" class="swiper-dots">{{ swiperCurrent + 1 }} / {{ goodsInfo.playPosterphotoList.length }}</view>
 				</view>
-				<fz-detail-head :detail="goodsInfo"></fz-detail-head>
 				<!-- 选项卡 -->
 				<view class="sticky-box">
 					<view class="tab-box x-f">
 						<view class="tab-item y-f x-c" @tap="onTab(tab.id)" v-for="tab in tabList" :key="tab.id">
-							<view class="tab-title">
+							<view class="tab-title cuIcon-punch">
 								{{ tab.title }}
-								<text v-if="tab.id == 'tab2'" class="comment-num">({{ commentNum }})</text>
 							</view>
 							<text class="tab-line" :class="{ 'line-active': tabCurrent === tab.id }"></text>
 						</view>
 					</view>
 					<view class="tab-detail pb20">
-						<view class="rich-box" v-show="tabCurrent === 'tab0'">
-							<view class="box-about">
-								<mote-lines-divide :dt="goodsInfo.filmIntro" :line="1" expandText="展开" foldHint="收起"/>
-							</view>
-							<view class="about-unline">
-								<fz-detail-gallery :detail='goodsInfo' type='crew'></fz-detail-gallery>
-							</view>
-							<view class="about-unline">
-								<fz-detail-gallery :detail='goodsInfo' type='still'></fz-detail-gallery>
-							</view>
-						</view>
-						<view class="goods-size" v-if="tabCurrent === 'tab1'">
-							<view class="table-box" v-if="goodsInfo.params && goodsInfo.params.length">
-								<view class="t-tr x-f" v-for="t in goodsInfo.params" :key="t.title">
-									<view class="t-head x-f">{{ t.title }}</view>
-									<view class="t-detail">{{ t.content }}</view>
-								</view>
-							</view>
-						</view>
-						<view class="goods-comment" v-if="tabCurrent === 'tab2'">
-							<block v-for="comment in commentList" :key="comment.id"><sh-comment :comment="comment"></sh-comment></block>
-							<view class="empty-box x-c" v-if="!commentList.length"><app-empty :isFixed="false" :emptyData="emptyData"></app-empty></view>
-							<view class="more-box x-c" v-if="commentList.length">
-								<button class="cu-btn more-btn x-f" @tap="jump('/pages/goods/comment-list', { goodsId: goodsInfo.id })">
-									查看全部
-									<text class="cuIcon-right"></text>
-								</button>
-							</view>
-						</view>
+						<view class="rich-box" v-show="tabCurrent === 'tab0'"><uni-parser :html="goodsInfo.playTxt"></uni-parser></view>
 					</view>
 				</view>
-			</view>
-
-			<!-- 其他商品foot -->
-			<view class="detail-foot_box  x-f" v-if="!showSku && !showServe && detailType !== 'score'">
-				<view class="left x-f">
-					<view class="tools-item y-f" @tap="goHome">
-						<image class="tool-img app-selector-circular" src="http://shopro.7wpp.com/imgs/tabbar/tab_home_sel.png" mode=""></image>
-						<text class="tool-title app-selector-rect">首页</text>
-					</view>
-					<!-- <view class="tools-item y-f" @tap="onFavorite(goodsInfo.id)">
-						<image
-							class="tool-img"
-							:src="Boolean(goodsInfo.favorite) ? 'http://shopro.7wpp.com/imgs/favorite_end.png' : 'http://shopro.7wpp.com/imgs/favorite.png'"
-							mode=""
-						></image>
-						<text class="tool-title">收藏</text>
-					</view> 
-					<view class="tools-item y-f" @tap="onShare">
-						<image class="tool-img" src="http://shopro.7wpp.com/imgs/share.png" mode=""></image>
-						<text class="tool-title">分享</text>
-					</view> -->
-				</view>
-				<view class="detail-right">
-					<view class="detail-btn-box x-ac" v-if="!goodsInfo.activity"><button class="cu-btn tool-btn pay-btn" @tap="jump('/pages/cinema/index', { filmId: filmId })">立即订票</button></view>
-				</view>
-			</view>
-			<!-- 分享组件 -->
-			<app-share v-model="showShare" :goodsInfo="goodsInfo" :posterType="'goods'"></app-share>
+			</view>	
 			<!-- 登录提示 -->
 			<app-login-modal></app-login-modal>
 			<!-- 骨架屏 -->
 			<app-skeleton :showSkeleton="false"></app-skeleton>
-			<!-- 自定义底部导航 -->
-			<app-tabbar></app-tabbar>
-			<!-- 关注弹窗 -->
-			<!-- <app-float-btn></app-float-btn> -->
 			<!-- 连续弹窗提醒 -->
 			<app-notice-modal></app-notice-modal>
 		</view>
 	</view>
 </template>
-+
 <script>
-import MoteLinesDivide from "@/components/mote-lines-divide/mote-lines-divide"
-import shGrouponTip from './children/sh-groupon-tip.vue';
-import fzDetailHead from './children/fz-detail-head.vue';
-import fzDetailGallery from './children/fz-detail-gallery.vue';
-import shComment from '../children/sh-comment.vue';
 import appSkeletons from '@/components/app-skeletons/app-skeletons.vue';
 import appEmpty from '@/components/app-empty/app-empty.vue';
-import { mapMutations, mapActions, mapState } from 'vuex';
-import goodsDetail from '@/csJson/goodDetail.json';
-import evaluate from '@/csJson/evaluate.json';
 export default {
 	components: {
-		shGrouponTip,
-		shComment,
-		MoteLinesDivide,
-		fzDetailHead,
-		fzDetailGallery,
 		appSkeletons,
 		appEmpty
 	},
 	data() {
 		return {
 			videoImg: 'http://139.159.136.187:50080/uploadFiles/image/d02494f7a0c24790f2d10b4d5fc4b613.jpg',
-			currentSkuText: '', //选中规格
-			detailType: '',
-			showShare: false,
-			filmId: '',
-			buyType: 'sku',
-			grouponBuyType: 'alone', //拼团购买方式。
-			showSku: false,
-			showServe: false,
 			tools: this.$tools,
 			goodsInfo: {},
-			commentList: [], //商品评价列表
-			commentNum: 0, //商品评价总数
-			favorite: false,
-			activityRules: {},
-			currentSkuList: [],
-			confirmGoodsInfo: {},
 			swiperCurrent: 0, //轮播下标
 			tabCurrent: 'tab0',
-			emptyData: {
-				img: '/static/imgs/empty/comment_empty.png',
-				tip: '暂无评价~'
-			},
 			tabList: [
 				{
 					id: 'tab0',
-					title: '简介'
+					title: '机台简介'
 				},
 				/* {
 					id: 'tab1',
 					title: '规格参数'
 				}, */
-				/* {
-					id: 'tab2',
-					title: '影评'
-				} */
 			]
 		};
 	},
 	computed: {},
 	onLoad() {
-		const type = this.$Route.query.type;
-		this.filmId = this.$Route.query.filmId
-		this.detailType = type;
-		switch (type) {
-			case 'score':
-				this.getScoreDetail();
-				break;
-			default:
-				this.getGoodsDetail();
-		}
-	},
-	onUnload(options){
-		let that = this
-		let params = {
-				filmId: that.filmId
-			}
-		uni.$emit('escUpload',params)
+		this.playId = this.$Route.query.playId
+		this.getGoodsDetail();
 	},
 	onReady() {},
 	methods: {
 		onBack(){
 			this.$Router.back();
 		},
-		getActivityRules(e) {
-			if (e) {
-				this.activityRules = JSON.parse(e);
-			}
-		},
-		// 检测
-		checkActivity(data, type) {
-			if (data) {
-				return !data.includes(type);
-			}
-			return true;
-		},
 		// 路由跳转
 		jump(path, parmas) {
-			this.showShare = false;
 			this.$Router.replace({
 				path: path,
 				query: parmas
 			});
-		},
-		// 回到首页
-		goHome() {
-			uni.switchTab({
-				url: '/pages/index/index',
-			})
 		},
 		// 轮播图切换
 		swiperChange(e) {
@@ -230,88 +99,36 @@ export default {
 		onTab(id) {
 			this.tabCurrent = id;
 		},
-		// 商品详情
+		// 机台详情
 		getGoodsDetail() {
 			let that = this;
-			that.$api('cinema.movieMessage', {
-				filmId: that.$Route.query.filmId
+			that.$api('cinema.playMessage', {
+				playId: that.$Route.query.playId
 			}).then(res => {
 				if (res.flag) {
 					that.goodsInfo = res.data;
-					that.goodsInfo.type='Movie';
-					that.getCommentList();
-					that.setShareInfo({
-						query: {
-							url: 'goods-' + that.$Route.query.filmId
-						},
-						title: that.goodsInfo.title,
-						image: that.goodsInfo.image
-					});
 				}else{
 					that.$tools.toast(res.msg);
 				}
 			});
 		},
-		// 商品评论
-		getCommentList() {
-			let that = this;
-			let res = evaluate;
-			if (res.code === 1) {
-				that.commentList = res.data.data;
-				that.commentNum = res.data.total;
-			}
-			/* that.$api('goods_comment.list', {
-				goods_id: that.goodsInfo.id,
-				per_page: 3,
-				type: 'all'
-			}).then(res => {
-				if (res.code === 1) {
-					that.commentList = res.data.data;
-					that.commentNum = res.data.total;
-				}
-			}); */
-		},
-		// 组件返回的type;
-		changeType(e) {
-			this.buyType = e;
-		},
-		// 组件返回的规格;
-		getSkuText(e) {
-			this.currentSkuText = e;
-		},
-		// 分享
-		onShare() {
-			this.showShare = true;
-		},
-		// 立即购买
-		goPay() {
-			if (Boolean(uni.getStorageSync('token'))) {
-				this.buyType = 'buy';
-				this.showSku = true;
-			} else {
-				this.$store.commit('LOGIN_TIP', true);
-			}
-		},
-		// 收藏
-		onFavorite(goodsId) {
-			let that = this;
-			that.$api('goods.favorite', {
-				goods_id: goodsId
-			}).then(res => {
-				if (res.code === 1) {
-					that.goodsInfo.favorite = res.data;
-					that.$tools.toast(res.msg);
-				}
-			});
-		}
 	}
 };
 </script>
 
 <style lang="scss">
-.box {
-	padding-bottom: 100rpx;
-}
+.tag-star {
+			position: absolute;
+			right: 0;
+			top: 10%;
+			z-index: 99;
+			width: 250rpx;
+			background-color: #CD3333;
+			border-radius: 30rpx 0 0 30rpx;
+			height: 60rpx;
+			text-align: center;
+			line-height: 60rpx;
+		}
 .box-about{
 	padding: 30rpx;
 	border-bottom: 1px solid #F8F8FF;
@@ -451,7 +268,7 @@ export default {
 		font-weight: bold;
 
 		.tab-line {
-			width: 123rpx;
+			width: 160rpx;
 			height: 4rpx;
 			left: 50%;
 			bottom: 20rpx;
@@ -468,10 +285,9 @@ export default {
 }
 
 .tab-detail {
-	min-height: 300rpx;
+	min-height: 500rpx;
 	background: #fff;
 	background: #fff;
-
 	.rich-box {
 		/deep/ img {
 			display: block;
