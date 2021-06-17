@@ -4,14 +4,14 @@
 			<!-- <image class="head-img" :src="item.avatar" mode=""></image> -->
 			<view class="list-content y-f">
 				<view class="title-box x-bc">
-					<text class="title one-t">{{ item.transactionType == 1?'充值':'消费' }}</text>
+					<text class="title padding-left one-t">{{ item.transactionType == 1?'充值':'消费' }}</text>
 					<view class="money">
 						<text v-if="item.transactionType == 1" class="add">+{{ item.qty }}</text>
 						<text v-else class="minus">-{{ item.qty }}</text>
 					</view>
 				</view>
 				<view class="tip-box x-bc">
-					<text class="time">{{ item.createDatetime }}</text>
+					<text class="time padding-left">{{ item.createDatetime }}</text>
 					<text class="from">交易{{item.status==0?'成功':'失败'}}</text>
 				</view>
 			</view>

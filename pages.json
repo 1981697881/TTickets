@@ -363,7 +363,7 @@
 					},
 					"meta": {
 						"auth": false,
-						"async": false,
+						"async": true,
 						"title": "机台",
 						"group": "电玩"
 					}
@@ -375,7 +375,7 @@
 					},
 					"meta": {
 						"auth": false,
-						"async": false,
+						"async": true,
 						"title": "机台",
 						"group": "电玩"
 					}
@@ -992,7 +992,6 @@
 					"style": {
 						"navigationBarTitleText": "积分",
 						"navigationStyle": "custom"
-
 					},
 					"meta": {
 						"auth": true,

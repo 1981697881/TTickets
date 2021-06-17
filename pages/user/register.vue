@@ -9,7 +9,7 @@
 		<!-- 背景图 -->
 		<view class="x-c"><image class="head-img" :src="userInfo.avatarUrl || '/static/imgs/base_avatar.png'" mode="aspectFill"></image></view>
 		<!-- titleview -->
-		<view class="wrapper">
+		<view class="wrapper padding-top">
 			<!-- logo -->
 			<!-- 表单 -->
 			<view class="login-box y-f">
@@ -26,7 +26,7 @@
 						<radio class="tcp-radio brown" :class="{ checked: isTcp }" :checked="isTcp"></radio>
 						<view class="">
 							我已阅读并遵守
-							<text class="tcp" @tap="jump('/pages/public/richtext', { id: 1 })">《用户协议》</text>
+							<text class="tcp" @tap="jump('/pages/public/richtext', { type: 1 })">《用户协议》</text>
 						</view>
 					</label>
 				</view>
@@ -145,7 +145,7 @@ export default {
 	position: absolute;
 	z-index: 90;
 	padding-bottom: 40upx;
-	padding-top: 115px;
+	padding-top: 350rpx;
 	width: 100vw;
 	height: 100vh;
 	top: 0;

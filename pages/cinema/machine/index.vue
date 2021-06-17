@@ -1,5 +1,9 @@
 <template>
 	<view class="page_box ">
+		<cu-custom :isBack="true">
+			<block slot="backText"></block>
+			<block slot="content">机台</block>
+		</cu-custom>
 		<view class="head_box">
 		</view>
 		<view class="content_box ">

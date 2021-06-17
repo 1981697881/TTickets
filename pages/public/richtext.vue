@@ -1,7 +1,7 @@
 <template>
 	<view class="page_box">
 		<view class="head_box"></view>
-		<view class="content_box"><uni-parser :html="richText.content"></uni-parser></view>
+		<view class="content_box"><uni-parser :html="richText.aboutMessage"></uni-parser></view>
 		<view class="foot_box"></view>
 		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>
@@ -31,14 +31,14 @@ export default {
 			return Promise.all([this.getRichText()]);
 		},
 		getRichText() {
-			this.$api('richtext', {
-				id: this.$Route.query.id
-			}).then(res => {
-				this.richText = res.data;
-				uni.setNavigationBarTitle({
-					title: res.data.title
+			if(this.$Route.query.type == 1){
+				this.$api('faq.About').then(res => {
+					this.richText = res.data[0];
+					uni.setNavigationBarTitle({
+						title: res.data[0].aboutName
+					});
 				});
-			});
+			}
 		}
 	}
 };

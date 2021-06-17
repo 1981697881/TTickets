@@ -2,14 +2,13 @@
 	<view class="page_box">
 		<view class="head_box">
 			<cu-custom :isBack="true">
-				<block slot="backText"></block>
-				<block slot="content">积分商城</block>
+				<block slot="backText">积分商城</block>
+				<block slot="content"></block>
 			</cu-custom>
-			<view class="card-box x-end x-bc">
-				<view class="left text-brown">
-					<text class="title">我的积分：</text>
-					<text class="money-num">{{balInfo.Point || 0}}</text>
-				</view>
+			<image class="bg" src="http://shopro.7wpp.com/imgs/user/integral_bg.png" mode=""></image>
+			<view class="all-box x-c">
+				<text class="all-num">{{ balInfo.Point || "0.00" }}</text>
+				<text class="all-title">当前积分</text>
 			</view>
 		</view>
 		<view class="content_box">
@@ -134,10 +133,47 @@ export default {
 }
 .head_box {
 	width: 750rpx;
-	height: 220rpx;
-	background: linear-gradient(125deg, rgba(139, 196, 128, 1) 0%, rgba(148, 180, 165, 1) 100%);
+	height: 480rpx;
+	background: linear-gradient(180deg, rgba(139, 196, 128, 1) 0%, rgba(148, 180, 165, 1) 56.99999999999999%, rgba(255, 255, 255, 1) 100%);
 	position: relative;
 	color: white;
+	.bg {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+		width: 310rpx;
+		height: 310rpx;
+	}
+	.all-box {
+		position: absolute;
+		left: 50%;
+		top: 50%;
+		transform: translate(-50%, -50%);
+		width: 180rpx;
+		height: 180rpx;
+		.all-num {
+			font-size: 50rpx;
+			font-family: PingFang SC;
+			font-weight: 500;
+			color: #a8700d;
+			margin-bottom: 20rpx;
+		}
+		.all-title {
+			position: absolute;
+			font-size: 24rpx;
+			font-family: PingFang SC;
+			font-weight: 500;
+			color: rgba(168, 112, 13, 1);
+			line-height: 54rpx;
+			text-align: center;
+			width: 154rpx;
+			height: 53rpx;
+			background: linear-gradient(90deg, rgba(233, 180, 97, 1), rgba(238, 204, 137, 1));
+			border-radius: 27rpx;
+			bottom: -16rpx;
+		}
+	}
 	.card-box {
 		width: 750rpx;
 		height: 100rpx;

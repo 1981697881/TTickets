@@ -1,6 +1,6 @@
 <template>
 	<view class="box">
-		<cu-custom :isBack="true" bgColor="bg-gray">
+		<cu-custom :isBack="true" bgColor="bg-white">
 			<block slot="backText"></block>
 			<block slot="content">{{ goodsInfo.playName }}</block>
 		</cu-custom>
@@ -47,12 +47,8 @@
 	</view>
 </template>
 <script>
-import appSkeletons from '@/components/app-skeletons/app-skeletons.vue';
-import appEmpty from '@/components/app-empty/app-empty.vue';
 export default {
 	components: {
-		appSkeletons,
-		appEmpty
 	},
 	data() {
 		return {
@@ -136,31 +132,6 @@ export default {
 .about-unline{
 	padding: 30rpx;
 }
-// 拼团玩法
-.groupon-play {
-	height: 94rpx;
-	background: #fff;
-
-	.title {
-		font-size: 28rpx;
-		color: #999;
-	}
-
-	.description {
-		font-size: 28rpx;
-		margin-left: 30rpx;
-	}
-
-	.cuIcon-right {
-		margin-left: 20rpx;
-	}
-}
-
-.load-box {
-	/deep/.skeletons_box {
-		z-index: 11;
-	}
-}
 
 .detail-content {
 	&::-webkit-scrollbar {
@@ -215,24 +186,6 @@ export default {
 	}
 }
 
-// 规格卡片
-.sku-box {
-	line-height: 82rpx;
-	background: #fff;
-	padding: 0 20rpx;
-	margin: 20rpx 0;
-	font-size: 28rpx;
-
-	.title {
-		color: #999;
-		margin-right: 20rpx;
-	}
-
-	.cuIcon-right {
-		color: #bfbfbf;
-		font-size: 36rpx;
-	}
-}
 
 .goods-title {
 	font-size: 28rpx;
@@ -289,6 +242,7 @@ export default {
 	background: #fff;
 	background: #fff;
 	.rich-box {
+		padding: 20rpx;
 		/deep/ img {
 			display: block;
 		}

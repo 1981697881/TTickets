@@ -10,15 +10,18 @@
 			<radio-group @change="selPay" class="pay-box" v-if="payment">
 				<label class="x-bc pay-item" v-if="payment.includes('wechat')">
 					<view class="x-f">
-						<image class="pay-img" src="http://shopro.7wpp.com/imgs/wx_pay.png" mode=""></image>
+						<image class="pay-img" src="https://i.postimg.cc/bw6zsHsf/wx-pay.png" mode=""></image>
 						<text>微信支付</text>
 					</view>
 					<radio value="wechat" :class="{ checked: payType === 'wechat' }" class=" pay-radio orange" :checked="payType === 'wechat'"></radio>
 				</label>
 				<label class="x-bc pay-item" v-if="payment.includes('wallet')">
 					<view class="x-f">
-						<image class="pay-img" src="http://shopro.7wpp.com/imgs/wallet_pay.png" mode=""></image>
-						<text>余额支付</text>
+						<image class="pay-img" src="https://i.postimg.cc/QdN88nNq/wallet-pay.png" mode=""></image>
+						<text>
+							余额支付
+							<text class="text-red padding-left">{{ balInfo.Money == 0 || balInfo.Money == null ? '余额不足' : '' }}({{ balInfo.Money || '0.00' }})</text>
+						</text>
 					</view>
 					<radio value="wallet" :class="{ checked: payType === 'wallet' }" class="pay-radio orange" :checked="payType === 'wallet'"></radio>
 				</label>
@@ -124,7 +127,7 @@ export default {
 					uni.showToast({
 						title: '购买成功',
 						icon: 'success',
-						duration: 1000,
+						duration: 2000,
 						mask: true,
 						success: function() {
 							uni.switchTab({
@@ -195,20 +198,28 @@ export default {
 			uni.showLoading({ title: '购买中~~！' });
 			if (that.userInfo.phoneNumber) {
 				if (that.payType == 'wallet') {
-					//生成订单
-					this.$api('goods.addCoinOrder', { coinPaymoney: that.$Route.query.goodsPrice, goodsId: that.$Route.query.goodsId, openId: uni.getStorageSync('openid') }).then(
-						res => {
-							if (res.flag) {
-								that.isSubOrder = true;
-								that.blanBuy(res.data);
-							} else {
-								uni.showToast({
-									icon: 'none',
-									title: res.msg
-								});
+					let countPrce = Number(that.$Route.query.goodsPrice);
+					if (Number(countPrce) <= Number(that.balInfo.Money)) {
+						//生成订单
+						this.$api('goods.addCoinOrder', { coinPaymoney: that.$Route.query.goodsPrice, goodsId: that.$Route.query.goodsId, openId: uni.getStorageSync('openid') }).then(
+							res => {
+								if (res.flag) {
+									that.isSubOrder = true;
+									that.blanBuy(res.data);
+								} else {
+									uni.showToast({
+										icon: 'none',
+										title: res.msg
+									});
+								}
 							}
-						}
-					);
+						);
+					} else {
+						uni.showToast({
+							icon: 'none',
+							title: '余额不足以支付本次费用，请选择其他支付方式'
+						});
+					}
 				} else {
 					that.payMeal(that.params);
 				}
@@ -229,7 +240,6 @@ export default {
 	height: 250rpx;
 	margin-bottom: 20rpx;
 	padding-top: 30rpx;
-
 	.time {
 		font-size: 28rpx;
 		color: #c4c4c4;
@@ -238,7 +248,7 @@ export default {
 	.money {
 		color: #e1212b;
 		font-size: 60rpx;
-		margin-top: 60rpx;
+		margin-top: 20rpx;
 
 		&::before {
 			content: '￥';

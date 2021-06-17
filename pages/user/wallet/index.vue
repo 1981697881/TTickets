@@ -24,13 +24,13 @@
 			</view>
 		</view>
 		<view class="content_box">
-			<view class="resale-list x-bc" @tap="bindingCard">
+			<!-- <view class="resale-list x-bc" @tap="bindingCard">
 				<view class="x-f">
 					<text class=" cuicon cuIcon-vipcard"></text>
 					<text>绑定会员卡</text>
 				</view>
 				<text class="cuIcon-right"></text>
-			</view>
+			</view> -->
 			<view class="resale-list x-bc" @tap="jump('/pages/user/wallet/recharge')">
 				<view class="x-f">
 					<text class=" cuicon cuIcon-recharge"></text>
@@ -251,7 +251,7 @@ export default {
 
 .head_box {
 	width: 750rpx;
-	height: 480rpx;
+	height: 540rpx;
 	background: linear-gradient(125deg, rgba(239, 196, 128, 1) 0%, rgba(148, 120, 165, 1) 100%);
 	position: relative;
 	color: white;
@@ -274,9 +274,8 @@ export default {
 		position: absolute;
 		left: 50%;
 		transform: translateX(-50%);
-		bottom: 30rpx;
+		top: 160rpx;
 		z-index: 6;
-
 		.left {
 			display: flex;
 			justify-content: space-between;

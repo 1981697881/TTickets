@@ -251,7 +251,7 @@ export default class AppPay {
 											uni.showToast({
 												title: '购买成功',
 												icon: 'success',
-												duration: 1000,
+												duration: 2000,
 												mask: true,
 												success: function() {
 													uni.switchTab({

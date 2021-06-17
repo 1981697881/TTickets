@@ -4,11 +4,15 @@
 		<view class="x-f wallet-left">
 			<view class="wallet-item y-f" @tap="jump('/pages/user/wallet/index')">
 				<text class="wallet-item__detail item-balance">{{ balInfo.Money || '0.00' }}</text>
-				<text class="wallet-item__title">会员余额</text>
+				<text class="wallet-item__title">余额</text>
 			</view>
-			<view class="wallet-item y-f" @tap="jump('/pages/user/wallet/score-balance')">
+			<view class="wallet-item y-f" @tap="jump('/pages/user/wallet/index')">
 				<text class="wallet-item__detail item-score">{{ balInfo.Coins2 || '0' }}</text>
 				<text class="wallet-item__title">游戏币</text>
+			</view>
+			<view class="wallet-item y-f" @tap="jump('/pages/user/wallet/index')">
+				<text class="wallet-item__detail item-coupon">{{ userInfo.Tickets || '0' }}</text>
+				<text class="wallet-item__title">彩票</text>
 			</view>
 			<view class="wallet-item y-f" @tap="jump('/pages/app/coupon/list')">
 				<text class="wallet-item__detail item-coupon">{{ userInfo.couponCount || '0' }}</text>
