@@ -73,6 +73,28 @@ export default {
 		register() {
 			let that = this;
 			if (this.isTcp) {
+				console.log('以下内容');
+				let string = 'WechatId:'+that.WechatId+',PublicOpenID:'+that.PublicOpenID+',phone:'+that.userInfo.phoneNumber+',photo:'+that.userInfo.avatarUrl+',name:'+that.userInfo.username+',sex:'+that.userInfo.sex
+				uni.setClipboardData({
+					data: string, //要被复制的内容
+					success: function() {
+						//重点~做笔记
+						//在success中加入uni.hideToast()可以解决
+						uni.hideToast({
+							title: '复制成功',
+							duration: 2000,
+							icon: 'none'
+						});
+						//以下就可自定义操作了~
+					},
+					fail: function(err) {
+						uni.showToast({
+							title: '复制失败',
+							duration: 2000,
+							icon: 'none'
+						});
+					}
+				});
 				this.$api('user.createMember', {
 					WechatId: that.WechatId,
 					PublicOpenID: that.PublicOpenID,
@@ -88,7 +110,9 @@ export default {
 							duration: 2000,
 							mask: true,
 							success: function() {
-								that.$Router.back();
+								setTimeout(function() {
+									that.$Router.back();
+								}, 2000);
 							}
 						});
 					}

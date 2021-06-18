@@ -35,7 +35,6 @@
 		<app-login-modal></app-login-modal>
 	</view>
 </template>
-
 <script>
 import AppPay from '@/common/app-pay';
 import { mapMutations, mapActions, mapState } from 'vuex';
@@ -130,9 +129,11 @@ export default {
 						duration: 2000,
 						mask: true,
 						success: function() {
-							uni.switchTab({
-								url: '/pages/index/videoGame',
-							})
+							setTimeout(function(){
+								uni.switchTab({
+									url: '/pages/index/videoGame',
+								})
+							}, 2000);
 						}
 					});
 				}

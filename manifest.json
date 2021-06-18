@@ -168,7 +168,7 @@
         "setting" : {
             "urlCheck" : false,
             "es6" : false,
-            "minified" : false,
+            "minified" : true,
             "postcss" : true,
             "checkSiteMap" : false // 关闭页面索引检测
         },

@@ -63,10 +63,12 @@ export default {
 		await that.getScanCode();
 	},
 	onHide() {
+		console.log('隐藏')
 		clearInterval(timer);
 		timer = null
 	},
-	onUnload(options) {
+	onUnload() {
+		console.log('卸载')
 		clearInterval(timer);
 		timer = null
 	},
@@ -75,6 +77,7 @@ export default {
 		countDown() {
 			let that = this;
 			let maxtime = that.timer;
+			console.log(maxtime)	
 			timer = setInterval(() => {
 				if (maxtime >= 0) {
 					--maxtime;
@@ -88,12 +91,10 @@ export default {
 			that.$api('user.getCustPayQrCode', { CustID: that.balInfo.custId }).then(res => {
 				if (res.flag) {
 					that.$set(that,'scanId',res.data.Data)
-					console.log(that.scanId)
 					that.timer = Number(res.data.Data2) * 60;
 					that.countDown()
 				}
 			});
-			console.log(that.scanId)
 		},
 		qrR(res) {
 			this.src = res;

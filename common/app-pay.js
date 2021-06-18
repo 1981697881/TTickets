@@ -254,9 +254,11 @@ export default class AppPay {
 												duration: 2000,
 												mask: true,
 												success: function() {
-													uni.switchTab({
-														url: '/pages/index/videoGame',
-													})
+													setTimeout(function(){
+														uni.switchTab({
+															url: '/pages/index/videoGame',
+														})
+													}, 2000);
 												}
 											});
 										}
