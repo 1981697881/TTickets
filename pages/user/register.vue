@@ -60,20 +60,36 @@ export default {
 		if (JSON.stringify(option) != '{}') {
 			this.WechatId = option.WechatId;
 			this.PublicOpenID = option.PublicOpenID;
+			this.getZkUserInfo()
 		}
 	},
 	methods: {
-		...mapActions(['setTokenAndBack']),
+		...mapActions(['setTokenAndBack','getUserBalance']),
 		jump(path, parmas) {
 			this.$Router.push({
 				path: path,
 				query: parmas
 			});
 		},
+		getZkUserInfo(){
+			let that = this;
+			this.$api('user.balance2', {
+				WechatId: that.WechatId,
+				PublicOpenID: that.PublicOpenID,
+			}).then(res => {
+				if (res.flag) {
+					uni.showToast({
+						title: '成功获取信息',
+						icon: 'none',
+						duration: 1000,
+						mask: true,
+					});
+				}
+			});
+		},
 		register() {
 			let that = this;
 			if (this.isTcp) {
-				console.log('以下内容');
 				let string = 'WechatId:'+that.WechatId+',PublicOpenID:'+that.PublicOpenID+',phone:'+that.userInfo.phoneNumber+',photo:'+that.userInfo.avatarUrl+',name:'+that.userInfo.username+',sex:'+that.userInfo.sex
 				uni.setClipboardData({
 					data: string, //要被复制的内容
@@ -104,6 +120,7 @@ export default {
 					sex: that.userInfo.sex
 				}).then(res => {
 					if (res.flag) {
+						that.getUserBalance();
 						uni.showToast({
 							title: res.msg || '注册成功',
 							icon: 'success',
@@ -121,7 +138,6 @@ export default {
 				this.$tools.toast('请先同意协议！');
 			}
 		},
-
 		onTcp() {
 			this.isTcp = !this.isTcp;
 		}

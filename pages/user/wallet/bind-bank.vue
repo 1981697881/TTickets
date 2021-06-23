@@ -90,7 +90,7 @@ export default {
 		/* this.getBankInfo(); */
 	},
 	methods: {
-		...mapActions(['getUserDetails']),
+		...mapActions(['getUserDetails','getUserBalance']),
 		bindPhone(e) {
 			let me = this;
 			me.$api('user.getWxMiniPhoneNumber', {
@@ -131,6 +131,7 @@ export default {
 				if (valid) {
 					that.$api('user.memberBindSimple', that.bankInfo).then(res => {
 						if (res.flag) {
+							that.getUserBalance();
 							uni.showToast({
 								title: res.msg || '绑定成功',
 								icon: 'success',

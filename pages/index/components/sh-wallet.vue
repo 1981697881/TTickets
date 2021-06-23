@@ -11,7 +11,7 @@
 				<text class="wallet-item__title">游戏币</text>
 			</view>
 			<view class="wallet-item y-f" @tap="jump('/pages/user/wallet/index')">
-				<text class="wallet-item__detail item-coupon">{{ userInfo.Tickets || '0' }}</text>
+				<text class="wallet-item__detail item-coupon">{{ balInfo.Tickets || '0' }}</text>
 				<text class="wallet-item__title">彩票</text>
 			</view>
 			<view class="wallet-item y-f" @tap="jump('/pages/app/coupon/list')">
