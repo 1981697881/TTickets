@@ -64,7 +64,7 @@ export default {
 		}
 	},
 	methods: {
-		...mapActions(['setTokenAndBack','getUserBalance']),
+		...mapActions(['setTokenAndBack','getUserDetails']),
 		jump(path, parmas) {
 			this.$Router.push({
 				path: path,
@@ -90,7 +90,7 @@ export default {
 		register() {
 			let that = this;
 			if (this.isTcp) {
-				let string = 'WechatId:'+that.WechatId+',PublicOpenID:'+that.PublicOpenID+',phone:'+that.userInfo.phoneNumber+',photo:'+that.userInfo.avatarUrl+',name:'+that.userInfo.username+',sex:'+that.userInfo.sex
+				/* let string = 'WechatId:'+that.WechatId+',PublicOpenID:'+that.PublicOpenID+',phone:'+that.userInfo.phoneNumber+',photo:'+that.userInfo.avatarUrl+',name:'+that.userInfo.username+',sex:'+that.userInfo.sex
 				uni.setClipboardData({
 					data: string, //要被复制的内容
 					success: function() {
@@ -110,7 +110,7 @@ export default {
 							icon: 'none'
 						});
 					}
-				});
+				}); */
 				this.$api('user.createMember', {
 					WechatId: that.WechatId,
 					PublicOpenID: that.PublicOpenID,
@@ -120,7 +120,7 @@ export default {
 					sex: that.userInfo.sex
 				}).then(res => {
 					if (res.flag) {
-						that.getUserBalance();
+						that.getUserDetails();
 						uni.showToast({
 							title: res.msg || '注册成功',
 							icon: 'success',

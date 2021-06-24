@@ -131,7 +131,7 @@ export default {
 				if (valid) {
 					that.$api('user.memberBindSimple', that.bankInfo).then(res => {
 						if (res.flag) {
-							that.getUserBalance();
+							that.getUserDetails();
 							uni.showToast({
 								title: res.msg || '绑定成功',
 								icon: 'success',

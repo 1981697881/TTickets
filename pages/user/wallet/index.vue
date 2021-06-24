@@ -104,6 +104,7 @@ export default {
 		})
 	},
 	onShow() {
+		console.log('进入')
 		/* this.getApplyRules(); */
 		/* this.getUserInfo(); */
 		this.getUserBalance()
