@@ -67,7 +67,23 @@ export default {
 		onCheck(data) {
 			if (data.path_type == 2) {
 				this.showModal('RadioModal');
-			} else {
+			} else if(data.path_type == 3) {
+				uni.navigateToMiniProgram({
+				  appId: 'wxe16a10c527a8e244',
+				  path: 'pages/main/index?share=path&path=/pages_home/exchange-gift/index',
+				  extraData: {
+					  
+				  },
+				  envVersion: 'release',
+				  success(res) {
+					  console.log(res)
+				    // 打开成功
+				  },fail(res) {
+					  console.log(res)
+				    // 打开失败
+				  },
+				})
+			} else{
 				this.jump(data);
 			}
 		},

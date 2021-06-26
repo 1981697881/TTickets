@@ -6,7 +6,6 @@
 		</view>
 	</view>
 </template>
-
 <script>
 export default {
 	components: {},

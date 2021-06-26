@@ -60,15 +60,18 @@ export default {
 		clearInterval(timer);
 		timer = null
 		let that = this;
+		this.scanId = ''
 		await that.getScanCode();
 	},
 	onHide() {
 		console.log('隐藏')
+		this.scanId = ''
 		clearInterval(timer);
 		timer = null
 	},
 	onUnload() {
 		console.log('卸载')
+		this.scanId = ''
 		clearInterval(timer);
 		timer = null
 	},
