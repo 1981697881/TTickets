@@ -87,14 +87,9 @@ export default {
 		}
 	},
 	methods: {
-		isShowOpen() {
-		      const codeHtml = document.getElementById(this.cid);
-		      codeHtml.innerHTML = "";
-		   },
 		_makeCode() {
 			let that = this
 			if (!this._empty(this.val)) {
-				this.isShowOpen()
 				qrcode = new QRCode({
 					context: that, // 上下文环境
 					canvasId:that.cid, // canvas-id
@@ -110,7 +105,6 @@ export default {
 					image: that.icon, // 二维码图标
 					imageSize: that.iconSize,// 二维码图标大小
 					cbResult: function (res) { // 生成二维码的回调
-						console.log(res)
 						that._result(res)
 					},
 				});
@@ -163,27 +157,25 @@ export default {
 		}
 	},
 	watch: {
-		size: function (n, o) {
+		/* size: function (n, o) {
 			if (n != o && !this._empty(n)) {
 				this.cSize = n
 				if (!this._empty(this.val)) {
-					console.log('size')
 					setTimeout(() => {
 						this._makeCode()
-					}, 1000);
+					}, 100);
 				}
 			}
-		},
+		},*/
 		val: function (n, o) {
 			if (this.onval) {
 				if (n != o && !this._empty(n)) {
-					console.log('val')
 					setTimeout(() => {
 						this._makeCode()
-					}, 1000);
+					}, 0);
 				}
 			}
-		}
+		} 
 	},
 	computed: {
 		cpSize() {
@@ -195,14 +187,15 @@ export default {
 		}
 	},
 	mounted: function () {
-		if (this.loadMake) {
+		/*console.log(this.val)
+		 if (this.loadMake) {
+			console.log(!this._empty(this.val))
 			if (!this._empty(this.val)) {
-				console.log('初始化')
 				setTimeout(() => {
 					this._makeCode()
-				}, 1000);
+				}, 100);
 			}
-		}
+		} */
 	},
 }
 </script>

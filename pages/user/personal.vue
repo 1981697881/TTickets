@@ -42,7 +42,7 @@ export default {
 			icon: require('@/static/imgs/logo/basicprofile.png'), // 二维码图标
 			iconsize: 40, // 二维码图标大小
 			lv: 3, // 二维码容错级别 ， 一般不用设置，默认就行
-			onval: false, // val值变化时自动重新生成二维码
+			onval: true, // val值变化时自动重新生成二维码
 			loadMake: true, // 组件加载完成后自动生成二维码
 			src: '', // 二维码生成后的图片地址或base64
 			poster: {},
@@ -64,16 +64,24 @@ export default {
 		await that.getScanCode();
 	},
 	onHide() {
+		let that = this;
 		console.log('隐藏')
 		this.scanId = ''
 		clearInterval(timer);
 		timer = null
+		that.$nextTick(function(){
+			that.$refs.userCode._clearCode()
+		})
 	},
 	onUnload() {
+		let that = this;
 		console.log('卸载')
 		this.scanId = ''
 		clearInterval(timer);
 		timer = null
+		that.$nextTick(function(){
+			that.$refs.userCode._clearCode()
+		})
 	},
 	methods: {
 		// 倒计时
@@ -95,7 +103,8 @@ export default {
 				if (res.flag) {
 					that.$set(that,'scanId',res.data.Data)
 					that.timer = Number(res.data.Data2) * 60;
-					that.countDown()
+					/* that.countDown() */
+					
 				}
 			});
 		},
