@@ -5,10 +5,10 @@
 				<view class="group-wrap">
 					<wallet-head :detail="walletInfo"></wallet-head>
 					<view class="group-box">
-						<wallet-info :detail="walletInfo" :scanId="confirmationId"></wallet-info>
+						<wallet-info ref="walletInfo" :detail="walletInfo" :scanId="confirmationId"></wallet-info>
 					</view>
 				</view>
-				<!-- loading -->
+				<!-- loading -->	
 				<app-load v-model="isLoading"></app-load>
 			</scroll-view>
 		</view>
@@ -51,11 +51,25 @@ export default {
 			grouponList: []
 		};
 	},
-	onLoad() {
-		if(this.$Route.query){
-			this.confirmationId = this.$Route.query.confirmationId
-			this.getOrderDetail()
+	onShow() {
+		let that = this
+		console.log(this.$Route.query)
+		if(that.$Route.query){
+			that.confirmationId = that.$Route.query.confirmationId
+			that.getOrderDetail()
 		}
+	},
+	onHide() {
+		let that = this;
+		that.$nextTick(function(){
+			that.$refs.walletInfo.clearCode()
+		})
+	},
+	onUnload() {
+		let that = this;
+		that.$nextTick(function(){
+			that.$refs.walletInfo.clearCode()
+		})
 	},
 	onPullDownRefresh() {},
 	computed: {},

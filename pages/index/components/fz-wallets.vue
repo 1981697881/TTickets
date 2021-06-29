@@ -1,5 +1,5 @@
 <template>
-	<view class="activity-goods-box x-bc" @tap="jump('/pages/wallet/detail/index', { id: cardId })">
+	<view class="activity-goods-box x-bc" @tap="jump('/pages/wallet/index', { confirmationId: confirmationId })">
 		<view class="img-box">
 			<slot name="tag"></slot>
 			<image class="img" :src="img" mode="scaleToFill"></image>
@@ -36,6 +36,7 @@ export default {
 		img: '',
 		title: '',
 		subtitle: '',
+		confirmationId: '',
 		price: '',
 		originalPrice: ''
 	},

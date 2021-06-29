@@ -81,7 +81,7 @@
 			<view>订单号：{{ detail.confirmationId }}</view>
 			<view>购买时间：{{detail.createDateTime}}</view>
 			<view>手机号：{{detail.mobile}}</view>
-			<view>电影票由{{detail.channelName}}提供</view>
+			<view>电影票由{{detail.channelName}}影城提供</view>
 		</view>
 		<view class="cir-info">
 			<view class="cir-left"></view>
@@ -114,7 +114,7 @@ export default {
 			icon: '', // 二维码图标
 			iconsize: 40, // 二维码图标大小
 			lv: 3, // 二维码容错级别 ， 一般不用设置，默认就行
-			onval: false, // val值变化时自动重新生成二维码
+			onval: true, // val值变化时自动重新生成二维码
 			loadMake: true, // 组件加载完成后自动生成二维码
 			src: '', // 二维码生成后的图片地址或base64
 			scrollLeft: 0,
@@ -136,8 +136,15 @@ export default {
 			this.tabCurrent = id;
 		},
 		qrR(res) {
-					this.src = res
-				},
+			this.src = res
+		},
+		clearCode(){
+			let that = this
+			this.scanId = ''
+			that.$nextTick(function(){
+				that.$refs.qrcode._clearCode()
+			})
+		}
 	},
 	props: {
 		detail: {
@@ -149,9 +156,9 @@ export default {
 			default: ''
 		}
 	},
-	created(){
+	mounted(){
 		console.log(123)
-		console.log(scanId)
+		console.log(this.scanId)
 	},
 };
 </script>

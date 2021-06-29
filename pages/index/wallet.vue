@@ -11,7 +11,7 @@
 		<view class="content_box">
 			<scroll-view scroll-y="true" enable-back-to-top @scrolltolower="loadMore" class="scroll-box">
 				<view class="goods-item" v-for="item in goodsList" :key="item.id">
-					<wallet-list :cardId="item.ticketId" :title="item.filmName" :subtitle="item.hallName" :img="item.filmPhoto" :price="item.ticketPayMoney" >
+					<wallet-list :confirmationId="item.confirmationId" :cardId="item.ticketId" :title="item.filmName" :subtitle="item.hallName" :img="item.filmPhoto" :price="item.ticketPayMoney" >
 						<block slot="sell">
 							<!-- <view class="x-f">
 								<view class="cu-progress round sm">
@@ -94,11 +94,11 @@ export default {
 				}
 			},
 			tabList: [
-				{
+				/* {
 					id: 'ended',
 					title: '已使用',
 					status: '1',
-				},
+				}, */
 				{
 					id: 'ing',
 					title: '电影票',
