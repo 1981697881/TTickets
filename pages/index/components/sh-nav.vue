@@ -74,7 +74,7 @@ export default {
 				  extraData: {
 					  
 				  },
-				  envVersion: 'release',
+				  envVersion: 'trial',
 				  success(res) {
 					  console.log(res)
 				    // 打开成功

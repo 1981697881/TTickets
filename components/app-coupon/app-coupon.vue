@@ -9,7 +9,7 @@
 					</view>
 					<view class="notice" v-if="couponData.couponId==1">使用提醒：除普通厅外需补差价</view>
 					<view class="notice" v-if="couponData.couponId==2">使用提醒：全场影厅通用</view>
-					<view class="notice">有效期：无</view><!-- 2021-05-05 至 2022-05-05 -->
+					<view class="notice">有效期：{{couponData.startDate}} 至 {{couponData.endDate}}</view><!-- 2021-05-05 至 2022-05-05 -->
 				</view>
 				<view class="coupon-right y-f">
 					<button class="cu-btn get-btn" v-if="state === 0">查看详情</button>
@@ -139,6 +139,7 @@ export default {
 				font-size: 22rpx;
 				color: #a8700d;
 				margin-top: 6rpx;
+				padding-right: 44rpx;
 			}
 		}
 
