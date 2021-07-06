@@ -64,7 +64,6 @@ export default {
 		})
 	},
 	onLoad(options) {
-		clearInterval(timer);
 		timer = null;
 		this.options = options;
 		if (this.$Route.query) {

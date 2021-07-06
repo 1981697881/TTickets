@@ -39,7 +39,7 @@ export default {
 			val: '', // 要生成的二维码值
 			size: 400, // 二维码大小
 			unit: 'upx', // 单位
-			icon: require('@/static/imgs/logo/basicprofile.png'), // 二维码图标
+			icon: '/static/imgs/logo/basicprofile.png', // 二维码图标
 			iconsize: 40, // 二维码图标大小
 			lv: 3, // 二维码容错级别 ， 一般不用设置，默认就行
 			onval: true, // val值变化时自动重新生成二维码

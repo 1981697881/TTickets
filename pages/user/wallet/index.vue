@@ -14,7 +14,7 @@
 					</view>
 					<text class="money-num">{{balInfo.Money || "0.00"}}</text>
 					<text class="text-olive">
-						<text>游戏币：{{balInfo.Coins2 || "0"}}</text>
+						<text>游戏币：{{balInfo.Coins || "0"}}</text>
 						<text class="padding-left"> 彩票：{{balInfo.Tickets || "0"}}</text>
 						<text class="padding-left">积分：{{balInfo.Point || "0.00"}}</text>
 						   </text>

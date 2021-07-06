@@ -7,7 +7,7 @@
 				<text class="wallet-item__title">余额</text>
 			</view>
 			<view class="wallet-item y-f" @tap="jump('/pages/user/wallet/index')">
-				<text class="wallet-item__detail item-score">{{ balInfo.Coins2 || '0' }}</text>
+				<text class="wallet-item__detail item-score">{{ balInfo.Coins || '0' }}</text>
 				<text class="wallet-item__title">游戏币</text>
 			</view>
 			<view class="wallet-item y-f" @tap="jump('/pages/user/wallet/index')">
