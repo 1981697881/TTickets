@@ -278,7 +278,7 @@ export default {
 		return str;
 	},
 	// 获取时间区间
-	// 查询前后三天日期
+	// 查询前后day天日期
 	getDayList(date, day) {
 		let today = new Date();
 		let targetday_milliseconds = today.getTime() + 1000 * 60 * 60 * 24 * day;

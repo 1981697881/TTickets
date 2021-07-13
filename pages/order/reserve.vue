@@ -115,7 +115,7 @@
 							:pickerData="groupCouponsList"
 							v-if="expressTypeCur == 'express'"
 						></fz-group-card>
-						<!-- <fz-coupon-card :pickerData="groupCouponsList" v-if="expressTypeCur == 'selfetch'"></fz-coupon-card> -->
+						<fz-coupon-card @changeCoupon="changeCoupon" :pickerData="groupCouponsList" v-if="expressTypeCur == 'selfetch'"></fz-coupon-card>
 					</view>
 					<view class="express-type__bottom x-bc">
 						<button class="cu-btn cancel-btn" @tap="hideExpressType">取消</button>
@@ -174,7 +174,7 @@ export default {
 			preferentialAmount: 0,
 			groupCouponsList: [],
 			couponArray: [],
-			couponPrice: '选择优惠券',
+			couponPrice: 0,
 			getFocus: false, //获取焦点。
 			checkTime: {},
 			showExpressType: false, //优惠券弹窗
@@ -184,7 +184,6 @@ export default {
 				express: '抵用券',
 				selfetch: 'express'
 			},
-
 			expressType: [
 				//快递方式
 				{
@@ -316,7 +315,6 @@ export default {
 			this.hallImbalance = this.perGoodsList.locationHall.hallImbalance;
 			this.ticketPaymoney = Number(this.perGoodsList.schedule.standardprice) * Number(this.perGoodsList.seats.length);
 		}
-
 		/* this.goodsList = JSON.parse(this.$Route.query.goodsList); 
 		this.from = this.$Route.query.from;
 		this.orderType = this.$Route.query.orderType;
@@ -334,6 +332,15 @@ export default {
 		async changeExpressType(cur) {
 			this.expressTypeCur = cur;
 			this.getFocus = false;
+			this.couponArray = [];
+			this.couponPrice = 0;
+			if(cur == 'express'){
+				this.$nextTick(function(){
+					this.$refs.groupCard.resetCouponList()
+				})
+			}
+			this.calculateBenefits()
+			
 		},
 		// 显示弹窗
 		async onSelExpressType(goods) {
@@ -654,7 +661,7 @@ export default {
 			let that = this;
 			let res = prompt;
 			if (res.code === 1) {
-				that.pickerData.couponList = res.data;
+				that.pickerData = res.data;
 			}
 			/* that.$api('order.coupons', {
 				goods_list: that.goodsList,
@@ -677,6 +684,7 @@ export default {
 			}).then(res => {
 				if (res.flag) {
 					that.groupCouponsList = res.data;
+					that.pickerData.couponList = res.data;
 					that.pickerData.title = '可用优惠券(' + that.groupCouponsList.length + '张)';
 					/* if (that.groupCouponsList.length > 0) {
 						if (that.perGoodsList.seats.length > that.groupCouponsList.length) {
@@ -698,40 +706,46 @@ export default {
 		},
 		changeCoupon(index) {
 			if (index >= 0) {
-				this.couponId = this.pickerData.couponList[index].user_coupons_id;
-				this.pickerData.title = '-￥' + this.pickerData.couponList[index].amount;
-				this.getPre();
+				this.couponId = this.pickerData.couponList[index].id;
+				/* this.pickerData.title = '￥' + this.pickerData.couponList[index].fullPrice; */
+				this.couponPrice = this.pickerData.couponList[index].fullPrice;
+				/* this.getPre(); */
+				this.calculateBenefits();
 			} else {
 				this.couponId = 0;
 				this.pickerData.title = '选择优惠券';
-				this.getPre();
+				/* this.getPre(); */
 			}
 		},
-		//计算优惠
-		calculateBenefits(val) {
+		//计算团体票优惠
+		calculateBenefits(val = []) {
 			let that = this;
 			let countPrice = 0;
-			val.forEach(item => {
-				that.groupCouponsList.forEach((items, index) => {
-					if (item == items.id) {
-						if (that.payType == 'wallet') {
-							if (items.couponId == '2') {
-								countPrice += Number(that.perGoodsList.schedule.settleprice);
+			if (that.expressTypeCur == 'express') {
+				val.forEach(item => {
+					that.groupCouponsList.forEach((items, index) => {
+						if (item == items.id) {
+							if (that.payType == 'wallet') {
+								if (items.couponId == '2') {
+									countPrice += Number(that.perGoodsList.schedule.settleprice);
+								} else {
+									countPrice += Number(that.perGoodsList.schedule.settleprice);
+									countPrice = countPrice - Number(that.hallImbalance);
+								}
 							} else {
-								countPrice += Number(that.perGoodsList.schedule.settleprice);
-								countPrice = countPrice - Number(that.hallImbalance);
-							}
-						} else {
-							if (items.couponId == '2') {
-								countPrice += Number(that.perGoodsList.schedule.standardprice);
-							} else {
-								countPrice += Number(that.perGoodsList.schedule.standardprice);
-								countPrice = countPrice - Number(that.hallImbalance);
+								if (items.couponId == '2') {
+									countPrice += Number(that.perGoodsList.schedule.standardprice);
+								} else {
+									countPrice += Number(that.perGoodsList.schedule.standardprice);
+									countPrice = countPrice - Number(that.hallImbalance);
+								}
 							}
 						}
-					}
+					});
 				});
-			});
+			} else {
+				countPrice = Number(that.couponPrice);
+			}
 			if (that.payType == 'wallet') {
 				this.ticketPaymoney = Number(that.perGoodsList.schedule.settleprice) * Number(that.perGoodsList.seats.length) - countPrice;
 			} else {

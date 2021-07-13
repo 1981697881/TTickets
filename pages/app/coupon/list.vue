@@ -32,13 +32,17 @@ export default {
 	},
 	data() {
 		return {
-			stateCurrent: 0,
+			stateCurrent: 4,
 			listParams:{
 				couponType: 0,
 				openId: uni.getStorageSync('openid'),
 				status: 0
 			},
 			couponsState: [
+				{
+					id: 4,
+					title: '领券中心'
+				},
 				{
 					id: 0,
 					title: '抵用券'
@@ -61,7 +65,7 @@ export default {
 	},
 	computed: {},
 	onLoad() {
-		this.getCouponList();
+		this.getCouponIssueList();
 	},
 	methods: {
 		onNav(id) {
@@ -70,17 +74,23 @@ export default {
 			if(this.stateCurrent==0){
 				this.listParams.couponType = 0
 				this.listParams.status = 0
+				this.getCouponList();
 			}else if(this.stateCurrent==1){
 				this.listParams.couponType = 1
 				this.listParams.status = 0
+				this.getCouponList();
 			}else if(this.stateCurrent==2){
 				delete this.listParams.couponType
 				this.listParams.status = 1
+				this.getCouponList();
+			}else if(this.stateCurrent==4){
+				this.getCouponIssueList();
 			}else{
 				delete this.listParams.couponType
 				this.listParams.status = 2
+				this.getCouponList();
 			}	
-			this.getCouponList();
+			
 		},
 		jump(path, parmas) {
 			this.$Router.push({
@@ -100,9 +110,18 @@ export default {
 				}
 			});
 		},
+		getCouponIssueList() {
+			let that = this;
+			that.$api('coupons.couponIssueList', that.listParams).then(res => {
+				if (res.flag) {
+					that.couponList = res.data;
+				}
+			});
+		},
 
 		//跳转优惠券详情
 		toCouponDetail(data) {
+			console.log(data)
 			this.jump('/pages/app/coupon/detail', data);
 			/* if (data.user_coupons_id) {
 				this.jump('/pages/app/coupon/detail', { id: data.id, userCouponId: data.user_coupons_id });

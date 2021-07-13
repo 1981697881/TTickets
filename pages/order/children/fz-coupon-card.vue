@@ -4,15 +4,14 @@
 			<text class="coupon-title">不使用优惠券</text>
 			<radio class="orange coupon-radio" :class="{ checked: radioId === 0 }" :checked="radioId === 0"></radio>
 		</label>
-		<label class="radio-item x-bc" v-if="pickerData.length>0" v-for="(radio, index) in pickerData.couponList" :key="radio.user_coupons_id" @tap="selCoupon(index + 1)">
-			<text class="coupon-title">{{ radio.name }}:{{ `满${radio.enough}减${radio.amount}` }}</text>
+		<label class="radio-item x-bc" v-if="pickerData.length>0" v-for="(radio, index) in pickerData" :key="radio.index" @tap="selCoupon(index + 1)">
+			<text class="coupon-title">{{ radio.couponName }}:{{ `满${radio.reducePrice}减${radio.fullPrice}` }}</text>
 			<radio class="orange coupon-radio" :class="{ checked: radioId === index + 1 }" :checked="radioId === index + 1"></radio>
 		</label>
 		<!-- 空白页 -->
 		<app-empty :isFixed="false" v-if="pickerData.length==0" :emptyData="emptyData"></app-empty>
 	</view>
 </template>
-
 <script>
 export default {
 	components: {},

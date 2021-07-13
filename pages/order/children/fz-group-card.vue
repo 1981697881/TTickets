@@ -39,7 +39,8 @@ export default {
 		pickerData: {
 			type: Array,
 			default: []
-		},checkArray: {
+		},
+		checkArray: {
 			type: Array,
 			default: []
 		},
@@ -53,19 +54,25 @@ export default {
 		}
 	},
 	mounted() {
-		console.log(123)
+		
 	},
 	created() {
 		this.pickerData.forEach((element, index) => {
 			// 不包含选中项时禁用组件
+			console.log(this.checkArray)
 			if (this.checkArray.indexOf(element.id.toString()) == -1) {
 				element.disabled = true;
 			}
 		});
 	},
 	computed: {},
-	
 	methods: {
+		resetCouponList(){
+			this.pickerData.forEach((element, index) => {
+				element.disabled = false;
+			});
+			this.$forceUpdate()
+		},
 		selCoupon(e) {
 			let that = this;
 			// 判断选中项长度是否超过指定长度
@@ -103,7 +110,6 @@ export default {
 					element.disabled = false;
 				});
 			}
-			console.log(e.detail.value)
 			that.$emit('changeCouponGroup', e.detail.value);
 			/* if (that.checkId.length > 0) {
 				if (that.checkId.length < that.hallLength) {
@@ -126,7 +132,6 @@ export default {
 			console.log(that.checkId);
 			this.$emit('changeCouponGroup', that.checkId); */
 		},
-		
 	}
 };
 </script>

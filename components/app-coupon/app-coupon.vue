@@ -1,6 +1,23 @@
 <template>
 	<view class="" v-if="couponData">
 		<!-- 未领取，已领取 -->
+		<view class="coupon-wrap" v-if="state === 4">
+			<view class="coupon-item x-bc">
+				<view class="coupon-left y-start ">
+					<view class="sum-box">
+						<text class="unit">￥</text>
+						<text class="sum">{{ couponData.couponPrice }}</text>
+						<text class="sub">{{ couponData.cname }}</text>
+					</view>
+					<view class="notice">满{{ couponData.useMinPrice }}元可用</view>
+					<view class="notice">领取日期：{{couponData.startTime}} 至 {{couponData.endTime}}</view>
+				</view>
+				<view class="coupon-right y-f">
+					<button class="cu-btn get-btn" v-if="state === 4" @tap.stop="getCoupon">立即领取</button>
+					<view class="surplus-num" v-if="state === 4">仅剩{{ couponData.remainCount }}张</view>
+				</view>
+			</view>
+		</view>
 		<view class="coupon-wrap" v-if="state === 0">
 			<view class="coupon-item x-bc">
 				<view class="coupon-left y-start ">
@@ -21,11 +38,11 @@
 				<view class="coupon-left y-start ">
 					<view class="sum-box">
 						<text class="unit">￥</text>
-						<text class="miso-font sum">{{ couponData.amount }}</text>
-						<text class="sub">{{ couponData.name }}</text>
+						<text class="miso-font sum">{{ couponData.fullPrice }}</text>
+						<text class="sub">{{ couponData.couponName }}</text>
 					</view>
-					<view class="notice">满{{ couponData.enough }}元可用</view>
-					<view class="notice">有效期：{{ tools.timestamp(couponData.usetime.start) }} 至 {{ tools.timestamp(couponData.usetime.end) }}</view>
+					<view class="notice">满{{ couponData.fullPrice }}元可用</view>
+					<view class="notice">有效期：{{couponData.startDate}} 至 {{couponData.endDate}}</view>
 				</view>
 				<view class="coupon-right y-f">
 					<button class="cu-btn get-btn" v-if="state === 1">查看详情</button>
@@ -37,11 +54,13 @@
 				<view class="coupon-left y-start ">
 					<view class="coupon-left y-start ">
 						<view class="sum-box">
+							<text class="miso-font sum">{{ couponData.fullPrice }}</text>
 							<text class="sub">{{ couponData.couponName }}</text>
 						</view>
 						<view class="notice" v-if="couponData.couponId==1">使用提醒：除普通厅外需补差价</view>
-						<view class="notice" v-if="couponData.couponId==2">使用提醒：全场影厅通用</view>
-						<view class="notice">有效期：无</view><!-- 2021-05-05 至 2022-05-05 -->
+						<view class="notice" v-else-if="couponData.couponId==2">使用提醒：全场影厅通用</view>
+						<view class="notice" v-else>满{{ couponData.fullPrice }}元可用</view>
+						<view class="notice">有效期：{{couponData.startDate}} 至 {{couponData.endDate}}</view><!-- 2021-05-05 至 2022-05-05 -->
 					</view>
 				</view>
 				<view class="coupon-right y-f">
@@ -55,10 +74,10 @@
 				<view class="coupon-left y-start ">
 					<view class="sum-box">
 						<text class="unit">￥</text>
-						<text class="miso-font sum">{{ couponData.amount }}</text>
-						<text class="sub">{{ couponData.name }}</text>
+						<text class="miso-font sum">{{ couponData.fullPrice }}</text>
+						<text class="sub">{{ couponData.couponName }}</text>
 					</view>
-					<view class="notice">有效期：{{ tools.timestamp(couponData.usetime.start) }} 至 {{ tools.timestamp(couponData.usetime.end) }}</view>
+					<view class="notice">有效期：{{couponData.startDate}} 至 {{couponData.endDate}}</view>
 				</view>
 				<view class="coupon-right y-f">
 					<button class="cu-btn get-btn">已失效</button>
@@ -86,12 +105,12 @@ export default {
 	methods: {
 		getCoupon() {
 			let that = this;
-			that.$api('coupons.get', {
-				id: that.couponData.id
-			}).then(res => {
-				if (res.code === 1) {
+			let params = this.couponData
+			params.openId = uni.getStorageSync('openid')
+			that.$api('coupons.get', params).then(res => {
+				if (res.flag) {
 					that.$tools.toast(res.msg);
-					that.couponData.stock -= 1;
+					that.couponData.remainCount -= 1;
 				}
 			});
 		}
