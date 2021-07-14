@@ -9,7 +9,7 @@
 			</view>
 		</view>
 		<view class="content_box">
-			<view class="coupon-list" v-for="(c,index) in couponList" :key="index" @tap="toCouponDetail(c)"><app-coupon :state="stateCurrent" :couponData="c"></app-coupon></view>
+			<view class="coupon-list" v-for="(c,index) in couponList" :key="index" @tap="toCouponDetail(c)"><app-coupon :state="stateCurrent" :couponData="c" @getCouponList="getCouponIssueList"></app-coupon></view>
 		</view>
 		<view class="foot_box"></view>
 		<!-- 自定义底部导航 -->

@@ -340,7 +340,6 @@ export default {
 				})
 			}
 			this.calculateBenefits()
-			
 		},
 		// 显示弹窗
 		async onSelExpressType(goods) {

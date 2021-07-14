@@ -445,6 +445,11 @@ export default {
 			auth: true,
 			method: 'GET',
 			// desc: '获取智科公众号id',
+		},getCustomerList: {
+			url: 'V8/getCustomerList',
+			auth: true,
+			method: 'GET',
+			// desc: '获取智科公众号id',
 		},balance: {
 			url: 'V8/Balance',
 			auth: true,

@@ -86,8 +86,7 @@ export default {
 			this.bankInfo.PublicOpenID = option.PublicOpenID;
 		}
 		this.bankInfo.phone = this.userinfo.phoneNumber;
-		console.log(option);
-		/* this.getBankInfo(); */
+		this.getBankInfo();
 	},
 	methods: {
 		...mapActions(['getUserDetails','getUserBalance']),
@@ -116,10 +115,11 @@ export default {
 		//获取银行卡信息
 		getBankInfo() {
 			let that = this;
-			that.$api('user_bank.info').then(res => {
-				if (res.code === 1) {
+			that.$api('user.getCustomerList',{phone:that.bankInfo.phone}).then(res => {
+				if (res.flag) {
+					console.log(res)
 					if (res.data) {
-						that.bankInfo = res.data;
+						
 					}
 				}
 			});
