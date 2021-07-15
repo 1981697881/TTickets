@@ -121,8 +121,9 @@ export default {
 
 		//跳转优惠券详情
 		toCouponDetail(data) {
-			console.log(data)
-			this.jump('/pages/app/coupon/detail', data);
+			let obj = {}
+			obj.detail = JSON.stringify([data])
+			this.jump('/pages/app/coupon/detail', obj);
 			/* if (data.user_coupons_id) {
 				this.jump('/pages/app/coupon/detail', { id: data.id, userCouponId: data.user_coupons_id });
 			} else {

@@ -40,17 +40,16 @@
 			"content": {
 				"ids": "3",
 				"name": ""
-			},	
+			},
 			"decorate_id": 1
 		}, {
 			"id": 17949,
 			"type": "spread",
 			"category": "home",
 			"name": "二级广告",
-			"content": {
-			},
+			"content": {},
 			"decorate_id": 1
-		},{
+		}, {
 			"id": 17951,
 			"type": "adv",
 			"category": "home",
@@ -159,26 +158,34 @@
 			"content": {
 				"name": "",
 				"list": [{
-					"name": "我的订单",
-					"image": "https://i.postimg.cc/tT8R5Qfj/all-order.png",
-					"path": "/pages/index/wallet",
-					"path_name": "优惠券",
-					"path_type": 1
-					},{
-					"name": "兑换券",
-					"image": "https://i.postimg.cc/GhF3kfxW/a329a448d7cb7fd2ff46a9ab0e9f5ac0.png",
-					"path": "/pages/user/group-ticket",
-					"path_name": "优惠券",
-					"path_type": 1
+						"name": "我的订单",
+						"image": "https://i.postimg.cc/tT8R5Qfj/all-order.png",
+						"path": "/pages/index/wallet",
+						"path_name": "优惠券",
+						"path_type": 1
 					},
-					
-				{
-					"name": "联系客服",
-					"image": "https://i.postimg.cc/q75pJHp3/5d53a6e7f940c5ef925f63c1810c8429.png",
-					"path": "/pages/public/kefu/index",
-					"path_name": "客服",
-					"path_type": 2
-				}]
+					{
+						"name": "兑换券",
+						"image": "https://i.postimg.cc/GhF3kfxW/a329a448d7cb7fd2ff46a9ab0e9f5ac0.png",
+						"path": "/pages/user/group-ticket",
+						"path_name": "优惠券",
+						"path_type": 1
+					},
+					{
+						"name": "积分商城",
+						"image": "https://i.postimg.cc/8cb3CLL0/ab05b484afd9e2a21977adc79d0c456e.png",
+						"path": "/pages/app/score/list",
+						"path_name": "积分商城",
+						"path_type": 3
+					},
+					{
+						"name": "联系客服",
+						"image": "https://i.postimg.cc/q75pJHp3/5d53a6e7f940c5ef925f63c1810c8429.png",
+						"path": "/pages/public/kefu/index",
+						"path_name": "客服",
+						"path_type": 2
+					}
+				]
 			},
 			"decorate_id": 1
 		}, {

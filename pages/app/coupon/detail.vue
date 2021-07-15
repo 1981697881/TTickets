@@ -12,12 +12,12 @@
 					<view class="top y-f">
 						<view class="img-box x-c"><image class="coupon-img" src="http://shopro.7wpp.com/imgs/coupon.png" mode=""></image></view>
 						<view class="title">{{ options.couponName }}</view>
-						<!-- <view class="tip">满{{ couponDetail.enough }}元可用</view>
+						<view class="tip">满{{ options.reducePrice }}元可用</view>
 						<button class="cu-btn " :class="btnStataus == 'no_use' || !btnStataus ? 'use-btn' : 'fail-btn'" @tap="goScroll">
 							{{ btnStatusText[btnStataus] || '立即领取' }}
-						</button> -->
-						<view class="time" v-if="couponDetail.usetime">
-							有效期：2021-05-05 至 2022-05-05
+						</button>
+						<view class="time">
+							有效期：{{options.startDate}} 至 {{options.startDate}}
 						</view>
 					</view>
 					<view class="bottom y-start">
@@ -70,7 +70,8 @@ export default {
 	},
 	computed: {},
 	onLoad() {
-		this.options = this.$Route.query;
+		this.options = JSON.parse(this.$Route.query.detail)[0];
+		console.log(this.options)
 		/* this.getCouponDetail();
 		this.getCouponGoods(); */
 	},

@@ -448,7 +448,7 @@ export default {
 		},getCustomerList: {
 			url: 'V8/getCustomerList',
 			auth: true,
-			method: 'GET',
+			method: 'POST',
 			// desc: '获取智科公众号id',
 		},balance: {
 			url: 'V8/Balance',

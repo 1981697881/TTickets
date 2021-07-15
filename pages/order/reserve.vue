@@ -31,7 +31,7 @@
 			<view class="coupon x-bc item-list">
 				<view class="item-title">优惠券</view>
 				<view class="x-f" @tap="selCoupon">
-					<text class="price" v-if="groupCouponsList.length">{{ pickerData.title }}</text>
+					<text class="price" v-if="(Number(pickerData.couponList.length)+(Number(groupCouponsList.length)))>0">{{ pickerData.title }}</text>
 					<text class="sel-coupon" v-else>暂无优惠券</text>
 					<text class="cuIcon-right"></text>
 				</view>
@@ -115,7 +115,7 @@
 							:pickerData="groupCouponsList"
 							v-if="expressTypeCur == 'express'"
 						></fz-group-card>
-						<fz-coupon-card @changeCoupon="changeCoupon" :pickerData="groupCouponsList" v-if="expressTypeCur == 'selfetch'"></fz-coupon-card>
+						<fz-coupon-card @changeCoupon="changeCoupon" :pickerData="pickerData.couponList" v-if="expressTypeCur == 'selfetch'"></fz-coupon-card>
 					</view>
 					<view class="express-type__bottom x-bc">
 						<button class="cu-btn cancel-btn" @tap="hideExpressType">取消</button>
@@ -323,6 +323,7 @@ export default {
 
 		this.initDate();
 		this.getGroupCoupons();
+		this.getCoupons();
 	},
 	onShow() {
 		/* this.$isPreviewApi = true */
@@ -429,6 +430,14 @@ export default {
 		},
 		selPay(e) {
 			let that = this;
+			that.couponArray = [];
+			that.couponPrice = 0;
+			if(that.expressTypeCur == 'express'){
+				that.$nextTick(function(){
+					that.$refs.groupCard.resetCouponList()
+				})
+			}
+			that.calculateBenefits()
 			if (e.detail.value == 'wallet') {
 				let countPrce = Number(that.perGoodsList.schedule.settleprice) * Number(that.perGoodsList.seats.length) - that.preferentialAmount;
 				if (Number(countPrce) <= Number(that.balInfo.Money)) {
@@ -658,21 +667,19 @@ export default {
 		// 可用优惠券
 		getCoupons() {
 			let that = this;
-			let res = prompt;
-			if (res.code === 1) {
-				that.pickerData = res.data;
-			}
-			/* that.$api('order.coupons', {
-				goods_list: that.goodsList,
-				from: that.from,
-				address_id: that.addressId,
-				coupons_id: that.couponId,
-				order_type: that.orderType
+			that.$api('coupons.list', {
+				couponType: 1,
+				openId: uni.getStorageSync('openid'),
+				status: 0,
+				payType: that.payType=="wechat"?1:0,
+				scheduleId: that.perGoodsList.scheduleId,
+				seatCount: that.perGoodsList.seats.length,
 			}).then(res => {
-				if (res.code === 1) {
+				if (res.flag) {
 					that.pickerData.couponList = res.data;
+					that.pickerData.title = '可用优惠券(' + (Number(that.pickerData.couponList.length)+(Number(that.groupCouponsList.length))) + '张)';
 				}
-			}); */
+			});
 		}, // 可用团体票
 		getGroupCoupons() {
 			let that = this;
@@ -683,8 +690,7 @@ export default {
 			}).then(res => {
 				if (res.flag) {
 					that.groupCouponsList = res.data;
-					that.pickerData.couponList = res.data;
-					that.pickerData.title = '可用优惠券(' + that.groupCouponsList.length + '张)';
+					that.pickerData.title = '可用优惠券(' + (Number(that.pickerData.couponList.length)+(Number(that.groupCouponsList.length))) + '张)';
 					/* if (that.groupCouponsList.length > 0) {
 						if (that.perGoodsList.seats.length > that.groupCouponsList.length) {
 							that.pickerData.title = '可用优惠券(' + that.groupCouponsList.length + '张)';
@@ -697,7 +703,7 @@ export default {
 		},
 		// 选择优惠券
 		selCoupon() {
-			if (this.groupCouponsList.length) {
+			if ((Number(this.pickerData.couponList.length)+(Number(this.groupCouponsList.length)))) {
 				this.showExpressType = true;
 			} else {
 				this.$tools.toast('暂无优惠券');

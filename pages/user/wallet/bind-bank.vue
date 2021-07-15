@@ -10,10 +10,18 @@
 			<u-form :model="bankInfo" :rules="rules" ref="uForm" :errorType="errorType">
 				<u-form-item class="flex justify-between" :labelStyle="labelStyle" label-width="130" label-position="left" label="卡号:" prop="WechatNo">
 					<u-input style="float: left;width: 500rpx;" placeholder="请输入卡号" :placeholderStyle="placeholderStyle" v-model="bankInfo.WechatNo" type="text"></u-input>
-					<button class="cu-btn code-btn" @tap.stop="getCode"><text class="cuIcon-scan"></text></button>
+					<button class="cu-btn code-btn" @tap.stop="getCode"><text class="cuIcon-unfold"></text></button>
 				</u-form-item>
+				<u-select value-name="Number" label-name="Number" v-model="show" mode="single-column" :list="cardslist" @confirm="confirm"></u-select>
 				<u-form-item class="flex justify-between" :labelStyle="labelStyle" label-width="130" label-position="left" label="手机号:" prop="phone">
-					<u-input style="float: left;width: 500rpx;" disabled placeholder="请输入手机号" :placeholderStyle="placeholderStyle" v-model="bankInfo.phone" type="text"></u-input>
+					<u-input
+						style="float: left;width: 500rpx;"
+						disabled
+						placeholder="请输入手机号"
+						:placeholderStyle="placeholderStyle"
+						v-model="bankInfo.phone"
+						type="text"
+					></u-input>
 					<button class="cu-btn code-btn" open-type="getPhoneNumber" @getphonenumber="bindPhone"><text class="cuIcon-mobile"></text></button>
 				</u-form-item>
 				<u-form-item class="flex justify-between" :labelStyle="labelStyle" label-width="130" label-position="left" label="密码:" prop="password">
@@ -39,6 +47,8 @@ export default {
 				WechatId: '',
 				PublicOpenID: ''
 			},
+			show: false,
+			cardslist: [],
 			labelStyle: {
 				'font-size': '28rpx',
 				'font-weight': '500',
@@ -89,7 +99,10 @@ export default {
 		this.getBankInfo();
 	},
 	methods: {
-		...mapActions(['getUserDetails','getUserBalance']),
+		...mapActions(['getUserDetails', 'getUserBalance']),
+		confirm(e) {
+			this.bankInfo.WechatNo = e[0].value;
+		},
 		bindPhone(e) {
 			let me = this;
 			me.$api('user.getWxMiniPhoneNumber', {
@@ -106,20 +119,20 @@ export default {
 		},
 		getCode() {
 			let that = this;
-			uni.scanCode({
+			that.show = true;
+			/* uni.scanCode({
 				success: function(res) {
 					that.bankInfo.WechatNo = res.result;
 				}
-			});
+			}); */
 		},
 		//获取银行卡信息
 		getBankInfo() {
 			let that = this;
-			that.$api('user.getCustomerList',{phone:that.bankInfo.phone}).then(res => {
+			that.$api('user.getCustomerList', { phone: that.bankInfo.phone }).then(res => {
 				if (res.flag) {
-					console.log(res)
-					if (res.data) {
-						
+					if (res.data.Data) {
+						that.cardslist = res.data.Data;
 					}
 				}
 			});
@@ -144,7 +157,7 @@ export default {
 									// #endif
 								}
 							});
-						}else{
+						} else {
 							that.$tools.toast(res.msg);
 						}
 					});
@@ -158,19 +171,19 @@ export default {
 </script>
 
 <style lang="scss">
-	.pw-input{
-		.u-input{
-			input{
-				width: 500rpx !important;
-			}
+.pw-input {
+	.u-input {
+		input {
+			width: 500rpx !important;
 		}
 	}
+}
 .head_box {
 	background: linear-gradient(125deg, rgba(139, 196, 128, 1) 0%, rgba(148, 120, 165, 1) 100%);
 	position: relative;
 	color: white;
 }
-.u-form-item{
+.u-form-item {
 	margin: 0 20rpx 0 20rpx !important;
 }
 .form-box {

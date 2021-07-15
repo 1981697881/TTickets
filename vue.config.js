@@ -18,7 +18,6 @@ module.exports = {
 	// 		}
 	// 	}
 	// },
-
 	// chainWebpack: (config) => { //高版本，HBuilder X，可以开启。
 	// 	// 发行或运行时启用了压缩时会生效,在package.json中配置压缩
 	// 	config.optimization.minimizer('terser').tap((args) => {
