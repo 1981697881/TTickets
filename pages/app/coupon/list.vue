@@ -9,7 +9,9 @@
 			</view>
 		</view>
 		<view class="content_box">
-			<view class="coupon-list" v-for="(c,index) in couponList" :key="index" @tap="toCouponDetail(c)"><app-coupon :state="stateCurrent" :couponData="c" @getCouponList="getCouponIssueList"></app-coupon></view>
+			<view class="coupon-list" v-for="(c, index) in couponList" :key="index" @tap="toCouponDetail(c)">
+				<app-coupon :state="stateCurrent" :couponData="c" @getCouponList="getCouponIssueList"></app-coupon>
+			</view>
 		</view>
 		<view class="foot_box"></view>
 		<!-- 自定义底部导航 -->
@@ -33,7 +35,7 @@ export default {
 	data() {
 		return {
 			stateCurrent: 4,
-			listParams:{
+			listParams: {
 				couponType: 0,
 				openId: uni.getStorageSync('openid'),
 				status: 0
@@ -71,26 +73,25 @@ export default {
 		onNav(id) {
 			this.stateCurrent = id;
 			this.couponList = [];
-			if(this.stateCurrent==0){
-				this.listParams.couponType = 0
-				this.listParams.status = 0
+			if (this.stateCurrent == 0) {
+				this.listParams.couponType = 0;
+				this.listParams.status = 0;
 				this.getCouponList();
-			}else if(this.stateCurrent==1){
-				this.listParams.couponType = 1
-				this.listParams.status = 0
+			} else if (this.stateCurrent == 1) {
+				this.listParams.couponType = 1;
+				this.listParams.status = 0;
 				this.getCouponList();
-			}else if(this.stateCurrent==2){
-				delete this.listParams.couponType
-				this.listParams.status = 1
+			} else if (this.stateCurrent == 2) {
+				delete this.listParams.couponType;
+				this.listParams.status = 1;
 				this.getCouponList();
-			}else if(this.stateCurrent==4){
+			} else if (this.stateCurrent == 4) {
 				this.getCouponIssueList();
-			}else{
-				delete this.listParams.couponType
-				this.listParams.status = 2
+			} else {
+				delete this.listParams.couponType;
+				this.listParams.status = 2;
 				this.getCouponList();
-			}	
-			
+			}
 		},
 		jump(path, parmas) {
 			this.$Router.push({
@@ -118,11 +119,14 @@ export default {
 				}
 			});
 		},
-
 		//跳转优惠券详情
-		toCouponDetail(data) {
-			let obj = {}
-			obj.detail = JSON.stringify([data])
+		toCouponDetail(val) {
+			let obj = {};
+			let data = {...val}
+			data.stateCurrent = this.stateCurrent
+			data.startDate = Date.parse(data.startDate)
+			data.endDate = Date.parse(data.endDate)
+			obj.detail = JSON.stringify([data]);
 			this.jump('/pages/app/coupon/detail', obj);
 			/* if (data.user_coupons_id) {
 				this.jump('/pages/app/coupon/detail', { id: data.id, userCouponId: data.user_coupons_id });

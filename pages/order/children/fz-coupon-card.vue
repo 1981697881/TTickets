@@ -36,6 +36,9 @@ export default {
 		
 	},
 	methods: {
+		resetCouponList(){
+			this.radioId = 0
+		},
 		selCoupon(index) {
 			this.radioId = index;
 			this.$emit('changeCoupon', this.radioId - 1);

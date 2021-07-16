@@ -9,18 +9,27 @@
 		<view class="content_box">
 			<scroll-view class="scroll-box" scroll-y="true" scroll-with-animation enable-back-to-top :scroll-into-view="scrollId" @scroll="onScroll">
 				<view class="coupon-box">
-					<view class="top y-f">
-						<view class="img-box x-c"><image class="coupon-img" src="http://shopro.7wpp.com/imgs/coupon.png" mode=""></image></view>
+					<view class="top y-f" v-if="options.stateCurrent!=4">
+						<view class="img-box x-c"><image class="coupon-img" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/coupon.png" mode=""></image></view>
 						<view class="title">{{ options.couponName }}</view>
-						<view class="tip">满{{ options.reducePrice }}元可用</view>
-						<button class="cu-btn " :class="btnStataus == 'no_use' || !btnStataus ? 'use-btn' : 'fail-btn'" @tap="goScroll">
+						<view class="tip" v-if="options.reducePrice">满{{ options.reducePrice }}元可用</view>
+						<view class="tip" v-if="options.deductionAmount">升级影厅需补 {{ options.deductionAmount }} 元差额</view>
+						<!-- <button class="cu-btn " :class="btnStataus == 'no_use' || !btnStataus ? 'use-btn' : 'fail-btn'" @tap="goScroll">
 							{{ btnStatusText[btnStataus] || '立即领取' }}
-						</button>
+						</button> -->
 						<view class="time">
-							有效期：{{options.startDate}} 至 {{options.startDate}}
+							有效期：{{tools.dateFormat('YYYY-mm-dd HH:MM:SS',new Date(options.startDate))}} 至 {{tools.dateFormat('YYYY-mm-dd HH:MM:SS',new Date(options.endDate))}}
 						</view>
 					</view>
-					<view class="bottom y-start">
+					<view class="top y-f" v-else>
+						<view class="img-box x-c"><image class="coupon-img" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/coupon.png" mode=""></image></view>
+						<view class="title">{{ options.cname }}</view>
+						<view class="tip" >满{{ options.useMinPrice }}元可用</view>
+						<view class="time">
+							有效期：{{tools.dateFormat('YYYY-mm-dd HH:MM:SS',new Date(options.startDate))}} 至 {{tools.dateFormat('YYYY-mm-dd HH:MM:SS',new Date(options.endDate))}}
+						</view>
+					</view>
+					<view class="bottom y-start" v-if="options.description">
 						<view class="notice-item y-start">
 							<view class="notice-title">优惠券说明</view>
 							<text class="notice-detail">{{ options.description }}</text>

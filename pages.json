@@ -23,7 +23,7 @@
 				"group": "商城" //分组
 			}
 		},
-		{
+		/* {
 			"path": "pages/index/category",
 			"name": "category",
 			"style": {
@@ -36,7 +36,7 @@
 				"title": "分类",
 				"group": "商城"
 			}
-		},
+		}, */
 		{
 			"path": "pages/index/circuit",
 			"style": {
@@ -65,7 +65,8 @@
 				"title": "票夹",
 				"group": "订单"
 			}
-		},{
+		},
+		/* {
 			"path": "pages/index/cart",
 			"name": "cart",
 			"style": {
@@ -78,7 +79,7 @@
 				"title": "购物车",
 				"group": "商城"
 			}
-		},
+		}, */
 		{
 			"path": "pages/index/user",
 			"name": "user",

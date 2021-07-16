@@ -22,8 +22,8 @@
 						<text class="cuIcon-roundclose text-red padding-xs">不可改签</text>
 						<text class="cuIcon-roundclose text-red padding-xs">不可退票</text>
 					</view>
-					<view class="x-f">
-						<view class="detail">共{{ perGoodsList.seats.length }}张 原价 ￥{{ Number(perGoodsList.schedule.standardprice) * Number(perGoodsList.seats.length) }}</view>
+					<view class="x-f"><!-- 会员价 ￥{{ Number(perGoodsList.schedule.settleprice) * Number(perGoodsList.seats.length) }} -->
+						<view class="detail">共{{ perGoodsList.seats.length }}张 原价 ￥{{ Number(perGoodsList.schedule.standardprice) * Number(perGoodsList.seats.length) }} </view>
 					</view>
 				</view>
 			</view>
@@ -115,7 +115,7 @@
 							:pickerData="groupCouponsList"
 							v-if="expressTypeCur == 'express'"
 						></fz-group-card>
-						<fz-coupon-card @changeCoupon="changeCoupon" :pickerData="pickerData.couponList" v-if="expressTypeCur == 'selfetch'"></fz-coupon-card>
+						<fz-coupon-card ref="couponCard" @changeCoupon="changeCoupon" :pickerData="pickerData.couponList" v-if="expressTypeCur == 'selfetch'"></fz-coupon-card>
 					</view>
 					<view class="express-type__bottom x-bc">
 						<button class="cu-btn cancel-btn" @tap="hideExpressType">取消</button>
@@ -339,6 +339,10 @@ export default {
 				this.$nextTick(function(){
 					this.$refs.groupCard.resetCouponList()
 				})
+			}else{
+				this.$nextTick(function(){
+					this.$refs.couponCard.resetCouponList()
+				})
 			}
 			this.calculateBenefits()
 		},
@@ -436,8 +440,11 @@ export default {
 				that.$nextTick(function(){
 					that.$refs.groupCard.resetCouponList()
 				})
+			}else{
+				this.$nextTick(function(){
+					this.$refs.couponCard.resetCouponList()
+				})
 			}
-			that.calculateBenefits()
 			if (e.detail.value == 'wallet') {
 				let countPrce = Number(that.perGoodsList.schedule.settleprice) * Number(that.perGoodsList.seats.length) - that.preferentialAmount;
 				if (Number(countPrce) <= Number(that.balInfo.Money)) {
@@ -453,6 +460,7 @@ export default {
 				that.payType = e.detail.value;
 				that.ticketPaymoney = Number(that.perGoodsList.schedule.standardprice) * Number(that.perGoodsList.seats.length) - that.preferentialAmount;
 			}
+			this.getCoupons();
 			//切换支付方式重新计算优惠
 			that.calculateBenefits(that.couponArray);
 		},
@@ -710,11 +718,13 @@ export default {
 			}
 		},
 		changeCoupon(index) {
+			this.couponArray =[]
 			if (index >= 0) {
 				this.couponId = this.pickerData.couponList[index].id;
 				/* this.pickerData.title = '￥' + this.pickerData.couponList[index].fullPrice; */
 				this.couponPrice = this.pickerData.couponList[index].fullPrice;
 				/* this.getPre(); */
+				this.couponArray.push(this.couponId)
 				this.calculateBenefits();
 			} else {
 				this.couponId = 0;
@@ -756,10 +766,15 @@ export default {
 			} else {
 				this.ticketPaymoney = Number(that.perGoodsList.schedule.standardprice) * Number(that.perGoodsList.seats.length) - countPrice;
 			}
-			this.pickerData.title = '-￥' + countPrice;
+			if(countPrice == 0){
+				this.pickerData.title = '选择优惠券';
+			}else{
+				this.pickerData.title = '-￥' + countPrice;
+			}
 			this.preferentialAmount = countPrice;
 		},
 		changeCouponGroup(val) {
+			this.couponArray =[]
 			let that = this;
 			if (val.length > 0) {
 				this.couponArray = val;
