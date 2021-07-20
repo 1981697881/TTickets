@@ -334,6 +334,7 @@ export default {
 			this.expressTypeCur = cur;
 			this.getFocus = false;
 			this.couponArray = [];
+			this.couponId = 0;
 			this.couponPrice = 0;
 			if(cur == 'express'){
 				this.$nextTick(function(){
@@ -435,6 +436,7 @@ export default {
 		selPay(e) {
 			let that = this;
 			that.couponArray = [];
+			that.couponId = 0;
 			that.couponPrice = 0;
 			if(that.expressTypeCur == 'express'){
 				that.$nextTick(function(){
@@ -488,7 +490,7 @@ export default {
 						ticketId: that.perGoodsList.ticketId,
 						ticketPaymoney: that.ticketPaymoney
 					};
-					let pay = new AppPay(that.payType, that.perGoodsList, null, params, 1, confirmParam, that.couponArray);
+					let pay = new AppPay(that.payType, that.perGoodsList, null, params, 1, confirmParam, that.couponArray,that.couponId);
 					that.isSubOrder = true;
 					/* that.confirmOrder() */
 				} else {
@@ -578,6 +580,7 @@ export default {
 				scheduleKey: this.perGoodsList.scheduleKey,
 				mobile: this.userInfo.phoneNumber,
 				ticketList: array,
+				couponId: that.couponId,
 				ifCdkeyPay: that.ifCdkeyPay,
 				Ids: that.couponArray
 			}).then(res => {
@@ -719,12 +722,11 @@ export default {
 		},
 		changeCoupon(index) {
 			this.couponArray =[]
+			this.couponId = 0;
 			if (index >= 0) {
 				this.couponId = this.pickerData.couponList[index].id;
-				/* this.pickerData.title = '￥' + this.pickerData.couponList[index].fullPrice; */
-				this.couponPrice = this.pickerData.couponList[index].fullPrice;
+				this.couponPrice = this.pickerData.couponList[index].reducePrice;
 				/* this.getPre(); */
-				this.couponArray.push(this.couponId)
 				this.calculateBenefits();
 			} else {
 				this.couponId = 0;
@@ -774,8 +776,9 @@ export default {
 			this.preferentialAmount = countPrice;
 		},
 		changeCouponGroup(val) {
-			this.couponArray =[]
 			let that = this;
+			this.couponArray =[]
+			that.couponId = 0;
 			if (val.length > 0) {
 				this.couponArray = val;
 				that.calculateBenefits(val);

@@ -18,11 +18,12 @@ export default class AppPay {
 	// 			wallet			v							v					v						v
 
 
-	constructor(payment, order,url="pay.prepay",params,reType=0,confirmParam={},couponArray=[]) {
+	constructor(payment, order,url="pay.prepay",params,reType=0,confirmParam={},couponArray=[],couponId) {
 		this.payment = payment;
 		this.order = order;
 		this.reType = reType;
 		this.couponArray = couponArray;
+		this.couponId = couponId;
 		this.confirmParam = confirmParam;
 		this.url = url || "pay.prepay";
 		this.params = params
@@ -220,6 +221,7 @@ export default class AppPay {
 							mobile: store.state.user.userInfo.phoneNumber,
 							ticketList: that.confirmParam,
 							Ids: that.couponArray,
+							couponId: that.couponId,
 							ifCdkeyPay: false,
 						}).then(rescin => {
 							if(rescin.flag){

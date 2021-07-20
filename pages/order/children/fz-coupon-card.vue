@@ -5,7 +5,7 @@
 			<radio class="orange coupon-radio" :class="{ checked: radioId === 0 }" :checked="radioId === 0"></radio>
 		</label>
 		<label class="radio-item x-bc" v-if="pickerData.length>0" v-for="(radio, index) in pickerData" :key="radio.index" @tap="selCoupon(index + 1)">
-			<text class="coupon-title">{{ radio.couponName }}:{{ `满${radio.reducePrice}减${radio.fullPrice}` }}</text>
+			<text class="coupon-title">{{ radio.couponName }}:{{ `满${radio.fullPrice}减${radio.reducePrice}` }}</text>
 			<radio class="orange coupon-radio" :class="{ checked: radioId === index + 1 }" :checked="radioId === index + 1"></radio>
 		</label>
 		<!-- 空白页 -->
