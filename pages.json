@@ -108,6 +108,18 @@
 				"group": "卖品"
 			}
 		},{
+			"path": "pages/menu/detail",
+			"name": "shoppingMallDetail",
+			"style": {
+				"navigationBarTitleText": "商品明细"
+			},
+			"meta": {
+				"auth": false,
+				"async": true,
+				"title": "商品详情",
+				"group": "卖品"
+			}
+		},{
 			"path": "pages/index/videoGame",
 			"name": "videoGame",
 			"style": {

@@ -23,8 +23,8 @@
 				<!-- <button class="cu-btn cash-btn" @tap="onWithdrawals">提现</button> -->
 			</view>
 		</view>
-		<view class="content_box">
-			<view class="resale-list x-bc" @tap="bindingCard" v-if="!balInfo.IsBandCard && balInfo.Number">
+		<view class="content_box"><!-- v-if="!balInfo.IsBandCard && balInfo.Number" -->
+			<view class="resale-list x-bc" @tap="bindingCard" >
 				<view class="x-f">
 					<text class=" cuicon cuIcon-vipcard"></text>
 					<text>绑定会员卡</text>

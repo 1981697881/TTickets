@@ -63,21 +63,21 @@
             "sdkConfigs" : {
                 "oauth" : {
                     "weixin" : {
-                        "appid" : "wx522bf4cc9a13****",
-                        "appsecret" : "fa44dc893ab55338f46d65f900b1****",
+                        "appid" : "wx0f0958a85adea6b8",
+                        "appsecret" : "5b22055a1c6b1f021ddbdbf2c1e66afc",
                         "UniversalLinks" : ""
                     }
                 },
                 "payment" : {
                     "weixin" : {
-                        "appid" : "wx522bf4cc9a13****",
+                        "appid" : "wx0f0958a85adea6b8",
                         "UniversalLinks" : ""
                     },
                     "alipay" : {}
                 },
                 "share" : {
                     "weixin" : {
-                        "appid" : "wx522bf4cc9a13****",
+                        "appid" : "wx0f0958a85adea6b8",
                         "UniversalLinks" : ""
                     }
                 },

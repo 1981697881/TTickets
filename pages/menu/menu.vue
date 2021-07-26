@@ -34,15 +34,20 @@
 								<!-- category begin -->
 								<view class="category" >
 									<view class="items">
-										<!-- 商品 begin -->
+										<!-- 商品 begin  @tap="jump('/pages/menu/detail', { PackageId: good.PackageId })"-->
 										<view class="good" v-for="(good, key) in goods" :key="key">
-											<image :src="good.images|| 'http://139.159.136.187:50080/uploadFiles/image/448b0e700eec459304f9cc7e556b9f24.jpg'" class="image" @tap="showGoodDetailModal(item, good)"></image>
+											<image  :src="good.ImagePath|| 'http://139.159.136.187:50080/uploadFiles/image/448b0e700eec459304f9cc7e556b9f24.jpg'" class="image" @tap="showGoodDetailModal(item, good)"></image>
 											<view class="right">
-												<text class="name">{{ good.goodsName }}</text>
-												<text class="tips">{{ good.goodsDescribe }}</text>
+												<text class="name">{{good.PackageName}}</text>
+												<text class="tips">{{good.Note}}</text>
 												<view class="price_and_action">
-													<text class="price">￥{{ good.goodsPrice }}</text>
-													<view class="btn-group" v-if="good.use_property">
+													<text class="price">￥{{ good.PackageAmount }} <text class="price text-gray" style="text-decoration:line-through">￥{{ good.OriginalPrice }}</text></text> 
+													<view class="btn-group">
+														<button class="cu-btn cuIcon sm round shadow bg-orange">
+															<text class="cuIcon-cart"></text>
+														</button>
+													</view>
+													<!-- <view class="btn-group" v-if="good.use_property">
 														<button  class="btn property_btn bg-green" hover-class="none" size="mini" @tap="showGoodDetailModal(item, good)">
 															选规格
 														</button>
@@ -64,7 +69,7 @@
 														<button class="btn add_btn cuIcon bg-green" size="min" hover-class="none" @tap="handleAddToCart('', good, 1)">
 															<view class="cuIcon-add"></view>
 														</button>
-													</view>
+													</view> -->
 												</view>
 											</view>
 										</view>
@@ -233,6 +238,9 @@ export default {
 		await this.init();
 	}, */
 	computed: {
+		...mapState({
+			balInfo: state => state.user.balInfo
+		}),
 		goodCartNum() {
 			//计算单个饮品添加到购物车的数量
 			return goodsId =>
@@ -276,11 +284,11 @@ export default {
 			//页面初始化
 			this.loading = true;
 			let me = this;
-			me.$api('goods.commodityList', {
-				goodsType: 2,
+			me.$api('goods.lists', {
+				custId: me.balInfo.custId,
 			}).then(res => {
 				if (res.flag) {
-					this.goods = res.data;
+					this.goods = res.data.Data;
 				}
 			});
 			this.loading = false;
@@ -451,7 +459,15 @@ export default {
 				query: JSON.parse(JSON.stringify(this.cart))
 			});
 			uni.hideLoading();
-		}
+		},
+		// 路由跳转
+		jump(path, parmas) {
+			this.showShare = false;
+			this.$Router.replace({
+				path: path,
+				query: parmas
+			});
+		},
 	}
 };
 </script>
