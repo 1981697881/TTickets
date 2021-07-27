@@ -129,7 +129,7 @@ export default {
 		//获取银行卡信息
 		getBankInfo() {
 			let that = this;
-			that.$api('user.getCustomerList', { phone: that.bankInfo.phone }).then(res => {
+			that.$api('user.getCustomerList', { phone: that.bankInfo.phone,returnWechat: true }).then(res => {
 				if (res.flag) {
 					if (res.data.Data) {
 						that.cardslist = res.data.Data;

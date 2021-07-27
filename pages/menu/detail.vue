@@ -2,7 +2,7 @@
 	<view class="box">
 		<cu-custom :isBack="true" bgColor="bg-gray">
 			<block slot="backText"></block>
-			<block slot="content">{{ goodsInfo.filmName }}</block>
+			<block slot="content">{{ goodsInfo.PackageName }}</block>
 		</cu-custom>
 		<view class="detail_box app-selector">
 			<view class="detail-content">
@@ -141,14 +141,14 @@ export default {
 	},
 	onLoad() {
 		const type = this.$Route.query.type;
-		this.packageId = this.$Route.query.packageId
+		this.PackageId = this.$Route.query.PackageId
 		this.detailType = type;
 		this.getGoodsDetail();
 	},
 	onUnload(options){
 		let that = this
 		let params = {
-				packageId: that.packageId
+				PackageId: that.PackageId
 			}
 		uni.$emit('escUpload',params)
 	},
@@ -196,7 +196,7 @@ export default {
 		getGoodsDetail() {
 			let that = this;
 			that.$api('goods.detail', {
-				packageId: that.$Route.query.packageId,
+				packageId: that.$Route.query.PackageId,
 				custId: that.balInfo.custId,
 			}).then(res => {
 				if (res.flag) {

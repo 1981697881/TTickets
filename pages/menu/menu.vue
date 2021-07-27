@@ -34,16 +34,16 @@
 								<!-- category begin -->
 								<view class="category" >
 									<view class="items">
-										<!-- 商品 begin  @tap="jump('/pages/menu/detail', { PackageId: good.PackageId })"-->
+										<!-- 商品 begin  "-->
 										<view class="good" v-for="(good, key) in goods" :key="key">
-											<image  :src="good.ImagePath|| 'http://139.159.136.187:50080/uploadFiles/image/448b0e700eec459304f9cc7e556b9f24.jpg'" class="image" @tap="showGoodDetailModal(item, good)"></image>
+											<image @tap="jump('/pages/menu/detail', { PackageId: good.PackageId })" :src="good.ImagePath|| 'http://139.159.136.187:50080/uploadFiles/image/448b0e700eec459304f9cc7e556b9f24.jpg'" class="image"></image>
 											<view class="right">
 												<text class="name">{{good.PackageName}}</text>
 												<text class="tips">{{good.Note}}</text>
 												<view class="price_and_action">
 													<text class="price">￥{{ good.PackageAmount }} <text class="price text-gray" style="text-decoration:line-through">￥{{ good.OriginalPrice }}</text></text> 
 													<view class="btn-group">
-														<button class="cu-btn cuIcon sm round shadow bg-orange">
+														<button class="cu-btn cuIcon sm round shadow bg-orange" @tap="toPay(good)">
 															<text class="cuIcon-cart"></text>
 														</button>
 													</view>
@@ -451,12 +451,12 @@ export default {
 				this.cartPopupVisible = false;
 			}
 		},
-		toPay() {
+		toPay(good) {
 			uni.showLoading({ title: '加载中' });
-			uni.setStorageSync('cart', JSON.parse(JSON.stringify(this.cart)))
+			/* uni.setStorageSync('cart', JSON.parse(JSON.stringify(this.cart))) */
 			this.$Router.push({
 				path: '/pages/menu/pay',
-				query: JSON.parse(JSON.stringify(this.cart))
+				query: good
 			});
 			uni.hideLoading();
 		},
