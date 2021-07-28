@@ -2,14 +2,14 @@
 	<view class="page_box">
 		<view class="head_box" v-if="orderPre.need_address" >
 			<view class="add-address-box flex-sub x-f" v-if="!addressId" @tap="jump('/pages/user/address/list', { from: 'order' })">
-				<image class="address-bg" src="http://shopro.7wpp.com/imgs/address_line.png" mode=""></image>
+				<image class="address-bg" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/address_line.png" mode=""></image>
 				<view class="box-bg x-bc flex-sub pad">
 					<text class="select-notice">请选择收货地址</text>
 					<text class="cuIcon-right"></text>
 				</view>
 			</view>
 			<view class="address-list" v-else @tap="jump('/pages/user/address/list', { from: 'order' })">
-				<image class="address-bg" src="http://shopro.7wpp.com/imgs/address_line.png" mode=""></image>
+				<image class="address-bg" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/address_line.png" mode=""></image>
 				<view class="top x-f">
 					<text class="name">{{ address.consignee }}</text>
 					<text class="phone">{{ address.phone }}</text>
@@ -1152,7 +1152,7 @@ export default {
 		.express-address {
 			position: relative;
 			padding: 30rpx 25rpx;
-			background: url('http://shopro.7wpp.com/imgs/address_bg.png') no-repeat;
+			background: url('https://cfzx.gzfzdev.com/movie/uploadFiles/image/address_bg.png') no-repeat;
 			background-size: 430rpx 300rpx;
 			background-position: top right;
 			.express-top {

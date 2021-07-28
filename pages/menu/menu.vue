@@ -36,7 +36,7 @@
 									<view class="items">
 										<!-- 商品 begin  "-->
 										<view class="good" v-for="(good, key) in goods" :key="key">
-											<image @tap="jump('/pages/menu/detail', { PackageId: good.PackageId })" :src="good.ImagePath|| 'http://139.159.136.187:50080/uploadFiles/image/448b0e700eec459304f9cc7e556b9f24.jpg'" class="image"></image>
+											<image @tap="jump('/pages/menu/detail', { PackageId: good.PackageId })" :src="good.ImagePath|| 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/zanwu.jpg'" class="image"></image>
 											<view class="right">
 												<text class="name">{{good.PackageName}}</text>
 												<text class="tips">{{good.Note}}</text>
@@ -456,14 +456,14 @@ export default {
 			/* uni.setStorageSync('cart', JSON.parse(JSON.stringify(this.cart))) */
 			this.$Router.push({
 				path: '/pages/menu/pay',
-				query: good
+				query: {packageId: good.PackageId}
 			});
 			uni.hideLoading();
 		},
 		// 路由跳转
 		jump(path, parmas) {
 			this.showShare = false;
-			this.$Router.replace({
+			this.$Router.push({
 				path: path,
 				query: parmas
 			});

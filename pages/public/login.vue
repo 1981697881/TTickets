@@ -1,7 +1,7 @@
 <template>
 	<view class="container">
 		<!-- 背景图 -->
-		<view class="x-c"><image class="logo-bg" src="http://shopro.7wpp.com/imgs/logo_bg.png" mode=""></image></view>
+		<view class="x-c"><image class="logo-bg" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/logo_bg.png" mode=""></image></view>
 		<!-- titleview -->
 		<view class="head-box"><cu-custom :isBack="true"></cu-custom></view>
 		<view class="wrapper">
@@ -40,19 +40,19 @@
 			<view class="third-party y-f">
 				<!-- #ifdef H5 -->
 				<button class="cu-btn wx-logo-box y-f" @tap="wxLogin">
-					<image class="auto-login" src="http://shopro.7wpp.com/imgs/auto_login.png" mode=""></image>
+					<image class="auto-login" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/auto_login.png" mode=""></image>
 					<view class="">微信一键登录</view>
 				</button>
 				<!-- #endif -->
 				<!-- #ifdef MP-WEIXIN -->
 				<button class="cu-btn wx-logo-box y-f"  @click="getuserinfo">
-					<image class="auto-login" src="http://shopro.7wpp.com/imgs/auto_login.png" mode=""></image>
+					<image class="auto-login" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/auto_login.png" mode=""></image>
 					<view class="">微信一键登录</view>
 				</button>
 				<!-- #endif -->
 				<!-- #ifdef APP-PLUS -->
 				<button class="cu-btn wx-logo-box y-f" @tap="wxLogin">
-					<image class="auto-login" src="http://shopro.7wpp.com/imgs/auto_login.png" mode=""></image>
+					<image class="auto-login" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/auto_login.png" mode=""></image>
 					<view class="">微信一键登录</view>
 				</button>
 				<!-- #endif -->

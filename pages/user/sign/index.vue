@@ -69,8 +69,8 @@
 			<block slot="modalContent">
 				<view class="sign-modal-box">
 					<view class="modal-head y-f">
-						<image class="modal-bg" src="http://shopro.7wpp.com/imgs/modal/sign_modal_bg.jpg" mode=""></image>
-						<image class="sign-tag" src="http://shopro.7wpp.com/imgs/modal/sign_modal_succeed.png" mode=""></image>
+						<image class="modal-bg" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/sign_modal_bg.jpg" mode=""></image>
+						<image class="sign-tag" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/sign_modal_succeed.png" mode=""></image>
 						<view class="sign-num-box">
 							已连续打卡
 							<text class="sign-num">{{ cuntinueDays }}</text>

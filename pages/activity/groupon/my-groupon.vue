@@ -80,9 +80,9 @@ export default {
 			showShare: false,
 			stateId: 'all',
 			grouponStatus: {
-				finish: 'http://shopro.7wpp.com/imgs/group_state_succeed.png',
-				'finish-fictitious': 'http://shopro.7wpp.com/imgs/group_state_succeed.png',
-				invalid: 'http://shopro.7wpp.com/imgs/group_state_failed.png'
+				finish: 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/group_state_succeed.png',
+				'finish-fictitious': 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/group_state_succeed.png',
+				invalid: 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/group_state_failed.png'
 			},
 			myGrouponList: [], //我的拼团列表。
 			shareGoodsInfo: {}, //分享海报信息。

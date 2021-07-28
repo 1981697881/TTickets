@@ -111,7 +111,9 @@
 			"path": "pages/menu/detail",
 			"name": "shoppingMallDetail",
 			"style": {
-				"navigationBarTitleText": "商品明细"
+				"navigationBarTitleText": "商品明细",
+				"navigationStyle": "custom",
+				"enablePullDownRefresh": true
 			},
 			"meta": {
 				"auth": false,

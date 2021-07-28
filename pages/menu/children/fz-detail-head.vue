@@ -2,11 +2,11 @@
 	<view class="ci-header">
 		<view class="locate-logo">
 			<view class="tag">{{detail.dimensional || ''}}</view>
-			<image class="logo-img" :src="detail.filmPhoto"></image>
+			<image class="logo-img" :src="detail.ImagePath"></image>
 		</view>
 		<view class="header-info">
-			<view class="text-bold text-xxl padding-top">{{detail.filmName}}</view>
-			<view class="info-text text-gray">{{detail.filmLong}}分钟 / {{detail.filmSortid || ""}} / {{detail.filmDirector || ""}}</view>
+			<view class="text-bold text-xxl padding-top">{{detail.PackageName}}</view>
+			<view class="info-text text-gray">￥{{ detail.PackageAmount }} <text class="price text-gray" style="text-decoration:line-through">￥{{ detail.OriginalPrice }}</text></view>
 			<view class="info-text text-gray"></view>
 		</view>
 	</view>

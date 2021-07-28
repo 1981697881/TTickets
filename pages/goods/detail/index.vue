@@ -104,7 +104,7 @@
 			<view class="score-foot-box x-f" v-if="!showSku && !showServe && detailType === 'score'">
 				<view class="left x-f">
 					<view class="tools-item y-f" @tap="goHome">
-						<image class="tool-img" src="http://shopro.7wpp.com/imgs/tabbar/tab_home_sel.png" mode=""></image>
+						<image class="tool-img" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/tab_home_sel.png" mode=""></image>
 						<text class="tool-title">首页</text>
 					</view>
 				</view>
@@ -116,19 +116,19 @@
 			<view class="detail-foot_box  x-f" v-if="!showSku && !showServe && detailType !== 'score'">
 				<view class="left x-f">
 					<view class="tools-item y-f" @tap="goHome">
-						<image class="tool-img app-selector-circular" src="http://shopro.7wpp.com/imgs/tabbar/tab_home_sel.png" mode=""></image>
+						<image class="tool-img app-selector-circular" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/tab_home_sel.png" mode=""></image>
 						<text class="tool-title app-selector-rect">首页</text>
 					</view>
 					<view class="tools-item y-f" @tap="onFavorite(goodsInfo.id)">
 						<image
 							class="tool-img"
-							:src="Boolean(goodsInfo.favorite) ? 'http://shopro.7wpp.com/imgs/favorite_end.png' : 'http://shopro.7wpp.com/imgs/favorite.png'"
+							:src="Boolean(goodsInfo.favorite) ? 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/favorite_end.png' : 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/favorite.png'"
 							mode=""
 						></image>
 						<text class="tool-title">收藏</text>
 					</view>
 					<view class="tools-item y-f" @tap="onShare">
-						<image class="tool-img" src="http://shopro.7wpp.com/imgs/share.png" mode=""></image>
+						<image class="tool-img" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/share.png" mode=""></image>
 						<text class="tool-title">分享</text>
 					</view>
 				</view>

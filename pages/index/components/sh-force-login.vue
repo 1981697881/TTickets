@@ -1,7 +1,7 @@
 <template>
 	<!-- #ifdef MP-WEIXIN -->
 	<view v-if="forceOauth" class="force-login-wrap">
-		<image class="logo-bg" src="http://shopro.7wpp.com/imgs/logo_bg.png" mode="aspectFill"></image>
+		<image class="logo-bg" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/logo_bg.png" mode="aspectFill"></image>
 		<view class="force-login__content y-f">
 			<open-data class="user-avatar" type="userAvatarUrl"></open-data>
 			<open-data class="user-name" type="userNickName"></open-data>

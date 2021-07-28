@@ -1212,7 +1212,7 @@ export default {
 		.express-address {
 			position: relative;
 			padding: 30rpx 25rpx;
-			background: url('http://shopro.7wpp.com/imgs/address_bg.png') no-repeat;
+			background: url('https://cfzx.gzfzdev.com/movie/uploadFiles/image/address_bg.png') no-repeat;
 			background-size: 430rpx 300rpx;
 			background-position: top right;
 			.express-top {
@@ -1607,7 +1607,7 @@ export default {
 		.express-address {
 			position: relative;
 			padding: 30rpx 25rpx;
-			background: url('http://shopro.7wpp.com/imgs/address_bg.png') no-repeat;
+			background: url('https://cfzx.gzfzdev.com/movie/uploadFiles/image/address_bg.png') no-repeat;
 			background-size: 430rpx 300rpx;
 			background-position: top right;
 			.express-top {

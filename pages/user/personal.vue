@@ -1,6 +1,6 @@
 <template>
 	<view class="content">
-		<image class="bg_img" src="http://shopro.7wpp.com/imgs/poster/invite_poster.png" mode=""></image>
+		<image class="bg_img" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/invite_poster.png" mode=""></image>
 		<view class="poster-box y-f">
 			<view class="share-box">
 				<view class="share-list-box">

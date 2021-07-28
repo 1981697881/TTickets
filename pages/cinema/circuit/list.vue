@@ -77,40 +77,7 @@ export default {
 			activeItem: 0,
 			circuit: '',
 			swiperList: [
-				/* {
-					id: 0,
-					name: '百鸟朝凤',
-					score: '8.0',
-					scrn: 'screen',
-					genre: '剧情',
-					time: '103分钟',
-					direct: '吴天明',
-					starring: '陶泽如 李岷城 嵇波',
-					type: 'group',
-					url: 'http://139.159.136.187:50080/uploadFiles/image/d02494f7a0c24790f2d10b4d5fc4b613.jpg'
-				},
-				{
-					id: 1,
-					name: '流浪地球',
-					score: '7.0',
-					time: '125 分钟',
-					direct: '郭帆',
-					genre: '科幻',
-					starring: '吴京 屈楚萧 赵今麦',
-					type: 'group',
-					url: 'http://139.159.136.187:50080/uploadFiles/image/75932d4f57e9ad2f1af692bc4c8ab470.jpeg'
-				},
-				{
-					id: 2,
-					name: '我不是药神',
-					score: '8.1',
-					time: '116 分钟',
-					genre: '剧情',
-					direct: '文牧野',
-					starring: '徐峥 周一围 王传君',
-					type: 'group',
-					url: 'http://139.159.136.187:50080/uploadFiles/image/340beba0ae805c0f9e8ad5928b0e2fdf.jpeg'
-				} */
+				
 			],
 			dotStyle: false,
 			towerStart: 0,

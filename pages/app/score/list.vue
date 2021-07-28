@@ -5,7 +5,7 @@
 				<block slot="backText">积分商城</block>
 				<block slot="content"></block>
 			</cu-custom>
-			<image class="bg" src="http://shopro.7wpp.com/imgs/user/integral_bg.png" mode=""></image>
+			<image class="bg" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/integral_bg.png" mode=""></image>
 			<view class="all-box x-c">
 				<text class="all-num">{{ balInfo.Point || "0.00" }}</text>
 				<text class="all-title">当前积分</text>

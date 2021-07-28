@@ -1,7 +1,7 @@
 <template>
 	<view class="success-page">
 		<view class="success-box flex flex-direction align-center">
-			<image class="pay-img" :src="pay ? 'http://shopro.7wpp.com/imgs/pay_success.png' : 'http://shopro.7wpp.com/imgs/pay_fail.png'" mode=""></image>
+			<image class="pay-img" :src="pay ? 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/pay_success.png' : 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/pay_fail.png'" mode=""></image>
 			<text class="notice">{{ pay ? '支付成功' : '支付失败' }}</text>
 			<text class="pay-money" v-if="pay &&ticketPaymoney">￥{{ ticketPaymoney }}</text>
 			<view class="btn-box flex justify-between">

@@ -4,7 +4,7 @@
 		<view class="sh-foot-box x-f" v-if="!showSku && !showServe">
 			<view class="left x-f">
 				<view class="tools-item y-f" @tap="goHome">
-					<image class="tool-img" src="http://shopro.7wpp.com/imgs/tabbar/tab_home_sel.png" mode=""></image>
+					<image class="tool-img" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/tab_home_sel.png" mode=""></image>
 					<text class="tool-title">首页</text>
 				</view>
 			</view>

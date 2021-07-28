@@ -55,14 +55,14 @@
 			<radio-group @change="selPay" class="pay-box">
 				<label class="x-bc pay-item">
 					<view class="x-f">
-						<image class="pay-img" src="http://shopro.7wpp.com/imgs/wx_pay.png" mode=""></image>
+						<image class="pay-img" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/wx_pay.png" mode=""></image>
 						<text>微信支付</text>
 					</view>
 					<radio value="wechat" :class="{ checked: payType === 'wechat' }" class=" pay-radio orange" :checked="payType === 'wechat'"></radio>
 				</label>
 				<label class="x-bc pay-item">
 					<view class="x-f">
-						<image class="pay-img" src="http://shopro.7wpp.com/imgs/wallet_pay.png" mode=""></image>
+						<image class="pay-img" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/wallet_pay.png" mode=""></image>
 						<text>
 							余额支付
 							<text class="text-red padding-left">{{balInfo.Money==0 ||balInfo.Money==null?'余额不足':''}}({{balInfo.Money || "0.00"}})</text>

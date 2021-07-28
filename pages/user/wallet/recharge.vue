@@ -22,7 +22,7 @@
 			<radio-group @change="selPay" class="pay-box" v-if="payment">
 				<label class="x-bc pay-item" v-if="payment.includes('wechat')">
 					<view class="x-f">
-						<image class="pay-img" src="http://shopro.7wpp.com/imgs/wx_pay.png" mode=""></image>
+						<image class="pay-img" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/wx_pay.png" mode=""></image>
 						<text>微信支付</text>
 					</view>
 					<radio value="wechat" :class="{ checked: payType === 'wechat' }" class=" pay-radio orange" :checked="payType === 'wechat'"></radio>

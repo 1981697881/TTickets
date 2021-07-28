@@ -7,10 +7,11 @@
 		<view class="detail_box app-selector">
 			<view class="detail-content">
 				<view class="goodes_detail_swiper-box">
-					<!-- 购买滚动提示 -->
-					<view class="carousel">
-						<image class="swiper-image app-selector-rect" :src="goodsInfo.filmPhoto" mode="aspectFill" lazy-load></image>
-					</view>
+					<swiper class="carousel" circular @change="swiperChange" :autoplay="true">
+						<swiper-item @tap="tools.previewImage(goodsInfo.ImageArray, swiperCurrent)" v-for="(img, index) in goodsInfo.ImageArray" :key="index" class="carousel-item">
+							<image class="swiper-image app-selector-rect" :src="img" mode="aspectFill" lazy-load></image>
+						</swiper-item>
+					</swiper>
 				</view>
 				<fz-detail-head :detail="goodsInfo"></fz-detail-head>
 				<!-- 选项卡 -->
@@ -25,35 +26,7 @@
 						</view>
 					</view>
 					<view class="tab-detail pb20">
-						<view class="rich-box" v-show="tabCurrent === 'tab0'">
-							<view class="box-about">
-								<mote-lines-divide :dt="goodsInfo.filmIntro" :line="1" expandText="展开" foldHint="收起"/>
-							</view>
-							<view class="about-unline">
-								<fz-detail-gallery :detail='goodsInfo' type='crew'></fz-detail-gallery>
-							</view>
-							<view class="about-unline">
-								<fz-detail-gallery :detail='goodsInfo' type='still'></fz-detail-gallery>
-							</view>
-						</view>
-						<view class="goods-size" v-if="tabCurrent === 'tab1'">
-							<view class="table-box" v-if="goodsInfo.params && goodsInfo.params.length">
-								<view class="t-tr x-f" v-for="t in goodsInfo.params" :key="t.title">
-									<view class="t-head x-f">{{ t.title }}</view>
-									<view class="t-detail">{{ t.content }}</view>
-								</view>
-							</view>
-						</view>
-						<view class="goods-comment" v-if="tabCurrent === 'tab2'">
-							<block v-for="comment in commentList" :key="comment.id"><sh-comment :comment="comment"></sh-comment></block>
-							<view class="empty-box x-c" v-if="!commentList.length"><app-empty :isFixed="false" :emptyData="emptyData"></app-empty></view>
-							<view class="more-box x-c" v-if="commentList.length">
-								<button class="cu-btn more-btn x-f" @tap="jump('/pages/goods/comment-list', { goodsId: goodsInfo.id })">
-									查看全部
-									<text class="cuIcon-right"></text>
-								</button>
-							</view>
-						</view>
+						<view class="rich-box"><uni-parser :html="goodsInfo.BuyNote"></uni-parser></view>
 					</view>
 				</view>
 			</view>
@@ -62,12 +35,12 @@
 			<view class="detail-foot_box  x-f" v-if="!showSku && !showServe && detailType !== 'score'">
 				<view class="left x-f">
 					<view class="tools-item y-f" @tap="goHome">
-						<image class="tool-img app-selector-circular" src="http://shopro.7wpp.com/imgs/tabbar/tab_home_sel.png" mode=""></image>
+						<image class="tool-img app-selector-circular" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/tab_home_sel.png" mode=""></image>
 						<text class="tool-title app-selector-rect">首页</text>
 					</view>
 				</view>
 				<view class="detail-right">
-					<view class="detail-btn-box x-ac" v-if="!goodsInfo.activity"><button class="cu-btn tool-btn pay-btn" @tap="jump('/pages/cinema/index', { packageId: packageId })">立即购买</button></view>
+					<view class="detail-btn-box x-ac" v-if="!goodsInfo.activity"><button class="cu-btn tool-btn pay-btn" @tap="jump('/pages/menu/pay', { packageId: goodsInfo.PackageId })">立即购买</button></view>
 				</view>
 			</view>
 			<!-- 分享组件 -->
@@ -89,7 +62,6 @@
 <script>
 import MoteLinesDivide from "@/components/mote-lines-divide/mote-lines-divide"
 import fzDetailHead from './children/fz-detail-head.vue';
-import fzDetailGallery from './children/fz-detail-gallery.vue';
 import appEmpty from '@/components/app-empty/app-empty.vue';
 import { mapMutations, mapActions, mapState } from 'vuex';
 import goodsDetail from '@/csJson/goodDetail.json';
@@ -98,24 +70,19 @@ export default {
 	components: {
 		MoteLinesDivide,
 		fzDetailHead,
-		fzDetailGallery,
 		appEmpty
 	},
 	data() {
 		return {
 			videoImg: 'http://139.159.136.187:50080/uploadFiles/image/d02494f7a0c24790f2d10b4d5fc4b613.jpg',
-			currentSkuText: '', //选中规格
 			detailType: '',
 			showShare: false,
 			packageId: '',
 			buyType: 'sku',
-			grouponBuyType: 'alone', //拼团购买方式。
 			showSku: false,
 			showServe: false,
 			tools: this.$tools,
 			goodsInfo: {},
-			commentList: [], //商品评价列表
-			commentNum: 0, //商品评价总数
 			favorite: false,
 			activityRules: {},
 			currentSkuList: [],
@@ -129,7 +96,7 @@ export default {
 			tabList: [
 				{
 					id: 'tab0',
-					title: '简介'
+					title: '商品详情'
 				},
 			]
 		};
@@ -180,7 +147,7 @@ export default {
 		// 回到首页
 		goHome() {
 			uni.switchTab({
-				url: '/pages/index/index',
+				url: '/pages/menu/menu',
 			})
 		},
 		// 轮播图切换
@@ -202,38 +169,10 @@ export default {
 				if (res.flag) {
 					that.goodsInfo = res.data.Data;
 					that.goodsInfo.type='Movie';
-					that.getCommentList();
 				}else{
 					that.$tools.toast(res.msg);
 				}
 			});
-		},
-		// 商品评论
-		getCommentList() {
-			let that = this;
-			let res = evaluate;
-			if (res.code === 1) {
-				that.commentList = res.data.data;
-				that.commentNum = res.data.total;
-			}
-			/* that.$api('goods_comment.list', {
-				goods_id: that.goodsInfo.id,
-				per_page: 3,
-				type: 'all'
-			}).then(res => {
-				if (res.code === 1) {
-					that.commentList = res.data.data;
-					that.commentNum = res.data.total;
-				}
-			}); */
-		},
-		// 组件返回的type;
-		changeType(e) {
-			this.buyType = e;
-		},
-		// 组件返回的规格;
-		getSkuText(e) {
-			this.currentSkuText = e;
 		},
 		// 分享
 		onShare() {
@@ -248,18 +187,6 @@ export default {
 				this.$store.commit('LOGIN_TIP', true);
 			}
 		},
-		// 收藏
-		onFavorite(goodsId) {
-			let that = this;
-			that.$api('goods.favorite', {
-				goods_id: goodsId
-			}).then(res => {
-				if (res.code === 1) {
-					that.goodsInfo.favorite = res.data;
-					that.$tools.toast(res.msg);
-				}
-			});
-		}
 	}
 };
 </script>
