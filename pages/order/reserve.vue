@@ -22,8 +22,9 @@
 						<text class="cuIcon-roundclose text-red padding-xs">不可改签</text>
 						<text class="cuIcon-roundclose text-red padding-xs">不可退票</text>
 					</view>
-					<view class="x-f"><!-- 会员价 ￥{{ Number(perGoodsList.schedule.settleprice) * Number(perGoodsList.seats.length) }} -->
-						<view class="detail">共{{ perGoodsList.seats.length }}张 原价 ￥{{ Number(perGoodsList.schedule.standardprice) * Number(perGoodsList.seats.length) }} </view>
+					<view class="x-f">
+						<!-- 会员价 ￥{{ Number(perGoodsList.schedule.settleprice) * Number(perGoodsList.seats.length) }} -->
+						<view class="detail">共{{ perGoodsList.seats.length }}张 原价 ￥{{ Number(perGoodsList.schedule.standardprice) * Number(perGoodsList.seats.length) }}</view>
 					</view>
 				</view>
 			</view>
@@ -31,11 +32,37 @@
 			<view class="coupon x-bc item-list">
 				<view class="item-title">优惠券</view>
 				<view class="x-f" @tap="selCoupon">
-					<text class="price" v-if="(Number(pickerData.couponList.length)+(Number(groupCouponsList.length)))>0">{{ pickerData.title }}</text>
+					<text class="price" v-if="Number(pickerData.couponList.length) + Number(groupCouponsList.length) > 0">{{ pickerData.title }}</text>
 					<text class="sel-coupon" v-else>暂无优惠券</text>
 					<text class="cuIcon-right"></text>
 				</view>
 			</view>
+			<!-- <view class="goods x-bc item-list" style="margin-bottom: 0;">
+				<view class="item-title">商品套餐</view>
+				<view class="x-f">
+					<text class="price" v-if="goodsTitle!=''">{{ goodsTitle }}</text>
+					<text class="sel-coupon" v-else>暂无商品</text>
+				</view>
+			</view>
+			<scroll-view class="goods-tier scroll-box bg-white" scroll-y enable-back-to-top scroll-with-animation>
+				<view class="content-box">
+					<radio-group @change="radioChange">
+						<view class="goods-box x-start" v-for="(item, index) in cart" :key="index">
+							<image class="goods-img" :src="decodeURI(item.ImagePath) || 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/zanwu.jpg'" mode=""></image>
+							<view class="y-start">
+								<view class="goods-title more-t">{{ item.PackageName }}</view>
+								<view class="size-tip">{{ item.Note || '' }}</view>
+								<slot name="goodsBottom">
+									<view class="price">￥{{ item.PackageAmount }}</view>
+								</slot>
+							</view>
+							<view style="line-height: 150rpx;">
+								<radio :value="item.PackageId" :class="item.PackageId === current" class="pay-radio orange" :checked="item.PackageId === current"></radio>
+							</view>
+						</view>
+					</radio-group>
+				</view>
+			</scroll-view> -->
 			<radio-group @change="selPay" class="pay-box">
 				<label class="x-bc pay-item">
 					<view class="x-f">
@@ -165,6 +192,7 @@ export default {
 			payType: 'wechat',
 			from: '',
 			orderType: '',
+			goodsTitle: '',
 			grouponBuyType: 'alone',
 			grouponId: 0,
 			perGoodsList: {}, //确认单订单
@@ -174,6 +202,7 @@ export default {
 			preferentialAmount: 0,
 			groupCouponsList: [],
 			couponArray: [],
+			cart: [],
 			couponPrice: 0,
 			getFocus: false, //获取焦点。
 			checkTime: {},
@@ -197,6 +226,7 @@ export default {
 					value: 'selfetch'
 				}
 			],
+			current: 0,
 			isProtocol: true, //自提协议。
 			selfPhone: 0, //编辑手机号
 			getFocus: false, //获取焦点。
@@ -207,6 +237,7 @@ export default {
 			checkDayCur: 0, //默认日期
 			hasLocation: false, //是否已经授权过
 			lat: 0,
+			goodsPrice: 0,
 			lng: 0
 		};
 	},
@@ -320,8 +351,8 @@ export default {
 		this.orderType = this.$Route.query.orderType;
 		this.grouponBuyType = this.$Route.query.grouponBuyType;
 		this.grouponId = this.$Route.query.grouponId;*/
-
 		this.initDate();
+		this.getGoodsList();
 		this.getGroupCoupons();
 		this.getCoupons();
 	},
@@ -330,22 +361,42 @@ export default {
 	},
 	methods: {
 		...mapActions(['getUserDetails']),
+		radioChange(evt) {
+			for (let i = 0; i < this.cart.length; i++) {
+				if (this.cart[i].PackageId === evt.detail.value) {
+					this.current = evt.detail.value;
+					this.goodsTitle = this.cart[i].PackageName+'('+this.cart[i].PackageAmount+')元';
+					this.goodsPrice = this.cart[i].PackageAmount
+					break;
+				}
+			}
+		},
+		getGoodsList() {
+			let me = this;
+			me.$api('goods.lists', {
+				custId: me.balInfo.custId
+			}).then(res => {
+				if (res.flag) {
+					this.cart = res.data.Data;
+				}
+			});
+		},
 		async changeExpressType(cur) {
 			this.expressTypeCur = cur;
 			this.getFocus = false;
 			this.couponArray = [];
 			this.couponId = 0;
 			this.couponPrice = 0;
-			if(cur == 'express'){
-				this.$nextTick(function(){
-					this.$refs.groupCard.resetCouponList()
-				})
-			}else{
-				this.$nextTick(function(){
-					this.$refs.couponCard.resetCouponList()
-				})
+			if (cur == 'express') {
+				this.$nextTick(function() {
+					this.$refs.groupCard.resetCouponList();
+				});
+			} else {
+				this.$nextTick(function() {
+					this.$refs.couponCard.resetCouponList();
+				});
 			}
-			this.calculateBenefits()
+			this.calculateBenefits();
 		},
 		// 显示弹窗
 		async onSelExpressType(goods) {
@@ -438,14 +489,14 @@ export default {
 			that.couponArray = [];
 			that.couponId = 0;
 			that.couponPrice = 0;
-			if(that.expressTypeCur == 'express'){
-				that.$nextTick(function(){
-					that.$refs.groupCard.resetCouponList()
-				})
-			}else{
-				this.$nextTick(function(){
-					this.$refs.couponCard.resetCouponList()
-				})
+			if (that.expressTypeCur == 'express') {
+				that.$nextTick(function() {
+					that.$refs.groupCard.resetCouponList();
+				});
+			} else {
+				this.$nextTick(function() {
+					this.$refs.couponCard.resetCouponList();
+				});
 			}
 			if (e.detail.value == 'wallet') {
 				let countPrce = Number(that.perGoodsList.schedule.settleprice) * Number(that.perGoodsList.seats.length) - that.preferentialAmount;
@@ -490,7 +541,7 @@ export default {
 						ticketId: that.perGoodsList.ticketId,
 						ticketPaymoney: that.ticketPaymoney
 					};
-					let pay = new AppPay(that.payType, that.perGoodsList, null, params, 1, confirmParam, that.couponArray,that.couponId);
+					let pay = new AppPay(that.payType, that.perGoodsList, null, params, 1, confirmParam, that.couponArray, that.couponId);
 					that.isSubOrder = true;
 					/* that.confirmOrder() */
 				} else {
@@ -610,6 +661,7 @@ export default {
 					ticketId: that.perGoodsList.ticketId,
 					qty: that.ticketPaymoney + '',
 					custId: that.balInfo.custId,
+					note: '[使用' + that.ticketPaymoney + '预存款购买电影票]',
 					phoneNumber: that.userInfo.phoneNumber
 				};
 				this.$api('user.deduction', params).then(res => {
@@ -682,13 +734,13 @@ export default {
 				couponType: 1,
 				openId: uni.getStorageSync('openid'),
 				status: 0,
-				payType: that.payType=="wechat"?1:0,
+				payType: that.payType == 'wechat' ? 1 : 0,
 				scheduleId: that.perGoodsList.scheduleId,
-				seatCount: that.perGoodsList.seats.length,
+				seatCount: that.perGoodsList.seats.length
 			}).then(res => {
 				if (res.flag) {
 					that.pickerData.couponList = res.data;
-					that.pickerData.title = '可用优惠券(' + (Number(that.pickerData.couponList.length)+(Number(that.groupCouponsList.length))) + '张)';
+					that.pickerData.title = '可用优惠券(' + (Number(that.pickerData.couponList.length) + Number(that.groupCouponsList.length)) + '张)';
 				}
 			});
 		}, // 可用团体票
@@ -701,7 +753,7 @@ export default {
 			}).then(res => {
 				if (res.flag) {
 					that.groupCouponsList = res.data;
-					that.pickerData.title = '可用优惠券(' + (Number(that.pickerData.couponList.length)+(Number(that.groupCouponsList.length))) + '张)';
+					that.pickerData.title = '可用优惠券(' + (Number(that.pickerData.couponList.length) + Number(that.groupCouponsList.length)) + '张)';
 					/* if (that.groupCouponsList.length > 0) {
 						if (that.perGoodsList.seats.length > that.groupCouponsList.length) {
 							that.pickerData.title = '可用优惠券(' + that.groupCouponsList.length + '张)';
@@ -714,14 +766,14 @@ export default {
 		},
 		// 选择优惠券
 		selCoupon() {
-			if ((Number(this.pickerData.couponList.length)+(Number(this.groupCouponsList.length)))) {
+			if (Number(this.pickerData.couponList.length) + Number(this.groupCouponsList.length)) {
 				this.showExpressType = true;
 			} else {
 				this.$tools.toast('暂无优惠券');
 			}
 		},
 		changeCoupon(index) {
-			this.couponArray =[]
+			this.couponArray = [];
 			this.couponId = 0;
 			if (index >= 0) {
 				this.couponId = this.pickerData.couponList[index].id;
@@ -768,16 +820,16 @@ export default {
 			} else {
 				this.ticketPaymoney = Number(that.perGoodsList.schedule.standardprice) * Number(that.perGoodsList.seats.length) - countPrice;
 			}
-			if(countPrice == 0){
+			if (countPrice == 0) {
 				this.pickerData.title = '选择优惠券';
-			}else{
+			} else {
 				this.pickerData.title = '-￥' + countPrice;
 			}
 			this.preferentialAmount = countPrice;
 		},
 		changeCouponGroup(val) {
 			let that = this;
-			this.couponArray =[]
+			this.couponArray = [];
 			that.couponId = 0;
 			if (val.length > 0) {
 				this.couponArray = val;
@@ -994,6 +1046,19 @@ export default {
 .phone {
 	margin: 20rpx;
 	border-radius: 15rpx;
+	box-shadow: 1px 1px 1px #c0c0c0;
+}
+.goods {
+	margin: 20rpx;
+	border-radius: 15rpx 15rpx 0 0;
+	border-bottom: 1rpx solid rgba(#dfdfdf, 0.5);
+	box-shadow: 1px 1px 1px #c0c0c0;
+}
+.goods-tier {
+	height: 300rpx;
+	width: auto;
+	margin: 0 20rpx 20rpx 20rpx;
+	border-radius: 0 0 15rpx 15rpx;
 	box-shadow: 1px 1px 1px #c0c0c0;
 }
 .notice {
@@ -1766,6 +1831,54 @@ export default {
 			font-weight: 400;
 			color: rgba(255, 255, 255, 1);
 		}
+	}
+}
+.goods-box {
+	position: relative;
+	margin: 10rpx;
+	width: 680rpx;
+	.goods-img {
+		height: 180rpx;
+		width: 180rpx;
+		background-color: #ccc;
+		margin-right: 25rpx;
+	}
+	.order-goods__tag {
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 3;
+		width: 60rpx;
+		height: 30rpx;
+	}
+	.goods-title {
+		font-size: 28rpx;
+		font-family: PingFang SC;
+		font-weight: 500;
+		color: rgba(51, 51, 51, 1);
+		width: 450rpx;
+		line-height: 40rpx;
+		margin-bottom: 10rpx;
+	}
+
+	.size-tip {
+		line-height: 40rpx;
+		// background: #f4f4f4;
+		// padding: 0 16rpx;
+		font-size: 24rpx;
+		color: #666;
+	}
+	.sub-tip {
+		width: 480rpx;
+		line-height: 40rpx;
+		// background: #F6F2EA;
+		font-size: 24rpx;
+		color: #a8700d;
+		margin: 10rpx 0;
+	}
+
+	.price {
+		color: #e1212b;
 	}
 }
 </style>

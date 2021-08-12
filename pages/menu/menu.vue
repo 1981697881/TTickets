@@ -43,6 +43,7 @@
 												<view class="price_and_action">
 													<text class="price">￥{{ good.PackageAmount }} <text class="price text-gray" style="text-decoration:line-through">￥{{ good.OriginalPrice }}</text></text> 
 													<view class="btn-group">
+														销量:<text class="text-red padding-right">{{good.SaleQty}}</text>
 														<button class="cu-btn cuIcon sm round shadow bg-orange" @tap="toPay(good)">
 															<text class="cuIcon-cart"></text>
 														</button>
@@ -455,8 +456,18 @@ export default {
 			uni.showLoading({ title: '加载中' });
 			/* uni.setStorageSync('cart', JSON.parse(JSON.stringify(this.cart))) */
 			this.$Router.push({
-				path: '/pages/menu/pay',
-				query: {packageId: good.PackageId}
+				path: '/pages/menu/pay', 
+				query: {
+					pay: JSON.stringify([{
+					packageId: good.PackageId,
+					ImagePath: good.ImagePath,
+					PackageName: good.PackageName,
+					Note: good.Note,
+					goodsCount: 1,
+					PackageAmount: good.PackageAmount,
+					OriginalPrice: good.OriginalPrice,
+					}])
+				}
 			});
 			uni.hideLoading();
 		},

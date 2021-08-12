@@ -61,7 +61,7 @@ export default {
 		onOrder() {
 			this.$Router.replace({
 				path: '/pages/index/wallet',
-				query: { ticketId: this.ticketId }
+				query: { type: this.$Route.query.reType != 4?'ing':'nostart' }
 			});
 		},
 		// 支付信息

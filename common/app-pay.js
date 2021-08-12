@@ -7,7 +7,11 @@ import Wechat from '@/common/wechat/wechat'
 // #endif
 import Router from '@/common/router';
 import Vue from 'vue'
-import { mapMutations, mapActions, mapState } from 'vuex';
+import {
+	mapMutations,
+	mapActions,
+	mapState
+} from 'vuex';
 
 export default class AppPay {
 
@@ -18,7 +22,7 @@ export default class AppPay {
 	// 			wallet			v							v					v						v
 
 
-	constructor(payment, order,url="pay.prepay",params,reType=0,confirmParam={},couponArray=[],couponId) {
+	constructor(payment, order, url = "pay.prepay", params, reType = 0, confirmParam = {}, couponArray = [], couponId) {
 		this.payment = payment;
 		this.order = order;
 		this.reType = reType;
@@ -94,7 +98,7 @@ export default class AppPay {
 		});
 		return new Promise((resolve, reject) => {
 			let that = this;
-			
+
 			if (uni.getStorageSync('openid')) {
 				that.params.openId = uni.getStorageSync('openid');
 			}
@@ -177,7 +181,8 @@ export default class AppPay {
 			let newUrl = url[1].replace(reg, '&');
 			let domain = uni.getStorageSync('sysInfo').domain; //域名需要https
 			let params = encodeURIComponent(
-				`${domain}/pages/order/payment/result?orderSn=${that.order.order_sn}&type=${that.payment}&pay=1`)
+				`${domain}/pages/order/payment/result?orderSn=${that.order.order_sn}&type=${that.payment}&pay=1`
+				)
 			window.location.href = newUrl + '&redirect_url=' + params;
 		}
 	}
@@ -186,7 +191,7 @@ export default class AppPay {
 		let that = this;
 		let result = await this.prepay();
 		let payData = result.data;
-		 Vue.prototype.$isPreviewApi = true
+		Vue.prototype.$isPreviewApi = true
 		uni.requestPayment({
 			provider: 'wxpay',
 			timeStamp: payData.timeStamp,
@@ -194,114 +199,150 @@ export default class AppPay {
 			package: payData.package,
 			signType: payData.signType,
 			paySign: payData.paySign,
-			success: function(res) {	
-					let orderResult
-					if(that.reType==1){
-					orderResult = {...that.order};
+			success: function(res) {
+				let orderResult
+				if (that.reType == 1) {
+					orderResult = {
+						...that.order
+					};
 					orderResult.schedule = JSON.stringify(orderResult.schedule)
-					orderResult.seats= JSON.stringify(orderResult.seats)
-					orderResult.locationHall= JSON.stringify(orderResult.locationHall)
-					}else{
-					orderResult = { ...that.order };
-					}
-					uni.$off('escLoack')
-					if(that.reType==1){
-						/* let ticketList = []
-						that.order.seats.forEach((item)=>{
-							let obj = {}
-							obj.seatId = item.seatId
-							obj.ticketFee = item.ticketfee
-							obj.ticketPrice = item.standardprice
-							ticketList.push(obj)
-						}) */
-						api('cinema.confirmOrder', {
-							lockOrderId: that.order.lockOrderId,
-							scheduleId: that.order.scheduleId,
-							scheduleKey: that.order.scheduleKey,
-							mobile: store.state.user.userInfo.phoneNumber,
-							ticketList: that.confirmParam,
-							Ids: that.couponArray,
-							couponId: that.couponId,
-							ifCdkeyPay: false,
-						}).then(rescin => {
-							if(rescin.flag){
-								Vue.prototype.$isPreviewApi = false
-								Router.replace({
-									path: '/pages/order/payment/result',
-									query: {
-										orderSn: orderResult,
-										params: that.params,
-										url: that.url,
-										type: that.payment,
-										pay: 1,
-										reType: that.reType
-									}
-								});
-							}else{
-								uni.showToast({
-									icon: 'none',
-									title: rescin.msg
-								})
-							}
-						});
-						}else if(that.reType==2){
-							api('goods.veCoin', { qty: that.order.coinCount,custId:store.state.user.balInfo.custId,phoneNumber:store.state.user.userInfo.phoneNumber }).then(resve => {
-								if (resve.flag) {
-									api('goods.veIntegral', { qty: that.order.integral,custId:store.state.user.balInfo.custId,phoneNumber:store.state.user.userInfo.phoneNumber }).then(resal => {
-										if (resal.flag) {
-											store.dispatch('getUserBalance')
-											uni.showToast({
-												title: '购买成功',
-												icon: 'success',
-												duration: 2000,
-												mask: true,
-												success: function() {
-													setTimeout(function(){
-														uni.switchTab({
-															url: '/pages/index/videoGame',
-														})
-													}, 2000);
-												}
-											});
+					orderResult.seats = JSON.stringify(orderResult.seats)
+					orderResult.locationHall = JSON.stringify(orderResult.locationHall)
+				} else {
+					orderResult = {
+						...that.order
+					};
+				}
+				uni.$off('escLoack')
+				if (that.reType == 1) {
+					/* let ticketList = []
+					that.order.seats.forEach((item)=>{
+						let obj = {}
+						obj.seatId = item.seatId
+						obj.ticketFee = item.ticketfee
+						obj.ticketPrice = item.standardprice
+						ticketList.push(obj)
+					}) */
+					api('cinema.confirmOrder', {
+						lockOrderId: that.order.lockOrderId,
+						scheduleId: that.order.scheduleId,
+						scheduleKey: that.order.scheduleKey,
+						mobile: store.state.user.userInfo.phoneNumber,
+						ticketList: that.confirmParam,
+						Ids: that.couponArray,
+						couponId: that.couponId,
+						ifCdkeyPay: false,
+					}).then(rescin => {
+						if (rescin.flag) {
+							Vue.prototype.$isPreviewApi = false
+							Router.replace({
+								path: '/pages/order/payment/result',
+								query: {
+									orderSn: orderResult,
+									params: that.params,
+									url: that.url,
+									type: that.payment,
+									pay: 1,
+									reType: that.reType
+								}
+							});
+						} else {
+							uni.showToast({
+								icon: 'none',
+								title: rescin.msg
+							})
+						}
+					});
+				} else if (that.reType == 2) {
+					api('goods.veCoin', {
+						qty: that.order.coinCount,
+						custId: store.state.user.balInfo.custId,
+						phoneNumber: store.state.user.userInfo.phoneNumber
+					}).then(resve => {
+						if (resve.flag) {
+							api('goods.veIntegral', {
+								qty: that.order.integral,
+								custId: store.state.user.balInfo.custId,
+								phoneNumber: store.state.user.userInfo.phoneNumber
+							}).then(resal => {
+								if (resal.flag) {
+									store.dispatch('getUserBalance')
+									uni.showToast({
+										title: '购买成功',
+										icon: 'success',
+										duration: 2000,
+										mask: true,
+										success: function() {
+											setTimeout(function() {
+												uni.switchTab({
+													url: '/pages/index/videoGame',
+												})
+											}, 2000);
 										}
 									});
 								}
 							});
-							
-					}else if(that.reType==3){
-							api('user.recharge', {
-								custId: store.state.user.balInfo.custId,
-								qty: that.params.rechargeMoney,
-								phoneNumber: store.state.user.userInfo.phoneNumber,
-							}).then(resch => {
-								if(resch.flag){
-									uni.showToast({
-										icon: 'none',
-										title: '充值成功'
-									})
-									store.dispatch('getUserBalance')
-								}else{
-									uni.showToast({
-										icon: 'none',
-										title: resch.msg
-									})
+						}
+					});
+
+				} else if (that.reType == 3) {
+					api('user.recharge', {
+						custId: store.state.user.balInfo.custId,
+						qty: that.params.rechargeMoney,
+						phoneNumber: store.state.user.userInfo.phoneNumber,
+					}).then(resch => {
+						if (resch.flag) {
+							uni.showToast({
+								icon: 'none',
+								title: '充值成功'
+							})
+							store.dispatch('getUserBalance')
+						} else {
+							uni.showToast({
+								icon: 'none',
+								title: resch.msg
+							})
+						}
+					});
+
+				} else if (that.reType == 4) {
+					that.confirmParam.orderNo = payData.outTradeNo
+					api('cinema.confirmOrder', that.confirmParam).then(rescin => {
+						if (rescin.flag) {
+							Vue.prototype.$isPreviewApi = false
+							Router.replace({
+								path: '/pages/order/payment/result',
+								query: {
+									orderSn: orderResult,
+									params: that.params,
+									url: that.url,
+									type: that.payment,
+									pay: 1,
+									reType: that.reType
 								}
 							});
-							
-					}else{
-						Router.replace({
-							path: '/pages/order/payment/result',
-							query: {
-								orderSn: orderResult,
-								params: that.params,
-								url: that.url,
-								type: that.payment,
-								pay: 1,
-								reType: that.reType
-							}
-						});
-					}
-				
+						} else {
+							uni.showToast({
+								icon: 'none',
+								title: rescin.msg
+							})
+						}
+					});
+
+				} else {
+					Router.replace({
+						path: '/pages/order/payment/result',
+						query: {
+							orderSn: orderResult,
+							params: that.params,
+							url: that.url,
+							type: that.payment,
+							pay: 1,
+							reType: that.reType
+						}
+					});
+				}
+
 			},
 			fail: function(err) {
 				console.log(err)
@@ -316,7 +357,7 @@ export default class AppPay {
 							pay: 0
 						}
 					});
-				}else{
+				} else {
 					console.log('关闭支付')
 					Vue.prototype.$isPreviewApi = false
 				}

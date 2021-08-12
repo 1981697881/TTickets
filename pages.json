@@ -481,6 +481,17 @@
 						"auth": true,
 						"async": true
 					}
+				},{
+					"path": "goodsIndex",
+					"style": {
+						"navigationBarTitleText": "票据详情",
+						"navigationBarBackgroundColor":"#03AFFF",
+						"navigationBarTextStyle":"white"
+					},
+					"meta": {
+						"auth": true,
+						"async": true
+					}
 				}
 				// 票夹------end
 			]

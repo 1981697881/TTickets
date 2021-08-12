@@ -24,7 +24,7 @@
 			</view>
 		</view>
 		<view class="content_box"><!-- v-if="!balInfo.IsBandCard && balInfo.Number" -->
-			<view class="resale-list x-bc" @tap="bindingCard" >
+			<view class="resale-list x-bc" v-if="!balInfo.IsBandCard && balInfo.Number" @tap="bindingCard" >
 				<view class="x-f">
 					<text class=" cuicon cuIcon-vipcard"></text>
 					<text>绑定会员卡</text>

@@ -133,6 +133,7 @@ export default {
 			this.showNoticeModal = false;
 		}
 		// #endif
+		this.getUserBalance()
 	},
 	mounted() {
 		
@@ -146,6 +147,7 @@ export default {
 			});
 		} */
 		// #endif
+		
 	},
 	methods: {
 		/* ...mapMutations(['CART_NUM']), */

@@ -278,7 +278,7 @@ export default {
 					that.initSeatArray();
 					uni.hideLoading();
 					if (that.head.dimensional == '3D' || that.head.dimensional == '4D') {
-						that.$tools.toast('请自备3D眼镜或影院前台购买');
+						that.$tools.toast('请自备3D眼镜或影院前台购买','none',{duration: 2500});
 					}
 				} else {
 					uni.showToast({

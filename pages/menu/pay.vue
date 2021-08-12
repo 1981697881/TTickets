@@ -3,21 +3,24 @@
 		<view style="margin-bottom: 130rpx;">
 			<!-- 购物车列表 begin -->
 			<view class="section-2">
-				<view class="cart d-flex flex-column">
-					<list-cell last v-for="(item, index) in cart" :key="index">
-						<view class="w-100 d-flex flex-column">
-							<view class="d-flex align-items-center mb-10">
-								<view class="name-and-props overflow-hidden">
-									<view class="text-color-base font-size-lg">{{ item.goodsName }}</view>
-								</view>
-								<view class="d-flex flex-fill justify-content-between align-items-center text-color-base font-size-lg">
-									<view>x{{ item.goodsCount }}</view>
-									<view>￥{{ item.goodsPrice }}</view>
-								</view>
+				<view class="cart d-flex flex-column bg-white">
+					<view class="goods-box x-start" v-for="(item, index) in cart" :key="index" >
+						<image class="goods-img" :src="decodeURI(item.ImagePath)|| 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/zanwu.jpg'" mode=""></image>
+						<view class="y-start">
+							<view class="goods-title more-t">{{ item.PackageName }}</view>
+							<view class="action">
+							<view class="btn-group">
+								<button type="default" plain class="btn" size="mini" hover-class="none" @tap="handlePropertyReduce(item)"><view class="cuIcon-move"></view></button>
+								<view class="number">{{ item.goodsCount }}</view>
+								<button type="primary" class="btn" size="min" hover-class="none" @tap="handlePropertyAdd(item)"><view class="cuIcon-add"></view></button>
 							</view>
-							<view class="text-truncate font-size-base text-color-assist">{{ item.props_text }}</view>
+							</view>
+							<view class="size-tip">{{ item.Note || '' }}</view>
+							<slot name="goodsBottom">
+								<view class="price">￥{{ item.PackageAmount }}</view>
+							</slot>
 						</view>
-					</list-cell>
+					</view>
 				</view>
 				<!-- 优惠券 -->
 				<view class="coupon x-bc item-list">
@@ -86,13 +89,11 @@
 <script>
 import { mapState, mapMutations } from 'vuex';
 import AppPay from '@/common/app-pay';
-import listCell from '@/components/list-cell/list-cell';
 import modal from '@/components/modal/modal';
 let orders = [];
 
 export default {
 	components: {
-		listCell,
 		modal
 	},
 	data() {
@@ -103,14 +104,7 @@ export default {
 				title: '选择优惠券',
 				couponList: []
 			},
-			form: {
-				remark: ''
-			},
-			orderType: 'dinein',
-			address: '123',
-			store: '1',
 			isSubOrder: false,
-			ensureAddressModalVisible: false
 		};
 	},
 	computed: {
@@ -119,28 +113,51 @@ export default {
 			balInfo: state => state.user.balInfo
 		}),
 		total() {
-			return this.cart.reduce((acc, cur) => acc + cur.goodsCount * cur.goodsPrice, 0);
+			return this.cart.reduce((acc, cur) => acc + cur.goodsCount * cur.PackageAmount, 0);
 		},
 		amount() {
-			return this.cart.reduce((acc, cur) => acc + cur.goodsCount * cur.goodsPrice, 0);
+			return this.cart.reduce((acc, cur) => acc + cur.goodsCount * cur.PackageAmount, 0);
 		}
 	},
-	onLoad(option) {
-		const { remark } = option;
-		this.cart = uni.getStorageSync('cart');
-		remark && this.$set(this.form, 'remark', remark);
+	onShow() {
+		const { query } = this.$Route;
+		this.cart = JSON.parse(query.pay)
 	},
 	methods: {
+		handlePropertyAdd(item) {
+			this.$set(item,'goodsCount',item.goodsCount+1)
+		},
+		handlePropertyReduce(item) {
+			if (item.goodsCount === 1) return;
+			this.$set(item,'goodsCount',item.goodsCount-1)
+		},
 		combuy(){
-			uni.showToast({
-				icon: 'none',
-				title: '此功能尚未开放....敬请期待'
-			})
-			/* if(this.payType=='wallet'){
-				this.blanBuy()
+			let that = this
+			if(this.payType=='wallet'){
+				if (Number(this.amount) <= Number(that.balInfo.Money)) {
+					uni.showLoading({ title: '购买中~~为了避免购买失败，请勿退出！' });
+					this.$api('user.addGoodsOrder', {
+						openId: uni.getStorageSync('openid'),
+						goodsPaymoney: this.amount
+					}).then(res => {
+						if(res.flag){
+							this.blanBuy(res.data)
+						}else{
+							uni.showToast({
+								icon: 'none',
+								title: res.msg
+							})
+						}
+					});
+				} else {
+					uni.showToast({
+						icon: 'none',
+						title: '余额不足以支付本次费用，请选择其他支付方式'
+					});
+				}
 			}else{
 				this.pay()
-			} */
+			}
 		},
 		// 选择优惠券
 		selCoupon() {
@@ -166,27 +183,24 @@ export default {
 			}
 		},
 		submit() {
-			if (this.orderType == 'takeout') {
-				this.ensureAddressModalVisible = true;
-			} else {
-				this.pay();
-			}
+			this.pay();
 		},
 		//余额购买
-		blanBuy(){
+		blanBuy(val){
 			let ticketList = []
 			let that = this;
 			if(that.userInfo.phoneNumber){
 				that.isSubOrder = true
 				let params = {
-					ticketId: that.perGoodsList.ticketId,
+					goodsNo: val.goodsNo,
 					qty: that.amount+"",
 					custId: that.balInfo.custId,
+					note: '[使用'+that.amount+'预存款购买商品'+that.cart[0].PackageName+']',
 					phoneNumber: that.userInfo.phoneNumber,
 				}
 				this.$api('user.deduction', params).then(res => {
 					if(res.flag){
-						that.jump('/pages/index/wallet', res.data);
+						that.confirmOrder(res.data,val.goodsNo)
 					}else{
 						uni.showToast({
 							icon: 'none',
@@ -202,6 +216,36 @@ export default {
 				})
 			}
 			
+		},
+		//确认订单
+		confirmOrder(val,orderNo) {
+			let that = this;
+			this.$api('cinema.confirmOrder', {
+				custId: that.balInfo.custId,
+				qty: that.cart[0].goodsCount,
+				orderNo: orderNo,
+				amount: that.amount
+			}).then(res => {
+				if (res.flag) {
+					uni.hideLoading();
+					uni.showToast({
+						title: '购买成功',
+						icon: 'success',
+						duration: 2000,
+						mask: true,
+						success: function() {
+							setTimeout(function(){
+								that.jump('/pages/index/wallet', {type:'nostart'});
+							}, 2000);
+						}
+					});
+				} else {
+					uni.showToast({
+						icon: 'none',
+						title: res.msg
+					});
+				}
+			});
 		},
 		//线上支付
 		pay() {
@@ -223,9 +267,9 @@ export default {
 				goodsPaymoney: that.amount,
 				memberGoodsDetailPojos: parArray
 			};
-			
-			let pay = new AppPay(that.payType, that.cart, 'goods.payGoodsMoney', params);
-			uni.removeStorageSync('cart');
+			let pay = new AppPay(that.payType, that.cart, 'goods.payGoodsMoney', params,4,{custId: that.balInfo.custId,
+				qty: that.cart[0].goodsCount,
+				amount: that.amount});
 			uni.hideLoading();
 			}else{
 				uni.showToast({
@@ -240,6 +284,57 @@ export default {
 
 <style lang="scss" scoped>
 @import '~@/static/style/app.scss';
+.action {
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		height: 70rpx;
+		.left {
+			flex: 1;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+			margin-right: 20rpx;
+			overflow: hidden;
+			.price {
+				font-size: $font-size-lg;
+				color: $text-color-base;
+			}
+			.props {
+				color: $text-color-assist;
+				font-size: 24rpx;
+				width: 100%;
+				overflow: hidden;
+				text-overflow: ellipsis;
+				white-space: nowrap;
+			}
+		}
+		.btn-group {
+			display: flex;
+			align-items: center;
+			justify-content: space-around;
+			.number {
+				font-size: $font-size-base;
+				width: 44rpx;
+				height: 44rpx;
+				line-height: 44rpx;
+				text-align: center;
+			}
+
+			.btn {
+				padding: 0;
+				font-size: $font-size-base;
+				width: 44rpx;
+				height: 44rpx;
+				line-height: 44rpx;
+				border-radius: 100%;
+			}
+		}
+	}
+.cart{
+	border-bottom: 1rpx solid #eeeeee;
+	box-shadow: 1px 1px 1px #c0c0c0;
+}
 .pay-box {
 	.pay-item {
 		height: 90rpx;
@@ -374,6 +469,93 @@ export default {
 		width: 100%;
 		border-radius: 50rem !important;
 		line-height: 3;
+	}
+}
+.goods-box {
+	position: relative;
+	.goods-img {
+		height: 180rpx;
+		width: 180rpx;
+		background-color: #ccc;
+		margin-right: 25rpx;
+	}
+	.order-goods__tag {
+		position: absolute;
+		top: 0;
+		left: 0;
+		z-index: 3;
+		width: 60rpx;
+		height: 30rpx;
+	}
+	.goods-title {
+		font-size: 28rpx;
+		font-family: PingFang SC;
+		font-weight: 500;
+		color: rgba(51, 51, 51, 1);
+		width: 450rpx;
+		line-height: 40rpx;
+		margin-bottom: 10rpx;
+	}
+
+	.size-tip {
+		line-height: 40rpx;
+		// background: #f4f4f4;
+		// padding: 0 16rpx;
+		font-size: 24rpx;
+		color: #666;
+	}
+	.sub-tip {
+		width: 480rpx;
+		line-height: 40rpx;
+		// background: #F6F2EA;
+		font-size: 24rpx;
+		color: #a8700d;
+		margin: 10rpx 0;
+	}
+
+	.price {
+		color: #e1212b;
+	}
+}
+// order
+.goods-box {
+	.order-right {
+		height: 180rpx;
+	}
+	.order-tip {
+		font-size: 24rpx;
+		font-family: PingFang SC;
+		font-weight: 400;
+		color: rgba(153, 153, 153, 1);
+		width: 450rpx;
+			margin-bottom: 20rpx;
+		.order-num {
+			margin-right: 10rpx;
+		}
+	}
+
+	.order-goods {
+		width: 480rpx;
+	
+		.status-btn {
+			background: none;
+			height: 32rpx;
+			border: 1rpx solid rgba(207, 169, 114, 1);
+			border-radius: 15rpx;
+			font-size: 20rpx;
+			font-family: PingFang SC;
+			font-weight: 400;
+			color: rgba(168, 112, 13, 1);
+			padding: 0 10rpx;
+			margin-left: 20rpx;
+			background:rgba(233,183,102,0.16);
+		}
+		.order-price {
+			font-size: 26rpx;
+			font-family: PingFang SC;
+			font-weight: 600;
+			color: rgba(51, 51, 51, 1);
+		}
 	}
 }
 </style>

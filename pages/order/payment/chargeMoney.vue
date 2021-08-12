@@ -179,6 +179,7 @@ export default {
 				qty: val.coinPaymoney + '',
 				custId: that.balInfo.custId,
 				coinNo: val.coinNo,
+				note: '[使用'+val.coinPaymoney+'预存款购买'+val.coinNo+'枚游戏币]',
 				phoneNumber: that.userInfo.phoneNumber
 			};
 			this.$api('user.deduction', params).then(res => {
