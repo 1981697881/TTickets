@@ -65,25 +65,32 @@ export default {
 			});
 		},
 		onCheck(data) {
+			let that = this;
 			if (data.path_type == 2) {
 				this.showModal('RadioModal');
-			} else if(data.path_type == 3) {
+			} else if (data.path_type == 3) {
 				uni.navigateToMiniProgram({
-				  appId: 'wx181a62e86068b2a7',//测试wxe16a10c527a8e244
-				  path: 'pages/main/index?share=path&path=/pages_home/exchange-gift/index',
-				  extraData: {
-					  
-				  },
-				  envVersion: 'release',
-				  success(res) {
-					  console.log(res)
-				    // 打开成功
-				  },fail(res) {
-					  console.log(res)
-				    // 打开失败
-				  },
-				})
-			} else{
+					appId: 'wx181a62e86068b2a7', //测试wxe16a10c527a8e244
+					path: 'pages/main/index?share=path&path=/pages_home/exchange-gift/index',
+					extraData: {},
+					envVersion: 'release',
+					success(res) {
+						console.log(res);
+						// 打开成功
+					},
+					fail(res) {
+						console.log(res);
+						// 打开失败
+					}
+				});
+			} else if (data.path_type == 4) {
+				uni.scanCode({
+					onlyFromCamera: true,
+					success: function(res) {
+						that.$tools.routerTo(res.result);
+					}
+				});
+			} else {
 				this.jump(data);
 			}
 		},

@@ -347,6 +347,11 @@ export default {
 			auth: true,
 			method: 'POST',
 			// desc: '卖品订单',
+		},depositMixPackage: {
+			url: 'V8/depositMixPackage',
+			auth: true,
+			method: 'POST',
+			// desc: '卖品确认订单',
 		},getMixPackageOrderDetail: {
 			url: 'V8/getMixPackageOrderDetail',
 			auth: true,

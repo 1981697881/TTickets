@@ -9,6 +9,8 @@ export default {
 	routerTo(path, params = {}, isLogin) {
 		let objParams = params;
 		// 是否跳转外部链接
+		console.log(path)
+		console.log(~path.indexOf('http'))
 		if (~path.indexOf('http')) {
 			// #ifdef H5
 			window.location = path;

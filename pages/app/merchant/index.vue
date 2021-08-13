@@ -94,7 +94,7 @@
 		<view v-if="storeOrderList.length" class="cu-load text-gray" :class="loadStatus"></view>
 
 		<!-- 日期选择 -->
-		<uni-calendar
+		<!-- <uni-calendar
 			v-model="showCalendar"
 			:mode="mode"
 			:start-text="startText"
@@ -103,7 +103,7 @@
 			:range-bg-color="rangeBgColor"
 			:active-bg-color="activeBgColor"
 			@change="selDate"
-		></uni-calendar>
+		></uni-calendar> -->
 		<!-- 输码弹窗 -->
 		<app-modal v-model="showInputModal" style="z-index: 88;">
 			<block slot="modalContent">

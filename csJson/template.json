@@ -163,6 +163,12 @@
 						"path": "/pages/index/wallet",
 						"path_name": "优惠券",
 						"path_type": 1
+					},{
+						"name": "我的二维码",
+						"image": "https://i.postimg.cc/h4s6JLbM/myerwem.png",
+						"path": "/pages/user/personal",
+						"path_name": "二维码",
+						"path_type": 1
 					},
 					{
 						"name": "兑换券",

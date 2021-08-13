@@ -307,7 +307,7 @@ export default class AppPay {
 
 				} else if (that.reType == 4) {
 					that.confirmParam.orderNo = payData.outTradeNo
-					api('cinema.confirmOrder', that.confirmParam).then(rescin => {
+					api('goods.depositMixPackage', that.confirmParam).then(rescin => {
 						if (rescin.flag) {
 							Vue.prototype.$isPreviewApi = false
 							Router.replace({

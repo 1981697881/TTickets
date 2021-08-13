@@ -5,7 +5,7 @@
 			<view class="section-2">
 				<view class="cart d-flex flex-column bg-white">
 					<view class="goods-box x-start" v-for="(item, index) in cart" :key="index" >
-						<image class="goods-img" :src="decodeURI(item.ImagePath)|| 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/zanwu.jpg'" mode=""></image>
+						<image class="goods-img" :src="decodeURIComponent(item.ImagePath)|| 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/zanwu.jpg'" mode=""></image>
 						<view class="y-start">
 							<view class="goods-title more-t">{{ item.PackageName }}</view>
 							<view class="action">
@@ -122,6 +122,7 @@ export default {
 	onShow() {
 		const { query } = this.$Route;
 		this.cart = JSON.parse(query.pay)
+		console.log(this.cart)
 	},
 	methods: {
 		handlePropertyAdd(item) {
@@ -133,10 +134,14 @@ export default {
 		},
 		combuy(){
 			let that = this
-			if(this.payType=='wallet'){
+			uni.showToast({
+				icon: 'none',
+				title: '抱歉，该功能还没上线，敬请期待'
+			});
+			/* if(this.payType=='wallet'){
 				if (Number(this.amount) <= Number(that.balInfo.Money)) {
 					uni.showLoading({ title: '购买中~~为了避免购买失败，请勿退出！' });
-					this.$api('user.addGoodsOrder', {
+					this.$api('goods.addGoodsOrder', {
 						openId: uni.getStorageSync('openid'),
 						goodsPaymoney: this.amount
 					}).then(res => {
@@ -157,7 +162,7 @@ export default {
 				}
 			}else{
 				this.pay()
-			}
+			} */
 		},
 		// 选择优惠券
 		selCoupon() {
@@ -168,7 +173,9 @@ export default {
 			}
 		},
 		selPay(e) {
+			let that = this
 			if(e.detail.value == 'wallet'){
+				console.log(Number(this.amount) <= Number(that.balInfo.Money) )
 				if(Number(this.amount) <= Number(that.balInfo.Money) ){
 					that.payType = e.detail.value;
 				}else{
@@ -181,6 +188,7 @@ export default {
 			}else{
 				that.payType = 'wechat';
 			}
+			console.log(that.payType)
 		},
 		submit() {
 			this.pay();
@@ -220,7 +228,7 @@ export default {
 		//确认订单
 		confirmOrder(val,orderNo) {
 			let that = this;
-			this.$api('cinema.confirmOrder', {
+			this.$api('goods.depositMixPackage', {
 				custId: that.balInfo.custId,
 				qty: that.cart[0].goodsCount,
 				orderNo: orderNo,
@@ -283,7 +291,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-@import '~@/static/style/app.scss';
+/* @import '~@/static/style/app.scss'; */
 .action {
 		display: flex;
 		align-items: center;
@@ -403,74 +411,12 @@ export default {
 	margin-right: -10rpx;
 }
 
-.location {
-	.store-name {
-		font-size: $font-size-lg;
-	}
-
-	.iconfont {
-		font-size: 50rpx;
-		line-height: 100%;
-		color: $color-primary;
-	}
-}
-
-.section-1 {
-	margin-bottom: 30rpx;
-	.contact {
-		.contact-tip {
-			margin-left: 10rpx;
-			border: 2rpx solid $color-primary;
-			padding: 6rpx 10rpx;
-			color: $color-primary;
-		}
-	}
-}
-
-.section-2 {
-	.name-and-props {
-		width: 65%;
-	}
-}
-
-.payment {
-	margin-bottom: 30rpx;
-
-	.disabled {
-		color: $text-color-grey;
-	}
-
-	.payment-icon {
-		font-size: 44rpx;
-		margin-right: 10rpx;
-	}
-
-	.checkbox {
-		font-size: 36rpx;
-		margin-left: 10rpx;
-	}
-
-	.checked {
-		color: $color-primary;
-	}
-}
-
 .pay-box {
 	box-shadow: 0 0 20rpx rgba(0, 0, 0, 0.1);
 	height: 100rpx;
 }
 
-.modal-content {
-	.change-address-btn {
-		line-height: 2;
-		padding: 0 1em;
-	}
-	.pay_btn {
-		width: 100%;
-		border-radius: 50rem !important;
-		line-height: 3;
-	}
-}
+
 .goods-box {
 	position: relative;
 	.goods-img {
