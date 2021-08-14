@@ -3,7 +3,7 @@
 		<view class="content_box">
 			<scroll-view class="scroll-box" scroll-y enable-back-to-top scroll-with-animation @scrolltolower="loadMore">
 				<view class="group-wrap">
-					<wallet-head :detail="walletInfo"></wallet-head>
+					<!-- <wallet-head :detail="walletInfo"></wallet-head> -->
 					<view class="group-box">
 						<wallet-goods ref="walletInfo" :detail="walletInfo" :scanId="confirmationId"></wallet-goods>
 					</view>
@@ -43,7 +43,7 @@ export default {
 				resetEndTime: '',
 				resetTime: '' */
 			},
-			confirmationId: '',
+			OrderID: '',
 			isLoading: false,
 			loadStatus: '', //loading,over
 			lastPage: 1,
@@ -55,7 +55,7 @@ export default {
 		let that = this
 		console.log(this.$Route.query)
 		if(that.$Route.query){
-			that.confirmationId = that.$Route.query.confirmationId
+			that.orderID = that.$Route.query.OrderID
 			that.getOrderDetail()
 		}
 	},
@@ -89,8 +89,8 @@ export default {
 		},
 		getOrderDetail(){
 			let that = this;
-			that.$api('wallet.detail', {
-				confirmationId : that.confirmationId,
+			that.$api('goods.getMixPackageOrderDetail', {
+				orderID : that.orderID,
 			}).then(res => {
 				if (res.flag) {
 					that.walletInfo = res.data;

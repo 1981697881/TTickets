@@ -2,14 +2,14 @@
 	<view class="group-content">
 		<view class="cont-header">
 			<view class="head-box text-black">
-				<view class="text-bold text-xxl">{{ detail.shortName || ''}}</view>
-				<view class="box-text padding-top">{{ detail.showDateTime || ''}} </view>
-				<view class="box-text">{{ detail.cinemaName || ''}} {{ detail.hallName || ''}}</view>
+				<view class="text-bold text-xxl">{{ detail.Data2[0].ProductName || ''}}</view>
+				<view class="box-text padding-top">截止日期:{{ detail.Data[0].EndDate || ''}} </view>
+				<view class="box-text">状态：{{ detail.Data[0].StatusName  || ''}}</view>
 				<view class="box-text text-gray">
-					<text v-for="(item, index) in detail.tickets" :key="index">{{ item.rowId || ''}}排{{ item.columnId || ''}}座</text>
+					<text>商品件数：{{detail.Data2[0].Qty}}</text>
 				</view>
 			</view>
-			<view class="img-box"><image class="img" :src="detail.filmPhoto" mode="aspectFill"></image></view>
+			<view class="img-box"><image class="img" :src="detail.Data2[0].ImagePath" mode=""></image></view>
 		</view>
 		<view class="cir-info">
 			<view class="cir-left"></view>
@@ -23,7 +23,7 @@
 						ref="qrcode"
 						:cid="cid"
 						class="img"
-						:val="scanId"
+						:val="detail.Data[0].TicketNo"
 						:size="size"
 						:unit="unit"
 						:icon="icon"
@@ -42,11 +42,10 @@
 			<view class="cir-line"></view>
 		</view>
 		<view class="cont-price text-gray">
-			<view class="text-black text-bold text-xl">实付金额：￥{{ detail.ticketPayMoney }}</view>
-			<view>订单号：{{ detail.confirmationId }}</view>
-			<view>购买时间：{{detail.createDateTime}}</view>
-			<view>手机号：{{detail.mobile}}</view>
-			<view>商品由{{detail.channelName}}影城提供</view>
+			<view class="text-black text-bold text-xl">实付金额：￥{{ detail.Data2[0].Amount }}</view>
+			<view>订单号：{{ detail.Data[0].OrderID }}</view>
+			<view>购买时间：{{detail.Data[0].Date}}</view>
+			<view>商品由{{detail.channelName || '财富中心'}}影城提供</view>
 		</view>
 		<view class="cir-info">
 			<view class="cir-left"></view>
@@ -67,7 +66,7 @@ export default {
 	components: { tkiQrcode },
 	data() {
 		return {
-			cid:'qrcode',
+			cid:'goodcode',
 			ifShow: true,
 			val: '', // 要生成的二维码值
 			size: 200, // 二维码大小

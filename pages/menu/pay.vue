@@ -83,18 +83,42 @@
 			<view class="font-size-lg flex-fill">￥{{ amount }}</view>
 			<button :disabled="isSubOrder" class="bg-primary h-100 d-flex align-items-center just-content-center text-color-white font-size-base" style="padding: 0 60rpx;" @tap="combuy">付款</button>
 		</view>
+		<!-- 登录提示 -->
+		<app-login-modal></app-login-modal>
+		<app-modal v-model="showExpressType" :modalType="'bottom-modal'">
+			<block slot="modalContent">
+				<!-- 选择优惠券 -->
+				<view class="express-type page_box">
+					<view class="express-type__head head-box">
+						<view class="express-type__head-nav" >
+							<text class="head-nav__title head-nav__title--active" >优惠券</text>
+							<view class="head-nav__left--active"></view>
+						</view>
+					</view>
+					<view class="express-type__content content_box">
+						<fz-coupon-card ref="couponCard" @changeCoupon="changeCoupon" :pickerData="pickerData.couponList"></fz-coupon-card>
+					</view>
+					<view class="express-type__bottom x-bc">
+						<button class="cu-btn cancel-btn" @tap="hideExpressType">取消</button>
+						<button class="cu-btn save-btn" @tap="saveExpressType">确定</button>
+					</view>
+				</view>
+			</block>
+		</app-modal>
 	</view>
 </template>
 
 <script>
 import { mapState, mapMutations } from 'vuex';
+import fzCouponCard from './children/fz-coupon-card.vue';
 import AppPay from '@/common/app-pay';
 import modal from '@/components/modal/modal';
 let orders = [];
 
 export default {
 	components: {
-		modal
+		modal,
+		fzCouponCard
 	},
 	data() {
 		return {
@@ -105,6 +129,9 @@ export default {
 				couponList: []
 			},
 			isSubOrder: false,
+			couponId: 0,
+			couponPrice: 0,
+			showExpressType: false, //优惠券弹窗
 		};
 	},
 	computed: {
@@ -113,15 +140,19 @@ export default {
 			balInfo: state => state.user.balInfo
 		}),
 		total() {
+			let that = this
 			return this.cart.reduce((acc, cur) => acc + cur.goodsCount * cur.PackageAmount, 0);
 		},
 		amount() {
-			return this.cart.reduce((acc, cur) => acc + cur.goodsCount * cur.PackageAmount, 0);
-		}
+			let that = this
+			return this.cart.reduce((acc, cur) => acc + cur.goodsCount * cur.PackageAmount -Number(that.couponPrice), 0);
+		},
+		
 	},
 	onShow() {
 		const { query } = this.$Route;
 		this.cart = JSON.parse(query.pay)
+		this.getCoupons();
 		console.log(this.cart)
 	},
 	methods: {
@@ -132,13 +163,32 @@ export default {
 			if (item.goodsCount === 1) return;
 			this.$set(item,'goodsCount',item.goodsCount-1)
 		},
+		// 关闭弹窗
+		hideExpressType() {
+			this.showExpressType = false;
+		},
+		// 保存方式
+		saveExpressType() {
+			this.showExpressType = false;
+		},
+		//计算团体票优惠
+		calculateBenefits(val = []) {
+			let that = this;
+			let countPrice = 0;
+			countPrice = Number(that.couponPrice);
+			if (countPrice == 0) {
+				this.pickerData.title = '选择优惠券';
+			} else {
+				this.pickerData.title = '-￥' + countPrice;
+			}
+		},
 		combuy(){
 			let that = this
 			uni.showToast({
 				icon: 'none',
 				title: '抱歉，该功能还没上线，敬请期待'
 			});
-			/* if(this.payType=='wallet'){
+			if(this.payType=='wallet'){
 				if (Number(this.amount) <= Number(that.balInfo.Money)) {
 					uni.showLoading({ title: '购买中~~为了避免购买失败，请勿退出！' });
 					this.$api('goods.addGoodsOrder', {
@@ -162,14 +212,42 @@ export default {
 				}
 			}else{
 				this.pay()
-			} */
+			}
 		},
+		// 可用优惠券
+		getCoupons() {
+			let that = this;
+			that.$api('coupons.list', {
+				couponType: 2,
+				openId: uni.getStorageSync('openid'),
+				status: 0,
+				payType: that.payType == 'wechat' ? 1 : 0,
+				goodsAllPriceStr: this.amount,
+			}).then(res => {
+				if (res.flag) {
+					that.pickerData.couponList = res.data;
+					that.pickerData.title = '可用优惠券(' + (that.pickerData.couponList.length) + '张)';
+				}
+			});
+		}, 
 		// 选择优惠券
 		selCoupon() {
-			if (this.pickerData.couponList.length) {
-				this.showPicker = true;
+			if (this.pickerData.couponList.length>0) {
+				this.showExpressType = true;
 			} else {
 				this.$tools.toast('暂无优惠券');
+			}
+		},
+		changeCoupon(index) {
+			this.couponArray = [];
+			this.couponId = 0;
+			if (index >= 0) {
+				this.couponId = this.pickerData.couponList[index].id;
+				this.couponPrice = this.pickerData.couponList[index].reducePrice;
+				this.calculateBenefits();
+			} else {
+				this.couponId = 0;
+				this.pickerData.title = '选择优惠券';
 			}
 		},
 		selPay(e) {
@@ -230,9 +308,11 @@ export default {
 			let that = this;
 			this.$api('goods.depositMixPackage', {
 				custId: that.balInfo.custId,
-				qty: that.cart[0].goodsCount,
+				qty: that.cart[0].goodsCount+"",
+				packageId: that.cart[0].packageId+"",
+				couponId: that.couponId,
 				orderNo: orderNo,
-				amount: that.amount
+				amount: that.amount+""
 			}).then(res => {
 				if (res.flag) {
 					uni.hideLoading();
@@ -253,6 +333,12 @@ export default {
 						title: res.msg
 					});
 				}
+			});
+		},
+		jump(path, parmas) {
+			this.$Router.replace({
+				path: path,
+				query: parmas
 			});
 		},
 		//线上支付
@@ -276,8 +362,10 @@ export default {
 				memberGoodsDetailPojos: parArray
 			};
 			let pay = new AppPay(that.payType, that.cart, 'goods.payGoodsMoney', params,4,{custId: that.balInfo.custId,
-				qty: that.cart[0].goodsCount,
-				amount: that.amount});
+				qty: that.cart[0].goodsCount+"",
+				packageId: that.cart[0].packageId+"",
+				couponId: that.couponId,
+				amount: that.amount+""});
 			uni.hideLoading();
 			}else{
 				uni.showToast({
@@ -291,7 +379,155 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/* @import '~@/static/style/app.scss'; */
+@import '~@/static/style/app.scss';
+.express-type {
+	width: 750rpx;
+	background-color: #fff;
+	border-radius: 20rpx 20rpx 0 0;
+	height: 700rpx;
+	overflow: visible;
+	.express-type__head {
+		width: 100%;
+		height: 74rpx;
+		background: #f8e3bd;
+		@include flex($align: center);
+		border-radius: 20rpx 20rpx 0 0;
+		&-nav {
+			width: (750rpx/4);
+			@include flex($align: center, $justify: center);
+			position: relative;
+			height: 100%;
+		}
+		.head-nav--active {
+			position: absolute;
+			left: 50%;
+			transform: translateX(-50%);
+			bottom: 0;
+			background: #fff;
+			width: 100%;
+			height: 80rpx;
+			background-color: #fff;
+			border-radius: 20rpx 20rpx 0px 0px;
+			&::after {
+				content: '';
+				display: block;
+				width: 40rpx;
+				height: 80rpx;
+				position: absolute;
+				transform: skewX(20deg);
+				background: #fff;
+				border-top-right-radius: 20rpx;
+				top: 0;
+				right: -15rpx;
+			}
+			&::before {
+				content: '';
+				display: block;
+				width: 40rpx;
+				height: 80rpx;
+				position: absolute;
+				transform: skewX(-20deg);
+				background: #fff;
+				border-top-left-radius: 20rpx;
+				top: 0;
+				left: -15rpx;
+			}
+		}
+		.head-nav__left--active {
+			position: absolute;
+			left: 50%;
+			transform: translateX(-50%);
+			bottom: 0;
+			background: #fff;
+			width: 100%;
+			height: 74rpx;
+			background-color: #fff;
+			border-radius: 20rpx 20rpx 0px 0px;
+			&::after {
+				content: '';
+				display: block;
+				width: 40rpx;
+				height: 74rpx;
+				position: absolute;
+				transform: skewX(20deg);
+				background: #fff;
+				border-top-right-radius: 20rpx;
+				top: 0;
+				right: -15rpx;
+			}
+		}
+		.head-nav__right--active {
+			position: absolute;
+			left: 50%;
+			transform: translateX(-50%);
+			bottom: 0;
+			background: #fff;
+			width: 100%;
+			height: 74rpx;
+			background-color: #fff;
+			border-radius: 20rpx 20rpx 0px 0px;
+			&::before {
+				content: '';
+				display: block;
+				width: 40rpx;
+				height: 74rpx;
+				position: absolute;
+				transform: skewX(-20deg);
+				background: #fff;
+				border-top-left-radius: 20rpx;
+				top: 0;
+				left: -15rpx;
+			}
+		}
+		.head-nav__title {
+			font-size: 24rpx;
+			font-weight: 500;
+			color: #666;
+			position: relative;
+			z-index: 6;
+		}
+		.head-nav__title--active {
+			color: #a8700d;
+			font-size: 26rpx;
+		}
+	}
+	.express-type__content {
+		.empty-address {
+			height: 120rpx;
+			padding: 0 25rpx;
+			@include flex($justify: null, $align: center, $direction: null, $warp: null, $warpAlign: null);
+			font-size: 28rpx;
+			font-family: PingFang SC;
+			font-weight: 400;
+			color: rgba(153, 153, 153, 1);
+		}
+		
+	}
+	.express-type__bottom {
+		height: 90rpx;
+		padding: 0 30rpx;
+		.cancel-btn {
+			width: 335rpx;
+			height: 74rpx;
+			background: rgba(238, 238, 238, 1);
+			border-radius: 37rpx;
+			font-size: 28rpx;
+			font-family: PingFang SC;
+			font-weight: 400;
+			color: rgba(51, 51, 51, 1);
+		}
+		.save-btn {
+			width: 335rpx;
+			height: 74rpx;
+			background: linear-gradient(90deg, rgba(233, 180, 97, 1), rgba(238, 204, 137, 1));
+			border-radius: 37rpx;
+			font-size: 28rpx;
+			font-family: PingFang SC;
+			font-weight: 400;
+			color: rgba(255, 255, 255, 1);
+		}
+	}
+}
 .action {
 		display: flex;
 		align-items: center;

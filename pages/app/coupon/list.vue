@@ -78,7 +78,7 @@ export default {
 				this.listParams.status = 0;
 				this.getCouponList();
 			} else if (this.stateCurrent == 1) {
-				this.listParams.couponType = 1;
+				this.listParams.couponType = null;
 				this.listParams.status = 0;
 				this.getCouponList();
 			} else if (this.stateCurrent == 2) {

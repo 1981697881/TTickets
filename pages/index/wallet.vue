@@ -18,14 +18,9 @@
 						:subtitle="item.hallName"
 						:img="item.filmPhoto"
 						:price="item.ticketPayMoney"
+						v-if="tabCurrent == 'ing'"
 					>
 						<block slot="sell">
-							<!-- <view class="x-f">
-								<view class="cu-progress round sm">
-									<view class="progress--color" :style="[{ width: loading ? getProgress(item.sales, item.stock) : '' }]"></view>
-								</view>
-								<view class="progress-text">已抢{{ getProgress(item.sales, item.stock) }}</view>
-							</view> -->
 							<view class="x-f">
 								<view>{{ item.showDatetime }}</view>
 							</view>
@@ -54,9 +49,35 @@
 									>
 										{{ btnType[tabCurrent].name }}
 									</button>
+								</view>
+							</view>
+						</block>
+					</wallet-list>
+					<wallet-list
+						:confirmationId="item.OrderID"
+						:cardId="item.ticketId"
+						:title="item.PName"
+						:subtitle="item.StatusName"
+						:img="item.ImagePath"
+						:price="item.OrderAmount"
+						v-else
+					>
+						<block slot="sell">
+							<view class="x-f">
+								<view>{{ item.Date }}</view>
+							</view>
+						</block>
+						<block slot="btn">
+							<view class="fot-text">
+								<view class="text-grey">
+									共
+									<text class="text-black text-bold text-xl padding-xs">{{ item.OrderQty }}</text>
+									件
+								</view>
+								<view class="fot-btn">
 									<button
 										v-if="btnType[tabCurrent].color == 'btn-nostart'"
-										@tap.stop="jump('/pages/wallet/goodsIndex', { confirmationId: item.confirmationId })"
+										@tap.stop="jump('/pages/wallet/goodsIndex', { OrderID: item.OrderID })"
 										class="cu-btn buy-btn"
 										:class="btnType[tabCurrent].color"
 									>
@@ -151,10 +172,12 @@ export default {
 		/* setTimeout(() => {
 			this.loading = true;
 		}, 500); */
-		this.getGoodsList();
 		const { query } = this.$Route;
 		if (query.type == 'nostart') {
 			this.tabCurrent = query.type;
+			this.getMixPackageOrderList();
+		}else{
+			this.getGoodsList();
 		}
 	},
 	methods: {
@@ -213,13 +236,13 @@ export default {
 		getMixPackageOrderList() {
 			let that = this;
 			that.loadStatus = 'loading';
-			that.$api('user.getMixPackageOrderList', {
+			that.$api('goods.getMixPackageOrderList', {
 				custId: that.balInfo.custId,
 				status: 0
 			}).then(res => {
 				if (res.flag) {
 					that.isLoading = false;
-					that.goodsList = res.data;
+					that.goodsList = res.data.Data;
 					that.loadStatus = 'over';
 				}
 			});
