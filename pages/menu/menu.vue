@@ -225,6 +225,7 @@ export default {
 			good: {}, //当前饮品
 			category: {}, //当前饮品所在分类
 			cartPopupVisible: false,
+			routerTo: this.$tools.routerTo,
 			sizeCalcState: false,
 			payType: 'wechat',
 			orderType: 'dinein',
@@ -233,14 +234,29 @@ export default {
 		};
 	},
 	async onShow() {
-		await this.init();
+		let that = this
+		await this.getUserDetails();
+		await this.getUserBalance();
+		if(this.balInfo.CustID == null){
+			if (that.userInfo.phoneNumber) {
+				that.routerTo('https://server.zk2016.com/outside/web/auth/miniAuth.do?placeId=77BAF153-CDE4-466E-B394-C69240E79077&redirect_uri=/pages/user/register')
+			} else {
+				uni.showToast({
+					icon: 'none',
+					title: '未检测到手机号码，请回个人中心授权手机号码'
+				});
+			}
+		}else{
+			await this.init();
+		}
 	},
 	/* async onLoad() {
 		await this.init();
 	}, */
 	computed: {
 		...mapState({
-			balInfo: state => state.user.balInfo
+			balInfo: state => state.user.balInfo,
+			userInfo: state => state.user.userInfo,
 		}),
 		goodCartNum() {
 			//计算单个饮品添加到购物车的数量
@@ -280,8 +296,10 @@ export default {
 		}
 	},
 	methods: {
+		...mapActions(['getUserBalance','getUserDetails']),
 		// 初始化
 		async init() {
+			
 			//页面初始化
 			this.loading = true;
 			let me = this;

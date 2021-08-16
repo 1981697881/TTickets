@@ -133,7 +133,7 @@ export default {
 			this.showNoticeModal = false;
 		}
 		// #endif
-		this.getUserBalance()
+		/* this.getUserBalance() */
 	},
 	mounted() {
 		
