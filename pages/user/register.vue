@@ -64,7 +64,7 @@ export default {
 		}
 	},
 	methods: {
-		...mapActions(['setTokenAndBack','getUserDetails']),
+		...mapActions(['getUserBalance','getUserDetails']),
 		jump(path, parmas) {
 			this.$Router.push({
 				path: path,
@@ -87,7 +87,7 @@ export default {
 				}
 			});
 		},
-		register() {
+		async register() {
 			let that = this;
 			if (this.isTcp) {
 				/* let string = 'WechatId:'+that.WechatId+',PublicOpenID:'+that.PublicOpenID+',phone:'+that.userInfo.phoneNumber+',photo:'+that.userInfo.avatarUrl+',name:'+that.userInfo.username+',sex:'+that.userInfo.sex

@@ -48,6 +48,10 @@ export default {
 			default: ''
 		}
 	},
+	created() {
+		console.log(this.showLogin) 
+		console.log(this.screenShot)
+	},
 	computed: {
 		...mapState({
 			showLoginTip: state => state.user.showLoginTip,

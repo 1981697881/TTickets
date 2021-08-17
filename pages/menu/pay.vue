@@ -149,13 +149,15 @@ export default {
 		},
 		
 	},
-	onShow() {
+	async onShow() {
 		const { query } = this.$Route;
 		this.cart = JSON.parse(query.pay)
 		this.getCoupons();
+		await this.getUserBalance();
 		console.log(this.cart)
 	},
 	methods: {
+		...mapActions(['getUserBalance','getUserDetails']),
 		handlePropertyAdd(item) {
 			this.$set(item,'goodsCount',item.goodsCount+1)
 		},
@@ -184,34 +186,46 @@ export default {
 		},
 		combuy(){
 			let that = this
-			uni.showToast({
-				icon: 'none',
-				title: '抱歉，该功能还没上线，敬请期待'
-			});
-			if(this.payType=='wallet'){
-				if (Number(this.amount) <= Number(that.balInfo.Money)) {
-					uni.showLoading({ title: '购买中~~为了避免购买失败，请勿退出！' });
-					this.$api('goods.addGoodsOrder', {
-						openId: uni.getStorageSync('openid'),
-						goodsPaymoney: this.amount
-					}).then(res => {
-						if(res.flag){
-							this.blanBuy(res.data)
-						}else{
-							uni.showToast({
-								icon: 'none',
-								title: res.msg
-							})
-						}
-					});
+			
+			if(that.balInfo.CustID == undefined){
+				if (that.userInfo.phoneNumber) {
+					that.routerTo('https://server.zk2016.com/outside/web/auth/miniAuth.do?placeId=77BAF153-CDE4-466E-B394-C69240E79077&redirect_uri=/pages/user/register')
 				} else {
 					uni.showToast({
 						icon: 'none',
-						title: '余额不足以支付本次费用，请选择其他支付方式'
+						title: '未检测到手机号码，请回个人中心授权手机号码',
+						duration: 2000
 					});
+					uni.switchTab({
+						url: '/pages/index/user',
+					})
 				}
 			}else{
-				this.pay()
+				if(this.payType=='wallet'){
+					if (Number(this.amount) <= Number(that.balInfo.Money)) {
+						uni.showLoading({ title: '购买中~~为了避免购买失败，请勿退出！' });
+						this.$api('goods.addGoodsOrder', {
+							openId: uni.getStorageSync('openid'),
+							goodsPaymoney: this.amount
+						}).then(res => {
+							if(res.flag){
+								this.blanBuy(res.data)
+							}else{
+								uni.showToast({
+									icon: 'none',
+									title: res.msg
+								})
+							}
+						});
+					} else {
+						uni.showToast({
+							icon: 'none',
+							title: '余额不足以支付本次费用，请选择其他支付方式'
+						});
+					}
+				}else{
+					this.pay()
+				}
 			}
 		},
 		// 可用优惠券

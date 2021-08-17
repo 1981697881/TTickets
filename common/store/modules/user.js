@@ -83,10 +83,13 @@ const actions = {
 	}) {
 		return new Promise((resolve, reject) => {
 			api('user.member',{openId: uni.getStorageSync('openid')}).then(res => {
-				console.log(res)
-				commit('LOGIN_TIP', false);
-				commit('USER_INFO', res.data);
-				uni.setStorageSync('userInfo', res.data);
+				if(res.flag){
+					commit('LOGIN_TIP', false);
+					commit('USER_INFO', res.data);
+					uni.setStorageSync('userInfo', res.data);
+				}else{
+					commit('LOGIN_TIP', true);
+				}
 				resolve(res)
 			}).catch(e => {
 				reject(e)
@@ -99,8 +102,10 @@ const actions = {
 		return new Promise((resolve, reject) => {
 			/* phone: state.userInfo.phoneNumber */
 			api('user.balance2',{WechatId: state.userInfo.wechatId,PublicOpenID:state.userInfo.publicOpenId}).then(res => {
-				commit('BAL_INFO', res.data[0]);
-				uni.setStorageSync('balInfo', res.data[0]);
+				if(res.flag){
+					commit('BAL_INFO', res.data[0]);
+					uni.setStorageSync('balInfo', res.data[0]);
+				}
 				resolve(res)
 			}).catch(e => {
 				reject(e)

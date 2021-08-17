@@ -146,7 +146,7 @@
 			</modal>
 			<!-- 商品详情模态框 end -->
 			<!-- 购物车详情popup -->
-			<popup-layer direction="top" :show-pop="cartPopupVisible" class="cart-popup">
+			<!-- <popup-layer direction="top" :show-pop="cartPopupVisible" class="cart-popup">
 				<template slot="content">
 					<view class="top"><text @tap="handleCartClear">清空</text></view>
 					<scroll-view class="cart-list" scroll-y>
@@ -183,7 +183,7 @@
 						</view>
 					</scroll-view>
 				</template>
-			</popup-layer>
+			</popup-layer> -->
 			<!-- 购物车详情popup -->
 		</view>
 		<view class="loading" v-else><image src="/static/imgs/loading.gif"></image></view>
@@ -235,20 +235,8 @@ export default {
 	},
 	async onShow() {
 		let that = this
+		await this.init();
 		await this.getUserDetails();
-		await this.getUserBalance();
-		if(this.balInfo.CustID == null){
-			if (that.userInfo.phoneNumber) {
-				that.routerTo('https://server.zk2016.com/outside/web/auth/miniAuth.do?placeId=77BAF153-CDE4-466E-B394-C69240E79077&redirect_uri=/pages/user/register')
-			} else {
-				uni.showToast({
-					icon: 'none',
-					title: '未检测到手机号码，请回个人中心授权手机号码'
-				});
-			}
-		}else{
-			await this.init();
-		}
 	},
 	/* async onLoad() {
 		await this.init();

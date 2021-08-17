@@ -56,7 +56,7 @@
 			"name": "wallet",
 			"style": {
 				"navigationBarTitleText": "我的订单",
-				"navigationBarTextStyle":"white",
+				"navigationBarTextStyle": "white",
 				"navigationBarBackgroundColor": "#2B4055"
 			},
 			"meta": {
@@ -95,7 +95,7 @@
 				"title": "我的",
 				"group": "用户"
 			}
-		},{
+		}, {
 			"path": "pages/menu/menu",
 			"name": "shoppingMall",
 			"style": {
@@ -107,7 +107,7 @@
 				"title": "小食和商品",
 				"group": "卖品"
 			}
-		},{
+		}, {
 			"path": "pages/menu/detail",
 			"name": "shoppingMallDetail",
 			"style": {
@@ -121,7 +121,7 @@
 				"title": "商品详情",
 				"group": "卖品"
 			}
-		},{
+		}, {
 			"path": "pages/index/videoGame",
 			"name": "videoGame",
 			"style": {
@@ -133,7 +133,7 @@
 				"title": "电玩充值",
 				"group": "电玩"
 			}
-		},{
+		}, {
 			"path": "pages/menu/pay",
 			"name": "menu",
 			"style": {
@@ -370,7 +370,7 @@
 						"title": "电影",
 						"group": "电影"
 					}
-				},{
+				}, {
 					"path": "machine/index",
 					"style": {
 						"navigationBarTitleText": "机台列表",
@@ -382,7 +382,7 @@
 						"title": "机台",
 						"group": "电玩"
 					}
-				},{
+				}, {
 					"path": "machine/detail",
 					"style": {
 						"navigationBarTitleText": "机台详情",
@@ -474,19 +474,19 @@
 					"path": "index",
 					"style": {
 						"navigationBarTitleText": "票据详情",
-						"navigationBarBackgroundColor":"#03AFFF",
-						"navigationBarTextStyle":"white"
+						"navigationBarBackgroundColor": "#03AFFF",
+						"navigationBarTextStyle": "white"
 					},
 					"meta": {
 						"auth": true,
 						"async": true
 					}
-				},{
+				}, {
 					"path": "goodsIndex",
 					"style": {
 						"navigationBarTitleText": "票据详情",
-						"navigationBarBackgroundColor":"#03AFFF",
-						"navigationBarTextStyle":"white"
+						"navigationBarBackgroundColor": "#03AFFF",
+						"navigationBarTextStyle": "white"
 					},
 					"meta": {
 						"auth": true,
@@ -530,7 +530,7 @@
 						"auth": true,
 						"async": false
 					}
-				},{
+				}, {
 					"path": "reserve",
 					"style": {
 						"navigationBarTitleText": "确认订单"
@@ -685,7 +685,7 @@
 						"auth": true,
 						"async": false
 					}
-				},{
+				}, {
 					"path": "payment/chargeMoney",
 					"style": {
 						"navigationBarTitleText": "支付方式"
@@ -804,7 +804,7 @@
 						"group": "用户"
 					}
 				},
-				
+
 				{
 					"path": "faq",
 					"style": {
@@ -864,7 +864,7 @@
 						"group": "用户"
 					}
 				},
-				
+
 				{
 					"path": "set",
 					"style": {
@@ -876,7 +876,7 @@
 						"title": "系统设置",
 						"group": "通用"
 					}
-				}, 
+				},
 				{
 					"path": "edit-password",
 					"style": {
@@ -889,7 +889,7 @@
 						"group": "用户"
 
 					}
-				},{
+				}, {
 					"path": "personal",
 					"style": {
 						"navigationBarTitleText": "个人二维码"
@@ -937,7 +937,7 @@
 						"title": "修改手机号",
 						"group": "用户"
 					}
-				},{
+				}, {
 					"path": "group-ticket",
 					"style": {
 						"navigationBarTitleText": "兑换"
@@ -948,7 +948,7 @@
 						"title": "兑换赠送",
 						"group": "用户"
 					}
-				},{
+				}, {
 					"path": "groupticketinfo",
 					"style": {
 						"navigationBarTitleText": "团体票详情"
@@ -987,7 +987,7 @@
 						"title": "绑定会员卡",
 						"group": "用户"
 					}
-				},{
+				}, {
 					"path": "wallet/recharge",
 					"style": {
 						"navigationBarTitleText": "充值"
@@ -1073,7 +1073,7 @@
 			"iconPath": "static/tabbar/_202105251003583.png",
 			"selectedIconPath": "static/tabbar/_202105251003582.png",
 			"text": "活动"
-		},{
+		}, {
 			"pagePath": "pages/index/videoGame",
 			"iconPath": "static/tabbar/_2021052510035862.png",
 			"selectedIconPath": "static/tabbar/_202105251003584.png",
