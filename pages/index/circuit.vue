@@ -27,6 +27,8 @@
 		<app-notice-modal></app-notice-modal>
 		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>
+		<!-- 门店选择 -->
+		<app-address-model></app-address-model>
 	</view>
 </template>
 

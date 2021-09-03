@@ -109,12 +109,11 @@
 </template>
 
 <script>
-import { mapState, mapMutations } from 'vuex';
+import { mapState, mapMutations, mapActions, mapGetters } from 'vuex';
 import fzCouponCard from './children/fz-coupon-card.vue';
 import AppPay from '@/common/app-pay';
 import modal from '@/components/modal/modal';
 let orders = [];
-
 export default {
 	components: {
 		modal,
@@ -326,7 +325,8 @@ export default {
 				packageId: that.cart[0].packageId+"",
 				couponId: that.couponId,
 				orderNo: orderNo,
-				amount: that.amount+""
+				amount: that.amount+"",
+				phoneNumber: that.userInfo.phoneNumber,
 			}).then(res => {
 				if (res.flag) {
 					uni.hideLoading();
@@ -379,6 +379,7 @@ export default {
 				qty: that.cart[0].goodsCount+"",
 				packageId: that.cart[0].packageId+"",
 				couponId: that.couponId,
+				phoneNumber: that.userInfo.phoneNumber,
 				amount: that.amount+""});
 			uni.hideLoading();
 			}else{
