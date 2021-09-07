@@ -87,6 +87,7 @@ export default {
 	computed: {
 		...mapState({
 			userinfo: state => state.user.userInfo,
+			 storeInfo: state => state.user.storeInfo,
 			balInfo: state => state.user.balInfo
 		})
 	},
@@ -129,7 +130,10 @@ export default {
 		//获取银行卡信息
 		getBankInfo() {
 			let that = this;
-			that.$api('user.getCustomerList', { phone: that.bankInfo.phone,returnWechat: true }).then(res => {
+			that.$api('user.getCustomerList', { 
+				phone: that.bankInfo.phone,
+				placeId: that.storeInfo.v8PlaceId,				V8Url: that.storeInfo.v8Url,
+				returnWechat: true }).then(res => {
 				if (res.flag) {
 					if (res.data.Data) {
 						that.cardslist = res.data.Data;
@@ -142,6 +146,8 @@ export default {
 			let that = this;
 			that.$refs.uForm.validate(valid => {
 				if (valid) {
+					that.bankInfo.placeId = that.storeInfo.v8PlaceId
+					that.bankInfo.V8Url = that.storeInfo.v8Url
 					that.$api('user.memberBindSimple', that.bankInfo).then(res => {
 						if (res.flag) {
 							that.getUserDetails();

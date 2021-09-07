@@ -81,6 +81,7 @@ export default {
 		...mapState({
 			payment: state => state.init.initData.payment,
 			balInfo: state => state.user.balInfo,
+			storeInfo: state => state.user.storeInfo,
 			userInfo: state => state.user.userInfo
 		})
 	},
@@ -134,6 +135,7 @@ export default {
 						rechargeMoney: that.checkPrice+"",
 						openId:uni.getStorageSync('openid'),
 						custId:that.balInfo.custId,
+						storeId:that.storeInfo.storeId,
 					}
 					let pay = new AppPay(that.payType, that.orderDetail,"user.payRecharge",params,3);
 				
@@ -157,6 +159,7 @@ export default {
 			this.$api('user.recharge', {
 				custId: this.balInfo.custId,
 				qty: that.checkPrice,
+				placeId: that.storeInfo.v8PlaceId,				V8Url: that.storeInfo.v8Url,
 				phoneNumber: this.userInfo.phoneNumber,
 			}).then(res => {
 				if(res.flag){

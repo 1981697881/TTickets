@@ -197,7 +197,7 @@
 		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>
 		<!-- 门店选择 -->
-		<app-address-model></app-address-model>
+		<app-address-model :init="init"></app-address-model>
 	</view>
 </template>
 
@@ -247,6 +247,7 @@ export default {
 		...mapState({
 			balInfo: state => state.user.balInfo,
 			userInfo: state => state.user.userInfo,
+			 storeInfo: state => state.user.storeInfo,
 		}),
 		goodCartNum() {
 			//计算单个饮品添加到购物车的数量
@@ -289,12 +290,12 @@ export default {
 		...mapActions(['getUserBalance','getUserDetails']),
 		// 初始化
 		async init() {
-			
 			//页面初始化
 			this.loading = true;
 			let me = this;
 			me.$api('goods.lists', {
 				custId: me.balInfo.custId,
+				placeId: me.storeInfo.v8PlaceId,				V8Url: me.storeInfo.v8Url,
 			}).then(res => {
 				if (res.flag) {
 					this.goods = res.data.Data;
@@ -358,9 +359,7 @@ export default {
 		},
 		handleAddToCart(cate, good, num) {
 			//添加到购物车
-			console.log(this.cart)
 			const index = this.cart.findIndex(item => {
-				console.log(item)
 				if (good.use_property) {
 					return item.goodsId === good.goodsId && item.props_text === good.props_text;
 				} else {

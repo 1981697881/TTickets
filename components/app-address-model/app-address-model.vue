@@ -1,16 +1,15 @@
 <template>
 	<!-- #ifdef MP-WEIXIN  -->
-	<view class="force-login-wrap page_box">
+	<view class="force-login-wrap page_box" v-if="Object.keys(storeInfo).length == 0">
 		<view class="head_box"></view>
 		<view class="content_box">
-			<view class="address-list" v-for="address in addressList" :key="address.id" @tap="useAddress(address)">
+			<view class="address-list" v-for="(address,index) in addressList" :key="address.id" @tap="useAddress(address)">
 				<view class="top x-f">
-					<text class="name">{{ address.consignee }}</text>
-					<text class="phone">{{ address.phone }}</text>
-					<text class="tag" v-if="address.is_default === '1'">默认</text>
+					<text class="name">{{ address.storeName }}</text>
+					<text class="phone text-sm text-yellow" v-if="index==0">最近</text>
 				</view>
-				<view class="detail">{{ address.province_name }}{{ address.city_name }}{{ address.area_name }}{{ address.address }}</view>
-				<button class="cu-btn set-btn" @tap.stop="jump('/pages/user/address/edit', { id: address.id })">编辑</button>
+				<view class="detail">{{address.storeAddress}}</view>
+				<text class="cu-btn set-btn text-cut">{{address.distance}} km</text>
 			</view>
 		</view>
 	</view>
@@ -35,16 +34,13 @@ export default {
 			default: ''
 		}
 	},
-	onShow() {
-		this.getAddressList();
-	},
 	created() {
-		console.log(this.showLogin) 
-		console.log(this.screenShot)
+		this.getAddressList();
 	},
 	computed: {
 		...mapState({
 			showLoginTip: state => state.user.showLoginTip,
+			storeInfo: state => state.user.storeInfo,
 			forceOauth: state => state.user.forceOauth
 		}),
 		showLogin: {
@@ -58,13 +54,28 @@ export default {
 	},
 	methods: {
 		...mapActions(['setTokenAndBack']),
-		
+		useAddress(val){
+			this.$store.commit('STORE_INFO', val);
+			if (this.init) {
+			    this.init();
+			}
+		},
 		getAddressList() {
-			this.$api('address.list').then(res => {
-				if (res.code === 1) {
-					this.addressList = res.data;
-				}
-			});
+			let that = this;
+			uni.getLocation({
+			  type: 'gcj02',
+			  success: function(res) {
+				that.$api('storesForm',{
+			      longitude: res.longitude,
+			      latitude: res.latitude,
+			    }).then(reso => {
+					if (reso.flag) {
+						that.addressList = reso.data;
+					}
+				});
+			  },
+			})
+			
 		}
 	}
 };
@@ -72,11 +83,13 @@ export default {
 
 <style lang="scss">
 .address-list {
-	padding: 40rpx;
+	padding: 20rpx;
 	position: relative;
 	background: #fff;
-	margin-bottom: 20rpx;
-
+	/* margin-bottom: 20rpx; */
+	margin: 10rpx;
+	border-radius: 5rpx;
+	box-shadow: 0px 0px 1px 1px #CCCCCC;	
 	.name,
 	.phone {
 		font-size: 30rpx;
@@ -147,7 +160,7 @@ export default {
 	overflow: hidden;
 	z-index: 11111;
 	top: 0;
-	background: linear-gradient(180deg, rgba(239, 196, 128, 1) 0%, rgba(248, 220, 165, 1) 25%, rgba(255, 255, 255, 1) 98%);
+	/* background: linear-gradient(180deg, rgba(239, 196, 128, 1) 0%, rgba(248, 220, 165, 1) 25%, rgba(255, 255, 255, 1) 98%); */
 }
 /* #endif */
 </style>

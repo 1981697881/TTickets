@@ -165,6 +165,7 @@ export default {
 	},
 	computed: {
 		...mapState({
+			 storeInfo: state => state.user.storeInfo,
 			balInfo: state => state.user.balInfo
 		})
 	},
@@ -238,6 +239,7 @@ export default {
 			that.loadStatus = 'loading';
 			that.$api('goods.getMixPackageOrderList', {
 				custId: that.balInfo.custId,
+				placeId: that.storeInfo.v8PlaceId,				V8Url: that.storeInfo.v8Url,
 				status: 0
 			}).then(res => {
 				if (res.flag) {

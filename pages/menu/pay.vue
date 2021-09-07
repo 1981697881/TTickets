@@ -136,6 +136,7 @@ export default {
 	computed: {
 		...mapState({
 			userInfo: state => state.user.userInfo,
+			storeInfo: state => state.user.storeInfo,
 			balInfo: state => state.user.balInfo
 		}),
 		total() {
@@ -294,6 +295,7 @@ export default {
 					goodsNo: val.goodsNo,
 					qty: that.amount+"",
 					custId: that.balInfo.custId,
+					placeId: that.storeInfo.v8PlaceId,					V8Url: that.storeInfo.v8Url, 
 					note: '[使用'+that.amount+'预存款购买商品'+that.cart[0].PackageName+']',
 					phoneNumber: that.userInfo.phoneNumber,
 				}
@@ -325,6 +327,7 @@ export default {
 				packageId: that.cart[0].packageId+"",
 				couponId: that.couponId,
 				orderNo: orderNo,
+				placeId: that.storeInfo.v8PlaceId,				V8Url: that.storeInfo.v8Url,
 				amount: that.amount+"",
 				phoneNumber: that.userInfo.phoneNumber,
 			}).then(res => {
@@ -379,6 +382,7 @@ export default {
 				qty: that.cart[0].goodsCount+"",
 				packageId: that.cart[0].packageId+"",
 				couponId: that.couponId,
+				placeId: that.storeInfo.v8PlaceId,				V8Url: that.storeInfo.v8Url,
 				phoneNumber: that.userInfo.phoneNumber,
 				amount: that.amount+""});
 			uni.hideLoading();

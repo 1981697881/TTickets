@@ -32,6 +32,8 @@
 			<app-notice-modal></app-notice-modal>
 			<!-- 登录提示 -->
 			<app-login-modal></app-login-modal>
+			<!-- 门店选择 -->
+			<app-address-model :init="init"></app-address-model>
 		</view>
 		<!-- 自定义底部导航 -->
 		<!-- <app-tabbar></app-tabbar> -->

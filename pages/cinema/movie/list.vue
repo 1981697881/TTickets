@@ -170,6 +170,9 @@ export default {
 		};
 	},
 	computed: {
+		...mapState({
+			storeInfo: state => state.user.storeInfo,
+		}),
 		aPrice() {
 			return this.SelectNum * 36;
 		},
@@ -407,6 +410,7 @@ export default {
 				openId: uni.getStorageSync('openid'),
 				seatIdList: oldArray,
 				scheduleId: this.listParams.scheduleId,
+				storeId: this.storeInfo.storeId,
 				scheduleKey: this.listParams.schedulekey,
 				openIdNotNull: 0
 			}).then(res => {

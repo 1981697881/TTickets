@@ -53,6 +53,7 @@ export default {
 	props: {},
 	computed: {
 		...mapState({
+			 storeInfo: state => state.user.storeInfo,
 			balInfo: state => state.user.balInfo
 		})
 	},
@@ -99,7 +100,10 @@ export default {
 		},
 		getScanCode() {
 			let that = this;
-			that.$api('user.getCustPayQrCode', { CustID: that.balInfo.custId }).then(res => {
+			that.$api('user.getCustPayQrCode', { 
+				placeId: that.storeInfo.v8PlaceId,				V8Url: that.storeInfo.v8Url, 
+				CustID: that.balInfo.custId,
+				}).then(res => {
 				if (res.flag) {
 					that.$set(that,'scanId',res.data.Data)
 					that.timer = Number(res.data.Data2) * 60;

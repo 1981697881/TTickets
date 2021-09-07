@@ -50,6 +50,8 @@
 		<app-notice-modal></app-notice-modal>
 		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>
+		<!-- 门店选择 -->
+		<app-address-model :init="init"></app-address-model>
 	</view>
 </template>
 
@@ -82,7 +84,7 @@ export default {
 	},
 	mounted() {
 		this.getScrHeight();
-		this.getGoodsList();
+		this.init();
 	},
 	computed: {
 		...mapState({
@@ -92,6 +94,9 @@ export default {
 	},
 	created() {},
 	methods: {
+		init() {
+			this.getGoodsList();
+		},
 		// 加载更多
 		loadMore() {
 			if (this.listParams.page < this.lastPage) {

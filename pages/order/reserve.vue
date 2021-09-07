@@ -244,6 +244,7 @@ export default {
 	computed: {
 		...mapState({
 			userInfo: state => state.user.userInfo,
+			storeInfo: state => state.user.storeInfo,
 			balInfo: state => state.user.balInfo
 		}),
 		expressClass() {
@@ -374,7 +375,9 @@ export default {
 		getGoodsList() {
 			let me = this;
 			me.$api('goods.lists', {
-				custId: me.balInfo.custId
+				custId: me.balInfo.custId,
+				placeId: me.storeInfo.v8PlaceId,
+				V8Url: me.storeInfo.v8Url, 
 			}).then(res => {
 				if (res.flag) {
 					this.cart = res.data.Data;
@@ -661,6 +664,7 @@ export default {
 					ticketId: that.perGoodsList.ticketId,
 					qty: that.ticketPaymoney + '',
 					custId: that.balInfo.custId,
+					placeId: that.storeInfo.v8PlaceId,					V8Url: that.storeInfo.v8Url, 
 					note: '[使用' + that.ticketPaymoney + '预存款购买电影票]',
 					phoneNumber: that.userInfo.phoneNumber
 				};

@@ -60,6 +60,7 @@ export default {
 		...mapState({
 			userInfo: state => state.user.userInfo,
 			payment: state => state.init.initData.payment,
+			storeInfo: state => state.user.storeInfo,
 			balInfo: state => state.user.balInfo
 		})
 	},
@@ -120,7 +121,11 @@ export default {
 		//积分充值
 		integral() {
 			let that = this;
-			that.$api('goods.veIntegral', { qty: that.$Route.query.integral, custId: that.balInfo.custId, phoneNumber: that.userInfo.phoneNumber }).then(res => {
+			that.$api('goods.veIntegral', { 
+				qty: that.$Route.query.integral,
+				 custId: that.balInfo.custId,
+				 placeId: that.storeInfo.v8PlaceId,				V8Url: that.storeInfo.v8Url,
+				  phoneNumber: that.userInfo.phoneNumber }).then(res => {
 				if (res.flag) {
 					uni.showToast({
 						title: '购买成功',
@@ -179,6 +184,7 @@ export default {
 				qty: val.coinPaymoney + '',
 				custId: that.balInfo.custId,
 				coinNo: val.coinNo,
+				placeId: that.storeInfo.v8PlaceId,				V8Url: that.storeInfo.v8Url, 
 				note: '[使用'+val.coinPaymoney+'预存款购买'+val.coinNo+'枚游戏币]',
 				phoneNumber: that.userInfo.phoneNumber
 			};

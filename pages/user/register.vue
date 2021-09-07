@@ -51,8 +51,8 @@ export default {
 	},
 	computed: {
 		...mapState({
-			initData: state => state.init.initData,
 			userInfo: state => state.user.userInfo,
+			storeInfo: state => state.user.storeInfo,
 			balInfo: state => state.user.balInfo
 		})
 	},
@@ -76,6 +76,8 @@ export default {
 			this.$api('user.balance2', {
 				WechatId: that.WechatId,
 				PublicOpenID: that.PublicOpenID,
+				placeId: that.storeInfo.v8PlaceId,
+				V8Url: that.storeInfo.v8Url,
 			}).then(res => {
 				if (res.flag) {
 					uni.showToast({
@@ -117,6 +119,8 @@ export default {
 					phone: that.userInfo.phoneNumber,
 					photo: that.userInfo.avatarUrl,
 					name: that.userInfo.username,
+					placeId: that.storeInfo.v8PlaceId,
+					V8Url: that.storeInfo.v8Url,
 					sex: that.userInfo.sex
 				}).then(res => {
 					if (res.flag) {

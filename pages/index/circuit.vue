@@ -28,7 +28,7 @@
 		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>
 		<!-- 门店选择 -->
-		<app-address-model></app-address-model>
+		<app-address-model :init="init"></app-address-model>
 	</view>
 </template>
 
@@ -100,9 +100,12 @@ export default {
 			this.searchVal = this.$Route.query.keywords;
 		}
 		
-		this.getCinemaList()
+		this.init()
 	},
 	methods: {
+		init() {
+			this.getCinemaList()
+		},
 		// 路由跳转
 		jump(path, parmas) {
 			this.$Router.push({ path: path, query: parmas });

@@ -10,6 +10,7 @@ import {
 	BAL_INFO,
 	ORDER_NUMBER,
 	MESSAGE_IDS,
+	STORE_INFO,
 	OUT_LOGIN,
 	// #ifdef MP-WEIXIN
 	FORCE_OAUTH,
@@ -20,6 +21,7 @@ const state = {
 	showLoginTip: false,
 	orderNum: {},
 	balInfo: uni.getStorageSync('balInfo'),
+	storeInfo: {},
 	// #ifdef MP-WEIXIN
 	forceOauth: false,
 	// #endif
@@ -101,7 +103,7 @@ const actions = {
 	}) {
 		return new Promise((resolve, reject) => {
 			/* phone: state.userInfo.phoneNumber */
-			api('user.balance2',{WechatId: state.userInfo.wechatId,PublicOpenID:state.userInfo.publicOpenId}).then(res => {
+			api('user.balance2',{placeId: state.user.storeInfo.v8PlaceId,V8Url: state.user.storeInfo.v8Url,WechatId: state.userInfo.wechatId,PublicOpenID:state.userInfo.publicOpenId}).then(res => {
 				if(res.flag){
 					commit('BAL_INFO', res.data[0]);
 					uni.setStorageSync('balInfo', res.data[0]);
@@ -185,6 +187,8 @@ const mutations = {
 		state.userInfo = data
 	},[BAL_INFO](state, data) {
 		state.balInfo = data
+	},[STORE_INFO](state, data) {
+		state.storeInfo = data
 	},
 	[LOGIN_TIP](state, data) {
 		state.showLoginTip = data
@@ -202,6 +206,7 @@ const mutations = {
 	[OUT_LOGIN](state, data) {
 		uni.removeStorageSync('token');
 		uni.removeStorageSync('userInfo');
+		uni.removeStorageSync('storeInfo');
 		uni.removeStorageSync('cartNum');
 		store.commit('USER_INFO', {});
 		store.commit('CART_LIST', []);

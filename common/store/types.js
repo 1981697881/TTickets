@@ -6,6 +6,7 @@ export const TEMPLATE_DATA = 'TEMPLATE_DATA'//模板信息
 export const SET_THEME = 'SET_THEME' //更改主题
 
 export const USER_INFO = 'USER_INFO' //用户信息
+export const STORE_INFO = 'STORE_INFO' //门店信息
 export const BAL_INFO = 'BAL_INFO' //用户余额信息
 export const ORDER_NUMBER = 'ORDER_NUMBER' //订单数量
 export const OUT_LOGIN = 'OUT_LOGIN' //退出登录

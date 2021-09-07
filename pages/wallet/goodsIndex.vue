@@ -24,6 +24,7 @@
 <script>
 import walletHead from '@/pages/wallet/children/wallet-head.vue';
 import walletGoods from '@/pages/wallet/children/wallet-goods.vue';
+import { mapMutations, mapActions, mapState } from 'vuex';
 export default {
 	components: {
 		walletHead,
@@ -72,7 +73,11 @@ export default {
 		})
 	},
 	onPullDownRefresh() {},
-	computed: {},
+	computed: {
+		...mapState({
+			storeInfo: state => state.user.storeInfo,
+		}),
+	},
 	methods: {
 		// 加载更多
 		loadMore() {
@@ -91,6 +96,7 @@ export default {
 			let that = this;
 			that.$api('goods.getMixPackageOrderDetail', {
 				orderID : that.orderID,
+				placeId: that.storeInfo.v8PlaceId,				V8Url: that.storeInfo.v8Url, 
 			}).then(res => {
 				if (res.flag) {
 					that.walletInfo = res.data;

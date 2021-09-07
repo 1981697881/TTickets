@@ -21,6 +21,7 @@
 import shFilter from './sh-filter.vue';
 import shDate from './sh-date.vue';
 import moreGoodList from '@/csJson/moreGoodList.json';
+import { mapMutations, mapActions, mapState } from 'vuex';
 export default {
 	components: {
 		shFilter,
@@ -46,7 +47,11 @@ export default {
 		this.getScrHeight();
 		this.getGoodsList();
 	},
-	computed: {},
+	computed: {
+		...mapState({
+			storeInfo: state => state.user.storeInfo,
+		}),
+	},
 	created() {},
 	methods: {
 		// 加载更多
@@ -80,6 +85,7 @@ export default {
 			let that = this;
 			that.isLoading = true;
 			that.loadStatus = 'loading';
+			that.listParams.cinemalinkId = that.storeInfo.cinemalinkId;
 			that.$api('cinema.studios', that.listParams).then(res => {
 				if (res.flag) {
 					that.isLoading = false;

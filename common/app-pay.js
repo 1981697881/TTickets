@@ -257,12 +257,15 @@ export default class AppPay {
 					api('goods.veCoin', {
 						qty: that.order.coinCount,
 						custId: store.state.user.balInfo.custId,
+						placeId: store.state.user.storeInfo.v8PlaceId,						V8Url: store.state.user.storeInfo.v8Url,
 						phoneNumber: store.state.user.userInfo.phoneNumber
 					}).then(resve => {
 						if (resve.flag) {
 							api('goods.veIntegral', {
 								qty: that.order.integral,
 								custId: store.state.user.balInfo.custId,
+								placeId: store.state.user.storeInfo.v8PlaceId,
+								V8Url: store.state.user.storeInfo.v8Url,
 								phoneNumber: store.state.user.userInfo.phoneNumber
 							}).then(resal => {
 								if (resal.flag) {
@@ -289,6 +292,7 @@ export default class AppPay {
 					api('user.recharge', {
 						custId: store.state.user.balInfo.custId,
 						qty: that.params.rechargeMoney,
+						placeId: store.state.user.storeInfo.v8PlaceId,						V8Url: store.state.user.storeInfo.v8Url,
 						phoneNumber: store.state.user.userInfo.phoneNumber,
 					}).then(resch => {
 						if (resch.flag) {
