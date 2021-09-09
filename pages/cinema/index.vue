@@ -186,7 +186,11 @@ export default {
 			lastPage: 1
 		};
 	},
-	computed: {},
+	computed: {
+		...mapState({
+			storeInfo: state => state.user.storeInfo,
+		}),
+	},
 	// 触底加载更多
 	onReachBottom() {
 		if (this.listParams.page < this.lastPage) {
@@ -319,7 +323,7 @@ export default {
 		// 获取影城
 		getCinemaList() {
 			let that = this;
-			that.$api('cinema.locationList', { cinemalinkId: that.listParams.cinemalinkId, filmId: that.listParams.filmId }).then(res => {
+			that.$api('cinema.locationList', { cinemalinkId: that.storeInfo.cinemaLinkId, filmId: that.listParams.filmId }).then(res => {
 				if (res.flag) {
 					that.cinemaList = res.data;
 					that.cinemaName = res.data[0].cinemaName;

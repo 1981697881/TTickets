@@ -22,13 +22,13 @@
 		<!-- 自定义底部导航 -->
 		<!-- <app-tabbar></app-tabbar> -->
 		<!-- 关注弹窗 -->
-		<!-- <app-float-btn></app-float-btn> -->
+		<app-float-btn></app-float-btn>
 		<!-- 连续弹窗提醒 -->
 		<app-notice-modal></app-notice-modal>
 		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>
 		<!-- 门店选择 -->
-		<app-address-model :init="init"></app-address-model>
+		<app-address-model @init="init"></app-address-model>
 	</view>
 </template>
 
@@ -72,7 +72,11 @@ export default {
 			lastPage: 1
 		};
 	},
-	computed: {},
+	computed: {
+		...mapState({
+			storeInfo: state => state.user.storeInfo,
+		}),
+	},
 	// 触底加载更多
 	onReachBottom() {
 		if (this.listParams.page < this.lastPage) {
@@ -94,6 +98,8 @@ export default {
 		}
 		if (this.$Route.query) {
 			this.listParams.cinemalinkId = this.$Route.query.cinemalinkId;
+		}else{
+			this.listParams.cinemalinkId = this.storeInfo.cinemalinkId;
 		}
 		if (this.$Route.query.keywords) {
 			this.listParams.keywords = this.$Route.query.keywords;
@@ -133,7 +139,7 @@ export default {
 		// 获取影城
 		getCinemaList() {
 			let that = this;
-			that.$api('cinema.locationList', {cinemalinkId: that.listParams.cinemalinkId, filmId: that.listParams.filmId }).then(res => {
+			that.$api('cinema.locationList', {cinemalinkId: that.storeInfo.cinemaLinkId, filmId: that.listParams.filmId }).then(res => {
 				if (res.flag) {
 					that.cinemaList = res.data;
 					that.cinemaName = res.data[0].cinemaName;

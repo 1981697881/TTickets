@@ -2,7 +2,7 @@
 	<!-- #ifdef MP-WEIXIN  -->
 	<view class="force-login-wrap page_box" v-if="Object.keys(storeInfo).length == 0">
 		<view class="head_box"></view>
-		<view class="content_box">
+		<view class="content_box" :style="'margin-top:'+marginTop">
 			<view class="address-list" v-for="(address,index) in addressList" :key="address.id" @tap="useAddress(address)">
 				<view class="top x-f">
 					<text class="name">{{ address.storeName }}</text>
@@ -32,7 +32,10 @@ export default {
 		modalType: {
 			type: String,
 			default: ''
-		}
+		},marginTop: {
+			type: String,
+			default: ''
+		},
 	},
 	created() {
 		this.getAddressList();
@@ -56,9 +59,7 @@ export default {
 		...mapActions(['setTokenAndBack']),
 		useAddress(val){
 			this.$store.commit('STORE_INFO', val);
-			if (this.init) {
-			    this.init();
-			}
+			 this.$emit('init');
 		},
 		getAddressList() {
 			let that = this;
@@ -154,11 +155,11 @@ export default {
 // 小程序登录提醒
 /* #ifdef MP-WEIXIN */
 .force-login-wrap {
-	position: fixed;
+	position: absolute;
 	width: 100vw;
 	height: 100vh;
 	overflow: hidden;
-	z-index: 11111;
+	z-index: 999;
 	top: 0;
 	/* background: linear-gradient(180deg, rgba(239, 196, 128, 1) 0%, rgba(248, 220, 165, 1) 25%, rgba(255, 255, 255, 1) 98%); */
 }

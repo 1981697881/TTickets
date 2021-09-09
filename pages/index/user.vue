@@ -1,5 +1,6 @@
 <template>
 	<view class="wrap-box">
+		
 		<view class="user-box">
 			<block v-if="template.length" v-for="(item, index) in template" :key="index">
 				<!-- 菜单 -->
@@ -27,13 +28,13 @@
 				</view>
 			</view>
 			<!-- 关注弹窗 -->
-			<!-- <app-float-btn></app-float-btn> -->
+			<app-float-btn></app-float-btn>
 			<!-- 连续弹窗提醒 -->
 			<app-notice-modal></app-notice-modal>
 			<!-- 登录提示 -->
 			<app-login-modal></app-login-modal>
 			<!-- 门店选择 -->
-			<app-address-model :init="init"></app-address-model>
+			<app-address-model @init="init" :marginTop="'150rpx'"></app-address-model>
 		</view>
 		<!-- 自定义底部导航 -->
 		<!-- <app-tabbar></app-tabbar> -->
@@ -99,7 +100,7 @@ export default {
 	},
 	onLoad() {},
 	onShow() {
-		this.$store.commit('CART_NUM');
+		/* this.$store.commit('CART_NUM'); */
 		this.init();
 	},
 	methods: {

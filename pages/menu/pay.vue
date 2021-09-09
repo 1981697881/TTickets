@@ -206,6 +206,7 @@ export default {
 						uni.showLoading({ title: '购买中~~为了避免购买失败，请勿退出！' });
 						this.$api('goods.addGoodsOrder', {
 							openId: uni.getStorageSync('openid'),
+							storeId: that.storeInfo.id,
 							goodsPaymoney: this.amount
 						}).then(res => {
 							if(res.flag){
@@ -295,7 +296,8 @@ export default {
 					goodsNo: val.goodsNo,
 					qty: that.amount+"",
 					custId: that.balInfo.custId,
-					placeId: that.storeInfo.v8PlaceId,					V8Url: that.storeInfo.v8Url, 
+					placeId: that.storeInfo.v8PlaceId,		
+					V8Url: that.storeInfo.v8Url, 
 					note: '[使用'+that.amount+'预存款购买商品'+that.cart[0].PackageName+']',
 					phoneNumber: that.userInfo.phoneNumber,
 				}
@@ -376,13 +378,15 @@ export default {
 			//测试订单
 			let params = {
 				goodsPaymoney: that.amount,
+				storeId: that.storeInfo.id,	
 				memberGoodsDetailPojos: parArray
 			};
 			let pay = new AppPay(that.payType, that.cart, 'goods.payGoodsMoney', params,4,{custId: that.balInfo.custId,
 				qty: that.cart[0].goodsCount+"",
 				packageId: that.cart[0].packageId+"",
 				couponId: that.couponId,
-				placeId: that.storeInfo.v8PlaceId,				V8Url: that.storeInfo.v8Url,
+				placeId: that.storeInfo.v8PlaceId,
+				V8Url: that.storeInfo.v8Url,
 				phoneNumber: that.userInfo.phoneNumber,
 				amount: that.amount+""});
 			uni.hideLoading();

@@ -191,13 +191,13 @@
 		<!-- 自定义底部导航 -->
 		<!-- <app-tabbar></app-tabbar> -->
 		<!-- 关注弹窗 -->
-		<!-- <app-float-btn></app-float-btn> -->
+		<app-float-btn></app-float-btn>
 		<!-- 连续弹窗提醒 -->
 		<app-notice-modal></app-notice-modal>
 		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>
 		<!-- 门店选择 -->
-		<app-address-model :init="init"></app-address-model>
+		<app-address-model @init="init"></app-address-model>
 	</view>
 </template>
 
@@ -237,8 +237,8 @@ export default {
 	},
 	async onShow() {
 		let that = this
-		await this.init();
 		await this.getUserDetails();
+		await this.init();
 	},
 	/* async onLoad() {
 		await this.init();
@@ -295,7 +295,8 @@ export default {
 			let me = this;
 			me.$api('goods.lists', {
 				custId: me.balInfo.custId,
-				placeId: me.storeInfo.v8PlaceId,				V8Url: me.storeInfo.v8Url,
+				placeId: me.storeInfo.v8PlaceId,
+				V8Url: me.storeInfo.v8Url,
 			}).then(res => {
 				if (res.flag) {
 					this.goods = res.data.Data;

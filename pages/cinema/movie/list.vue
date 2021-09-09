@@ -410,7 +410,7 @@ export default {
 				openId: uni.getStorageSync('openid'),
 				seatIdList: oldArray,
 				scheduleId: this.listParams.scheduleId,
-				storeId: this.storeInfo.storeId,
+				storeId: this.storeInfo.id,
 				scheduleKey: this.listParams.schedulekey,
 				openIdNotNull: 0
 			}).then(res => {

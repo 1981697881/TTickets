@@ -45,13 +45,13 @@
 		<!-- 自定义底部导航 -->
 		<!-- <app-tabbar></app-tabbar> -->
 		<!-- 关注弹窗 -->
-		<!-- <app-float-btn></app-float-btn> -->
+		<app-float-btn></app-float-btn>
 		<!-- 连续弹窗提醒 -->
 		<app-notice-modal></app-notice-modal>
 		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>
 		<!-- 门店选择 -->
-		<app-address-model :init="init"></app-address-model>
+		<app-address-model @init="init"></app-address-model>
 	</view>
 </template>
 

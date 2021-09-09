@@ -103,7 +103,7 @@ const actions = {
 	}) {
 		return new Promise((resolve, reject) => {
 			/* phone: state.userInfo.phoneNumber */
-			api('user.balance2',{placeId: state.user.storeInfo.v8PlaceId,V8Url: state.user.storeInfo.v8Url,WechatId: state.userInfo.wechatId,PublicOpenID:state.userInfo.publicOpenId}).then(res => {
+			api('user.balance2',{placeId: state.storeInfo.v8PlaceId,V8Url: state.storeInfo.v8Url,WechatId: state.userInfo.wechatId,PublicOpenID:state.userInfo.publicOpenId}).then(res => {
 				if(res.flag){
 					commit('BAL_INFO', res.data[0]);
 					uni.setStorageSync('balInfo', res.data[0]);

@@ -1,5 +1,5 @@
 <template>
-	<view v-if="!floatList && floatList.length" class="app-float-btn">
+	<view v-if="floatList && floatList.length" class="app-float-btn">
 		<view :class="{ 'btn-mark': showBtnList }" cathctouchmove @tap="hideBtnModal"></view>
 		<button class="cu-btn wechat-btn" @tap="onBtn">
 			<image class="wechat_img" :src="floatList.length == 1 ? floatList[0].btnimage : floatData.image" mode="widthFix"></image>
@@ -12,14 +12,14 @@
 				</view>
 			</view>
 		</view>
-		<!-- <view class="cu-modal" :class="{ show: showModal }" cathctouchmove @tap="hideModal">
+		<view class="cu-modal" :class="{ show: showModal }" cathctouchmove @tap="hideModal">
 			<view class="cu-dialog" @tap.stop style="background: none;overflow: visible;">
 				<view class="img-box">
 					<image class="modal-img" :src="modalImg" mode="widthFix" @longtap="saveImg(modalImg)"></image>
 					<text class="cuIcon-roundclose" @tap="hideModal"></text>
 				</view>
 			</view>
-		</view> -->
+		</view>
 	</view>
 </template>
 
@@ -58,14 +58,13 @@ export default {
 				let arr = this.floatData.list.filter(item => {
 					return item.page.includes(this.currentPath);
 				});
+				console.log(arr)
 				return arr;
 			}
 		}
 	},
 	created() {
-		// setInterval(function(){
-		// 	console.log(this.template,123)
-		// 	}, 100);
+		 	console.log(this.template)
 	},
 	methods: {
 		hideModal() {
@@ -75,11 +74,15 @@ export default {
 			this.showBtnList = false;
 		},
 		onBtnItem(item) {
+			console.log(item.style)
 			if (item.style == 2) {
 				this.$tools.routerTo(item.path);
 				this.showModal = false;
 				this.showBtnList = false;
-			} else {
+			} else if(item.style == 3){
+				console.log(item.style)
+				this.$store.commit('STORE_INFO', {});
+			} else{
 				this.modalImg = item.image;
 				this.showModal = true;
 			}
@@ -100,7 +103,13 @@ export default {
 		onBtn() {
 			if (this.floatList.length == 1) {
 				this.modalImg = this.floatList[0].image;
-				this.floatList[0].style == 2 ? this.$tools.routerTo(this.floatList[0].path) : (this.showModal = true);
+				if (this.floatList[0].style == 2) {
+					this.$tools.routerTo(this.floatList[0].path)
+				} else if(item.style == 3){
+					this.$store.commit('STORE_INFO', {});
+				} else{
+					this.showModal = true
+				}
 			} else {
 				this.showBtnList = !this.showBtnList;
 			}

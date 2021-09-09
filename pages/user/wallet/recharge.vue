@@ -135,7 +135,7 @@ export default {
 						rechargeMoney: that.checkPrice+"",
 						openId:uni.getStorageSync('openid'),
 						custId:that.balInfo.custId,
-						storeId:that.storeInfo.storeId,
+						storeId:that.storeInfo.id,
 					}
 					let pay = new AppPay(that.payType, that.orderDetail,"user.payRecharge",params,3);
 				

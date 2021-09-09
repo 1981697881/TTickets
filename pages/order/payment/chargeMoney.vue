@@ -102,6 +102,7 @@ export default {
 				//测试订单
 				let params = {
 					coinPaymoney: that.$Route.query.goodsPrice,
+					storeId: that.storeInfo.id,
 					goodsId: that.$Route.query.goodsId
 				};
 				/* uni.showToast({
@@ -208,7 +209,7 @@ export default {
 					let countPrce = Number(that.$Route.query.goodsPrice);
 					if (Number(countPrce) <= Number(that.balInfo.Money)) {
 						//生成订单
-						this.$api('goods.addCoinOrder', { coinPaymoney: that.$Route.query.goodsPrice, goodsId: that.$Route.query.goodsId, openId: uni.getStorageSync('openid') }).then(
+						this.$api('goods.addCoinOrder', { storeId: that.storeInfo.id,coinPaymoney: that.$Route.query.goodsPrice, goodsId: that.$Route.query.goodsId, openId: uni.getStorageSync('openid') }).then(
 							res => {
 								if (res.flag) {
 									that.isSubOrder = true;

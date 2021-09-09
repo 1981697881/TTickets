@@ -272,6 +272,27 @@
 				}]
 			},
 			"decorate_id": 1
+		}],
+		"float-button": [{
+			"id": 17963,
+			"type": "float-button",
+			"category": "float-button",
+			"name": "悬浮按钮",
+			"content": {
+				"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/f6b9c9d20d21df541ac52e9548486e1a.png",
+				"list": [{
+					"name": "门店",
+					"style": 3,
+					"image": "",
+					"btnimage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/f6b9c9d20d21df541ac52e9548486e1a.png",
+					"path": "",
+					"path_name": "切换门店",
+					"path_type": 1,
+					"page": ["/pages/index/user", "/pages/index/circuit", "/pages/index/videoGame", "/pages/menu/menu"
+					]
+				}]
+			},
+			"decorate_id": 1
 		}]
 	}
 }
