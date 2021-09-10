@@ -664,7 +664,9 @@ export default {
 					ticketId: that.perGoodsList.ticketId,
 					qty: that.ticketPaymoney + '',
 					custId: that.balInfo.custId,
-					placeId: that.storeInfo.v8PlaceId,					V8Url: that.storeInfo.v8Url, 
+					placeId: that.storeInfo.v8PlaceId,
+					V8Url: that.storeInfo.v8Url, 
+					storeId: that.storeInfo.id,
 					note: '[使用' + that.ticketPaymoney + '预存款购买电影票]',
 					phoneNumber: that.userInfo.phoneNumber
 				};

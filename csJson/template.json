@@ -279,12 +279,12 @@
 			"category": "float-button",
 			"name": "悬浮按钮",
 			"content": {
-				"image": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/f6b9c9d20d21df541ac52e9548486e1a.png",
+				"image": "https://i.postimg.cc/HW2CTdd6/dianpu.png",
 				"list": [{
 					"name": "门店",
 					"style": 3,
 					"image": "",
-					"btnimage": "https://shopro-1253949872.file.myqcloud.com/uploads/20200704/f6b9c9d20d21df541ac52e9548486e1a.png",
+					"btnimage": "https://i.postimg.cc/HW2CTdd6/dianpu.png",
 					"path": "",
 					"path_name": "切换门店",
 					"path_type": 1,

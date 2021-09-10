@@ -159,7 +159,9 @@ export default {
 			this.$api('user.recharge', {
 				custId: this.balInfo.custId,
 				qty: that.checkPrice,
-				placeId: that.storeInfo.v8PlaceId,				V8Url: that.storeInfo.v8Url,
+				placeId: that.storeInfo.v8PlaceId,
+				V8Url: that.storeInfo.v8Url,
+				storeId: that.storeInfo.id,
 				phoneNumber: this.userInfo.phoneNumber,
 			}).then(res => {
 				if(res.flag){

@@ -297,6 +297,7 @@ export default {
 					qty: that.amount+"",
 					custId: that.balInfo.custId,
 					placeId: that.storeInfo.v8PlaceId,		
+					storeId: that.storeInfo.id,		
 					V8Url: that.storeInfo.v8Url, 
 					note: '[使用'+that.amount+'预存款购买商品'+that.cart[0].PackageName+']',
 					phoneNumber: that.userInfo.phoneNumber,
@@ -329,7 +330,9 @@ export default {
 				packageId: that.cart[0].packageId+"",
 				couponId: that.couponId,
 				orderNo: orderNo,
-				placeId: that.storeInfo.v8PlaceId,				V8Url: that.storeInfo.v8Url,
+				placeId: that.storeInfo.v8PlaceId,
+				V8Url: that.storeInfo.v8Url,
+				storeId: that.storeInfo.id,
 				amount: that.amount+"",
 				phoneNumber: that.userInfo.phoneNumber,
 			}).then(res => {
@@ -387,6 +390,7 @@ export default {
 				couponId: that.couponId,
 				placeId: that.storeInfo.v8PlaceId,
 				V8Url: that.storeInfo.v8Url,
+				storeId: that.storeInfo.id,
 				phoneNumber: that.userInfo.phoneNumber,
 				amount: that.amount+""});
 			uni.hideLoading();

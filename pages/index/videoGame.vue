@@ -94,8 +94,10 @@ export default {
 	},
 	created() {},
 	methods: {
+		...mapActions(['getUserBalance','getUserDetails']),
 		init() {
 			this.getGoodsList();
+			this.getUserBalance()
 		},
 		// 加载更多
 		loadMore() {

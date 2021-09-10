@@ -58,13 +58,11 @@ export default {
 				let arr = this.floatData.list.filter(item => {
 					return item.page.includes(this.currentPath);
 				});
-				console.log(arr)
 				return arr;
 			}
 		}
 	},
 	created() {
-		 	console.log(this.template)
 	},
 	methods: {
 		hideModal() {
@@ -74,13 +72,11 @@ export default {
 			this.showBtnList = false;
 		},
 		onBtnItem(item) {
-			console.log(item.style)
 			if (item.style == 2) {
 				this.$tools.routerTo(item.path);
 				this.showModal = false;
 				this.showBtnList = false;
 			} else if(item.style == 3){
-				console.log(item.style)
 				this.$store.commit('STORE_INFO', {});
 			} else{
 				this.modalImg = item.image;
@@ -105,7 +101,7 @@ export default {
 				this.modalImg = this.floatList[0].image;
 				if (this.floatList[0].style == 2) {
 					this.$tools.routerTo(this.floatList[0].path)
-				} else if(item.style == 3){
+				} else if(this.floatList[0].style == 3){
 					this.$store.commit('STORE_INFO', {});
 				} else{
 					this.showModal = true
@@ -170,7 +166,7 @@ export default {
 
 	.wechat-btn {
 		// background: #ccc;
-		box-shadow: 0px 0px 20px 4px rgba(199, 199, 199, 0.22);
+		box-shadow: 0px 0px 20px 4px rgba(199, 199, 199, 0.72);
 		border-radius: 50%;
 		background: none;
 		padding: 0;

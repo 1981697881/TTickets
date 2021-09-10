@@ -238,6 +238,7 @@ export default {
 	async onShow() {
 		let that = this
 		await this.getUserDetails();
+		
 		await this.init();
 	},
 	/* async onLoad() {
@@ -293,6 +294,8 @@ export default {
 			//页面初始化
 			this.loading = true;
 			let me = this;
+			await this.getUserBalance();
+			this.goods = {}
 			me.$api('goods.lists', {
 				custId: me.balInfo.custId,
 				placeId: me.storeInfo.v8PlaceId,

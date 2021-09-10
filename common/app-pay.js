@@ -257,7 +257,9 @@ export default class AppPay {
 					api('goods.veCoin', {
 						qty: that.order.coinCount,
 						custId: store.state.user.balInfo.custId,
-						placeId: store.state.user.storeInfo.v8PlaceId,						V8Url: store.state.user.storeInfo.v8Url,
+						placeId: store.state.user.storeInfo.v8PlaceId,	
+						V8Url: store.state.user.storeInfo.v8Url,
+						storeId: store.state.user.storeInfo.id,
 						phoneNumber: store.state.user.userInfo.phoneNumber
 					}).then(resve => {
 						if (resve.flag) {
@@ -266,6 +268,7 @@ export default class AppPay {
 								custId: store.state.user.balInfo.custId,
 								placeId: store.state.user.storeInfo.v8PlaceId,
 								V8Url: store.state.user.storeInfo.v8Url,
+								storeId: store.state.user.storeInfo.id,
 								phoneNumber: store.state.user.userInfo.phoneNumber
 							}).then(resal => {
 								if (resal.flag) {
@@ -292,7 +295,9 @@ export default class AppPay {
 					api('user.recharge', {
 						custId: store.state.user.balInfo.custId,
 						qty: that.params.rechargeMoney,
-						placeId: store.state.user.storeInfo.v8PlaceId,						V8Url: store.state.user.storeInfo.v8Url,
+						placeId: store.state.user.storeInfo.v8PlaceId,
+						storeId: store.state.user.storeInfo.id,
+						V8Url: store.state.user.storeInfo.v8Url,
 						phoneNumber: store.state.user.userInfo.phoneNumber,
 					}).then(resch => {
 						if (resch.flag) {

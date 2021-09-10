@@ -125,7 +125,9 @@ export default {
 			that.$api('goods.veIntegral', { 
 				qty: that.$Route.query.integral,
 				 custId: that.balInfo.custId,
-				 placeId: that.storeInfo.v8PlaceId,				V8Url: that.storeInfo.v8Url,
+				 placeId: that.storeInfo.v8PlaceId,
+				V8Url: that.storeInfo.v8Url,
+				storeId: that.storeInfo.id,
 				  phoneNumber: that.userInfo.phoneNumber }).then(res => {
 				if (res.flag) {
 					uni.showToast({
@@ -147,7 +149,7 @@ export default {
 		//游戏币充值
 		currency() {
 			let that = this;
-			that.$api('goods.veCoin', { qty: that.$Route.query.coinCount, custId: that.balInfo.custId, phoneNumber: that.userInfo.phoneNumber }).then(res => {
+			that.$api('goods.veCoin', { qty: that.$Route.query.coinCount,storeId: that.storeInfo.id, placeId: that.storeInfo.v8PlaceId,V8Url: that.storeInfo.v8Url, custId: that.balInfo.custId, phoneNumber: that.userInfo.phoneNumber }).then(res => {
 				if (res.flag) {
 					that.integral();
 				}
@@ -185,7 +187,9 @@ export default {
 				qty: val.coinPaymoney + '',
 				custId: that.balInfo.custId,
 				coinNo: val.coinNo,
-				placeId: that.storeInfo.v8PlaceId,				V8Url: that.storeInfo.v8Url, 
+				placeId: that.storeInfo.v8PlaceId,
+				V8Url: that.storeInfo.v8Url, 
+				storeId: that.storeInfo.id,
 				note: '[使用'+val.coinPaymoney+'预存款购买'+val.coinNo+'枚游戏币]',
 				phoneNumber: that.userInfo.phoneNumber
 			};

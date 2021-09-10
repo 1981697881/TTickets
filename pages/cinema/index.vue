@@ -4,9 +4,9 @@
 			<view class="cu-dialog" @tap.stop="">
 				<radio-group class="block" @change="RadioChange">
 					<view class="cu-list menu text-left">
-						<view class="cu-item" v-for="(item, index) in PhoneList" :key="index">
+						<view class="cu-item" v-for="(item, index) in storeInfo.customerServicePhoneList" :key="index">
 							<label class="flex justify-between align-center flex-sub">
-								<view class="flex-sub" @tap="CallPhone(item.Phone)">{{ item.Name }}:{{ item.Phone }}</view>
+								<view class="flex-sub" @tap="CallPhone(item)">客服电话 ({{ index+1 }}):{{ item }}</view>
 							</label>
 						</view>
 					</view>

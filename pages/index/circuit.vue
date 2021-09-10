@@ -109,8 +109,10 @@ export default {
 		this.init()
 	},
 	methods: {
+		...mapActions(['getUserBalance','getUserDetails']),
 		init() {
 			this.getCinemaList()
+			this.getUserBalance()
 		},
 		// 路由跳转
 		jump(path, parmas) {
