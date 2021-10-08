@@ -107,9 +107,14 @@ const actions = {
 				if(res.flag){
 					commit('BAL_INFO', res.data[0]);
 					uni.setStorageSync('balInfo', res.data[0]);
+				}else{
+					commit('BAL_INFO', {});
+					uni.setStorageSync('balInfo', {});
 				}
 				resolve(res)
 			}).catch(e => {
+				commit('BAL_INFO', {});
+				uni.setStorageSync('balInfo', {});
 				reject(e)
 			})
 		})

@@ -218,6 +218,7 @@ export default {
 		this.filmId = this.$Route.query.filmId;
 		this.head.showDatetime = decodeURI(this.head.showDatetime);
 		this.listParams.scheduleId = this.$Route.query.scheduleId;
+		this.listParams.hallId = this.$Route.query.hallId; 
 		this.listParams.schedulekey = this.$Route.query.schedulekey;
 		this.listParams.scheduleKey = this.$Route.query.schedulekey;
 		this.listParams.sectionId = this.$Route.query.sectionId;
@@ -280,8 +281,11 @@ export default {
 					that.minCol = minCol - 1;
 					that.initSeatArray();
 					uni.hideLoading();
-					if (that.head.dimensional == '3D' || that.head.dimensional == '4D') {
+					/* if (that.head.dimensional == '3D' || that.head.dimensional == '4D') {
 						that.$tools.toast('请自备3D眼镜或影院前台购买','none',{duration: 2500});
+					} */
+					if (res.data.hallTip == '1') {
+						that.$tools.toast(res.data.hallTipMessage,'none',{duration: 2500});
 					}
 				} else {
 					uni.showToast({

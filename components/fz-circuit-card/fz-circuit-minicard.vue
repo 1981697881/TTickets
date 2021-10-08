@@ -1,6 +1,6 @@
 <template>
 	<view class="goods-box" v-if="detail">
-		<view class="content-box" @tap="jump('/pages/cinema/movie/list', { sectionId: detail.sectionId,scheduleId: detail.scheduleId,schedulekey:detail.scheduleKey,language: detail.language,dimensional: detail.dimensional,filmName:detail.filmName,filmId:detail.filmId,showDatetime:detail.showDatetime,hallName:detail.hallName || ''})">
+		<view class="content-box" @tap="jump('/pages/cinema/movie/list', { sectionId: detail.sectionId,scheduleId: detail.scheduleId,schedulekey:detail.scheduleKey,language: detail.language,dimensional: detail.dimensional,filmName:detail.filmName,filmId:detail.filmId,showDatetime:detail.showDatetime,hallId:detail.hallId,hallName:detail.hallName || ''})">
 			<text v-if="isTag && detail.status" class="tag-star"><text class="lg text-red cuIcon-favorfill"></text></text>
 			<view class="cont_one">
 				<view><text class="text-xl text-bold">{{detail.showDatetime.substring(11,16)}}</text></view>

@@ -132,7 +132,8 @@ export default {
 			let that = this;
 			that.$api('user.getCustomerList', { 
 				phone: that.bankInfo.phone,
-				placeId: that.storeInfo.v8PlaceId,				V8Url: that.storeInfo.v8Url,
+				placeId: that.storeInfo.v8PlaceId,
+				V8Url: that.storeInfo.v8Url,
 				returnWechat: true }).then(res => {
 				if (res.flag) {
 					if (res.data.Data) {
@@ -149,6 +150,7 @@ export default {
 					that.bankInfo.placeId = that.storeInfo.v8PlaceId
 					that.bankInfo.V8Url = that.storeInfo.v8Url
 					that.$api('user.memberBindSimple', that.bankInfo).then(res => {
+						console.log(res)
 						if (res.flag) {
 							that.getUserDetails();
 							uni.showToast({

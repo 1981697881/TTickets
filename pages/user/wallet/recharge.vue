@@ -32,7 +32,7 @@
 			<view class="notice x-bc">
 				<view class="notice-title">充值须知</view>
 				<view class="notice-detail">
-					<view>充值之后<text class="text-bold text-xl">不可退款</text>并且<text class="text-bold text-xl">不可提现</text>，清选择合适的充值金额后确认充值，谢谢</view>
+					<view>充值之后<text class="text-bold text-xl">不可退款</text>并且<text class="text-bold text-xl">不可提现</text>，请选择合适的充值金额后确认充值，谢谢</view>
 				</view>
 			</view>
 			<view class="x-c">
