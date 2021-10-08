@@ -150,21 +150,26 @@ export default {
 					that.bankInfo.placeId = that.storeInfo.v8PlaceId
 					that.bankInfo.V8Url = that.storeInfo.v8Url
 					that.$api('user.memberBindSimple', that.bankInfo).then(res => {
-						console.log(res)
+						console.log(res);
 						if (res.flag) {
-							that.getUserDetails();
-							uni.showToast({
-								title: res.msg || '绑定成功',
-								icon: 'success',
-								duration: 2000,
-								mask: true,
-								success: function() {
-									that.$Router.back();
-									// #ifdef H5
-									window.history.back(-1);
-									// #endif
-								}
-							});
+							let msgData = JSON.parse(res.msg);
+							if(msgData.success){
+								that.getUserDetails();
+								uni.showToast({
+									title: msgData.MsgText,
+									icon: 'success',
+									duration: 2000,
+									mask: true,
+									success: function() {
+										that.$Router.back();
+										// #ifdef H5
+										window.history.back(-1);
+										// #endif
+									}
+								});
+							}else{
+								that.$tools.toast(msgData.MsgText);
+							}
 						} else {
 							that.$tools.toast(res.msg);
 						}
