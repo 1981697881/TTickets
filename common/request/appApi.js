@@ -4,32 +4,32 @@
 export default {
 	/** 初始化 ↓ **/
 	init: {
-		url: 'web/index/init',
+		url: 'index/init',
 		auth: false,
 		method: 'GET',
 		// desc: '初始化数据',
 	},
 	storesForm: {
-		url: 'web/store/storesForm',
+		url: 'store/storesForm',
 		auth: false,
 		method: 'GET',
 		// desc: '获取门店',
 	},
 	posterList:{
-		url: 'web/app/api/posterList',
+		url: 'app/api/posterList',
 		auth: false,
 		method: 'POST',
 		// desc: '获取广告轮播',
 	},
 	menuList:{
-		url: 'web/app/api/menuList',
+		url: 'app/api/menuList',
 		auth: false,
 		method: 'POST',
 		// desc: '获取菜单',
 	},
 	/** 上传图片 ↓ **/
 	upload: {
-		url: 'web/index/upload',
+		url: 'index/upload',
 		auth: true,
 		method: 'POST',
 		// desc: '上传',
@@ -37,7 +37,7 @@ export default {
 
 	/** 上传Base64图片 ↓ **/
 	uploadBase64: {
-		url: 'web/index/uploadBase64',
+		url: 'index/uploadBase64',
 		auth: false,
 		method: 'POST',
 		// desc: '上传Base64位图片',
@@ -45,7 +45,7 @@ export default {
 
 	/** 消息订阅模板 ↓ **/
 	messageIds: {
-		url: 'web/notification/template',
+		url: 'notification/template',
 		auth: true,
 		method: 'GET',
 		// desc: '订阅消息模板ids',
@@ -53,14 +53,14 @@ export default {
 
 	/** 模板信息 ↓ **/
 	template: {
-		url: 'web/index/template',
+		url: 'index/template',
 		auth: false,
 		method: 'GET',
 		// desc: '模板信息',
 	},
 	/** 自定义模板页面 ↓ **/
 	custom: {
-		url: 'web/index/custom',
+		url: 'index/custom',
 		auth: false,
 		method: 'GET',
 		// desc: '自定义模板页面',
@@ -68,7 +68,7 @@ export default {
 
 	/** 直播 ↓ **/
 	live: {
-		url: 'web/live',
+		url: 'live',
 		auth: false,
 		method: 'GET',
 		// desc: '直播列表',
@@ -76,7 +76,7 @@ export default {
 	/** 微信Jssdk ↓ **/
 	wechat: {
 		jssdk: {
-			url: 'web/wechat/jssdk',
+			url: 'wechat/jssdk',
 			auth: false,
 			method: 'POST',
 			// desc: '微信Jssdk',
@@ -85,13 +85,13 @@ export default {
 	/** 签到 ↓ **/
 	user_sign: {
 		index: {
-			url: 'web/user_sign/index',
+			url: 'user_sign/index',
 			auth: true,
 			method: 'GET',
 			// desc: '签到记录',
 		},
 		sign: {
-			url: 'web/user_sign/sign',
+			url: 'user_sign/sign',
 			auth: true,
 			method: 'POST',
 			// desc: '签到',
@@ -101,25 +101,25 @@ export default {
 	/** 同步路由 ↓ **/
 	dev: {
 		asyncLink: {
-			url: 'web/index/asyncLink',
+			url: 'index/asyncLink',
 			auth: false,
 			method: 'POST',
 			// desc: '路由表',
 		},
 		asyncDecorateScreenShot: {
-			url: 'web/index/asyncDecorateScreenShot',
+			url: 'index/asyncDecorateScreenShot',
 			auth: false,
 			method: 'POST',
 			// desc: '更新店铺装修截图',
 		},
 		asyncBannerBgColor: {
-			url: 'web/index/asyncBannerBgColor',
+			url: 'index/asyncBannerBgColor',
 			auth: false,
 			method: 'POST',
 			// desc: '路由表',
 		},
 		debug: {
-			url: 'web/index/debugLog',
+			url: 'index/debugLog',
 			auth: false,
 			method: 'POST',
 		}
@@ -127,7 +127,7 @@ export default {
 
 	/** 富文本  ↓ **/
 	richtext: {
-		url: 'web/index/richtext',
+		url: 'index/richtext',
 		auth: false,
 		method: 'GET',
 		// desc: '富文本数据',
@@ -135,14 +135,14 @@ export default {
 
 	/** 三级分类 ↓ **/
 	category: {
-		url: 'web/category',
+		url: 'category',
 		auth: false,
 		method: 'GET',
 		// desc: '三级分类',
 	},
 	/** 二级分类 ↓ **/
 	categoryGoods: {
-		url: 'web/category/goods',
+		url: 'category/goods',
 		auth: false,
 		method: 'GET',
 		// desc: '点餐用',
@@ -151,13 +151,13 @@ export default {
 	/** 积分商城 ↓ **/
 	score: {
 		list: {
-			url: 'web/score_goods_sku_price/index',
+			url: 'score_goods_sku_price/index',
 			auth: false,
 			method: 'GET',
 			// desc: '积分商品列表',
 		},
 		detail: {
-			url: 'web/score_goods_sku_price/detail',
+			url: 'score_goods_sku_price/detail',
 			auth: false,
 			method: 'GET',
 			// desc: '积分详情',
@@ -167,37 +167,37 @@ export default {
 	/** 商户 ↓ **/
 	store: {
 		list: {
-			url: 'web/store/index',
+			url: 'store/index',
 			auth: true,
 			method: 'GET',
 			// desc: '商户列表，不需要storeId',
 		},
 		info: {
-			url: 'web/store.store/index',
+			url: 'store.store/index',
 			auth: true,
 			method: 'GET',
 			// desc: '商户信息',
 		},
 		order: {
-			url: 'web/store.order/index',
+			url: 'store.order/index',
 			auth: true,
 			method: 'GET',
 			// desc: '商户订单',
 		},
 		orderDetail: {
-			url: 'web/store.order/detail',
+			url: 'store.order/detail',
 			auth: true,
 			method: 'GET',
 			// desc: '订单详情',
 		},
 		orderSend: {
-			url: 'web/store.order/send',
+			url: 'store.order/send',
 			auth: true,
 			method: 'POST',
 			// desc: '订单发货',
 		},
 		orderConfirm: {
-			url: 'web/store.order/confirm',
+			url: 'store.order/confirm',
 			auth: true,
 			method: 'POST',
 			// desc: '核销订单',
@@ -207,13 +207,13 @@ export default {
 	/** 商品评论 ↓ **/
 	goods_comment: {
 		list: {
-			url: 'web/goods_comment/index',
+			url: 'goods_comment/index',
 			auth: false,
 			method: 'GET',
 			// desc: '商品评论列表',
 		},
 		type: {
-			url: 'web/goods_comment/type',
+			url: 'goods_comment/type',
 			auth: false,
 			method: 'GET',
 			// desc: '商品评论分类',
@@ -222,13 +222,13 @@ export default {
 	/** 票夹 ↓ **/
 	wallet:{
 		lists: {
-			url: 'web/memberTicket/userTicketForm',
+			url: 'memberTicket/userTicketForm',
 			auth: true,
 			method: 'POST',
 			// desc: '票劵列表',
 		},
 		detail: {
-			url: 'web/FH/getTicketInfo',
+			url: 'FH/getTicketInfo',
 			auth: true,
 			method: 'POST',
 			// desc: '票劵详情',
@@ -237,83 +237,83 @@ export default {
 	/** 影讯 ↓ **/
 	cinema: {
 		lists: {
-			url: 'web/app/api/hotMovieList',
+			url: 'app/api/hotMovieList',
 			auth: false,
 			method: 'POST',
 			// desc: '影片列表',
 		},
 		playList: {
-			url: 'web/app/api/playList',
+			url: 'app/api/playList',
 			auth: false,
 			method: 'POST',
 			// desc: '机台列表',
 		},
 		playMessage: {
-			url: 'web/app/api/playMessage',
+			url: 'app/api/playMessage',
 			auth: false,
 			method: 'POST',
 			// desc: '机台列表',
 		},
 		filmLists: {
-			url: 'web/app/api/schedulesByMovie',
+			url: 'app/api/schedulesByMovie',
 			auth: false,
 			method: 'POST',
 			// desc: '影片的影城和场次',
 		},
 		seatsLists: {
-			url: 'web/app/api/scheduleSeats',
+			url: 'app/api/scheduleSeats',
 			auth: false,
 			method: 'POST',
 			// desc: '座位列表',
 		},
 		SchedulesSoldSeats: {
-			url: 'web/app/api/downloadScheduleSoldSeats',
+			url: 'app/api/downloadScheduleSoldSeats',
 			auth: false,
 			method: 'POST',
 			// desc: '场次座位状态',
 		},lockSeats: {
-			url: 'web/FH/lockSeats',
+			url: 'FH/lockSeats',
 			auth: true,
 			method: 'POST',
 			// desc: '锁位',
 		},
 		confirmOrder: {
-			url: 'web/FH/confirmOrder',
+			url: 'FH/confirmOrder',
 			auth: true,
 			method: 'POST',
 			// desc: '确认订单',
 		},
 		escSeats: {
-			url: 'web/FH/releaseSeats',
+			url: 'FH/releaseSeats',
 			auth: true,
 			method: 'POST',
 			// desc: '取消锁位',
 		},
 		studios: {
-			url: 'web/app/api/locations',
+			url: 'app/api/locations',
 			auth: false,
 			method: 'POST',
 			// desc: '影城',
 		},locationList: {
-			url: 'web/app/api/locationList',
+			url: 'app/api/locationList',
 			auth: false,
 			method: 'POST',
 			// desc: '影城',
 		},
 		locationMovies: {
-			url: 'web/app/api/locationMovies',
+			url: 'app/api/locationMovies',
 			auth: false,
 			method: 'POST',
 			// desc: '影城下的影片',
 		},
 		locationSchedules: {
-			url: 'web/app/api/locationSchedules',
+			url: 'app/api/locationSchedules',
 			auth: false,
 			method: 'POST',
 			// desc: '影城下影片的场次',
 		},
 		movieMessage: {
-			url: 'web/app/api/movieMessage',
+			url: 'app/api/movieMessage',
 			auth: false,
 			method: 'POST',
 			// desc: '影片详情',
@@ -322,139 +322,139 @@ export default {
 	/** 商品 ↓ **/
 	goods: {
 		lists: {
-			url: 'web/V8/getMixPackage',
+			url: 'V8/getMixPackage',
 			auth: false,
 			method: 'POST',
 			// desc: '商品列表',
 		},
 		detail: {
-			url: 'web/V8/getPackageDetailInfo',
+			url: 'V8/getPackageDetailInfo',
 			auth: false,
 			method: 'POST',
 			// desc: '商品详情',
 		},
 		commodityList: {
-			url: 'web/app/api/commodityList',
+			url: 'app/api/commodityList',
 			auth: false,
 			method: 'POST',
 			// desc: '卖品列表',
 		},payGoodsMoney: {
-			url: 'web/WeChat/payGoodsMoney',
+			url: 'WeChat/payGoodsMoney',
 			auth: true,
 			method: 'POST',
 			// desc: '卖品支付',
 		},addGoodsOrder: {
-			url: 'web/memberGoods/addGoodsOrder',
+			url: 'memberGoods/addGoodsOrder',
 			auth: true,
 			method: 'POST',
 			// desc: '卖品余额支付生成订单',
 		},getMixPackageOrderList: {
-			url: 'web/V8/getMixPackageOrderList',
+			url: 'V8/getMixPackageOrderList',
 			auth: true,
 			method: 'POST',
 			// desc: '卖品订单',
 		},depositMixPackage: {
-			url: 'web/V8/depositMixPackage',
+			url: 'V8/depositMixPackage',
 			auth: true,
 			method: 'POST',
 			// desc: '卖品确认订单',
 		},getMixPackageOrderDetail: {
-			url: 'web/V8/getMixPackageOrderDetail',
+			url: 'V8/getMixPackageOrderDetail',
 			auth: true,
 			method: 'POST',
 			// desc: '卖品订单明细',
 		},payCoinMoney: {
-			url: 'web/WeChat/payCoinMoney',
+			url: 'WeChat/payCoinMoney',
 			auth: true,
 			method: 'POST',
 			// desc: '游戏币支付微信支付',
 		},addCoinOrder: {
-			url: 'web/memberCoin/addCoinOrder ',
+			url: 'memberCoin/addCoinOrder ',
 			auth: true,
 			method: 'POST',
 			// desc: '游戏币支付余额支付',
 		},veCoin: {
-			url: 'web/V8/Coin',
+			url: 'V8/Coin',
 			auth: true,
 			method: 'POST',
 			// desc: '游戏币充值',
 		},
 		veIntegral: {
-			url: 'web/V8/Integral',
+			url: 'V8/Integral',
 			auth: true,
 			method: 'POST',
 			// desc: '积分充值',
 		},
 		
 		memberGoodsList: {
-			url: 'web/memberGoods/memberGoodsList',
+			url: 'memberGoods/memberGoodsList',
 			auth: true,
 			method: 'POST',
 			// desc: '商品订单列表',
 		},
 		seckillList: {
-			url: 'web/goods/seckillList',
+			url: 'goods/seckillList',
 			auth: false,
 			method: 'GET',
 			// desc: '秒杀列表',
 		},
 		activity: {
-			url: 'web/goods/activity',
+			url: 'goods/activity',
 			auth: false,
 			method: 'GET',
 			// desc: '活动商品',
 		},
 		myGroupon: {
-			url: 'web/activity_groupon/myGroupon',
+			url: 'activity_groupon/myGroupon',
 			auth: true,
 			method: 'GET',
 			// desc: '我的拼团',
 		},
 		grouponDetail: {
-			url: 'web/activity_groupon/detail',
+			url: 'activity_groupon/detail',
 			auth: true,
 			method: 'GET',
 			// desc: '拼团详情',
 		},
 		grouponItem: {
-			url: 'web/activity_groupon/index',
+			url: 'activity_groupon/index',
 			auth: false,
 			method: 'GET',
 			// desc: '拼购列表',
 		},
 		grouponList: {
-			url: 'web/goods/grouponList',
+			url: 'goods/grouponList',
 			auth: false,
 			method: 'GET',
 			// desc: '拼团商品列表',
 		},
 		
 		favorite: {
-			url: 'web/goods/favorite',
+			url: 'goods/favorite',
 			auth: true,
 			method: 'POST',
 			// desc: '商品收藏',
 		},
 		favoriteList: {
-			url: 'web/goods/favoriteList',
+			url: 'goods/favoriteList',
 			auth: true,
 			method: 'GET',
 			// desc: '商品收藏列表',
 		},
 		viewList: {
-			url: 'web/goods/viewList',
+			url: 'goods/viewList',
 			auth: true,
 			method: 'GET',
 			// desc: '足迹列表',
 		},
 		viewDelete: {
-			url: 'web/goods/viewDelete',
+			url: 'goods/viewDelete',
 			auth: true,
 			method: 'POST',
 			// desc: '删除足迹',
 		},
 		storeAddress: {
-			url: 'web/goods/store',
+			url: 'goods/store',
 			auth: true,
 			method: 'GET',
 			// desc: '商品支持的自提点',
@@ -464,181 +464,181 @@ export default {
 	/** 用户 ↓ **/
 	user: {
 		info: {
-			url: 'web/user',
+			url: 'user',
 			auth: true,
 			method: 'GET',
 			// desc: '用户信息',
 		},getMiniAuth: {
-			url: 'web/V8/getMiniAuth',
+			url: 'V8/getMiniAuth',
 			auth: true,
 			method: 'GET',
 			// desc: '获取智科公众号id',
 		},getCustomerList: {
-			url: 'web/V8/getCustomerList',
+			url: 'V8/getCustomerList',
 			auth: true,
 			method: 'POST',
 			// desc: '获取智科公众号id',
 		},balance: {
-			url: 'web/V8/Balance',
+			url: 'V8/Balance',
 			auth: true,
 			method: 'POST',
 			// desc: '用户余额',
 		},balance2: {
-			url: 'web/V8/Balance2',
+			url: 'V8/Balance2',
 			auth: true,
 			method: 'POST',
 			// desc: '用户余额',
 		},memberBindSimple: {
-			url: 'web/V8/memberBindSimple',
+			url: 'V8/memberBindSimple',
 			auth: true,
 			method: 'POST',
 			// desc: '用户绑卡',
 		},createMember: {
-			url: 'web/V8/createMember',
+			url: 'V8/createMember',
 			auth: true,
 			method: 'POST',
 			// desc: '成为会员',
 		},deduction: {
-			url: 'web/V8/Deduction',
+			url: 'V8/Deduction',
 			auth: true,
 			method: 'POST',
 			// desc: '用户余额操作',
 		},
 		getCustPayQrCode: {
-			url: 'web/V8/getCustPayQrCode',
+			url: 'V8/getCustPayQrCode',
 			auth: true,
 			method: 'POST',
 			// desc: '用户二维码（v8）',
 		},
 		recharge: {
-			url: 'web/V8/Recharge',
+			url: 'V8/Recharge',
 			auth: true,
 			method: 'POST',
 			// desc: 'v8用户充值',
 		},payRecharge: {
-			url: 'web/WeChat/payRechargeMoney',
+			url: 'WeChat/payRechargeMoney',
 			auth: true,
 			method: 'POST',
 			// desc: '用户充值生成预付订单',
 		},
 		member: {
-			url: 'web/member/loginMember',
+			url: 'member/loginMember',
 			auth: true,
 			method: 'POST',
 			// desc: '用户信息',
 		},
 		transactionLogDorRList: {
-			url: 'web/transactionLog/transactionLogDorRList',
+			url: 'transactionLog/transactionLogDorRList',
 			auth: true,
 			method: 'POST',
 			// desc: '用户钱包账单列表',
 		},
 
 		profile: {
-			url: 'web/user/profile',
+			url: 'user/profile',
 			auth: true,
 			method: 'POST',
 			// desc: '修改用户信息',
 		},
 
 		changemobile: {
-			url: 'web/user/changemobile',
+			url: 'user/changemobile',
 			auth: true,
 			method: 'POST',
 			// desc: '修改手机号',
 		},
 
 		changepwd: {
-			url: 'web/user/changepwd',
+			url: 'user/changepwd',
 			auth: true,
 			method: 'POST',
 			// desc: '修改密码',
 		},
 
 		resetpwd: {
-			url: 'web/user/resetpwd',
+			url: 'user/resetpwd',
 			auth: false,
 			method: 'POST',
 			// desc: '重置密码',
 		},
 
 		mobileLogin: {
-			url: 'web/user/mobileLogin',
+			url: 'user/mobileLogin',
 			auth: false,
 			method: 'POST',
 			// desc: '手机验证码登录',
 		},
 
 		accountLogin: {
-			url: 'web/user/accountLogin',
+			url: 'user/accountLogin',
 			auth: false,
 			method: 'POST',
 			// desc: '账号密码登录',
 		},
 
 		getWxMiniProgramSessionKey: {
-			url: 'web/weChat/memberAuthorize',
+			url: 'weChat/memberAuthorize',
 			auth: false,
 			method: 'POST',
 			// desc: '获取用户session_key',
 		},
 		getWxMiniPhoneNumber: {
-			url: 'web/phone/phoneNumber',
+			url: 'phone/phoneNumber',
 			auth: false,
 			method: 'POST',
 			// desc: '获取用户手机号码',
 		},
 
 		wxMiniProgramLogin: {
-			url: 'web/weChat/memberLogin',
+			url: 'weChat/memberLogin',
 			auth: false,
 			method: 'POST',
 			// desc: '微信小程序登录',
 		},
 
 		wxOpenPlatformLogin: {
-			url: 'web/user/wxOpenPlatformLogin',
+			url: 'user/wxOpenPlatformLogin',
 			auth: false,
 			method: 'POST',
 			// desc: '微信APP登录',
 		},
 
 		register: {
-			url: 'web/user/register',
+			url: 'user/register',
 			auth: false,
 			method: 'POST',
 			// desc: '用户注册',
 		},
 		forgot: {
-			url: 'web/user/forgot',
+			url: 'user/forgot',
 			auth: false,
 			method: 'POST',
 			// desc: '忘记密码',
 		},
 		cdKeyList: {
-			url: 'web/cdkey/cdKeyList',
+			url: 'cdkey/cdKeyList',
 			auth: true,
 			method: 'POST',
 			//desc: '团体票列表',
 		},cdKeysList: {
-			url: 'web/memberCdkey/CdKeys',
+			url: 'memberCdkey/CdKeys',
 			auth: true,
 			method: 'POST',
 			//desc: '已购买团体票列表',
 		},CdKeyDetails: {
-			url: 'web/memberCdkeyDetail/CdKeyDetails',
+			url: 'memberCdkeyDetail/CdKeyDetails',
 			auth: true,
 			method: 'POST',
 			//desc: '团体票详情',
 		},
 		exchangeCdKey: {
-			url: 'web/memberCdkeyDetail/exchangeCdKey',
+			url: 'memberCdkeyDetail/exchangeCdKey',
 			auth: true,
 			method: 'POST',
 			//desc: '团体票兑换',
 		},
 		payCdKeyMoney: {
-			url: 'web/WeChat/payCdKeyMoney',
+			url: 'WeChat/payCdKeyMoney',
 			auth: true,
 			method: 'POST',
 			//desc: '团体票购买',
@@ -648,7 +648,7 @@ export default {
 	/** 分享 ↓ **/
 	share: {
 		add: {
-			url: 'web/share/add',
+			url: 'share/add',
 			auth: false,
 			method: 'POST',
 			// desc: '添加分享记录',
@@ -658,37 +658,37 @@ export default {
 	/** 位置 ↓ **/
 	address: {
 		area: {
-			url: 'web/address/area',
+			url: 'address/area',
 			auth: false,
 			method: 'GET',
 			// desc: '省市区',
 		},
 		list: {
-			url: 'web/address',
+			url: 'address',
 			auth: true,
 			method: 'GET',
 			// desc: '地址列表',
 		},
 		edit: {
-			url: 'web/address/edit',
+			url: 'address/edit',
 			auth: true,
 			method: 'POST',
 			// desc: '修改地址',
 		},
 		defaults: {
-			url: 'web/address/defaults',
+			url: 'address/defaults',
 			auth: true,
 			method: 'GET',
 			// desc: '默认地址',
 		},
 		info: {
-			url: 'web/address/info',
+			url: 'address/info',
 			auth: true,
 			method: 'GET',
 			// desc: '地址详情',
 		},
 		del: {
-			url: 'web/address/del',
+			url: 'address/del',
 			auth: true,
 			method: 'POST',
 			// desc: '删除',
@@ -698,7 +698,7 @@ export default {
 	/** 短信 ↓ **/
 	sms: {
 		send: {
-			url: 'web/sms/send',
+			url: 'sms/send',
 			auth: false,
 			method: 'POST',
 			// desc: '发送短信',
@@ -708,13 +708,13 @@ export default {
 	/** 常见问题 ↓ **/
 	faq: {
 		list: {
-			url: 'web/faq',
+			url: 'faq',
 			auth: false,
 			method: 'GET',
 			// desc: '常见问题列表',
 		},
 		About: {
-			url: 'web/app/api/About',
+			url: 'app/api/About',
 			auth: false,
 			method: 'POST',
 			// desc: '用户协议',
@@ -724,13 +724,13 @@ export default {
 	/** 意见反馈 ↓ **/
 	feedback: {
 		type: {
-			url: 'web/feedback/type',
+			url: 'feedback/type',
 			auth: true,
 			method: 'GET',
 			// desc: '意见反馈类型',
 		},
 		add: {
-			url: 'web/feedback/add',
+			url: 'feedback/add',
 			auth: true,
 			method: 'POST',
 			// desc: '提交意见',
@@ -740,20 +740,20 @@ export default {
 	/** 购物车 ↓ **/
 	cart: {
 		index: {
-			url: 'web/cart',
+			url: 'cart',
 			auth: true,
 			method: 'POST',
 			// desc: '购物车商品列表',
 		},
 		add: {
-			url: 'web/cart/add',
+			url: 'cart/add',
 			auth: true,
 			method: 'POST',
 			// desc: '添加购物车',
 		},
 
 		edit: {
-			url: 'web/cart/edit',
+			url: 'cart/edit',
 			auth: true,
 			method: 'POST',
 			// desc: '编辑购物车',
@@ -763,121 +763,121 @@ export default {
 	/** 订单 ↓ **/
 	order: {
 		index: {
-			url: 'web/order/index',
+			url: 'order/index',
 			auth: true,
 			method: 'GET',
 			// desc: '订单列表',
 		},
 		pre: {
-			url: 'web/order/pre',
+			url: 'order/pre',
 			auth: true,
 			method: 'POST',
 			// desc: '预备提交订单',
 		},
 		createOrder: {
-			url: 'web/order/createOrder',
+			url: 'order/createOrder',
 			auth: true,
 			method: 'POST',
 			// desc: '提交订单',
 		},
 		detail: {
-			url: 'web/order/detail',
+			url: 'order/detail',
 			auth: true,
 			method: 'GET',
 			// desc: '订单详情',
 		},
 		itemDetail: {
-			url: 'web/order/itemDetail',
+			url: 'order/itemDetail',
 			auth: true,
 			method: 'GET',
 			// desc: '订单商品详情',
 		},
 		confirm: {
-			url: 'web/order/confirm',
+			url: 'order/confirm',
 			auth: true,
 			method: 'POST',
 			// desc: '确认收货',
 		},
 		refund: {
-			url: 'web/order/refund',
+			url: 'order/refund',
 			auth: true,
 			method: 'POST',
 			// desc: '申请退款',
 		},
 		cancel: {
-			url: 'web/order/cancel',
+			url: 'order/cancel',
 			auth: true,
 			method: 'POST',
 			// desc: '取消订单',
 		},
 		statusNum: {
-			url: 'web/order/statusNum',
+			url: 'order/statusNum',
 			auth: true,
 			method: 'GET',
 			// desc: '订单dot',
 		},
 		comment: {
-			url: 'web/order/comment',
+			url: 'order/comment',
 			auth: true,
 			method: 'POST',
 			// desc: '评价商品',
 		},
 		coupons: {
-			url: 'web/order/coupons',
+			url: 'order/coupons',
 			auth: true,
 			method: 'POST',
 			// desc: '商品可用优惠券',
 		},
 		aftersale: {
-			url: 'web/order_aftersale/aftersale',
+			url: 'order_aftersale/aftersale',
 			auth: true,
 			method: 'POST',
 			// desc: '申请售后',
 		},
 		aftersaleList: {
-			url: 'web/order_aftersale/index',
+			url: 'order_aftersale/index',
 			auth: true,
 			method: 'GET',
 			// desc: '售后列表',
 		},
 		aftersaleDetail: {
-			url: 'web/order_aftersale/detail',
+			url: 'order_aftersale/detail',
 			auth: true,
 			method: 'GET',
 			// desc: '售后列表详情',
 		},
 		deleteOrder: {
-			url: 'web/order/delete',
+			url: 'order/delete',
 			auth: true,
 			method: 'POST',
 			// desc: '删除订单',
 		},
 		deleteAftersaleOrder: {
-			url: 'web/order_aftersale/delete',
+			url: 'order_aftersale/delete',
 			auth: true,
 			method: 'POST',
 			// desc: '删除售后订单',
 		},
 		cancelAftersaleOrder: {
-			url: 'web/order_aftersale/cancel',
+			url: 'order_aftersale/cancel',
 			auth: true,
 			method: 'POST',
 			// desc: '取消售后订单',
 		},
 		expressList: {
-			url: 'web/order_express/index',
+			url: 'order_express/index',
 			auth: true,
 			method: 'GET',
 			// desc: '包裹列表',
 		},
 		expressDetail: {
-			url: 'web/order_express/detail',
+			url: 'order_express/detail',
 			auth: true,
 			method: 'GET',
 			// desc: '包裹详情',
 		},
 		/* itemDetail: {
-			url: 'web/order/itemDetail',
+			url: 'order/itemDetail',
 			auth: true,
 			method: 'GET',
 			// desc: '订单商品详情',
@@ -887,7 +887,7 @@ export default {
 	/** 支付 ↓ **/
 	pay: {
 		prepay: {
-			url: 'web/WeChat/payMoney',
+			url: 'WeChat/payMoney',
 			auth: true,
 			method: 'POST',
 			// desc: '发起支付',
@@ -897,13 +897,13 @@ export default {
 	/** 提现 ↓ **/
 	user_wallet_apply: {
 		apply: {
-			url: 'web/user_wallet_apply/apply',
+			url: 'user_wallet_apply/apply',
 			auth: true,
 			method: 'POST',
 			// desc: '申请提现',
 		},
 		rule: {
-			url: 'web/user_wallet_apply/rule',
+			url: 'user_wallet_apply/rule',
 			auth: true,
 			method: 'GET',
 			// desc: '体现规则',
@@ -913,7 +913,7 @@ export default {
 
 	/** 钱包明细 ↓ **/
 	user_wallet_log: {
-		url: 'web/user_wallet_log',
+		url: 'user_wallet_log',
 		auth: true,
 		method: 'GET',
 		// desc: '钱包明细',
@@ -922,13 +922,13 @@ export default {
 	/** 银行卡 ↓ **/
 	user_bank: {
 		info: {
-			url: 'web/user_bank/info',
+			url: 'user_bank/info',
 			auth: true,
 			method: 'GET',
 			// desc: '银行卡信息',
 		},
 		edit: {
-			url: 'web/user_bank/edit',
+			url: 'user_bank/edit',
 			auth: true,
 			method: 'POST',
 			// desc: '编辑银行卡信息',
@@ -938,13 +938,13 @@ export default {
 	/** 评论 ↓ **/
 	comment: {
 		submit: {
-			url: 'web/comment/submit',
+			url: 'comment/submit',
 			auth: true,
 			method: 'POST',
 			// desc: '提交评论',
 		},
 		list: {
-			url: 'web/comment/list',
+			url: 'comment/list',
 			auth: true,
 			method: 'GET',
 			// desc: '评论列表',
@@ -954,37 +954,37 @@ export default {
 	/** 优惠券 ↓ **/
 	coupons: {
 		list: {
-			url: 'web/memberCouponDetail/list',
+			url: 'memberCouponDetail/list',
 			auth: true,
 			method: 'POST',
 			// desc: '个人中心优惠券列表',
 		},
 		couponIssueList: {
-			url: 'web/couponIssue/couponIssueList',
+			url: 'couponIssue/couponIssueList',
 			auth: true,
 			method: 'POST',
 			// desc: '个人中心可领取优惠券',
 		},
 		lists: {
-			url: 'web/coupons/lists',
+			url: 'coupons/lists',
 			auth: false,
 			method: 'GET',
 			// desc: '首页优惠券',
 		},
 		get: {
-			url: 'web/memberCouponDetail/getCoupon',
+			url: 'memberCouponDetail/getCoupon',
 			auth: true,
 			method: 'POST',
 			// desc: '领取',
 		},
 		detail: {
-			url: 'web/coupons/detail',
+			url: 'coupons/detail',
 			auth: true,
 			method: 'GET',
 			// desc: '购物券详情',
 		},
 		goods: {
-			url: 'web/coupons/goods',
+			url: 'coupons/goods',
 			auth: true,
 			method: 'GET',
 			// desc: '适用商品',

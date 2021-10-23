@@ -292,7 +292,8 @@ export default {
 			let that = this;
 			if(that.userInfo.phoneNumber){
 				that.isSubOrder = true
-				let params = {
+				that.confirmOrder('res.data',val.goodsNo)
+				/* let params = {
 					goodsNo: val.goodsNo,
 					qty: that.amount+"",
 					custId: that.balInfo.custId,
@@ -311,7 +312,7 @@ export default {
 							title: res.msg
 						})
 					}
-				});
+				}); */
 				
 			}else{
 				uni.showToast({
@@ -330,6 +331,7 @@ export default {
 				packageId: that.cart[0].packageId+"",
 				couponId: that.couponId,
 				orderNo: orderNo,
+				payType: 1,
 				placeId: that.storeInfo.v8PlaceId,
 				V8Url: that.storeInfo.v8Url,
 				storeId: that.storeInfo.id,

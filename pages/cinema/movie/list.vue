@@ -84,7 +84,8 @@
 						:class="SelectNum > 0 ? 'bg-red-1' : 'bg-unbtn'"
 						@click="buySeat"
 					>
-						{{ SelectNum > 0 ? '￥ ' + totalPrice + ' 确认座位' : '请选座位' }}
+						<!-- {{ SelectNum > 0 ? '￥ ' + totalPrice + ' 确认座位' : '请选座位' }} -->
+						{{ SelectNum > 0 ? ' 确认座位' : '请选座位' }}
 					</button>
 				</view>
 				<view class="dp-f jc-c ai-c mb-20 fz-28" v-if="showTis">
