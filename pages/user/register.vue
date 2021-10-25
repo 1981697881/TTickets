@@ -124,18 +124,23 @@ export default {
 					sex: that.userInfo.sex
 				}).then(res => {
 					if (res.flag) {
-						that.getUserDetails();
-						uni.showToast({
-							title: res.msg || '注册成功',
-							icon: 'success',
-							duration: 2000,
-							mask: true,
-							success: function() {
-								setTimeout(function() {
-									that.$Router.back();
-								}, 2000);
-							}
-						});
+						let msgData = JSON.parse(res.msg);
+						if(msgData.success){
+							that.getUserDetails();
+							uni.showToast({
+								title: res.msg || '注册成功',
+								icon: 'success',
+								duration: 2000,
+								mask: true,
+								success: function() {
+									setTimeout(function() {
+										that.$Router.back();
+									}, 2000);
+								}
+							});
+						}else{
+							that.$tools.toast(msgData.MsgText);
+						}
 					}
 				});
 			} else {
