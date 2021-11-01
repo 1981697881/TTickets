@@ -124,7 +124,7 @@ export default {
 					sex: that.userInfo.sex
 				}).then(res => {
 					if (res.flag) {
-						let msgData = JSON.parse(res.msg);
+						let msgData = JSON.parse(res.data);
 						if(msgData.success){
 							that.getUserDetails();
 							uni.showToast({

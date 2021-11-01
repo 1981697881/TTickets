@@ -128,7 +128,7 @@ export default {
 			that.$api('goods.commodityList', { goodsType: 1 }).then(res => {
 				if (res.flag) {
 					that.isLoading = false;
-					that.goodsList = [...that.goodsList, ...res.data];
+					that.goodsList = [ ...res.data];
 					that.lastPage = res.data.last_page;
 					if (that.listParams.page < res.data.last_page) {
 						that.loadStatus = '';

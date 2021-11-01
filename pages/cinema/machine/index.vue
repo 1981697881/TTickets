@@ -14,7 +14,6 @@
 							class="goods-item"
 							v-for="(goods, index) in goodsList"
 							:key="index"
-							@tap="jump('/pages/order/payment/chargeMoney', {})"
 						>
 							<fz-image-card :detail="goods" :tabId="tabId" :isTag="true"></fz-image-card>
 						</view>
