@@ -120,6 +120,18 @@
 				"title": "商品详情",
 				"group": "卖品"
 			}
+		},{
+			"path": "pages/menu/pay",
+			"name": "menu",
+			"style": {
+				"navigationBarTitleText": "支付"
+			},
+			"meta": {
+				"auth": true,
+				"async": true,
+				"title": "小食和商品",
+				"group": "卖品"
+			}
 		}, {
 			"path": "pages/index/videoGame",
 			"name": "videoGame",
@@ -132,19 +144,7 @@
 				"title": "电玩充值",
 				"group": "电玩"
 			}
-		}, {
-			"path": "pages/menu/pay",
-			"name": "menu",
-			"style": {
-				"navigationBarTitleText": "支付"
-			},
-			"meta": {
-				"auth": true,
-				"async": true,
-				"title": "小食和商品",
-				"group": "卖品"
-			}
-		},
+		}, 
 		{
 			"path": "pages/index/view",
 			"name": "view",
