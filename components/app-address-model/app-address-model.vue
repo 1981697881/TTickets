@@ -1,6 +1,6 @@
 <template>
 	<!-- #ifdef MP-WEIXIN  -->
-	<view class="force-login-wrap page_box" v-if="Object.keys(storeInfo).length == 0">
+	<view class="force-login-wrap page_box" v-if="Object.keys(storeInfo).length == 0 && Object.keys(storeInfo).length == 1">
 		<view class="head_box"></view>
 		<view class="content_box" :style="'margin-top:'+marginTop">
 			<view class="address-list" v-for="(address,index) in addressList" :key="address.id" @tap="useAddress(address)">
@@ -71,6 +71,10 @@ export default {
 			      latitude: res.latitude,
 			    }).then(reso => {
 					if (reso.flag) {
+						if(reso.data.length == 1){
+							that.$store.commit('STORE_INFO', reso.data[0]);
+							 that.$emit('init');
+						}
 						that.addressList = reso.data;
 					}
 				});

@@ -285,7 +285,8 @@ export default {
 					/* if (that.head.dimensional == '3D' || that.head.dimensional == '4D') {
 						that.$tools.toast('请自备3D眼镜或影院前台购买','none',{duration: 2500});
 					} */
-					if (res.data.hallTip == '1') {
+					//判断影厅和影片类型
+					if ((res.data.tipSwitch == '0' && res.data.dimensional=='3D') || (res.data.tipSwitch4d == '0' && res.data.dimensional=='4D')) {
 						that.$tools.toast(res.data.hallTipMessage,'none',{duration: 2500});
 					}
 				} else {

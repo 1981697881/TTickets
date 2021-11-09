@@ -128,7 +128,7 @@ export default {
 						if(msgData.success){
 							that.getUserDetails();
 							uni.showToast({
-								title: res.msg || '注册成功',
+								title: msgData.MsgText || '注册成功',
 								icon: 'success',
 								duration: 2000,
 								mask: true,

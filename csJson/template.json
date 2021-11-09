@@ -288,8 +288,7 @@
 					"path": "",
 					"path_name": "切换门店",
 					"path_type": 1,
-					"page": ["/pages/index/user", "/pages/index/circuit", "/pages/index/videoGame", "/pages/menu/menu"
-					]
+					"page": []
 				}]
 			},
 			"decorate_id": 1
