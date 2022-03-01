@@ -103,7 +103,7 @@
 			<view class="notice x-bc">
 				<view class="notice-title">购票须知</view>
 				<view class="notice-detail">
-					<view>1.由于设备故障灯不可抗力因素，存在少量场次取消的情况下，会进行退票退款</view>
+					<view>1.由于设备故障等不可抗力因素，存在少量场次取消的情况下，会进行退票退款</view>
 					<view>2.由于影院系统不稳定等因素，存在出票失败的情况，会进行退款</view>
 					<view>3.取票码可以在“票夹-电影票”中查看</view>
 					<view>4.会员订票优惠仅在使用余额购票时体现，微信支付则按正常票价支付</view>

@@ -287,7 +287,7 @@ export default {
 					} */
 					//判断影厅和影片类型
 					if ((res.data.tipSwitch == '0' && res.data.dimensional=='3D') || (res.data.tipSwitch4d == '0' && res.data.dimensional=='4D')) {
-						that.$tools.toast(res.data.hallTipMessage,'none',{duration: 2500});
+						that.$tools.toast(res.data.tipMessage,'none',{duration: 2500});
 					}
 				} else {
 					uni.showToast({

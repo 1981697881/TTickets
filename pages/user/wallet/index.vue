@@ -10,7 +10,7 @@
 				<view class="left y-start">
 					<view class="flex"><!-- -->
 						<text class="title">账户：<text class="text-red"> {{balInfo.Number || '您还不是会员!'}}</text></text>
-						<button v-if="!balInfo.Number"  class="cu-btn sm round shadow lines-orange margin-left" @tap="register">成为会员</button>
+						<button v-if="!balInfo.Number" class="cu-btn sm round shadow lines-orange margin-left" @tap="register">成为会员</button>
 					</view>
 					<text class="money-num">{{balInfo.Money || "0.00"}}</text>
 					<text class="text-olive">
@@ -100,7 +100,8 @@ export default {
 	computed: {
 		...mapState({
 			userInfo: state => state.user.userInfo,
-			balInfo: state => state.user.balInfo
+			balInfo: state => state.user.balInfo,
+			storeInfo: state => state.user.storeInfo
 		})
 	},
 	onShow() {

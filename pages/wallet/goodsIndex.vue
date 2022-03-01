@@ -96,7 +96,8 @@ export default {
 			let that = this;
 			that.$api('goods.getMixPackageOrderDetail', {
 				orderID : that.orderID,
-				placeId: that.storeInfo.v8PlaceId,				V8Url: that.storeInfo.v8Url, 
+				placeId: that.storeInfo.v8PlaceId,
+				V8Url: that.storeInfo.v8Url, 
 			}).then(res => {
 				if (res.flag) {
 					that.walletInfo = res.data;

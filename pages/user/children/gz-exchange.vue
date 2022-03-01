@@ -18,7 +18,10 @@ import { mapMutations, mapActions, mapState } from 'vuex';
 export default {
 	components: {},
 	props: {
-		exchangeCode: '',
+		exchangeCode: {
+			type: Object,
+			default: {}
+		},
 	},
 	data() {
 		return {
@@ -26,31 +29,48 @@ export default {
 				status: false,
 				value: ''
 			},
+			type: '',
 			phone: ''
 		};
 	},
 	computed: {},
 	onLoad() {},
 	mounted() {
-		this.code.value = this.exchangeCode
+		this.code.value = this.exchangeCode.exchangeCode
+		this.type = this.exchangeCode.type
 	},
 	methods: {
 		...mapActions(['getUserInfo']),
 		//兑换
 		exchange() {
 			let that = this;
-			that.$api('user.exchangeCdKey', {
-				openId: uni.getStorageSync('openid'),
-				memberCdkeyShare: that.code.value
-			}).then(res => {
-				if (res.flag) {
-					that.code.value= ''
-					that.$tools.toast('兑换成功');
-					/* that.getUserInfo(); */
-				}else{
-					that.$tools.toast(res.msg);
-				}
-			});
+			if(that.type =='exchangeCode'){
+				that.$api('user.exchangeCdKey', {
+					openId: uni.getStorageSync('openid'),
+					memberCdkeyShare: that.code.value
+				}).then(res => {
+					if (res.flag) {
+						that.code.value= ''
+						that.$tools.toast('兑换成功');
+						/* that.getUserInfo(); */
+					}else{
+						that.$tools.toast(res.msg);
+					}
+				});
+			}else if(that.type =='exchangeTCode'){
+				that.$api('user.getLimitCoupon', {
+					openId: uni.getStorageSync('openid'),
+					exchangeCode: that.code.value
+				}).then(res => {
+					if (res.flag) {
+						that.code.value= ''
+						that.$tools.toast('兑换成功');
+						/* that.getUserInfo(); */
+					}else{
+						that.$tools.toast(res.msg);
+					}
+				});
+			}
 		},
 		GetRequest(urlStr) {
 			if (typeof urlStr == 'undefined') {

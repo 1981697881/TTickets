@@ -106,7 +106,7 @@ export default {
 			this.searchVal = this.$Route.query.keywords;
 		}
 		
-		this.init()
+		/* this.init() */
 	},
 	methods: {
 		...mapActions(['getUserBalance','getUserDetails']),

@@ -9,7 +9,7 @@
 			</view>
 		</view> -->
 		<view class="content_box">
-			<gz-exchange :tabId="tabCurrent" :exchangeCode="exchangeCode" v-if="tabCurrent == 'ended'"></gz-exchange>
+			<gz-exchange :tabId="tabCurrent" :exchangeCode="exchange" v-if="tabCurrent == 'ended'"></gz-exchange>
 			<gz-purchase :tabId="tabCurrent" v-if="tabCurrent == 'ing'"></gz-purchase>
 			<gz-purchased :tabId="tabCurrent" v-if="tabCurrent == 'nostart'"></gz-purchased>
 		</view>
@@ -47,6 +47,10 @@ export default {
 			exchangeCode: '',
 			tabCurrent: 'ended',
 			goodsList: [],
+			exchange:{
+				type: '',
+				exchangeCode: ''
+			},
 			loading: false,
 			tabList: [
 				{
@@ -69,7 +73,12 @@ export default {
 		let that = this;
 		let q = decodeURIComponent(options.q);
 		if (typeof that.GetRequest(q).exchangeCode != "undefined") {
-			that.exchangeCode = that.GetRequest(q).exchangeCode
+			that.exchange.type = 'exchangeCode'
+			that.exchange.exchangeCode = that.GetRequest(q).exchangeCode
+		}
+		if(typeof that.GetRequest(q).exchangeTCode != "undefined"){
+			that.exchange.type = 'exchangeTCode' 
+			that.exchange.exchangeCode = that.GetRequest(q).exchangeTCode
 		}
 	},
 	mounted() {},

@@ -3,11 +3,11 @@
 		<view class="head_box margin-top">
 			<view class="cu-form-group text-xl text-bold text-brown">我的账户：{{balInfo.Number || ''}}</view>
 			<view class="cu-form-group text-grey">我的余额：{{ balInfo.Money || "0.00" }} 元</view>
-			<view class="cu-form-group text-bold">充值金额：</view>
+			<view class="cu-form-group text-bold">充值金额：{{checkPrice}} 元</view>
 		</view>
 		<view class="content_box">
-			<view class="y-f money-box">
-				<button
+			<!--<view class="y-f money-box">
+				 <button
 					v-for="(item, index) in setMeal"
 					:key="index"
 					class="money"
@@ -16,10 +16,20 @@
 					:data-target="index"
 					:data-price="item.price"
 				>
-					{{ item.price }}
-				</button>
-			</view>
-			<radio-group @change="selPay" class="pay-box" v-if="payment">
+				{{item.price}}
+				</button> 
+			</view>-->
+			<radio-group @change="selMoney" class="pay-box" style="margin-top: 20rpx;">
+				<label class="x-bc pay-item" style="height: 120rpx" v-for="(item, index) in setMeal"
+					:key="index">
+					<view class="x-f" style="flex-direction:column;align-items: flex-start;">
+						<text class="text-orange text-xl text-bold"><text class="text-red">￥</text> {{item.price}}</text>
+						<text class="text-sm text-gray">送爆米花</text>
+					</view>
+					<radio :value="item.price" class=" pay-radio orange"></radio>
+				</label>
+			</radio-group>
+			<radio-group @change="selPay" class="pay-box" style="margin-top: 20rpx;" v-if="payment">
 				<label class="x-bc pay-item" v-if="payment.includes('wechat')">
 					<view class="x-f">
 						<image class="pay-img" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/wx_pay.png" mode=""></image>
@@ -71,7 +81,7 @@ export default {
 			payType: 'wechat',
 			options: {},
 			checkItem: 0,
-			checkPrice: 200,
+			checkPrice: 0,
 			orderDetail: {},
 			isAndroid: uni.getStorageSync('isAndroid'),
 			platform: uni.getStorageSync('platform')
@@ -120,6 +130,9 @@ export default {
 		},
 		selPay(e) {
 			this.payType = e.detail.value;
+		},
+		selMoney(e) {
+			this.checkPrice = e.detail.value
 		},
 		// 发起支付
 		confirmPay() {
@@ -209,7 +222,7 @@ export default {
 }
 .money-box {
 	background: #fff;
-	height: 340rpx;
+	height: auto;
 	display: flex;
 	flex-direction: row;
 	flex-wrap: wrap;
@@ -218,7 +231,7 @@ export default {
 	margin-bottom: 20rpx;
 	.money {
 		text-align: center;
-		width: 220rpx;
+		width: 920rpx;
 		padding: 0 !important;
 		margin: 15rpx;
 		height: 120rpx;

@@ -166,7 +166,8 @@ export default {
 			that.$api('goods.detail', {
 				packageId: that.$Route.query.PackageId,
 				custId: that.balInfo.custId,
-				placeId: that.storeInfo.v8PlaceId,				V8Url: that.storeInfo.v8Url,
+				placeId: that.storeInfo.v8PlaceId,
+				V8Url: that.storeInfo.v8Url,
 			}).then(res => {
 				if (res.flag) {
 					that.goodsInfo = res.data.Data;

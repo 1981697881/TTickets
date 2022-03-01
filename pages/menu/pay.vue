@@ -10,9 +10,9 @@
 							<view class="goods-title more-t">{{ item.PackageName }}</view>
 							<view class="action">
 							<view class="btn-group">
-								<button type="default" plain class="btn" size="mini" hover-class="none" @tap="handlePropertyReduce(item)"><view class="cuIcon-move"></view></button>
+								<!-- <button type="default" plain class="btn" size="mini" hover-class="none" @tap="handlePropertyReduce(item)"><view class="cuIcon-move"></view></button> -->
 								<view class="number">{{ item.goodsCount }}</view>
-								<button type="primary" class="btn" size="min" hover-class="none" @tap="handlePropertyAdd(item)"><view class="cuIcon-add"></view></button>
+								<!-- <button type="primary" class="btn" size="min" hover-class="none" @tap="handlePropertyAdd(item)"><view class="cuIcon-add"></view></button> -->
 							</view>
 							</view>
 							<view class="size-tip">{{ item.Note || '' }}</view>

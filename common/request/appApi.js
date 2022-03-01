@@ -637,6 +637,12 @@ export default {
 			method: 'POST',
 			//desc: '团体票兑换',
 		},
+		getLimitCoupon: {
+			url: 'memberCouponDetail/getLimitCoupon ',
+			auth: true,
+			method: 'POST',
+			//desc: '优惠券兑换',
+		},
 		payCdKeyMoney: {
 			url: 'WeChat/payCdKeyMoney',
 			auth: true,
