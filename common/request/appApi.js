@@ -338,7 +338,14 @@ export default {
 			auth: false,
 			method: 'POST',
 			// desc: '卖品列表',
-		},payGoodsMoney: {
+		},
+		amountMoneyList: {
+			url: 'amountMoney/amountMoneyList',
+			auth: false,
+			method: 'GET',
+			// desc: '充值金额列表',
+		},
+		payGoodsMoney: {
 			url: 'WeChat/payGoodsMoney',
 			auth: true,
 			method: 'POST',

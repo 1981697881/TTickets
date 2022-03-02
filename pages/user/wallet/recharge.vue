@@ -23,10 +23,10 @@
 				<label class="x-bc pay-item" style="height: 120rpx" v-for="(item, index) in setMeal"
 					:key="index">
 					<view class="x-f" style="flex-direction:column;align-items: flex-start;">
-						<text class="text-orange text-xl text-bold"><text class="text-red">￥</text> {{item.price}}</text>
-						<text class="text-sm text-gray">送爆米花</text>
+						<text class="text-orange text-xl text-bold"><text class="text-red">￥</text> {{item.amount}}</text>
+						<text class="text-sm text-gray">{{item.remark}}</text>
 					</view>
-					<radio :value="item.price" class=" pay-radio orange"></radio>
+					<radio :value="item.amount" class=" pay-radio yellow"></radio>
 				</label>
 			</radio-group>
 			<radio-group @change="selPay" class="pay-box" style="margin-top: 20rpx;" v-if="payment">
@@ -64,19 +64,7 @@ export default {
 	components: {},
 	data() {
 		return {
-			setMeal:[{
-				price: "200",
-				itemId: 1,
-			},{
-				price: "300",
-				itemId: 2,
-			},{
-				price: "500",
-				itemId: 3,
-			},{
-				price: "1000",
-				itemId: 4,
-			}],
+			setMeal:[],
 			isSubOrder: false,
 			payType: 'wechat',
 			options: {},
@@ -100,6 +88,7 @@ export default {
 		if(this.$Route.query){
 			this.orderDetail = this.$Route.query
 		}
+		this.getMealList();
 		if (options.openid) {
 			//检测到回传openid
 			uni.setStorageSync('openid', options.openid);
@@ -111,6 +100,7 @@ export default {
 			window.location.reload();
 			throw 'stop';
 		}
+		
 		uni.removeStorageSync('payReload');
 		// #endif
 	},
@@ -133,6 +123,19 @@ export default {
 		},
 		selMoney(e) {
 			this.checkPrice = e.detail.value
+		},
+		getMealList(){
+			let that = this
+			this.$api('goods.amountMoneyList', {}).then(res => {
+				if(res.flag){
+					that.setMeal = res.data
+				}else{
+					uni.showToast({
+						icon: 'none',
+						title: res.msg
+					})
+				}
+			});
 		},
 		// 发起支付
 		confirmPay() {
