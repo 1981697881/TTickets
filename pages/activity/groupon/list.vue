@@ -166,7 +166,7 @@ export default {
 			font-weight: bold;
 			color: rgba(255, 255, 255, 0.8);
 		}
-		/deep/.goods-right {
+		:deep(.goods-right) {
 			width: 460rpx;
 			.title {
 				width: 460rpx;

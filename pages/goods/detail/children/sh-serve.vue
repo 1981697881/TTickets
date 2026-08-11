@@ -14,8 +14,7 @@
 			</view>
 			<text class="cuIcon-right"></text>
 		</view>
-		<view class="cu-modal bottom-modal" style="z-index: 999;" :class="{ show: showModal }" @tap="hideModal" catchtouchmove="true">
-			<view class="cu-dialog server-modal" @tap.stop style="background: none;">
+		<app-safe-popup v-model="showModal" type="bottom">
 				<view class="server-modal-box page_box">
 					<view class="modal-head x-c">
 						<text class="head-title">服务保障</text>
@@ -32,8 +31,7 @@
 					</view>
 					<view class="modal-foot x-c"><button class="cu-btn serve-btn" @tap="hideModal">确定</button></view>
 				</view>
-			</view>
-		</view>
+		</app-safe-popup>
 	</view>
 </template>
 
@@ -45,14 +43,16 @@ export default {
 	},
 	props: {
 		serveList: {},
+		modelValue: { type: Boolean, default: undefined },
 		value: {}
 	},
 	computed: {
 		showModal: {
 			get() {
-				return this.value;
+				return this.modelValue === undefined ? Boolean(this.value) : this.modelValue;
 			},
 			set(val) {
+				this.$emit('update:modelValue', val);
 				this.$emit('input', val);
 			}
 		}

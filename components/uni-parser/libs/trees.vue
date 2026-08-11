@@ -72,7 +72,8 @@
 <script>
 	global.Parser = {};
 	import trees from './trees'
-	const errorImg = require('../libs/config.js').errorImg;
+	import cfg from '../libs/config.js';
+	const errorImg = cfg.errorImg;
 	export default {
 		components: {
 			trees
@@ -104,7 +105,7 @@
 			this.init();
 		},
 		// #ifdef APP-PLUS
-		beforeDestroy() {
+		beforeUnmount() {
 			this.observer && this.observer.disconnect();
 		},
 		// #endif
@@ -124,7 +125,7 @@
 									if (res.intersectionRatio) {
 										for (var j = this.nodes.length; j--;)
 											if (this.nodes[j].name == 'img')
-												this.$set(this.ctrl, j, 1);
+												this.ctrl[j] = 1;
 										this.observer.disconnect();
 									}
 								})
@@ -186,21 +187,21 @@
 				var i = e.currentTarget.dataset.i;
 				if (this.lazyLoad && !this.ctrl[i]) {
 					// #ifdef QUICKAPP-WEBVIEW
-					this.$set(this.ctrl, i, 0);
+					this.ctrl[i] = 0;
 					this.$nextTick(function() {
 						// #endif
 						// #ifndef APP-PLUS
-						this.$set(this.ctrl, i, 1);
+						this.ctrl[i] = 1;
 						// #endif
 						// #ifdef QUICKAPP-WEBVIEW
 					})
 					// #endif
 				} else if (this.loading && this.ctrl[i] != 2) {
 					// #ifdef QUICKAPP-WEBVIEW
-					this.$set(this.ctrl, i, 0);
+					this.ctrl[i] = 0;
 					this.$nextTick(function() {
 						// #endif
-						this.$set(this.ctrl, i, 2);
+						this.ctrl[i] = 2;
 						// #ifdef QUICKAPP-WEBVIEW
 					})
 					// #endif
@@ -260,12 +261,12 @@
 					// 加载其他 source
 					var index = this.ctrl[i] ? this.ctrl[i].i + 1 : 1;
 					if (index < this.nodes[i].attrs.source.length)
-						this.$set(this.ctrl, i, index);
+						this.ctrl[i] = index;
 					if (e.detail.__args__)
 						e.detail = e.detail.__args__[0];
 				} else if (errorImg && source == 'img') {
 					this.top.imgList.setItem(target.dataset.index, errorImg);
-					this.$set(this.ctrl, i, 3);
+					this.ctrl[i] = 3;
 				}
 				this.top && this.top.$emit('error', {
 					source,
@@ -274,7 +275,7 @@
 				});
 			},
 			_loadVideo(e) {
-				this.$set(this.ctrl, e.target.dataset.i, 0);
+				this.ctrl[e.target.dataset.i] = 0;
 			}
 		}
 	}

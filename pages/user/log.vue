@@ -83,9 +83,9 @@ export default {
 			this.selList = values;
 			items.forEach(i => {
 				if (values.includes(i.goods_id.toString())) {
-					this.$set(i, 'checked', true);
+					i.checked = true;
 				} else {
-					this.$set(i, 'checked', false);
+					i.checked = false;
 				}
 			});
 		},
@@ -98,10 +98,10 @@ export default {
 			const { browseList } = this;
 			browseList.forEach(i => {
 				if (this.allSel) {
-					this.$set(i, 'checked', true);
+					i.checked = true;
 					this.selList.push(i.goods_id);
 				} else {
-					this.$set(i, 'checked', false);
+					i.checked = false;
 				}
 			});
 		},

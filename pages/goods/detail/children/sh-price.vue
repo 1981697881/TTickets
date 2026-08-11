@@ -117,7 +117,7 @@ export default {
 			this.doActivityRules();
 		}
 	},
-	destroyed() {
+	unmounted() {
 		clearInterval(timer);
 	},
 	computed: {},

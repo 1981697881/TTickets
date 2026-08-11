@@ -60,6 +60,7 @@
 
 <script>
 import appMiniCard from '@/components/app-mini-card/app-mini-card.vue';
+import { normalizePage, mergeUnique } from '@/common/utils/pagination';
 export default {
 	components: {
 		appMiniCard
@@ -68,6 +69,8 @@ export default {
 		return {
 			routerTo: this.$Router,
 			isLoading: true,
+			isPaging: false,
+			requestToken: 0,
 			loadStatus: '', //loading,over分页
 			currentPage: 1,
 			lastPage: 1,
@@ -116,6 +119,9 @@ export default {
 	onShow() {
 		// this.orderList = [];
 	},
+	beforeUnmount() {
+		this.requestToken += 1;
+	},
 	methods: {
 		jump(path, parmas) {
 			this.$Router.push({
@@ -125,34 +131,38 @@ export default {
 		},
 		onNav(id) {
 			this.orderType = id;
+			this.requestToken += 1;
+			this.isPaging = false;
 			this.orderList = [];
 			this.currentPage = 1;
 			this.getOrderList();
 		},
 		// 订单列表
-		getOrderList() {
-			let that = this;
-			that.isLoading = true;
-			that.loadStatus = 'loading';
-			that.$api('order.index', {
-				type: that.orderType,
-				page: that.currentPage
-			}).then(res => {
-				if (res.code === 1) {
-					that.isLoading = false;
-					that.orderList = [...that.orderList, ...res.data.data];
-					that.lastPage = res.data.last_page;
-					if (that.currentPage < res.data.last_page) {
-						that.loadStatus = '';
-					} else {
-						that.loadStatus = 'over';
-					}
+		async getOrderList() {
+			if (this.isPaging) return;
+			const token = ++this.requestToken;
+			this.isPaging = true;
+			this.isLoading = this.currentPage === 1;
+			this.loadStatus = 'loading';
+			try {
+				const res = await this.$api('order.index', { type: this.orderType, page: this.currentPage });
+				if (token !== this.requestToken) return;
+				if (res.code === 1 || res.flag) {
+					const page = normalizePage(res.data, this.currentPage);
+					this.orderList = mergeUnique(this.orderList, page.items, 'id', this.currentPage === 1);
+					this.lastPage = page.lastPage;
+					this.loadStatus = this.currentPage < page.lastPage ? '' : 'over';
 				}
-			});
+			} finally {
+				if (token === this.requestToken) {
+					this.isLoading = false;
+					this.isPaging = false;
+				}
+			}
 		},
 		// 加载更多
 		loadMore() {
-			if (this.currentPage < this.lastPage) {
+			if (!this.isPaging && this.currentPage < this.lastPage) {
 				this.currentPage += 1;
 				this.getOrderList();
 			}

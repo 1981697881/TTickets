@@ -1,5 +1,4 @@
 <script>
-import Vue from 'vue';
 import { mapMutations, mapActions, mapState } from 'vuex';
 import Wechat from './common/wechat/wechat';
 import store from '@/common/store';
@@ -15,9 +14,9 @@ export default {
 			return new Promise((resolve, reject) => {
 				uni.getSystemInfo({
 					success: function(e) {
-						Vue.prototype.StatusBar = e.statusBarHeight;
+						that.StatusBar = e.statusBarHeight;
 						// #ifdef H5
-						Vue.prototype.CustomBar = e.statusBarHeight + 45;
+						that.CustomBar = e.statusBarHeight + 45;
 						if (that.$wxsdk.isWechat()) {
 							platform = 'wxOfficialAccount';
 						} else {
@@ -29,9 +28,9 @@ export default {
 						platform = 'App';
 						if (e.platform == 'android') {
 							uni.setStorageSync('isAndroid', true);
-							Vue.prototype.CustomBar = e.statusBarHeight + 50;
+							that.CustomBar = e.statusBarHeight + 50;
 						} else {
-							Vue.prototype.CustomBar = e.statusBarHeight + 45;
+							that.CustomBar = e.statusBarHeight + 45;
 							uni.setStorageSync('isAndroid', false);
 						}
 						// #endif
@@ -40,8 +39,8 @@ export default {
 						platform = 'wxMiniProgram';
 						new Wechat().getWxMiniProgramSessionKey();
 						let custom = wx.getMenuButtonBoundingClientRect();
-						Vue.prototype.Custom = custom;
-						Vue.prototype.CustomBar = custom.bottom + custom.top - e.statusBarHeight;
+						that.Custom = custom;
+						that.CustomBar = custom.bottom + custom.top - e.statusBarHeight;
 						// #endif
 						uni.setStorageSync('platform', platform);
 						resolve(platform);
@@ -81,7 +80,7 @@ export default {
 		}
 	},
 	onLaunch: async function(options) {
-		Vue.prototype.ColorList = [{
+		this.ColorList = [{
 				title: '嫣红',
 				name: 'red',
 				color: '#e54d42'
@@ -158,7 +157,7 @@ export default {
 			},
 		]
 		//获取坐标
-		if (options.query.mode === 'save') {
+		if (options?.query?.mode === 'save') {
 			//截图模式
 			uni.setStorageSync('screenShot', true);
 			uni.setStorageSync('shop_id', options.query.shop_id);
@@ -198,7 +197,8 @@ export default {
 <style lang="scss">
 @import 'static/colorui/main.css';
 @import 'static/colorui/icon.css';
-@import 'uview-ui/index.scss';
+@import 'uview-plus/index.scss';
+@import 'static/style/design-system.scss';
 // 其他scss集成在uni.scss,(变量,class,minix)
 
 uni-radio:not([disabled]) .uni-radio-input:hover,
@@ -209,12 +209,12 @@ uni-checkbox:not([disabled]) .uni-checkbox-input:hover {
 page {
 	-webkit-overflow-scrolling: touch; //ios滑动不流畅
 	height: 100%;
-	background: #f6f6f6;
+	background: var(--tt-bg);
 	width: 100%;
 	font-size: 30upx;
-	font-family: NotoSansHans-Bold;
+	font-family: -apple-system, BlinkMacSystemFont, 'PingFang SC', 'Noto Sans CJK SC', 'Microsoft YaHei', sans-serif;
 	word-break: break-all; //英文文本不换行
-	color: #333;
+	color: var(--tt-text);
 }
 ::-webkit-scrollbar {
 	width: 0;

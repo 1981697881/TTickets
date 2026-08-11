@@ -66,14 +66,14 @@
 			<radio-group @change="selPay" class="pay-box">
 				<label class="x-bc pay-item">
 					<view class="x-f">
-						<image class="pay-img" src="https://i.postimg.cc/bw6zsHsf/wx-pay.png" mode=""></image>
+						<image class="pay-img" src="/static/image/wei.png" mode="aspectFit"></image>
 						<text>微信支付</text>
 					</view>
 					<radio value="wechat" :class="{ checked: payType === 'wechat' }" class=" pay-radio orange" :checked="payType === 'wechat'"></radio>
 				</label>
 				<label class="x-bc pay-item">
 					<view class="x-f">
-						<image class="pay-img" src="https://i.postimg.cc/QdN88nNq/wallet-pay.png" mode=""></image>
+						<image class="pay-img" src="/static/imgs/user/wallet.png" mode="aspectFit"></image>
 						<text>
 							余额支付
 							<text class="text-red padding-left">{{ balInfo.Money == 0 || balInfo.Money == null ? '余额不足' : '' }}({{ balInfo.Money || '0.00' }})</text>
@@ -987,7 +987,7 @@ export default {
 	margin: 20rpx;
 	border-radius: 15rpx;
 	box-shadow: 1px 1px 1px #c0c0c0;
-	/deep/ .goods-title {
+	:deep(.goods-title) {
 		width: 460rpx !important;
 	}
 	.goods-card {
@@ -1134,11 +1134,11 @@ export default {
 		width: 100%;
 		height: 74rpx;
 		background: #f8e3bd;
-		@include flex($align: center);
+		@include tt-flex($align: center);
 		border-radius: 20rpx 20rpx 0 0;
 		&-nav {
-			width: (750rpx/4);
-			@include flex($align: center, $justify: center);
+			width: 187.5rpx;
+			@include tt-flex($align: center, $justify: center);
 			position: relative;
 			height: 100%;
 		}
@@ -1239,7 +1239,7 @@ export default {
 		.empty-address {
 			height: 120rpx;
 			padding: 0 25rpx;
-			@include flex($justify: null, $align: center, $direction: null, $warp: null, $warpAlign: null);
+			@include tt-flex($justify: null, $align: center, $direction: null, $warp: null, $warpAlign: null);
 			font-size: 28rpx;
 			font-family: PingFang SC;
 			font-weight: 400;
@@ -1342,7 +1342,7 @@ export default {
 		}
 	}
 	.checkTime-content {
-		@include flex($justify: between, $align: center, $direction: null, $warp: null, $warpAlign: null);
+		@include tt-flex($justify: between, $align: center, $direction: null, $warp: null, $warpAlign: null);
 		.checkTime-content__left {
 			height: 100%;
 			width: 190rpx;
@@ -1391,11 +1391,11 @@ export default {
 		width: 100%;
 		height: 74rpx;
 		background: #f8e3bd;
-		@include flex($align: center);
+		@include tt-flex($align: center);
 		border-radius: 20rpx 20rpx 0 0;
 		&-nav {
-			width: (750rpx/4);
-			@include flex($align: center, $justify: center);
+			width: 187.5rpx;
+			@include tt-flex($align: center, $justify: center);
 			position: relative;
 			height: 100%;
 		}
@@ -1496,7 +1496,7 @@ export default {
 		.empty-address {
 			height: 120rpx;
 			padding: 0 25rpx;
-			@include flex($justify: null, $align: center, $direction: null, $warp: null, $warpAlign: null);
+			@include tt-flex($justify: null, $align: center, $direction: null, $warp: null, $warpAlign: null);
 			font-size: 28rpx;
 			font-family: PingFang SC;
 			font-weight: 400;

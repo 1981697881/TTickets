@@ -49,9 +49,9 @@ export default {
 	methods: {
 		onProblem(index) {
 			if (this.faqList[index].checked) {
-				this.$set(this.faqList[index], 'checked', false);
+				this.faqList[index].checked = false;
 			} else {
-				this.$set(this.faqList[index], 'checked', true);
+				this.faqList[index].checked = true;
 			}
 		},
 		// 常见问题列表、

@@ -6,7 +6,7 @@ import wxsdk from '@/common/wechat/sdk'
 import Wechat from '@/common/wechat/wechat'
 // #endif
 import Router from '@/common/router';
-import Vue from 'vue'
+import globalState from '@/common/runtime/globals'
 import {
 	mapMutations,
 	mapActions,
@@ -191,7 +191,7 @@ export default class AppPay {
 		let that = this;
 		let result = await this.prepay();
 		let payData = result.data;
-		Vue.prototype.$isPreviewApi = true
+		globalState.isPreviewApi = true
 		uni.requestPayment({
 			provider: 'wxpay',
 			timeStamp: payData.timeStamp,
@@ -234,7 +234,7 @@ export default class AppPay {
 						ifCdkeyPay: false,
 					}).then(rescin => {
 						if (rescin.flag) {
-							Vue.prototype.$isPreviewApi = false
+							globalState.isPreviewApi = false
 							Router.replace({
 								path: '/pages/order/payment/result',
 								query: {
@@ -318,7 +318,7 @@ export default class AppPay {
 					that.confirmParam.orderNo = payData.outTradeNo
 					api('goods.depositMixPackage', that.confirmParam).then(rescin => {
 						if (rescin.flag) {
-							Vue.prototype.$isPreviewApi = false
+							globalState.isPreviewApi = false
 							Router.replace({
 								path: '/pages/order/payment/result',
 								query: {
@@ -368,7 +368,7 @@ export default class AppPay {
 					});
 				} else {
 					console.log('关闭支付')
-					Vue.prototype.$isPreviewApi = false
+					globalState.isPreviewApi = false
 				}
 			}
 		});

@@ -159,34 +159,34 @@
 				"name": "",
 				"list": [{
 						"name": "我的订单",
-						"image": "https://i.postimg.cc/tT8R5Qfj/all-order.png",
+						"image": "/static/imgs/user/menu/order-v2.png",
 						"path": "/pages/index/wallet",
 						"path_name": "优惠券",
 						"path_type": 1
 					},{
 						"name": "我的二维码",
-						"image": "https://i.postimg.cc/h4s6JLbM/myerwem.png",
+						"image": "/static/imgs/user/menu/qrcode-v2.png",
 						"path": "/pages/user/personal",
 						"path_name": "二维码",
 						"path_type": 1
 					},
 					{
 						"name": "兑换券",
-						"image": "https://i.postimg.cc/GhF3kfxW/a329a448d7cb7fd2ff46a9ab0e9f5ac0.png",
+						"image": "/static/imgs/user/menu/voucher-v2.png",
 						"path": "/pages/user/group-ticket",
 						"path_name": "优惠券",
 						"path_type": 1
 					},
 					{
 						"name": "积分商城",
-						"image": "https://i.postimg.cc/8cb3CLL0/ab05b484afd9e2a21977adc79d0c456e.png",
+						"image": "/static/imgs/user/menu/points-mall-v2.png",
 						"path": "/pages/app/score/list",
 						"path_name": "积分商城",
 						"path_type": 3
 					},
 					{
 						"name": "联系客服",
-						"image": "https://i.postimg.cc/q75pJHp3/5d53a6e7f940c5ef925f63c1810c8429.png",
+						"image": "/static/imgs/user/menu/customer-service-v2.png",
 						"path": "/pages/public/kefu/index",
 						"path_name": "客服",
 						"path_type": 2
@@ -217,36 +217,36 @@
 				"activeColor": "#999000",
 				"list": [{
 					"name": "电影",
-					"image": "https://i.postimg.cc/xTWwc9Wm/20210419143757.png",
-					"activeImage": "https://i.postimg.cc/wxrPG6xr/20210419144423.png",
+					"image": "/static/tabbar/movie.png",
+					"activeImage": "/static/tabbar/movie-active.png",
 					"path": "/pages/index/circuit",
 					"path_name": "电影",
 					"path_type": 1
 				}, {
 					"name": "卖品",
-					"image": "https://i.postimg.cc/ZK2WnybL/202104191448131.png",
-					"activeImage": "https://i.postimg.cc/4487CSjq/20210419144813.png",
+					"image": "/static/tabbar/shop.png",
+					"activeImage": "/static/tabbar/shop-active.png",
 					"path": "/pages/menu/menu",
 					"path_name": "商品-OTO购买",
 					"path_type": 1
 				}, {
 					"name": "活动",
-					"image": "https://i.postimg.cc/kgGL1BKL/202104191448133.png",
-					"activeImage": "https://i.postimg.cc/4NBrQz7z/202104191448132.png",
+					"image": "/static/tabbar/activity.png",
+					"activeImage": "/static/tabbar/activity-active.png",
 					"path": "/pages/index/index",
 					"path_name": "主页-活动",
 					"path_type": 1
 				}, {
 					"name": "电玩",
-					"image": "https://i.postimg.cc/qvWyP564/202104191448135.png",
-					"activeImage": "https://i.postimg.cc/PfMbCy9Q/202104191448134.png",
+					"image": "/static/tabbar/game.png",
+					"activeImage": "/static/tabbar/game-active.png",
 					"path": "/pages/index/videoGame",
 					"path_name": "电玩-充值",
 					"path_type": 1
 				}, {
 					"name": "我的",
-					"image": "https://i.postimg.cc/9F53fm37/202104191448137.png",
-					"activeImage": "https://i.postimg.cc/7Z9jXS53/202104191448136.png",
+					"image": "/static/tabbar/user.png",
+					"activeImage": "/static/tabbar/user-active.png",
 					"path": "/pages/index/user",
 					"path_name": "用户-我的",
 					"path_type": 1
@@ -279,12 +279,12 @@
 			"category": "float-button",
 			"name": "悬浮按钮",
 			"content": {
-				"image": "https://i.postimg.cc/HW2CTdd6/dianpu.png",
+				"image": "/static/imgs/user/menu/store.png",
 				"list": [{
 					"name": "门店",
 					"style": 3,
 					"image": "",
-					"btnimage": "https://i.postimg.cc/HW2CTdd6/dianpu.png",
+					"btnimage": "/static/imgs/user/menu/store.png",
 					"path": "",
 					"path_name": "切换门店",
 					"path_type": 1,

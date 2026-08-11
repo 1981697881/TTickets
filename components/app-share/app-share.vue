@@ -1,7 +1,6 @@
 <template>
 	<view class="content">
-		<view class="cu-modal bottom-modal" :class="[{ show: showModal }, modalType]" cathctouchmove @tap="hideModal">
-			<view class="cu-dialog" @tap.stop style="background: none; overflow: visible;">
+		<app-safe-popup v-model="showModal" type="bottom" aria-label="分享">
 				<view class="share-box">
 					<view class="share-list-box x-f">
 						<!-- #ifdef MP-WEIXIN -->
@@ -41,8 +40,7 @@
 					</view>
 					<view class="share-foot x-c" @tap="hideModal">取消</view>
 				</view>
-			</view>
-		</view>
+		</app-safe-popup>
 		<!-- 指引 -->
 		<app-share-guide v-model="showShareGuide"></app-share-guide>
 	</view>
@@ -62,6 +60,7 @@ export default {
 		};
 	},
 	props: {
+		modelValue: { type: Boolean, default: undefined },
 		value: {},
 		modalType: {
 			type: String,
@@ -73,9 +72,10 @@ export default {
 	computed: {
 		showModal: {
 			get() {
-				return this.value;
+				return this.modelValue === undefined ? Boolean(this.value) : this.modelValue;
 			},
 			set(val) {
+				this.$emit('update:modelValue', val);
 				this.$emit('input', val);
 			}
 		}

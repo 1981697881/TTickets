@@ -286,7 +286,7 @@ export default {
 				uni.showLoading({
 					mask: true
 				});
-				this.$set(this.cartList[gIndex], 'goods_num', +e);
+				this.cartList[gIndex].goods_num = +e;
 				await this.changeCartList({
 					ids: [this.checkCart[goods.goods_id].cartOrderId],
 					goodsNum: +e,
@@ -531,7 +531,7 @@ export default {
 		background: #fff;
 		margin-top: 20rpx;
 
-		/deep/ .goods-title {
+		:deep(.goods-title) {
 			width: 420rpx !important;
 		}
 
@@ -716,7 +716,7 @@ export default {
 
 			.goods-item {
 				.goods-item--right {
-					@include flex($direction: column, $justify: around, $align: top);
+					@include tt-flex($direction: column, $justify: around, $align: top);
 					width: 100%;
 					position: relative;
 					height: 140rpx;
@@ -793,7 +793,7 @@ export default {
 				}
 
 				.num-step {
-					/deep/.uni-numbox__value {
+					:deep(.uni-numbox__value) {
 						width: 32rpx;
 					}
 				}

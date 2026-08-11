@@ -100,7 +100,7 @@ export default {
 				uni.showLoading({
 					mask: true
 				});
-				this.$set(this.cartList[index], 'goods_num', +e);
+				this.cartList[index].goods_num = +e;
 				await this.changeCartList({ ids: [g.id], goodsNum: e, art: 'change' });
 				await uni.hideLoading();
 			}
@@ -228,7 +228,7 @@ export default {
 	background: #fff;
 	margin-bottom: 20rpx;
 
-	/deep/ .goods-title {
+	:deep(.goods-title) {
 		width: 420rpx !important;
 	}
 

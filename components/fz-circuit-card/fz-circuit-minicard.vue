@@ -1,35 +1,27 @@
 <template>
-	<view class="goods-box" v-if="detail">
-		<view class="content-box" @tap="jump('/pages/cinema/movie/list', { sectionId: detail.sectionId,scheduleId: detail.scheduleId,schedulekey:detail.scheduleKey,language: detail.language,dimensional: detail.dimensional,filmName:detail.filmName,filmId:detail.filmId,showDatetime:detail.showDatetime,hallId:detail.hallId,hallName:detail.hallName || ''})">
-			<text v-if="isTag && detail.status" class="tag-star"><text class="lg text-red cuIcon-favorfill"></text></text>
-			<view class="cont_one">
-				<view><text class="text-xl text-bold">{{detail.showDatetime.substring(11,16)}}</text></view>
-				<view><text class="text-gray">{{endDateTime}}</text></view>
-			</view>
-			<view class="cont_two">
-				<view><text class="text-xs text-bold">{{detail.language}} {{detail.dimensional}}</text></view>
-				<view><text class="text-gray">{{detail.hallName}}</text></view>
-			</view>
-			<view class="cont_three">
-				<view class="o_price">会员{{detail.settleprice.replace('.00','')}}元</view>
-				<view class="text-olive text-xs">￥{{detail.standardprice.replace('.00','')}}</view>
-			</view>
-			<view class="cont_four"><button class="cu-btn bg-pink round ">购票</button></view>
+	<view v-if="detail" class="session-row" @tap="openSeats">
+		<view class="time-column">
+			<text class="start-time">{{ startTime }}</text>
+			<text class="end-time">{{ endTime }}散场</text>
 		</view>
+
+		<view class="hall-column">
+			<text class="format">{{ formatText }}</text>
+			<text class="hall one-t">{{ detail.hallName || '影厅待定' }}</text>
+		</view>
+
+		<view class="price-column">
+			<text class="member-price"><text class="currency">¥</text>{{ memberPrice }}</text>
+			<text v-if="standardPrice" class="standard-price">标准价 ¥{{ standardPrice }}</text>
+		</view>
+
+		<button class="buy-button" @tap.stop="openSeats">购票</button>
 	</view>
 </template>
 
 <script>
 export default {
-	name: 'fzCircuitMiniCard',
-	components: {},
-	data() {
-		return {
-			goodsList: [],
-			swiperCurrent: 0,
-			platform: uni.getStorageSync('platform'),
-		};
-	},
+	name: 'FzCircuitMiniCard',
 	props: {
 		isTag: {
 			type: [Boolean, String],
@@ -37,27 +29,51 @@ export default {
 		},
 		detail: {
 			type: Object,
-			default: null
+			default: () => ({})
 		}
 	},
-	computed:{
-		endDateTime:function () {
-		  let that = this
-		  return that.$tools.dateFormat('HH:MM', new Date(Date.parse(that.detail.showDatetime.replace(/-/g,'/'))+Number(that.detail.duration*60000))) 
+	computed: {
+		startTime() {
+			const value = this.detail.showDatetime || '';
+			return value.length >= 16 ? value.substring(11, 16) : '--:--';
+		},
+		endTime() {
+			const value = this.detail.showDatetime || '';
+			if (!value || !this.detail.duration) return '--:--';
+			const time = new Date(Date.parse(value.replace(/-/g, '/')) + Number(this.detail.duration) * 60000);
+			return Number.isNaN(time.getTime()) ? '--:--' : this.$tools.dateFormat('HH:MM', time);
+		},
+		formatText() {
+			return [this.detail.language, this.detail.dimensional].filter(Boolean).join(' ') || '版本待定';
+		},
+		memberPrice() {
+			return this.formatPrice(this.detail.settleprice);
+		},
+		standardPrice() {
+			return this.formatPrice(this.detail.standardprice, '');
 		}
-	},
-	created() {
 	},
 	methods: {
-		swiperChange(e) {
-			this.swiperCurrent = e.detail.current;
+		formatPrice(value, fallback = '--') {
+			if (value === undefined || value === null || value === '') return fallback;
+			return String(value).replace(/\.00$/, '');
 		},
-		// 路由跳转
-		jump(path, parmas) {
-			console.log(parmas)
+		openSeats() {
+			const detail = this.detail;
 			this.$Router.push({
-				path: path,
-				query: parmas
+				path: '/pages/cinema/movie/list',
+				query: {
+					sectionId: detail.sectionId,
+					scheduleId: detail.scheduleId,
+					schedulekey: detail.scheduleKey,
+					language: detail.language,
+					dimensional: detail.dimensional,
+					filmName: detail.filmName,
+					filmId: detail.filmId,
+					showDatetime: detail.showDatetime,
+					hallId: detail.hallId,
+					hallName: detail.hallName || ''
+				}
 			});
 		}
 	}
@@ -65,66 +81,116 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.o_price {
-	color: rgba(225, 33, 43, 1);
-	/* &:before {
-		content: '￥';
-		color: rgba(225, 33, 43, 1);
-		font-size: 26rpx;
-	} */
-}
-.o_price2 {
-	&:before {
-		content: '￥';
-		font-size: 26rpx;
-	}
-}
-.goods-box {
+.session-row {
 	width: 100%;
+	min-height: 142rpx;
+	display: flex;
+	align-items: center;
+	gap: 20rpx;
+	padding: 24rpx 4rpx;
+	box-sizing: border-box;
 	background: #fff;
-	border-radius: 20rpx;
-	overflow: hidden;
-	.content-box {
-		width: 100%;
-		overflow: hidden;
-		position: relative;
-		padding: 20rpx;
-		display: flex;
-		font-family: PingFang SC;
-		flex-direction: row;
-		.cont_one {
-			width: 170rpx;
-		}
-		.cont_two {
-			padding-top: 8rpx;
-			width: 200rpx;
-		}
-		.cont_three {
-			text-align: right;
-			width: 230rpx;
-		}
-		.cont_four {
-			padding-top: 20rpx;
-			text-align: right;
-			width: 200rpx;
-		}
-		.tag-star {
-			position: absolute;
-			right: 0;
-			top: 0;
-			z-index: 2;
-			width: 0;
-			height: 0;
-			border-top: 60upx solid #ffe4b5;
-			border-left: 60upx solid transparent;
-			text {
-				top: -55upx;
-				left: -32upx;
-				position: absolute;
-				z-index: 999;
-				display: inline-block;
-			}
-		}
+	border-bottom: 1rpx solid var(--tt-border);
+}
+
+.time-column,
+.hall-column,
+.price-column {
+	display: flex;
+	min-width: 0;
+	flex-direction: column;
+}
+
+.time-column {
+	flex: 0 0 122rpx;
+}
+
+.start-time {
+	font-size: 38rpx;
+	font-weight: 720;
+	line-height: 48rpx;
+	color: var(--tt-text);
+}
+
+.end-time,
+.hall,
+.standard-price {
+	margin-top: 7rpx;
+	font-size: 21rpx;
+	line-height: 30rpx;
+	color: var(--tt-text-muted);
+}
+
+.hall-column {
+	flex: 1;
+}
+
+.format {
+	font-size: 24rpx;
+	font-weight: 620;
+	line-height: 36rpx;
+	color: var(--tt-text);
+}
+
+.price-column {
+	flex: 0 0 118rpx;
+	align-items: flex-end;
+}
+
+.member-price {
+	font-size: 31rpx;
+	font-weight: 720;
+	line-height: 42rpx;
+	color: var(--tt-primary-strong);
+}
+
+.currency {
+	margin-right: 2rpx;
+	font-size: 22rpx;
+}
+
+.standard-price {
+	white-space: nowrap;
+}
+
+.buy-button {
+	width: 100rpx;
+	height: 58rpx;
+	flex: 0 0 100rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 30rpx;
+	background: var(--tt-primary);
+	color: #fff;
+	font-size: 24rpx;
+	font-weight: 650;
+	line-height: 58rpx;
+}
+
+.buy-button::after {
+	display: none;
+}
+
+@media screen and (max-width: 340px) {
+	.session-row {
+		gap: 12rpx;
+	}
+
+	.time-column {
+		flex-basis: 108rpx;
+	}
+
+	.price-column {
+		flex-basis: 104rpx;
+	}
+
+	.buy-button {
+		width: 88rpx;
+		flex-basis: 88rpx;
 	}
 }
 </style>

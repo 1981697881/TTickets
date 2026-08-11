@@ -2,14 +2,14 @@
 	<view class="group-content">
 		<view class="cont-header">
 			<view class="head-box text-black">
-				<view class="text-bold text-xxl">{{ detail.Data2[0].ProductName || ''}}</view>
-				<view class="box-text padding-top">截止日期:{{ detail.Data[0].EndDate || ''}} </view>
-				<view class="box-text">状态：{{ detail.Data[0].StatusName  || ''}}</view>
+				<view class="text-bold text-xxl">{{ product.ProductName || ''}}</view>
+				<view class="box-text padding-top">截止日期:{{ primary.EndDate || ''}} </view>
+				<view class="box-text">状态：{{ primary.StatusName  || ''}}</view>
 				<view class="box-text text-gray">
-					<text>商品件数：{{detail.Data2[0].Qty}}</text>
+					<text>商品件数：{{ product.Qty || 0 }}</text>
 				</view>
 			</view>
-			<view class="img-box"><image class="img" :src="detail.Data2[0].ImagePath" mode=""></image></view>
+			<view class="img-box"><image class="img" :src="product.ImagePath || ''" mode="aspectFill"></image></view>
 		</view>
 		<view class="cir-info">
 			<view class="cir-left"></view>
@@ -23,7 +23,7 @@
 						ref="qrcode"
 						:cid="cid"
 						class="img"
-						:val="detail.Data[0].TicketNo"
+						:val="primary.TicketNo || ''"
 						:size="size"
 						:unit="unit"
 						:icon="icon"
@@ -42,9 +42,9 @@
 			<view class="cir-line"></view>
 		</view>
 		<view class="cont-price text-gray">
-			<view class="text-black text-bold text-xl">实付金额：￥{{ detail.Data2[0].Amount }}</view>
-			<view>订单号：{{ detail.Data[0].OrderID }}</view>
-			<view>购买时间：{{detail.Data[0].Date}}</view>
+			<view class="text-black text-bold text-xl">实付金额：￥{{ product.Amount || '0.00' }}</view>
+			<view>订单号：{{ primary.OrderID || '' }}</view>
+			<view>购买时间：{{ primary.Date || '' }}</view>
 			<view>商品由{{detail.channelName || '财富中心'}}影城提供</view>
 		</view>
 		<view class="cir-info">
@@ -91,6 +91,14 @@ export default {
 			]
 		};
 	},
+	computed: {
+		primary() {
+			return this.detail?.Data?.[0] || {};
+		},
+		product() {
+			return this.detail?.Data2?.[0] || {};
+		}
+	},
 	methods: {
 		onTab(id) {
 			this.tabCurrent = id;
@@ -99,26 +107,21 @@ export default {
 			this.src = res
 		},
 		clearCode(){
-			let that = this
-			this.scanId = ''
-			that.$nextTick(function(){
-				that.$refs.qrcode._clearCode()
-			})
+			this.$nextTick(() => {
+				const qrcode = this.$refs.qrcode;
+				if (qrcode && typeof qrcode._clearCode === 'function') qrcode._clearCode();
+			});
 		}
 	},
 	props: {
 		detail: {
 			type: Object,
-			default: null
+			default: () => ({ Data: [], Data2: [] })
 		},
 		scanId: {
 			type: String,
 			default: ''
 		}
-	},
-	mounted(){
-		console.log(123)
-		console.log(this.scanId)
 	},
 };
 </script>

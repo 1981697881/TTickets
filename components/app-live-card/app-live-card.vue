@@ -99,7 +99,7 @@ export default {
 			that.getLiveStatus();
 		}, 60000);
 	},
-	beforeDestroy() {
+	beforeUnmount() {
 		timer = null;
 	},
 	methods: {
@@ -160,7 +160,7 @@ export default {
 		height: 40rpx;
 		background: rgba(0, 0, 0, 0.4);
 		border-radius: 20rpx;
-		@include flex($justify: center, $align: center);
+		@include tt-flex($justify: center, $align: center);
 		.status-img {
 			width: 40rpx;
 			height: 40rpx;
@@ -200,10 +200,10 @@ export default {
 	padding: 20rpx;
 	width: 345rpx;
 	.live-info {
-		@include flex($justify: between, $align: center);
+		@include tt-flex($justify: between, $align: center);
 		width: 100%;
 		.info-box {
-			@include flex($align: center);
+			@include tt-flex($align: center);
 		}
 		.info-avatar {
 			width: 40rpx;
@@ -228,7 +228,7 @@ export default {
 		}
 	}
 	.live-goods {
-		@include flex($align: center);
+		@include tt-flex($align: center);
 		margin-top: 20rpx;
 		&__item {
 			position: relative;
@@ -263,7 +263,7 @@ export default {
 			top: 0;
 			left: 0;
 			margin: auto;
-			@include flex($justify: center, $align: center);
+			@include tt-flex($justify: center, $align: center);
 			background: rgba(#000, 0.3);
 			font-size: 24rpx;
 			font-family: PingFang SC;

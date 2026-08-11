@@ -63,6 +63,7 @@ import appEmpty from '@/components/app-empty/app-empty.vue';
 import { mapMutations, mapActions, mapState } from 'vuex';
 import moreGoodList from '@/csJson/moreGoodList.json';
 import tools from '@/common/utils/tools';
+import { normalizePage, mergeUnique } from '@/common/utils/pagination';
 let timer = null;
 export default {
 	components: {
@@ -103,7 +104,7 @@ export default {
 	computed: {},
 	// 触底加载更多
 	onReachBottom() {
-		if (this.listParams.page < this.lastPage) {
+		if (!this.isLoading && this.listParams.page < this.lastPage) {
 			this.listParams.page += 1;
 			this.getGoodsList();
 		}
@@ -117,7 +118,7 @@ export default {
 	methods: {
 		// 加载更多
 		loadMore() {
-			if (this.listParams.page < this.lastPage) {
+			if (!this.isLoading && this.listParams.page < this.lastPage) {
 				this.listParams.page += 1;
 				this.getGoodsList();
 			}
@@ -173,7 +174,7 @@ export default {
 				that.goodsList = [];
 				this.listParams.page = 1;
 				that.getGoodsList();
-			}, 1000);
+			}, 350);
 		},
 		// 清除搜索框
 		clearSearch() {
@@ -213,26 +214,26 @@ export default {
 		},
 		fatherMethod(val) {
 			this.listParams.showDatetime = val.day;
+			this.listParams.page = 1;
 			this.goodsList = [];
 			this.getGoodsList();
 		},
 		// 影城场次列表
-		getGoodsList() {
-			let that = this;
-			that.isLoading = true;
-			that.loadStatus = 'loading';
-			that.$api('cinema.filmLists', that.listParams).then(res => {
-				if (res.flag) {
-					that.isLoading = false;
-					that.goodsList = [...that.goodsList, ...res.data];
-					that.lastPage = res.data.last_page;
-					if (that.listParams.page < res.data.last_page) {
-						that.loadStatus = '';
-					} else {
-						that.loadStatus = 'over';
-					}
+		async getGoodsList() {
+			if (this.isLoading) return;
+			this.isLoading = true;
+			this.loadStatus = 'loading';
+			try {
+				const res = await this.$api('cinema.filmLists', { ...this.listParams });
+				if (res.flag || res.code === 1) {
+					const page = normalizePage(res.data, this.listParams.page);
+					this.goodsList = mergeUnique(this.goodsList, page.items, 'cinemaId', this.listParams.page === 1);
+					this.lastPage = page.lastPage;
+					this.loadStatus = this.listParams.page < page.lastPage ? '' : 'over';
 				}
-			});
+			} finally {
+				this.isLoading = false;
+			}
 		}
 	}
 };
@@ -255,7 +256,7 @@ export default {
 		display: inline-flex;
 		width: 40%;
 		padding: 20rpx;
-		image {
+		.cir-logo-image {
 			border-radius: 15rpx;
 			width: 100%;
 		}

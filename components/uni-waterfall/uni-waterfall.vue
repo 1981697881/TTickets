@@ -16,13 +16,14 @@
  */
 export default {
 	props: {
+		modelValue: {
+			type: Array,
+			default: undefined
+		},
 		value: {
 			// 瀑布流数据
 			type: Array,
-			required: true,
-			default: function() {
-				return [];
-			}
+			default: undefined
 		},
 		// 每次向结构插入数据的时间间隔，间隔越长，越能保证两列高度相近，但是对用户体验越不好
 		// 单位ms
@@ -64,12 +65,19 @@ export default {
 		this.splitData();
 	},
 	computed: {
+		flowList() {
+			return this.modelValue === undefined ? (this.value || []) : this.modelValue;
+		},
 		// 破坏flowList变量的引用，否则watch的结果新旧值是一样的
 		copyFlowList() {
-			return this.cloneData(this.value);
+			return this.cloneData(this.flowList);
 		}
 	},
 	methods: {
+		emitModel(value) {
+			this.$emit('update:modelValue', value);
+			this.$emit('input', value);
+		},
 		// 获取一个目标元素的高度
 		$uGetRect(selector, all) {
 			return new Promise(resolve => {
@@ -127,7 +135,7 @@ export default {
 			this.leftList = [];
 			this.rightList = [];
 			// 同时清除父组件列表中的数据
-			this.$emit('input', []);
+			this.emitModel([]);
 		},
 		// 清除某一条指定的数据，根据id实现
 		remove(id) {
@@ -143,8 +151,12 @@ export default {
 				if (index != -1) this.rightList.splice(index, 1);
 			}
 			// 同时清除父组件的数据中的对应id的条目
-			index = this.value.findIndex(val => val[this.idKey] == id);
-			if (index != -1) this.$emit('input', this.value.splice(index, 1));
+			const data = this.cloneData(this.flowList);
+			index = data.findIndex(val => val[this.idKey] == id);
+			if (index != -1) {
+				data.splice(index, 1);
+				this.emitModel(data);
+			}
 		},
 		// 修改某条数据的某个属性
 		modify(id, key, value) {
@@ -160,14 +172,14 @@ export default {
 				if (index != -1) this.rightList[index][key] = value;
 			}
 			// 修改父组件的数据中的对应id的条目
-			index = this.value.findIndex(val => val[this.idKey] == id);
+			index = this.flowList.findIndex(val => val[this.idKey] == id);
 			if (index != -1) {
 				// 首先复制一份value的数据
-				let data = this.cloneData(this.value);
+				let data = this.cloneData(this.flowList);
 				// 修改对应索引的key属性的值为value
 				data[index][key] = value;
 				// 修改父组件通过v-model绑定的变量的值
-				this.$emit('input', data);
+				this.emitModel(data);
 			}
 		}
 	}

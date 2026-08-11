@@ -904,7 +904,7 @@ export default {
 	position: relative;
 	margin-top: 20rpx;
 
-	/deep/ .goods-title {
+	:deep(.goods-title) {
 		width: 460rpx !important;
 	}
 	.goods-card {
@@ -1002,11 +1002,11 @@ export default {
 		width: 100%;
 		height: 74rpx;
 		background: #F8E3BD;
-		@include flex($align: center);
+		@include tt-flex($align: center);
 		border-radius: 20rpx 20rpx 0 0;
 		&-nav {
-			width: (750rpx/4);
-			@include flex($align: center, $justify: center);
+			width: 187.5rpx;
+			@include tt-flex($align: center, $justify: center);
 			position: relative;
 			height: 100%;
 		}
@@ -1107,7 +1107,7 @@ export default {
 		.empty-address {
 			height: 120rpx;
 			padding: 0 25rpx;
-			@include flex($justify: null, $align: center, $direction: null, $warp: null, $warpAlign: null);
+			@include tt-flex($justify: null, $align: center, $direction: null, $warp: null, $warpAlign: null);
 			font-size: 28rpx;
 			font-family: PingFang SC;
 			font-weight: 400;
@@ -1176,7 +1176,7 @@ export default {
 					text-align: left;
 				}
 				.address-location {
-					@include flex($justify: center, $align: center, $direction: column, $warp: null, $warpAlign: null);
+					@include tt-flex($justify: center, $align: center, $direction: column, $warp: null, $warpAlign: null);
 					position: absolute;
 					right: 60rpx;
 					top: 30rpx;
@@ -1218,7 +1218,7 @@ export default {
 			}
 
 			.express-content {
-				@include flex($justify: null, $align: center, $direction: null, $warp: null, $warpAlign: null);
+				@include tt-flex($justify: null, $align: center, $direction: null, $warp: null, $warpAlign: null);
 				margin-bottom: 20rpx;
 				.box-line {
 					width: 1rpx;
@@ -1348,7 +1348,7 @@ export default {
 		}
 	}
 	.checkTime-content {
-		@include flex($justify: between, $align: center, $direction: null, $warp: null, $warpAlign: null);
+		@include tt-flex($justify: between, $align: center, $direction: null, $warp: null, $warpAlign: null);
 		.checkTime-content__left {
 			height: 100%;
 			width: 190rpx;

@@ -341,7 +341,7 @@ export default {
 		display: flex;
 		flex-wrap: wrap;
 		.dateCell {
-			width: (750rpx/7);
+			width: calc(750rpx / 7);
 			height: 80rpx;
 			font-size: 26rpx;
 			font-family: DINPro;

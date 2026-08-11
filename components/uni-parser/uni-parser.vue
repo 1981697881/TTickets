@@ -20,11 +20,17 @@
 <script>
 	// #ifndef H5 || APP-PLUS-NVUE || MP-360
 	import trees from './libs/trees';
+	import Parser from './libs/MpHtmlParser.js';
+	// #endif
+	// #ifdef H5 || APP-PLUS-NVUE || MP-360
+	import cfg from './libs/config.js';
+	// #endif
+	// #ifndef H5 || APP-PLUS-NVUE || MP-360
 	var cache = {},
 		// #ifdef MP-WEIXIN || MP-TOUTIAO
 		fs = uni.getFileSystemManager ? uni.getFileSystemManager() : null,
 		// #endif
-		Parser = require('./libs/MpHtmlParser.js');
+		parserReady = Boolean(Parser);
 	var dom;
 	// 计算 cache 的 key
 	function hash(str) {
@@ -34,8 +40,7 @@
 	}
 	// #endif
 	// #ifdef H5 || APP-PLUS-NVUE || MP-360
-	var windowWidth = uni.getSystemInfoSync().windowWidth,
-		cfg = require('./libs/config.js');
+	var windowWidth = uni.getSystemInfoSync().windowWidth;
 	// #endif
 	// #ifdef APP-PLUS-NVUE
 	var weexDom = weex.requireModule('dom');
@@ -179,7 +184,7 @@
 			}, 30)
 			// #endif
 		},
-		beforeDestroy() {
+		beforeUnmount() {
 			// #ifdef H5 || MP-360
 			if (this._observer) this._observer.disconnect();
 			// #endif

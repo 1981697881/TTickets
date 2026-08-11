@@ -1,37 +1,53 @@
 <template>
-	<view class="page_box">
-		<view class="head_box"></view>
-		<view class="content_box">
-			<view class="y-f money-box">
-				<text class="time" v-if="isPast">{{ timeText }}</text>
-				<view class="money">{{ total_fee }}</view>
-				<view class="text-center text-orange">{{ orderText }}</view>
-			</view>
-			<radio-group @change="selPay" class="pay-box" v-if="payment">
-				<label class="x-bc pay-item" v-if="payment.includes('wechat')">
-					<view class="x-f">
-						<image class="pay-img" src="https://i.postimg.cc/bw6zsHsf/wx-pay.png" mode=""></image>
-						<text>微信支付</text>
+	<view class="page_box payment-page">
+		<scroll-view class="content_box payment-scroll" scroll-y>
+			<view class="payment-content">
+				<view class="order-summary">
+					<view class="coin-media">
+						<image src="/static/imgs/user/menu/arcade-coins.jpg" mode="aspectFit"></image>
 					</view>
-					<radio value="wechat" :class="{ checked: payType === 'wechat' }" class=" pay-radio orange" :checked="payType === 'wechat'"></radio>
-				</label>
-				<label class="x-bc pay-item" v-if="payment.includes('wallet')">
-					<view class="x-f">
-						<image class="pay-img" src="https://i.postimg.cc/QdN88nNq/wallet-pay.png" mode=""></image>
-						<text>
-							余额支付
-							<text class="text-red padding-left">{{ balInfo.Money == 0 || balInfo.Money == null ? '余额不足' : '' }}({{ balInfo.Money || '0.00' }})</text>
-						</text>
+					<view class="order-copy">
+						<text class="order-name">{{ params.goodsName || '游戏币' }}</text>
+						<text v-if="params.goodsDescribe" class="order-description">{{ params.goodsDescribe }}</text>
+						<view class="order-price"><text>¥</text>{{ total_fee }}</view>
 					</view>
-					<radio value="wallet" :class="{ checked: payType === 'wallet' }" class="pay-radio orange" :checked="payType === 'wallet'"></radio>
-				</label>
-			</radio-group>
-			<view class="x-c">
-				<button :disabled="isSubOrder" class="cu-btn pay-btn" @tap="confirmPay">确认支付 ￥{{ total_fee }}</button>
+				</view>
+
+				<view class="countdown-row">
+					<text>支付倒计时</text>
+					<text class="countdown" :class="{ expired: !isPast }">{{ isPast ? timeText : '已过期' }}</text>
+				</view>
+
+				<text class="payment-title">选择支付方式</text>
+				<radio-group v-if="payment" class="pay-box" @change="selPay">
+					<label v-if="payment.includes('wechat')" class="pay-item">
+						<view class="pay-info">
+							<view class="pay-icon wechat-icon">
+								<image src="/static/image/wei.png" mode="aspectFit"></image>
+							</view>
+							<text class="pay-name">微信支付</text>
+						</view>
+						<radio value="wechat" color="#A9B238" class="pay-radio" :checked="payType === 'wechat'"></radio>
+					</label>
+					<label v-if="payment.includes('wallet')" class="pay-item">
+						<view class="pay-info">
+							<view class="pay-icon wallet-icon">
+								<image src="/static/imgs/user/wallet.png" mode="aspectFit"></image>
+							</view>
+							<view class="wallet-copy">
+								<text class="pay-name">余额支付</text>
+								<text class="balance">（¥{{ balInfo.Money || '0.00' }}）</text>
+							</view>
+						</view>
+						<radio value="wallet" color="#A9B238" class="pay-radio" :checked="payType === 'wallet'"></radio>
+					</label>
+				</radio-group>
 			</view>
+		</scroll-view>
+		<view class="payment-footer">
+			<button :disabled="isSubOrder || !isPast" class="confirm-button" @tap="confirmPay">确认支付 ¥{{ total_fee }}</button>
 		</view>
 		<view class="foot_box"></view>
-		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>
 	</view>
 </template>
@@ -61,7 +77,7 @@ export default {
 			userInfo: state => state.user.userInfo,
 			payment: state => state.init.initData.payment,
 			storeInfo: state => state.user.storeInfo,
-			balInfo: state => state.user.balInfo
+			balInfo: state => state.user.balInfo || {}
 		})
 	},
 	onLoad(options) {
@@ -165,7 +181,7 @@ export default {
 		countDown() {
 			let that = this;
 			let maxtime = 10 * 30;
-			timer = setInterval(() => {
+			const updateCountdown = () => {
 				if (maxtime >= 0) {
 					let minutes = Math.floor(maxtime / 60);
 					let seconds = Math.floor(maxtime % 60);
@@ -178,7 +194,9 @@ export default {
 					that.isPast = false;
 					that.isSubOrder = true;
 				}
-			}, 1000);
+			};
+			updateCountdown();
+			timer = setInterval(updateCountdown, 1000);
 		},
 		//余额购买
 		blanBuy(val) {
@@ -247,60 +265,210 @@ export default {
 </script>
 
 <style lang="scss">
-.money-box {
+.payment-page,
+.payment-scroll,
+.payment-content {
 	background: #fff;
-	height: 250rpx;
-	margin-bottom: 20rpx;
-	padding-top: 30rpx;
-	.time {
-		font-size: 28rpx;
-		color: #c4c4c4;
-	}
+}
 
-	.money {
-		color: #e1212b;
-		font-size: 60rpx;
-		margin-top: 20rpx;
+.payment-scroll {
+	flex: 1;
+	height: 100%;
+}
 
-		&::before {
-			content: '￥';
-			font-size: 46rpx;
-		}
+.payment-content {
+	padding: 28rpx 28rpx 44rpx;
+}
+
+.order-summary {
+	display: flex;
+	align-items: stretch;
+	min-height: 220rpx;
+	overflow: hidden;
+	background: #fff;
+	border: 1rpx solid var(--tt-border);
+	border-radius: 26rpx;
+}
+
+.coin-media {
+	width: 220rpx;
+	flex: 0 0 220rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	background: #f8f7f1;
+
+	image {
+		width: 156rpx;
+		height: 156rpx;
 	}
+}
+
+.order-copy {
+	min-width: 0;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
+	padding: 24rpx 26rpx;
+}
+
+.order-name {
+	font-size: 32rpx;
+	font-weight: 720;
+	line-height: 44rpx;
+	color: var(--tt-text);
+}
+
+.order-description {
+	margin-top: 10rpx;
+	font-size: 23rpx;
+	line-height: 32rpx;
+	color: var(--tt-text-muted);
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	overflow: hidden;
+}
+
+.order-price {
+	margin-top: 14rpx;
+	font-size: 40rpx;
+	font-weight: 750;
+	line-height: 50rpx;
+	color: #ec6b20;
+
+	text {
+		margin-right: 4rpx;
+		font-size: 24rpx;
+		font-weight: 650;
+	}
+}
+
+.countdown-row {
+	height: 92rpx;
+	margin-top: 24rpx;
+	padding: 0 24rpx;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	background: #fff;
+	border: 1rpx solid var(--tt-border);
+	border-radius: 22rpx;
+	font-size: 27rpx;
+	color: var(--tt-text);
+	box-sizing: border-box;
+}
+
+.countdown {
+	font-size: 28rpx;
+	font-weight: 700;
+	font-variant-numeric: tabular-nums;
+	color: #ec6b20;
+
+	&.expired {
+		color: var(--tt-danger);
+	}
+}
+
+.payment-title {
+	display: block;
+	padding: 36rpx 2rpx 18rpx;
+	font-size: 31rpx;
+	font-weight: 700;
+	line-height: 44rpx;
+	color: var(--tt-text);
 }
 
 .pay-box {
-	.pay-item {
-		height: 90rpx;
-		padding: 0 30rpx;
-		font-size: 26rpx;
-		background: #fff;
-		width: 750rpx;
-		border-bottom: 1rpx solid #eeeeee;
+	overflow: hidden;
+	background: #fff;
+	border: 1rpx solid var(--tt-border);
+	border-radius: 24rpx;
+}
 
-		&:last-child {
-			border-bottom: none;
-		}
+.pay-item {
+	height: 102rpx;
+	padding: 0 22rpx;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	border-bottom: 1rpx solid var(--tt-border);
+	box-sizing: border-box;
 
-		.pay-radio {
-			transform: scale(0.8);
-		}
-
-		.pay-img {
-			width: 40rpx;
-			height: 40rpx;
-			// background: #ccc;
-			margin-right: 25rpx;
-		}
+	&:last-child {
+		border-bottom: 0;
 	}
 }
 
-.pay-btn {
-	width: 690rpx;
-	height: 80rpx;
-	background: linear-gradient(90deg, rgba(240, 199, 133, 1), rgba(246, 214, 157, 1));
-	border-radius: 40rpx;
-	color: rgba(#fff, 0.9);
-	margin-top: 100rpx;
+.pay-info,
+.wallet-copy {
+	display: flex;
+	align-items: center;
+}
+
+.pay-icon {
+	width: 58rpx;
+	height: 58rpx;
+	margin-right: 18rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	border-radius: 15rpx;
+
+	image {
+		width: 42rpx;
+		height: 42rpx;
+	}
+}
+
+.wechat-icon {
+	background: #e8f8ea;
+}
+
+.wallet-icon {
+	background: var(--tt-primary-soft);
+}
+
+.pay-name {
+	font-size: 28rpx;
+	font-weight: 560;
+	color: var(--tt-text);
+}
+
+.balance {
+	font-size: 23rpx;
+	color: var(--tt-text-muted);
+}
+
+.pay-radio {
+	transform: scale(0.82);
+}
+
+.payment-footer {
+	padding: 18rpx 28rpx calc(18rpx + var(--tt-safe-bottom));
+	background: rgba(255, 255, 255, 0.97);
+	border-top: 1rpx solid var(--tt-border);
+}
+
+.confirm-button {
+	width: 100%;
+	height: 88rpx;
+	margin: 0;
+	padding: 0 30rpx;
+	background: var(--tt-primary);
+	border-radius: 999rpx;
+	font-size: 29rpx;
+	font-weight: 700;
+	line-height: 88rpx;
+	color: #fff;
+	box-shadow: 0 8rpx 18rpx rgba(143, 152, 30, 0.2);
+
+	&[disabled] {
+		background: #d9dbd2;
+		color: #fff;
+		box-shadow: none;
+	}
 }
 </style>

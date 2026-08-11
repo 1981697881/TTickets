@@ -2,7 +2,7 @@
      flex布局  
  ==================== */
 // flex(主轴,交叉轴,方向,换行,多轴线对齐)
-@mixin flex($justify: null, $align: null, $direction: null, $warp: null, $warpAlign: null) {
+@mixin tt-flex($justify: null, $align: null, $direction: null, $warp: null, $warpAlign: null) {
 	display: flex;
 
 	@if $direction !=null {

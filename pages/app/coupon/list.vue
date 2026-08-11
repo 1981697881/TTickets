@@ -27,7 +27,6 @@
 
 <script>
 import appCoupon from '@/components/app-coupon/app-coupon.vue';
-import prompt from '@/csJson/prompt.json';
 export default {
 	components: {
 		appCoupon

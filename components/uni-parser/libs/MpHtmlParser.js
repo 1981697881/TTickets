@@ -5,9 +5,10 @@
  * @author JinYufeng
  * @listens MIT
  */
-const cfg = require('./config.js'),
-	blankChar = cfg.blankChar,
-	CssHandler = require('./CssHandler.js'),
+import cfg from './config.js';
+import CssHandler from './CssHandler.js';
+
+const blankChar = cfg.blankChar,
 	windowWidth = uni.getSystemInfoSync().windowWidth;
 var emoji;
 
@@ -532,4 +533,4 @@ MpHtmlParser.prototype.EndTag = function(c) {
 		else this.state = this.Text;
 	}
 }
-module.exports = MpHtmlParser;
+export default MpHtmlParser;

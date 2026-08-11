@@ -1,411 +1,235 @@
 <template>
-	<view class="box">
-		<cu-custom :isBack="true" bgColor="bg-white">
-			<block slot="backText"></block>
-			<block slot="content">{{ goodsInfo.playName }}</block>
-		</cu-custom>
-		<view class="load-box" v-if="goodsInfo.playId == null"><app-skeletons :type="'detail'"></app-skeletons></view>
-		<view class="detail_box app-selector" v-else>
+	<view class="page_box machine-detail-page">
+		<view v-if="isLoading" class="loading-box">
+			<app-skeletons type="detail"></app-skeletons>
+		</view>
+
+		<scroll-view v-else-if="goodsInfo.playId" class="detail-scroll" scroll-y enable-back-to-top>
 			<view class="detail-content">
-				<view class="goodes_detail_swiper-box">
-					<text class="tag-star text-bold text-xl text-white">
-						{{ goodsInfo.playName }}
-					</text>
-					<!-- <view class="carousel">
-						<image class="swiper-image app-selector-rect" :src="goodsInfo.filmPhoto" mode="aspectFill" lazy-load></image>
-					</view> -->
-					<!-- 详情轮播 -->
-					<swiper class="carousel" circular @change="swiperChange">
-						<swiper-item v-for="(img, index) in goodsInfo.playPosterphotoList" :key="index" class="carousel-item">
-							<image class="swiper-image app-selector-rect" :src='"https://cfzx.gzfzdev.com/movie/uploadFiles/image/"+img' mode="aspectFill" lazy-load></image>
+				<view class="machine-gallery">
+					<swiper v-if="imageUrls.length" class="gallery-swiper" circular @change="swiperChange">
+						<swiper-item v-for="(img, index) in imageUrls" :key="`${img}-${index}`">
+							<image class="gallery-image" :src="img" mode="aspectFill" lazy-load></image>
 						</swiper-item>
 					</swiper>
-					<view v-if="goodsInfo.playPosterphotoList" class="swiper-dots">{{ swiperCurrent + 1 }} / {{ goodsInfo.playPosterphotoList.length }}</view>
-				</view>
-				<!-- 选项卡 -->
-				<view class="sticky-box">
-					<view class="tab-box x-f">
-						<view class="tab-item y-f x-c" @tap="onTab(tab.id)" v-for="tab in tabList" :key="tab.id">
-							<view class="tab-title cuIcon-punch">
-								{{ tab.title }}
-							</view>
-							<text class="tab-line" :class="{ 'line-active': tabCurrent === tab.id }"></text>
-						</view>
+					<view v-else class="gallery-placeholder">
+						<image src="/static/tabbar/game-active.png" mode="aspectFit"></image>
 					</view>
-					<view class="tab-detail pb20">
-						<view class="rich-box" v-show="tabCurrent === 'tab0'"><uni-parser :html="goodsInfo.playTxt"></uni-parser></view>
-					</view>
+					<view v-if="imageUrls.length" class="image-counter">{{ swiperCurrent + 1 }} / {{ imageUrls.length }}</view>
 				</view>
-			</view>	
-			<!-- 登录提示 -->
-			<app-login-modal></app-login-modal>
-			<!-- 骨架屏 -->
-			<app-skeleton :showSkeleton="false"></app-skeleton>
-			<!-- 连续弹窗提醒 -->
-			<app-notice-modal></app-notice-modal>
+
+				<text class="machine-name">{{ goodsInfo.playName }}</text>
+
+				<view class="intro-heading">
+					<view class="section-mark"></view>
+					<text>机台简介</text>
+				</view>
+				<view class="rich-content">
+					<uni-parser :html="goodsInfo.playTxt || '暂无机台介绍'"></uni-parser>
+				</view>
+			</view>
+		</scroll-view>
+
+		<view v-else class="empty-state">
+			<image class="empty-icon" src="/static/tabbar/game-active.png" mode="aspectFit"></image>
+			<text class="empty-title">未找到机台信息</text>
+			<button class="retry-button" @tap="getGoodsDetail">重新加载</button>
 		</view>
+
+		<app-login-modal></app-login-modal>
+		<app-notice-modal></app-notice-modal>
 	</view>
 </template>
+
 <script>
+const IMAGE_BASE_URL = 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/';
+
 export default {
-	components: {
-	},
 	data() {
 		return {
-			videoImg: 'http://139.159.136.187:50080/uploadFiles/image/d02494f7a0c24790f2d10b4d5fc4b613.jpg',
-			tools: this.$tools,
+			playId: '',
 			goodsInfo: {},
-			swiperCurrent: 0, //轮播下标
-			tabCurrent: 'tab0',
-			tabList: [
-				{
-					id: 'tab0',
-					title: '机台简介'
-				},
-				/* {
-					id: 'tab1',
-					title: '规格参数'
-				}, */
-			]
+			swiperCurrent: 0,
+			isLoading: true
 		};
 	},
-	computed: {},
-	onLoad() {
-		this.playId = this.$Route.query.playId
+	computed: {
+		imageUrls() {
+			const images = Array.isArray(this.goodsInfo.playPosterphotoList)
+				? this.goodsInfo.playPosterphotoList.filter(Boolean)
+				: [];
+			if (!images.length && this.goodsInfo.playPosterphotos) images.push(this.goodsInfo.playPosterphotos);
+			if (!images.length && this.goodsInfo.playPhoto) images.push(this.goodsInfo.playPhoto);
+			return images.map(image => /^https?:\/\//.test(image) ? image : `${IMAGE_BASE_URL}${image}`);
+		}
+	},
+	onLoad(options) {
+		this.playId = options?.playId || this.$Route?.query?.playId || '';
 		this.getGoodsDetail();
 	},
-	onReady() {},
 	methods: {
-		onBack(){
-			this.$Router.back();
+		swiperChange(event) {
+			this.swiperCurrent = event.detail.current;
 		},
-		// 路由跳转
-		jump(path, parmas) {
-			this.$Router.replace({
-				path: path,
-				query: parmas
-			});
-		},
-		// 轮播图切换
-		swiperChange(e) {
-			const index = e.detail.current;
-			this.swiperCurrent = index;
-		},
-		// 选项卡
-		onTab(id) {
-			this.tabCurrent = id;
-		},
-		// 机台详情
-		getGoodsDetail() {
-			let that = this;
-			that.$api('cinema.playMessage', {
-				playId: that.$Route.query.playId
-			}).then(res => {
-				if (res.flag) {
-					that.goodsInfo = res.data;
-				}else{
-					that.$tools.toast(res.msg);
+		async getGoodsDetail() {
+			this.isLoading = true;
+			try {
+				const res = await this.$api('cinema.playMessage', { playId: this.playId });
+				if (res?.flag || res?.code === 1) {
+					this.goodsInfo = res.data || {};
+				} else {
+					this.goodsInfo = {};
+					res?.msg && this.$tools.toast(res.msg);
 				}
-			});
-		},
+			} catch (error) {
+				this.goodsInfo = {};
+				console.warn('[arcade] failed to load machine detail', error);
+			} finally {
+				this.isLoading = false;
+			}
+		}
 	}
 };
 </script>
 
 <style lang="scss">
-.tag-star {
-			position: absolute;
-			right: 0;
-			top: 10%;
-			z-index: 99;
-			width: 250rpx;
-			background-color: #CD3333;
-			border-radius: 30rpx 0 0 30rpx;
-			height: 60rpx;
-			text-align: center;
-			line-height: 60rpx;
-		}
-.box-about{
-	padding: 30rpx;
-	border-bottom: 1px solid #F8F8FF;
+.machine-detail-page {
+	background: #fff;
 }
-.about-unline{
-	padding: 30rpx;
+
+.detail-scroll {
+	flex: 1;
+	height: 100%;
 }
 
 .detail-content {
-	&::-webkit-scrollbar {
-		width: 0;
-		height: 0;
-		color: transparent;
-	}
-}
-.sticky-box {
-	.tab-box {
-		position: -webkit-sticky;
-		position: sticky;
-		top: 2.5rem;
-		border-bottom: 1px solid #F8F8FF;
-		z-index: 99;
-	}
-}
-
-// 商品图片轮播
-
-.goodes_detail_swiper-box {
-	width: 750rpx;
-	height: 400rpx;
-	position: relative;
-	.carousel {
-		width: 750rpx;
-		height: 100%;
-	}
-
-	.carousel-item {
-		width: 750rpx;
-		height: 100%;
-	}
-
-	.swiper-image {
-		width: 750rpx;
-		height: 100%;
-		background: #ccc;
-	}
-
-	.swiper-dots {
-		display: flex;
-		position: absolute;
-		right: 20rpx;
-		bottom: 20rpx;
-		line-height: 44rpx;
-		border-radius: 22rpx;
-		padding: 0 15rpx;
-		background: rgba(#333, 0.3);
-		font-size: 28rpx;
-		color: rgba(#fff, 0.9);
-	}
-}
-
-
-.goods-title {
-	font-size: 28rpx;
-	font-weight: 500;
-	line-height: 42rpx;
-	background-color: #fff;
-	padding-bottom: 10rpx;
-	padding: 10rpx 20rpx;
-}
-
-.sub-title {
-	padding: 0 20rpx;
-	color: #a8700d;
-	font-size: 24rpx;
-	font-weight: 500;
-	line-height: 42rpx;
-	background-color: #fff;
-	padding-bottom: 10rpx;
-}
-
-// 选项卡
-.tab-box {
-	height: 102rpx;
+	padding: 24rpx 28rpx 56rpx;
 	background: #fff;
-	border-bottom: 1rpx solid rgba(#dfdfdf, 0.8);
-	margin-top: 20rpx;
-
-	.tab-item {
-		flex: 1;
-		height: 100%;
-		position: relative;
-		font-size: 30rpx;
-		font-weight: bold;
-
-		.tab-line {
-			width: 160rpx;
-			height: 4rpx;
-			left: 50%;
-			bottom: 20rpx;
-			transform: translateX(-50%);
-			background: transparent;
-			position: absolute;
-			z-index: 2;
-		}
-
-		.line-active {
-			background: rgba(168, 112, 13, 1);
-		}
-	}
 }
 
-.tab-detail {
-	min-height: 500rpx;
-	background: #fff;
-	background: #fff;
-	.rich-box {
-		padding: 20rpx;
-		/deep/ img {
-			display: block;
-		}
-	}
-
-	.goods-size {
-		padding-top: 30rpx;
-
-		.table-box {
-			width: 710rpx;
-			margin: auto;
-			background: rgba(255, 255, 255, 1);
-			border: 1rpx solid rgba(223, 223, 223, 1);
-
-			.t-tr {
-				border-bottom: 1rpx solid rgba(223, 223, 223, 1);
-
-				&:last-child {
-					border-bottom: none;
-				}
-
-				.t-head {
-					font-size: 26rpx;
-					color: #999;
-					flex: 1;
-					padding: 15rpx 20rpx;
-					height: 100%;
-					border-right: 1rpx solid rgba(223, 223, 223, 1);
-				}
-
-				.t-detail {
-					font-size: 26rpx;
-					flex: 4;
-					padding: 15rpx 20rpx;
-					height: 100%;
-				}
-			}
-		}
-	}
-
-	.goods-comment {
-		padding-top: 30rpx;
-		min-height: 300rpx;
-
-		.more-box {
-			height: 100rpx;
-			background: #fff;
-
-			.more-btn {
-				width: 200rpx;
-				height: 60rpx;
-				border: 1rpx solid rgba(213, 166, 90, 1);
-				border-radius: 30rpx;
-				font-size: 26rpx;
-				font-weight: 400;
-				color: rgba(168, 112, 13, 1);
-				padding: 0;
-				background: #fff;
-
-				.cuIcon-right {
-					font-size: 30rpx;
-					margin-left: 10rpx;
-				}
-			}
-		}
-	}
-}
-// 底部工具栏
-.detail-foot_box {
-	background: rgba(255, 255, 255, 1);
-	border-top: 1rpx solid rgba(238, 238, 238, 1);
+.machine-gallery {
 	width: 100%;
-	position: fixed;
-	bottom: 0;
-	z-index: 999;
-	.left,
-	.detail-right {
-		flex: 1;
-		text-align: center;
+	height: 470rpx;
+	position: relative;
+	overflow: hidden;
+	background: #f1f2ed;
+	border-radius: 28rpx;
+}
+
+.gallery-swiper,
+.gallery-image,
+.gallery-placeholder {
+	width: 100%;
+	height: 100%;
+}
+
+.gallery-placeholder {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+
+	image {
+		width: 120rpx;
+		height: 120rpx;
+		opacity: 0.55;
 	}
-	.tools-item {
-		flex: 1;
-		.tool-img {
-			width: 46rpx;
-			height: 46rpx;
-		}
-		.tool-title {
-			font-size: 22rpx;
-			line-height: 22rpx;
-			padding-top: 8rpx;
-		}
+}
+
+.image-counter {
+	position: absolute;
+	right: 20rpx;
+	bottom: 18rpx;
+	height: 46rpx;
+	padding: 0 18rpx;
+	display: flex;
+	align-items: center;
+	background: rgba(23, 24, 18, 0.72);
+	border-radius: 999rpx;
+	font-size: 23rpx;
+	color: #fff;
+}
+
+.machine-name {
+	display: block;
+	padding: 28rpx 2rpx 24rpx;
+	font-size: 40rpx;
+	font-weight: 760;
+	line-height: 56rpx;
+	color: var(--tt-text);
+}
+
+.intro-heading {
+	display: flex;
+	align-items: center;
+	gap: 14rpx;
+	padding: 8rpx 2rpx 18rpx;
+	font-size: 31rpx;
+	font-weight: 700;
+	color: var(--tt-text);
+}
+
+.section-mark {
+	width: 7rpx;
+	height: 34rpx;
+	background: var(--tt-primary);
+	border-radius: 999rpx;
+}
+
+.rich-content {
+	padding: 0 2rpx;
+	font-size: 28rpx;
+	line-height: 1.9;
+	color: var(--tt-text-secondary);
+
+	:deep(img) {
+		max-width: 100%;
+		height: auto;
+		display: block;
+		border-radius: 18rpx;
 	}
 
-	.detail-btn-box {
-		flex: 1;
-		line-height: 100rpx;
-
-		display: inline-block;
-		.tool-btn {
-			font-size: 28rpx;
-			font-weight: 500;
-			color: rgba(#fff, 0.9);
-			width: 210rpx;
-			border-radius: 35rpx;
-			padding: 0;
-			.price {
-				font-size: 24rpx;
-				font-weight: bold;
-				color: rgba(#fff, 0.9);
-			}
-
-			.price-title {
-				font-size: 20rpx;
-				font-weight: 500;
-				color: rgba(#fff, 0.9);
-				padding-top: 8rpx;
-			}
-		}
-
-		.add-btn {
-			box-shadow: 0px 2rpx 5rpx 0px rgba(102, 103, 104, 0.46);
-			background: linear-gradient(90deg, rgba(103, 104, 105, 1), rgba(82, 82, 82, 1));
-		}
-
-		.pay-btn {
-			box-shadow: 0px 7rpx 6rpx 0px rgba(229, 138, 0, 0.22);
-			background: linear-gradient(90deg, rgba(233, 180, 97, 1), rgba(238, 204, 137, 1));
-		}
-
-		.seckill-btn {
-			width: 432rpx;
-			height: 70rpx;
-			background: linear-gradient(93deg, rgba(208, 19, 37, 1), rgba(237, 60, 48, 1));
-			box-shadow: 0px 7rpx 6rpx 0px rgba(#ed3c30, 0.22);
-			font-size: 28rpx;
-			font-family: PingFang SC;
-			font-weight: 500;
-			color: rgba(255, 255, 255, 1);
-			border-radius: 35rpx;
-			padding: 0;
-			margin-right: 20rpx;
-		}
-
-		.seckilled-btn {
-			width: 432rpx;
-			height: 70rpx;
-			background: rgba(221, 221, 221, 1);
-			font-size: 28rpx;
-			font-family: PingFang SC;
-			font-weight: 500;
-			color: #999999;
-			border-radius: 35rpx;
-			padding: 0;
-			margin-right: 20rpx;
-		}
-
-		.groupon-btn {
-			width: 210rpx;
-			height: 70rpx;
-			background: linear-gradient(90deg, rgba(254, 131, 42, 1), rgba(255, 102, 0, 1));
-			box-shadow: 0px 7rpx 6rpx 0px rgba(255, 104, 4, 0.22);
-			border-radius: 35rpx;
-		}
+	:deep(p) {
+		margin: 0 0 18rpx;
+		line-height: 1.9;
 	}
+}
+
+.loading-box {
+	flex: 1;
+	background: #fff;
+}
+
+.empty-state {
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	background: #fff;
+}
+
+.empty-icon {
+	width: 112rpx;
+	height: 112rpx;
+	opacity: 0.5;
+}
+
+.empty-title {
+	margin-top: 22rpx;
+	font-size: 28rpx;
+	color: var(--tt-text-secondary);
+}
+
+.retry-button {
+	min-width: 180rpx;
+	height: 72rpx;
+	margin-top: 26rpx;
+	padding: 0 30rpx;
+	background: var(--tt-primary);
+	border-radius: 999rpx;
+	font-size: 26rpx;
+	font-weight: 650;
+	line-height: 72rpx;
+	color: #fff;
 }
 </style>

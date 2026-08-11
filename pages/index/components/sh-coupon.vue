@@ -11,7 +11,7 @@
 
 <script>
 import appCoupon from '@/components/app-coupon/app-coupon.vue';
-import prompt from '@/csJson/prompt.json';
+import couponSeed from '@/csJson/prompt.json';
 export default {
 	components: {
 		appCoupon
@@ -23,11 +23,13 @@ export default {
 		};
 	},
 	props: {
-		detail: {}
+		detail: {
+			type: Object,
+			default: () => ({})
+		}
 	},
 	computed: {},
 	created() {
-		console.log(this.detail)
 		this.detail.ids && this.getCouponsList();
 	},
 	methods: {
@@ -43,9 +45,7 @@ export default {
 		},
 		// 优惠券列表
 		getCouponsList() {
-			let that = this;
-			let res = prompt
-			that.couponList = res.data;
+			this.couponList = couponSeed.data || [];
 			/* that.$api('coupons.lists', {
 				ids: that.detail.ids
 			}).then(res => {
@@ -73,7 +73,7 @@ export default {
 		// padding: 0 15rpx;
 	}
 	.tab-list {
-		/deep/.coupon-wrap {
+		:deep(.coupon-wrap) {
 			width: 710rpx;
 		}
 	}

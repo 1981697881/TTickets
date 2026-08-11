@@ -119,11 +119,11 @@ export default {
 	width: 100%;
 	height: 96rpx;
 	background: #fff;
-	@include flex($align: center);
+	@include tt-flex($align: center);
 	&__item {
 		flex: 1;
 		height: 100%;
-		@include flex($direction: column, $justify: between, $align: center);
+		@include tt-flex($direction: column, $justify: between, $align: center);
 	}
 	&__item-name {
 		font-size: 28rpx;
@@ -131,7 +131,7 @@ export default {
 		font-weight: bold;
 		color: rgba(51, 51, 51, 1);
 		flex: 1;
-		@include flex($justify: center, $align: center);
+		@include tt-flex($justify: center, $align: center);
 	}
 	&__item--link {
 		width: 68rpx;

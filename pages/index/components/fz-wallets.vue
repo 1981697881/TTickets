@@ -1,141 +1,195 @@
 <template>
-	<view class="activity-goods-box x-bc" @tap="jump('/pages/wallet/index', { confirmationId: confirmationId })">
-		<view class="img-box">
-			<slot name="tag"></slot>
-			<image class="img" :src="img" mode="scaleToFill"></image>
-		</view>
-		<view class="goods-right y-bc">
-			<view class="title one-t">{{ title }}</view>
-			<view class="tip one-t">{{ subtitle }}</view>
-			<view class="slod-end"><slot name="sell"></slot></view>
-			<view class=" price-box">
-				<view class="x-f">
-					<view class="current">￥{{ price }}</view>
-					<!-- <view class="original">￥{{ originalPrice }}</view> -->
-				</view>
+	<view class="order-card" @tap="openDetail">
+		<view class="order-card__main">
+			<view class="order-card__media" :class="`order-card__media--${imageVariant}`">
+				<image v-if="img" class="order-card__image" :src="img" mode="aspectFill"></image>
+				<view v-else class="order-card__placeholder x-c"><text class="cuIcon-pic"></text></view>
+			</view>
+			<view class="order-card__content">
+				<text class="order-card__title one-t">{{ title || '未命名订单' }}</text>
+				<text v-if="subtitle" class="order-card__subtitle one-t">{{ subtitle }}</text>
+				<text v-if="date" class="order-card__date">{{ date }}</text>
 			</view>
 		</view>
-		<view class="cir-info">
-			<view class="cir-left"></view>
-			<view class="cir-right"></view>
-			<view class="cir-line"></view>
+
+		<view class="order-card__summary x-bc">
+			<view class="order-card__quantity">
+				<text class="order-card__label">数量</text>
+				<text class="order-card__value">{{ quantity || 0 }} {{ quantityUnit }}</text>
+			</view>
+			<view class="order-card__amount">
+				<text class="order-card__label">实付</text>
+				<text class="order-card__price">￥{{ displayPrice }}</text>
+			</view>
 		</view>
-		<view class="fot-content"><slot name="btn"></slot></view>
+
+		<button class="order-card__action" @tap.stop="openDetail">{{ actionText }}</button>
 	</view>
 </template>
 
 <script>
 export default {
-	name: 'walletCard',
-	components: {},
-	data() {
-		return {};
-	},
+	name: 'WalletCard',
 	props: {
-		cardId: 0,
-		img: '',
-		title: '',
-		subtitle: '',
-		confirmationId: '',
-		price: '',
-		originalPrice: ''
+		img: { type: String, default: '' },
+		title: { type: String, default: '' },
+		subtitle: { type: String, default: '' },
+		date: { type: String, default: '' },
+		price: { type: [String, Number], default: '' },
+		quantity: { type: [String, Number], default: 0 },
+		quantityUnit: { type: String, default: '' },
+		actionText: { type: String, default: '' },
+		imageVariant: { type: String, default: 'poster' },
+		detailPath: { type: String, default: '' },
+		detailQuery: { type: Object, default: () => ({}) }
 	},
-	computed: {},
-	created() {},
+	computed: {
+		displayPrice() {
+			return this.price === '' || this.price === null || this.price === undefined ? '0.00' : this.price;
+		}
+	},
 	methods: {
-		// 路由跳转
-		jump(path, parmas) {
-			this.$Router.push({ path: path, query: parmas });
+		openDetail() {
+			if (!this.detailPath) return;
+			this.$Router.push({ path: this.detailPath, query: this.detailQuery });
 		}
 	}
 };
 </script>
 
-<style lang="scss">
-.activity-goods-box {
-	margin: 30rpx;
-	box-shadow: 1px 2px 2px 2px #f6f6f6;
-	border-radius: 10rpx;
-	background: #fff;
-	flex-wrap: wrap;
-	.cir-info {
-		width: 100%;
-		margin-top: 15rpx;
-		display: flex;
-		height: 48rpx;
-		background: #f6f6f6;
-		position: relative;
-		.cir-line {
-			position: absolute;
-			height: 1px;
-			box-shadow: 1px 1px 1px 1px #fff;
-			background: linear-gradient(to right, #DCDCDC, #DCDCDC 5px, transparent 5px, transparent);
-			background-size: 15rpx 100%;
-			top: 45%;
-			width: 93%;
-			left: 3.5%;
-		}
-		.cir-left {
-			width: 50%;
-			background: radial-gradient(circle at 1% 24rpx, transparent 20rpx, #fff 0) top left 49% no-repeat;
-		}
-		.cir-right {
-			width: 50%;
-			background: radial-gradient(circle at 99% 24rpx, transparent 20rpx, #fff 0) top right 49% no-repeat;
-		}
-	}
-	.fot-content {
-		padding: 20rpx;
-		width: 100%;
-		display: inline-block;
-	}
-	.img-box {
-		padding: 20rpx;
-		padding-bottom: 0;
-		width: 200rpx;
-		overflow: hidden;
-		position: relative;
-		.img {
-			width: 200rpx;
-			border-radius: 15rpx;
-			height: 210rpx;
-			background-color: #ccc;
-		}
-	}
-	.goods-right {
-		padding: 20rpx;
-		width: 450rpx;
-		min-height: 200rpx;
-		position: relative;
-		align-items: flex-start;
-		position: relative;
-		.title {
-			font-size: 28rpx;
-			line-height: 28rpx;
-			width: 500rpx;
-		}
+<style scoped lang="scss">
+.order-card {
+	margin: 24rpx 30rpx;
+	padding: 24rpx;
+	box-sizing: border-box;
+	background: var(--tt-surface);
+	border: 1rpx solid var(--tt-border);
+	border-radius: var(--tt-radius-lg);
+	box-shadow: 0 8rpx 24rpx rgba(23, 24, 18, 0.035);
+}
 
-		.tip {
-			font-size: 22rpx;
-			color: #a8700d;
-			width: 500rpx;
-		}
+.order-card__main {
+	display: flex;
+	min-width: 0;
+}
 
-		.price-box {
-			.current {
-				font-size: 28rpx;
-				font-weight: 500;
-				color: rgba(225, 33, 43, 1);
-			}
+.order-card__media {
+	flex: 0 0 170rpx;
+	width: 170rpx;
+	height: 220rpx;
+	margin-right: 26rpx;
+	overflow: hidden;
+	border-radius: var(--tt-radius-md);
+	background: var(--tt-primary-soft);
+}
 
-			.original {
-				font-size: 22rpx;
-				font-weight: 400;
-				text-decoration: line-through;
-				color: rgba(153, 153, 153, 1);
-				margin-left: 14rpx;
-			}
-		}
-	}
+.order-card__media--product {
+	flex-basis: 190rpx;
+	width: 190rpx;
+	height: 190rpx;
+}
+
+.order-card__image,
+.order-card__placeholder {
+	width: 100%;
+	height: 100%;
+}
+
+.order-card__placeholder {
+	font-size: 48rpx;
+	color: var(--tt-primary-strong);
+}
+
+.order-card__content {
+	display: flex;
+	flex: 1;
+	min-width: 0;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
+}
+
+.order-card__title {
+	display: block;
+	width: 100%;
+	font-size: 32rpx;
+	font-weight: 700;
+	line-height: 46rpx;
+	color: var(--tt-text);
+}
+
+.order-card__subtitle,
+.order-card__date {
+	display: block;
+	width: 100%;
+	margin-top: 16rpx;
+	font-size: 25rpx;
+	line-height: 36rpx;
+	color: var(--tt-text-secondary);
+}
+
+.order-card__date { color: var(--tt-text-muted); }
+
+.order-card__summary {
+	min-height: 90rpx;
+	margin-top: 24rpx;
+	padding-top: 20rpx;
+	border-top: 1rpx dashed var(--tt-border);
+}
+
+.order-card__quantity,
+.order-card__amount {
+	display: flex;
+	align-items: baseline;
+	min-width: 0;
+}
+
+.order-card__label {
+	margin-right: 12rpx;
+	font-size: 24rpx;
+	line-height: 34rpx;
+	color: var(--tt-text-secondary);
+}
+
+.order-card__value {
+	font-size: 27rpx;
+	font-weight: 600;
+	line-height: 38rpx;
+	color: var(--tt-text);
+}
+
+.order-card__price {
+	font-size: 34rpx;
+	font-weight: 700;
+	line-height: 44rpx;
+	color: var(--tt-primary-strong);
+}
+
+.order-card__action {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 100%;
+	height: 80rpx;
+	min-height: 80rpx;
+	margin: 4rpx 0 0;
+	padding: 0 24rpx;
+	border: 0;
+	border-radius: var(--tt-radius-md);
+	background: var(--tt-primary);
+	font-size: 28rpx;
+	font-weight: 700;
+	line-height: 80rpx;
+	color: #fff;
+	&::after { border: 0; }
+}
+
+@media (max-width: 340px) {
+	.order-card { margin-right: 22rpx; margin-left: 22rpx; padding: 20rpx; }
+	.order-card__media { flex-basis: 142rpx; width: 142rpx; height: 190rpx; margin-right: 20rpx; }
+	.order-card__media--product { flex-basis: 156rpx; width: 156rpx; height: 156rpx; }
+	.order-card__title { font-size: 29rpx; }
+	.order-card__subtitle,
+	.order-card__date { margin-top: 10rpx; font-size: 23rpx; }
 }
 </style>

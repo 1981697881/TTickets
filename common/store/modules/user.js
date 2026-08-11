@@ -21,7 +21,7 @@ const state = {
 	showLoginTip: false,
 	orderNum: {},
 	balInfo: uni.getStorageSync('balInfo'),
-	storeInfo: {},
+	storeInfo: uni.getStorageSync('storeInfo') || {},
 	// #ifdef MP-WEIXIN
 	forceOauth: false,
 	// #endif
@@ -193,7 +193,12 @@ const mutations = {
 	},[BAL_INFO](state, data) {
 		state.balInfo = data
 	},[STORE_INFO](state, data) {
-		state.storeInfo = data
+		state.storeInfo = data || {}
+		if (data && Object.keys(data).length) {
+			uni.setStorageSync('storeInfo', data)
+		} else {
+			uni.removeStorageSync('storeInfo')
+		}
 	},
 	[LOGIN_TIP](state, data) {
 		state.showLoginTip = data

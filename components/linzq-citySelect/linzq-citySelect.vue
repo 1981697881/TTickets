@@ -1,9 +1,9 @@
 <template>
-	<div class="wrapper" :style="'top:' + statusBarHeight + 'px'">
-		<div class="header">
+	<view class="wrapper" :style="'top:' + statusBarHeight + 'px'">
+		<view class="header">
 			<view class="back_div"><image class="back_img" @click="back_city()" src="../../static/back_img.png" mode=""></image></view>
 			<input class="input" @input="onInput" placeholder="中文/拼音/首字母" v-model="searchValue" />
-		</div>
+		</view>
 		<scroll-view class="calendar-list" scroll-y="true" :scroll-into-view="scrollIntoId">
 			<view v-if="disdingwei" id="hot">
 				<!-- 定位模块 -->
@@ -49,7 +49,7 @@
 		<view class="mask" v-if="showMask">
 			<view class="mask-r">{{ selectLetter }}</view>
 		</view>
-	</div>
+	</view>
 </template>
 
 <script>

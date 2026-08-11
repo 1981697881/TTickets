@@ -1,9 +1,8 @@
 <template>
 	<!-- #ifndef MP-WEIXIN  -->
-	<view class="cu-modal" v-if="showLogin && !screenShot" :class="[{ show: showLogin }, modalType]" cathctouchmove @tap="hideModal">
-		<view class="cu-dialog" @tap.stop style="background: none;overflow: visible;">
+	<app-safe-popup v-if="!screenShot" v-model="showLogin" max-width="610rpx" aria-label="登录提示">
 			<view class="modal-box">
-				<image class="head-bg" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/nologin_bg.png" mode=""></image>
+				<view class="login-mark"><text class="cuIcon-profile"></text></view>
 				<view class="detail">
 					<view class="title1">您还没有登录</view>
 					<view class="title2">登录即刻开启品质生活</view>
@@ -13,20 +12,19 @@
 					<button class="cu-btn close-btn" @tap="hideModal">取消</button>
 				</view>
 			</view>
-		</view>
-	</view>
+	</app-safe-popup>
 	<!-- #endif  -->
 	<!-- #ifdef MP-WEIXIN  -->
-	<view class="force-login-wrap" v-if="forceOauth || showLogin">
-		<image class="logo-bg" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/logo_bg.png" mode="aspectFill"></image>
+	<app-safe-popup :model-value="forceOauth || showLogin" :mask-closable="false" max-width="680rpx" aria-label="微信授权登录">
+		<view class="force-login-wrap">
 		<view class="force-login__content y-f">
-			<open-data class="user-avatar" type="userAvatarUrl"></open-data>
-			<open-data class="user-name" type="userNickName"></open-data>
+			<view class="user-avatar x-c"><text class="cuIcon-profile"></text></view>
 			<view class="login-notice">为了提供更优质的服务，需要获取您的头像昵称</view>
-			<button class="cu-btn author-btn" @click="getuserinfo" >授权并查看</button>
+			<button class="cu-btn author-btn" @tap="getuserinfo">授权并查看</button>
 			<button class="cu-btn close-btn" @tap="closeAuth">暂不授权</button>
 		</view>
 	</view>
+	</app-safe-popup>
 	<!-- #endif  -->
 </template>
 
@@ -48,10 +46,7 @@ export default {
 			default: ''
 		}
 	},
-	created() {
-		console.log(this.showLogin) 
-		console.log(this.screenShot)
-	},
+	created() {},
 	computed: {
 		...mapState({
 			showLoginTip: state => state.user.showLoginTip,
@@ -80,26 +75,28 @@ export default {
 				path: '/pages/public/login'
 			});
 		},
-		getUserProfile(){
+		getUserProfile() {
 			return new Promise((resolve, reject) => {
-			        uni.getUserProfile({
-			        	desc: 'Wexin', // 这个参数是必须的
-			        	success: res => {
-			        		 resolve(res);
-			        	}
-			        });
-			 })
+				uni.getUserProfile({
+					desc: '用于完善会员资料',
+					success: resolve,
+					fail: reject
+				});
+			});
 		},
 		// 小程序，获取用户信息登录
 		async getuserinfo(e) {
-			let that = this
-			var wechat = new Wechat();
-			let res = await that.getUserProfile()
-			let token = await wechat.wxMiniProgramLogin(res);
-			that.$store.commit('FORCE_OAUTH', false);
-			that.$store.commit('LOGIN_TIP', false);
-			uni.setStorageSync('fromLogin', that.$Route);
-			that.setTokenAndBack(token);
+			try {
+				const wechat = new Wechat();
+				const profile = await this.getUserProfile();
+				const token = await wechat.wxMiniProgramLogin(profile);
+				this.$store.commit('FORCE_OAUTH', false);
+				this.$store.commit('LOGIN_TIP', false);
+				uni.setStorageSync('fromLogin', this.$Route);
+				this.setTokenAndBack(token);
+			} catch (error) {
+				this.$tools.toast('未完成授权，请重试');
+			}
 		},
 		// 小程序，取消登录
 		closeAuth() {
@@ -113,41 +110,49 @@ export default {
 <style lang="scss">
 // 登录提示
 .modal-box {
-	width: 610rpx;
-	border-radius: 20rpx;
+	width: 100%;
+	border-radius: var(--tt-radius-lg);
 	background: #fff;
 	position: relative;
-	left: 50%;
-	transform: translateX(-50%);
-	padding-bottom: 30rpx;
+	padding: 48rpx 36rpx 24rpx;
+	box-sizing: border-box;
+	text-align: center;
 
-	.head-bg {
-		width: 100%;
-		height: 210rpx;
+	.login-mark {
+		width: 108rpx;
+		height: 108rpx;
+		margin: 0 auto 28rpx;
+		border-radius: 50%;
+		background: var(--tt-primary-soft);
+		color: var(--tt-primary-strong);
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		font-size: 48rpx;
 	}
 
 	.detail {
 		.title1 {
-			color: #46351b;
+			color: var(--tt-text);
 			font-size: 35rpx;
 			font-weight: bold;
 		}
 
 		.title2 {
 			font-size: 28rpx;
-			color: #999;
+			color: var(--tt-text-muted);
 			padding-top: 20rpx;
 		}
 	}
 
 	.btn-box {
-		margin-top: 80rpx;
+		margin-top: 48rpx;
 
 		.login-btn {
 			width: 492rpx;
 			height: 70rpx;
-			background: linear-gradient(90deg, rgba(233, 180, 97, 1), rgba(238, 204, 137, 1));
-			box-shadow: 0px 7rpx 6rpx 0px rgba(229, 138, 0, 0.22);
+			background: var(--tt-primary);
+			box-shadow: 0 8rpx 18rpx rgba(143, 152, 30, 0.2);
 			border-radius: 35rpx;
 			font-size: 28rpx;
 			color: rgba(#fff, 0.9);
@@ -156,7 +161,7 @@ export default {
 		.close-btn {
 			width: 492rpx;
 			height: 70rpx;
-			color: #e9b766;
+			color: var(--tt-primary-strong);
 			font-size: 26rpx;
 			margin-top: 20rpx;
 			background: none;
@@ -167,17 +172,12 @@ export default {
 // 小程序登录提醒
 /* #ifdef MP-WEIXIN */
 .force-login-wrap {
-	position: fixed;
-	width: 100vw;
-	height: 100vh;
+	position: relative;
+	width: 100%;
+	min-height: 720rpx;
 	overflow: hidden;
-	z-index: 11111;
-	top: 0;
-	background: linear-gradient(180deg, rgba(239, 196, 128, 1) 0%, rgba(248, 220, 165, 1) 25%, rgba(255, 255, 255, 1) 98%);
-	.logo-bg {
-		width: 640rpx;
-		height: 300rpx;
-	}
+	border-radius: var(--tt-radius-lg);
+	background: linear-gradient(180deg, var(--tt-primary-soft) 0%, #fff 42%);
 	.force-login__content {
 		position: absolute;
 		left: 50%;
@@ -189,13 +189,9 @@ export default {
 			border-radius: 50%;
 			overflow: hidden;
 			margin-bottom: 40rpx;
-		}
-		.user-name {
-			font-size: 35rpx;
-			font-family: PingFang SC;
-			font-weight: bold;
-			color: rgba(132, 87, 8, 1);
-			margin-bottom: 30rpx;
+			background: var(--tt-primary-soft);
+			color: var(--tt-primary-strong);
+			font-size: 72rpx;
 		}
 		.login-notice {
 			font-size: 28rpx;

@@ -284,7 +284,7 @@ export default {
 	}
 	.order-content {
 		padding: 20rpx;
-		/deep/.status-btn {
+		:deep(.status-btn) {
 			display: none;
 		}
 	}

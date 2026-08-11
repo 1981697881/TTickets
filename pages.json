@@ -3,7 +3,9 @@
 		"autoscan": true,
 		"custom": {
 			"uni-(.*)": "@/components/uni-$1/uni-$1.vue",
-			"^u-(.*)": "@/uview-ui/components/u-$1/u-$1.vue"
+			"^u--(.*)": "uview-plus/components/u-$1/u-$1.vue",
+			"^up-(.*)": "uview-plus/components/u-$1/u-$1.vue",
+			"^u-([^-].*)": "uview-plus/components/u-$1/u-$1.vue"
 		}
 	},
 	"pages": [{
@@ -12,7 +14,7 @@
 			"title": "首页",
 			"aliasPath": "/", //对于h5端你必须在首页加上aliasPath并设置为/
 			"style": {
-				"navigationBarTitleText": "推荐",
+				"navigationBarTitleText": "活动",
 				"enablePullDownRefresh": true,
 				"navigationStyle": "custom"
 			},
@@ -40,9 +42,9 @@
 		{
 			"path": "pages/index/circuit",
 			"style": {
-				"navigationBarTitleText": "电影 +",
-				"navigationBarBackgroundColor": "#060210",
-				"navigationBarTextStyle": "white"
+				"navigationBarTitleText": "电影",
+				"navigationBarBackgroundColor": "#FFFFFF",
+				"navigationBarTextStyle": "black"
 			},
 			"meta": {
 				"auth": false,
@@ -56,8 +58,9 @@
 			"name": "wallet",
 			"style": {
 				"navigationBarTitleText": "我的订单",
-				"navigationBarTextStyle": "white",
-				"navigationBarBackgroundColor": "#2B4055"
+				"navigationBarTextStyle": "black",
+				"navigationBarBackgroundColor": "#ffffff",
+				"backgroundColor": "#f5f6f2"
 			},
 			"meta": {
 				"auth": false,
@@ -136,7 +139,7 @@
 			"path": "pages/index/videoGame",
 			"name": "videoGame",
 			"style": {
-				"navigationBarTitleText": "环游嘉年华+"
+				"navigationBarTitleText": "电玩"
 			},
 			"meta": {
 				"auth": false,
@@ -334,9 +337,9 @@
 				{
 					"path": "index",
 					"style": {
-						"navigationBarTitleText": "电影 +",
-						"navigationBarBackgroundColor": "#060210",
-						"navigationBarTextStyle": "white"
+						"navigationBarTitleText": "选择场次",
+						"navigationBarBackgroundColor": "#FFFFFF",
+						"navigationBarTextStyle": "black"
 					},
 					"meta": {
 						"auth": false,
@@ -372,8 +375,7 @@
 				}, {
 					"path": "machine/index",
 					"style": {
-						"navigationBarTitleText": "机台列表",
-						"navigationStyle": "custom"
+						"navigationBarTitleText": "机台展示"
 					},
 					"meta": {
 						"auth": false,
@@ -384,8 +386,7 @@
 				}, {
 					"path": "machine/detail",
 					"style": {
-						"navigationBarTitleText": "机台详情",
-						"navigationStyle": "custom"
+						"navigationBarTitleText": "机台详情"
 					},
 					"meta": {
 						"auth": false,
@@ -409,7 +410,7 @@
 				{
 					"path": "detail/index",
 					"style": {
-						"navigationStyle": "custom"
+						"navigationBarTitleText": "电影详情"
 					},
 					"meta": {
 						"auth": false,
@@ -677,7 +678,7 @@
 				{
 					"path": "payment/method",
 					"style": {
-						"navigationBarTitleText": "支付方式"
+						"navigationBarTitleText": "确认支付"
 
 					},
 					"meta": {
@@ -687,7 +688,7 @@
 				}, {
 					"path": "payment/chargeMoney",
 					"style": {
-						"navigationBarTitleText": "支付方式"
+						"navigationBarTitleText": "确认支付"
 
 					},
 					"meta": {
@@ -1050,7 +1051,7 @@
 	},
 	"tabBar": {
 		"color": "#999",
-		"selectedColor": "#999000",
+		"selectedColor": "#A9B238",
 		"borderStyle": "black",
 		"backgroundColor": "#ffffff",
 		"height": "50px",
@@ -1059,28 +1060,28 @@
 		"spacing": "3px",
 		"list": [{
 			"pagePath": "pages/index/circuit",
-			"iconPath": "static/tabbar/_202105251003589.png",
-			"selectedIconPath": "static/tabbar/_202105251003588.png",
+			"iconPath": "static/tabbar/movie.png",
+			"selectedIconPath": "static/tabbar/movie-active.png",
 			"text": "电影"
 		}, {
 			"pagePath": "pages/menu/menu",
-			"iconPath": "static/tabbar/_202105251003581.png",
-			"selectedIconPath": "static/tabbar/_202105251003580.png",
+			"iconPath": "static/tabbar/shop.png",
+			"selectedIconPath": "static/tabbar/shop-active.png",
 			"text": "卖品"
 		}, {
 			"pagePath": "pages/index/index",
-			"iconPath": "static/tabbar/_202105251003583.png",
-			"selectedIconPath": "static/tabbar/_202105251003582.png",
+			"iconPath": "static/tabbar/activity.png",
+			"selectedIconPath": "static/tabbar/activity-active.png",
 			"text": "活动"
 		}, {
 			"pagePath": "pages/index/videoGame",
-			"iconPath": "static/tabbar/_2021052510035862.png",
-			"selectedIconPath": "static/tabbar/_202105251003584.png",
+			"iconPath": "static/tabbar/game.png",
+			"selectedIconPath": "static/tabbar/game-active.png",
 			"text": "电玩"
 		}, {
 			"pagePath": "pages/index/user",
-			"iconPath": "static/tabbar/_202105251003587.png",
-			"selectedIconPath": "static/tabbar/_2021052510035861.png",
+			"iconPath": "static/tabbar/user.png",
+			"selectedIconPath": "static/tabbar/user-active.png",
 			"text": "我的"
 		}]
 	}

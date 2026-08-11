@@ -89,7 +89,7 @@ export default {
 			that.getLiveStatus();
 		}, 60000);
 	},
-	beforeDestroy() {
+	beforeUnmount() {
 		timer = null;
 	},
 	computed: {},
@@ -142,7 +142,7 @@ export default {
 	border-radius: 20rpx;
 	padding: 30rpx 20rpx 25rpx;
 	.head {
-		@include flex($justify: between, $align: center);
+		@include tt-flex($justify: between, $align: center);
 		&-title {
 			font-size: 32rpx;
 			font-weight: bold;
@@ -176,7 +176,7 @@ export default {
 				height: 40rpx;
 				background: rgba(0, 0, 0, 0.4);
 				border-radius: 20rpx;
-				@include flex($justify: center, $align: center);
+				@include tt-flex($justify: center, $align: center);
 				.status-img {
 					width: 38rpx;
 					height: 38rpx;

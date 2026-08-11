@@ -38,7 +38,7 @@ export default {
 	padding-bottom: 40rpx;
 
 	.tool-item {
-		width: (750rpx/4);
+		width: 187.5rpx;
 		padding-top: 40rpx;
 
 		.tool-img {

@@ -1,17 +1,12 @@
 <template>
-	<view class="adv-box mb10" v-if="detail.list.length>0" @tap="routerTo(detail.list[0].posterUrl)">
-		<!-- 模板1-->
-		<view class="x-f">
-			<image :src="'https://cfzx.gzfzdev.com/movie/uploadFiles/image/'+detail.list[0].posterPhoto" mode="scaleToFill" lazy-load></image>
-		</view>
-		<view class="box-fot flex flex-wrap justify-between " >
-			<view class="fot-left">
-				<view class="text-xl padding-xs text-black text-bold">{{detail.list[0].posterName}}</view>
-				<view class="padding-xs">{{detail.list[0].posterContent}}</view>
+	<view class="activity-card" v-if="activity" @tap="routerTo(activity.posterUrl)">
+		<image class="spread-image" :src="activityImage" mode="aspectFill" lazy-load></image>
+		<view class="activity-card__body">
+			<view class="activity-card__copy">
+				<text class="activity-card__title one-t">{{ activity.posterName }}</text>
+				<text v-if="activity.posterContent" class="activity-card__summary one-t">{{ activity.posterContent }}</text>
 			</view>
-			<view class="fot-right">
-				<button class="cu-btn round sm bg-blue margin-right">正在进行</button>
-			</view>
+			<view class="activity-card__status">正在进行</view>
 		</view>
 	</view>
 </template>
@@ -27,13 +22,19 @@ export default {
 	props: {
 		detail: {
 			type: Object,
-			default: {}
+			default: () => ({ list: [] })
 		}
 	},
-	computed: {},
-	created() {
-		console.log(this.detail)
+	computed: {
+		activity() {
+			return this.detail.list && this.detail.list.length ? this.detail.list[0] : null;
+		},
+		activityImage() {
+			const path = this.activity && this.activity.posterPhoto ? this.activity.posterPhoto : '';
+			return /^https?:\/\//.test(path) ? path : 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/' + path;
+		}
 	},
+	created() {},
 	methods: {
 		
 	}
@@ -41,21 +42,50 @@ export default {
 </script>
 
 <style lang="scss">
-.adv-box {
-	background-color: #fff;
-	border-radius: 20rpx;
+.activity-card {
+	background: #fff;
+	margin: 0 30rpx 28rpx;
+	border: 1rpx solid var(--tt-border);
+	border-radius: 24rpx;
+	box-shadow: 0 12rpx 32rpx rgba(25, 27, 18, 0.06);
 	overflow: hidden;
-	.box-fot{
-		height: 150rpx;
-		.fot-left{}
-		.fot-right{
-			line-height: 130rpx;
-		}
-	}
-	image {
-		width:100%;
-		height: 350rpx;
-		// background-color: #ccc;
-	}
+}
+.spread-image {
+	display: block;
+	width: 100%;
+	height: 330rpx;
+	background: var(--tt-primary-soft);
+}
+.activity-card__body {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 24rpx;
+	min-height: 138rpx;
+	padding: 24rpx 26rpx;
+}
+.activity-card__copy { flex: 1; min-width: 0; }
+.activity-card__title {
+	display: block;
+	font-size: 31rpx;
+	font-weight: 700;
+	line-height: 44rpx;
+	color: var(--tt-text);
+}
+.activity-card__summary {
+	display: block;
+	margin-top: 8rpx;
+	font-size: 23rpx;
+	line-height: 34rpx;
+	color: var(--tt-text-muted);
+}
+.activity-card__status {
+	flex: 0 0 auto;
+	padding: 13rpx 22rpx;
+	border-radius: 30rpx;
+	background: var(--tt-primary);
+	font-size: 22rpx;
+	line-height: 28rpx;
+	color: #fff;
 }
 </style>

@@ -1308,7 +1308,7 @@ function getShreUserPosterBackgroundFc(objs, upimage) { //下载并保存背景�
 }
 
 
-module.exports = {
+export {
 	getSharePoster,
 	setText,
 	setImage,
@@ -1319,4 +1319,4 @@ module.exports = {
 	drawStrokeRect,
 	drawRoundStrokeRect,
 	drawRoundFillRect
-}
+};

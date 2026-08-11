@@ -39,8 +39,7 @@
 import shFilter from './children/sh-filter.vue';
 import appGoodsCard from '@/components/app-goods-card/app-goods-card.vue';
 import appEmpty from '@/components/app-empty/app-empty.vue';
-import { mapMutations, mapActions, mapState } from 'vuex';
-let timer = null;
+import { normalizePage, mergeUnique } from '@/common/utils/pagination';
 export default {
 	components: {
 		shFilter,
@@ -61,6 +60,9 @@ export default {
 				page: 1
 			},
 			isLoading: true, //loading和空白页。
+			isPaging: false,
+			requestToken: 0,
+			searchTimer: null,
 			loadStatus: '', //loading,over
 			lastPage: 1
 		};
@@ -68,7 +70,7 @@ export default {
 	computed: {},
 	// 触底加载更多
 	onReachBottom() {
-		if (this.listParams.page < this.lastPage) {
+		if (!this.isPaging && this.listParams.page < this.lastPage) {
 			this.listParams.page += 1;
 			this.getGoodsList();
 		}
@@ -83,64 +85,70 @@ export default {
 		}
 		this.getGoodsList();
 	},
+	beforeUnmount() {
+		clearTimeout(this.searchTimer);
+		this.requestToken += 1;
+	},
 	methods: {
-		onFilter(e) {
-			this.listParams.order = e;
+		resetList() {
+			this.requestToken += 1;
+			this.isPaging = false;
 			this.goodsList = [];
 			this.listParams.page = 1;
+			this.loadStatus = '';
+		},
+		onFilter(e) {
+			this.listParams.order = e;
+			this.resetList();
 			this.getGoodsList();
 		},
 		// 键盘搜索
 		onSearch() {
 			let that = this;
 			that.listParams.keywords = that.searchVal;
-			that.goodsList = [];
-			this.listParams.page = 1;
+			this.resetList();
 			that.getGoodsList();
 		},
 		// 输入防抖搜索
 		onInput() {
 			let that = this;
 			that.listParams.category_id = 0;
-			// 输入不及时
-			setTimeout(() => {
-				that.listParams.keywords = that.searchVal;
-			}, 0);
-			// 防抖
-			if (timer !== null) {
-				clearTimeout(timer);
-			}
-			timer = setTimeout(() => {
-				that.goodsList = [];
-				this.listParams.page = 1;
+			clearTimeout(this.searchTimer);
+			this.searchTimer = setTimeout(() => {
+				that.listParams.keywords = that.searchVal.trim();
+				that.resetList();
 				that.getGoodsList();
-			}, 1000);
+			}, 350);
 		},
 		// 清除搜索框
 		clearSearch() {
 			this.searchVal = '';
 			this.listParams.keywords = '';
-			this.listParams.page = 1;
+			this.resetList();
 			this.getGoodsList();
 		},
 		// 商品列表
-		getGoodsList() {
-			let that = this;
-			that.isLoading = false;
-			/* that.isLoading = true;
-			that.loadStatus = 'loading'; */
-			/* that.$api('goods.lists', that.listParams).then(res => {
-				if (res.code === 1) {
-					that.isLoading = false;
-					that.goodsList = [...that.goodsList, ...res.data.data];
-					that.lastPage = res.data.last_page;
-					if (that.listParams.page < res.data.last_page) {
-						that.loadStatus = '';
-					} else {
-						that.loadStatus = 'over';
-					}
+		async getGoodsList() {
+			if (this.isPaging) return;
+			const token = ++this.requestToken;
+			this.isPaging = true;
+			this.isLoading = this.listParams.page === 1;
+			this.loadStatus = 'loading';
+			try {
+				const res = await this.$api('goods.lists', { ...this.listParams });
+				if (token !== this.requestToken) return;
+				if (res.code === 1 || res.flag) {
+					const page = normalizePage(res.data, this.listParams.page);
+					this.goodsList = mergeUnique(this.goodsList, page.items, 'id', this.listParams.page === 1);
+					this.lastPage = page.lastPage;
+					this.loadStatus = this.listParams.page < page.lastPage ? '' : 'over';
 				}
-			}); */
+			} finally {
+				if (token === this.requestToken) {
+					this.isLoading = false;
+					this.isPaging = false;
+				}
+			}
 		}
 	}
 };

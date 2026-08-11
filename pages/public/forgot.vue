@@ -163,7 +163,7 @@ export default {
 				bottom: 0;
 				left: 50%;
 				transform: translateX(-50%);
-				disply: block;
+				display: block;
 				width: 0;
 				height: 0;
 				border-width: 10rpx;

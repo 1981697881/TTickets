@@ -1,6 +1,6 @@
 <template>
 	<view class="">
-		<view class="mask" v-if="isShowDropDown" cathctouchmove @tap.stop="onHideDropDown"></view>
+		<view class="mask" v-if="isShowDropDown" @touchmove.stop.prevent @tap.stop="onHideDropDown"></view>
 		<!-- 商家信息 -->
 		<view class="shopinfo-box">
 			<image class="user-bg" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/shop_headbg.png" mode=""></image>

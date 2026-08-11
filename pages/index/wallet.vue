@@ -1,252 +1,217 @@
 <template>
-	<view class="page_box">
-		<view class="head_box">
-			<view class="tab-box x-f">
-				<view class="tab-item" @tap="onTab(tab)" :class="{ 'tab-active': tabCurrent === tab.id }" v-for="tab in tabList" :key="tab.id">
-					<text class="tab-title">{{ tab.title }}</text>
-					<text v-show="tabCurrent === tab.id" class="tab-triangle"></text>
-				</view>
+	<view class="page_box order-page">
+		<view class="head_box order-tabs" role="tablist" aria-label="订单类型">
+			<view
+				class="order-tab"
+				:class="{ 'order-tab--active': tabCurrent === tab.id }"
+				v-for="tab in tabList"
+				:key="tab.id"
+				role="tab"
+				:aria-selected="tabCurrent === tab.id"
+				@tap="onTab(tab)"
+			>
+				<text class="order-tab__title">{{ tab.title }}</text>
+				<text v-if="tabCurrent === tab.id" class="order-tab__indicator"></text>
 			</view>
 		</view>
+
 		<view class="content_box">
-			<scroll-view scroll-y="true" enable-back-to-top @scrolltolower="loadMore" class="scroll-box">
-				<view class="goods-item" v-for="item in goodsList" :key="item.id">
-					<wallet-list
-						:confirmationId="item.confirmationId"
-						:cardId="item.ticketId"
-						:title="item.filmName"
-						:subtitle="item.hallName"
-						:img="item.filmPhoto"
-						:price="item.ticketPayMoney"
-						v-if="tabCurrent == 'ing'"
-					>
-						<block slot="sell">
-							<view class="x-f">
-								<view>{{ item.showDatetime }}</view>
-							</view>
-						</block>
-						<block slot="btn">
-							<view class="fot-text">
-								<view class="text-grey">
-									共
-									<text class="text-black text-bold text-xl padding-xs">{{ item.ticketCount }}</text>
-									张
-								</view>
-								<view class="fot-btn">
-									<button
-										v-if="btnType[tabCurrent].color == 'btn-end'"
-										@tap.stop="jump('/pages/order/add-comment', { confirmationId: item.confirmationId })"
-										class="cu-btn buy-btn"
-										:class="btnType[tabCurrent].color"
-									>
-										{{ btnType[tabCurrent].name }}
-									</button>
-									<button
-										v-if="btnType[tabCurrent].color == 'btn-ing'"
-										@tap.stop="jump('/pages/wallet/index', { confirmationId: item.confirmationId })"
-										class="cu-btn buy-btn"
-										:class="btnType[tabCurrent].color"
-									>
-										{{ btnType[tabCurrent].name }}
-									</button>
-								</view>
-							</view>
-						</block>
-					</wallet-list>
-					<wallet-list
-						:confirmationId="item.OrderID"
-						:cardId="item.ticketId"
-						:title="item.PName"
-						:subtitle="item.StatusName"
-						:img="item.ImagePath"
-						:price="item.OrderAmount"
-						v-else
-					>
-						<block slot="sell">
-							<view class="x-f">
-								<view>{{ item.Date }}</view>
-							</view>
-						</block>
-						<block slot="btn">
-							<view class="fot-text">
-								<view class="text-grey">
-									共
-									<text class="text-black text-bold text-xl padding-xs">{{ item.OrderQty }}</text>
-									件
-								</view>
-								<view class="fot-btn">
-									<button
-										v-if="btnType[tabCurrent].color == 'btn-nostart'"
-										@tap.stop="jump('/pages/wallet/goodsIndex', { OrderID: item.OrderID })"
-										class="cu-btn buy-btn"
-										:class="btnType[tabCurrent].color"
-									>
-										{{ btnType[tabCurrent].name }}
-									</button>
-								</view>
-							</view>
-						</block>
-					</wallet-list>
+			<scroll-view
+				class="scroll-box order-scroll"
+				scroll-y
+				enable-back-to-top
+				refresher-enabled
+				:refresher-triggered="refresherTriggered"
+				@refresherrefresh="refreshOrders"
+				@scrolltolower="loadMore"
+			>
+				<wallet-list
+					v-for="order in displayOrders"
+					:key="order.key"
+					:img="order.img"
+					:title="order.title"
+					:subtitle="order.subtitle"
+					:date="order.date"
+					:price="order.price"
+					:quantity="order.quantity"
+					:quantity-unit="order.quantityUnit"
+					:action-text="order.actionText"
+					:image-variant="order.imageVariant"
+					:detail-path="order.detailPath"
+					:detail-query="order.detailQuery"
+				/>
+
+				<app-empty v-if="!goodsList.length && !isLoading" :empty-data="emptyData" :is-fixed="false"></app-empty>
+				<view v-if="goodsList.length" class="order-load-more">
+					<text>{{ loadStatusText }}</text>
 				</view>
-				<!-- 空白 -->
-				<app-empty v-if="!goodsList.length && !isLoading" :emptyData="emptyData"></app-empty>
-				<!-- 加载更多 -->
-				<view v-if="goodsList.length" class="cu-load text-gray" :class="loadStatus"></view>
-				<!-- loading -->
-				<app-load v-model="isLoading"></app-load>
+				<view class="order-safe-bottom"></view>
 			</scroll-view>
 		</view>
-		<view class="foot_box"></view>
-		<!-- 自定义底部导航 -->
-		<!-- <app-tabbar></app-tabbar> -->
-		<!-- 关注弹窗 -->
+
+		<app-load v-model="isLoading"></app-load>
 		<app-float-btn></app-float-btn>
-		<!-- 连续弹窗提醒 -->
 		<app-notice-modal></app-notice-modal>
-		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>
 	</view>
 </template>
+
 <script>
 import walletList from './components/fz-wallets.vue';
 import appEmpty from '@/components/app-empty/app-empty.vue';
-import { mapMutations, mapActions, mapState, mapGetters } from 'vuex';
+import { mapState } from 'vuex';
+import { createRequestGate, mergeUnique, normalizePage } from '@/common/utils/pagination.js';
+
 export default {
-	components: {
-		walletList,
-		appEmpty
-	},
+	components: { walletList, appEmpty },
 	data() {
 		return {
-			emptyData: {
-				img: '/static/imgs/empty/empty_goods.png',
-				tip: '暂无可使用票劵，快去逛逛吧~'
-			},
 			isLoading: false,
-			loadStatus: '', //loading,over
+			refresherTriggered: false,
+			loadStatus: '',
 			lastPage: 1,
 			currentPage: 1,
-			status: 0,
 			tabCurrent: 'ing',
 			goodsList: [],
-			loading: false,
-			btnType: {
-				ended: {
-					name: '评价',
-					color: 'btn-end'
-				},
-				ing: {
-					name: '立即取票',
-					color: 'btn-ing'
-				},
-				nostart: {
-					name: '立即兑换',
-					color: 'btn-nostart'
-				}
-			},
+			requestGate: createRequestGate(),
 			tabList: [
-				/* {
-					id: 'ended',
-					title: '已使用',
-					status: '1',
-				}, */
-				{
-					id: 'ing',
-					title: '电影票',
-					status: '0'
-				},
-				{
-					id: 'nostart',
-					title: '商品',
-					status: '4'
-				}
+				{ id: 'ing', title: '电影票', status: '0' },
+				{ id: 'nostart', title: '商品', status: '4' }
 			]
 		};
 	},
 	computed: {
 		...mapState({
-			 storeInfo: state => state.user.storeInfo,
-			balInfo: state => state.user.balInfo
-		})
-	},
-	onShow() {
-		/* setTimeout(() => {
-			this.loading = true;
-		}, 500); */
-		const { query } = this.$Route;
-		if (query.type == 'nostart') {
-			this.tabCurrent = query.type;
-			this.getMixPackageOrderList();
-		}else{
-			this.getGoodsList();
+			storeInfo: state => state.user.storeInfo || {},
+			balInfo: state => state.user.balInfo || {}
+		}),
+		emptyData() {
+			return {
+				img: '/static/imgs/empty/empty_goods.png',
+				tip: this.tabCurrent === 'ing' ? '暂无可使用的电影票' : '暂无可兑换的商品订单'
+			};
+		},
+		displayOrders() {
+			return this.goodsList.map((item, index) => {
+				if (this.tabCurrent === 'ing') {
+					const confirmationId = item.confirmationId;
+					return {
+						key: `movie-${confirmationId || item.ticketId || index}`,
+						img: item.filmPhoto || '',
+						title: item.filmName || '',
+						subtitle: item.hallName || '',
+						date: item.showDatetime || '',
+						price: item.ticketPayMoney,
+						quantity: item.ticketCount,
+						quantityUnit: '张',
+						actionText: '立即取票',
+						imageVariant: 'poster',
+						detailPath: '/pages/wallet/index',
+						detailQuery: { confirmationId }
+					};
+				}
+
+				const orderId = item.OrderID;
+				return {
+					key: `product-${orderId || index}`,
+					img: item.ImagePath || '',
+					title: item.PName || '',
+					subtitle: item.StatusName || '',
+					date: item.Date || '',
+					price: item.OrderAmount,
+					quantity: item.OrderQty,
+					quantityUnit: '件',
+					actionText: '立即兑换',
+					imageVariant: 'product',
+					detailPath: '/pages/wallet/goodsIndex',
+					detailQuery: { OrderID: orderId }
+				};
+			});
+		},
+		loadStatusText() {
+			if (this.loadStatus === 'loading') return '加载中…';
+			if (this.currentPage >= this.lastPage) return '— 没有更多了 —';
+			return '上拉加载更多';
 		}
 	},
+	onShow() {
+		const type = this.$Route.query?.type;
+		if (type === 'nostart' || type === 'ing') this.tabCurrent = type;
+		this.resetAndFetch();
+	},
+	beforeUnmount() {
+		this.requestGate.invalidate();
+	},
 	methods: {
-		jump(path, parmas) {
-			this.$Router.push({
-				path: path,
-				query: parmas
+		onTab(tab) {
+			if (this.tabCurrent === tab.id) return;
+			this.tabCurrent = tab.id;
+			this.resetAndFetch();
+		},
+		refreshOrders() {
+			this.refresherTriggered = true;
+			this.resetAndFetch().finally(() => {
+				this.refresherTriggered = false;
 			});
 		},
-		onTab(val) {
-			this.tabCurrent = val.id;
-			this.status = val.status;
+		resetAndFetch() {
+			this.requestGate.invalidate();
 			this.goodsList = [];
 			this.currentPage = 1;
-			if (this.tabCurrent == 'ing') {
-				this.getGoodsList();
-			} else {
-				this.getMixPackageOrderList();
-			}
+			this.lastPage = 1;
+			this.loadStatus = '';
+			return this.fetchOrders(true);
 		},
-		// 百分比
-		getProgress(sales, stock) {
-			let unit = '';
-			if (stock + sales > 0) {
-				let num = (sales / (sales + stock)) * 100;
-				unit = num.toFixed(2) + '%';
-			} else {
-				unit = '0%';
-			}
-			return unit;
-		},
-		// 加载更多
 		loadMore() {
-			if (this.currentPage < this.lastPage) {
-				this.currentPage += 1;
-				this.getGoodsList();
-			}
+			if (this.requestGate.active || this.currentPage >= this.lastPage) return;
+			this.currentPage += 1;
+			this.fetchOrders(false);
 		},
-		// 票劵列表
-		getGoodsList() {
-			let that = this;
-			/* that.isLoading = true; */
-			that.loadStatus = 'loading';
-			that.$api('wallet.lists', {
+		fetchOrders(reset) {
+			const token = this.requestGate.begin();
+			if (!token) return Promise.resolve();
+			this.isLoading = reset;
+			this.loadStatus = 'loading';
+			const requestedTab = this.tabCurrent;
+			const requestedPage = this.currentPage;
+			const request = requestedTab === 'ing' ? this.fetchMovieOrders() : this.fetchProductOrders();
+
+			return request
+				.then(res => {
+					if (!this.requestGate.isLatest(token) || requestedTab !== this.tabCurrent) return;
+					const payload = requestedTab === 'ing' ? res.data : (res.data?.Data ?? res.data);
+					const page = normalizePage(payload, this.currentPage);
+					const key = requestedTab === 'ing' ? 'confirmationId' : 'OrderID';
+					this.goodsList = mergeUnique(this.goodsList, page.items, key, reset);
+					this.currentPage = page.page;
+					this.lastPage = page.lastPage;
+					this.loadStatus = this.currentPage >= this.lastPage ? 'over' : '';
+				})
+				.catch(() => {
+					if (this.requestGate.isLatest(token)) {
+						if (!reset) this.currentPage = Math.max(1, requestedPage - 1);
+						this.loadStatus = '';
+					}
+				})
+				.finally(() => {
+					this.requestGate.end(token);
+					this.isLoading = false;
+				});
+		},
+		fetchMovieOrders() {
+			return this.$api('wallet.lists', {
 				openId: uni.getStorageSync('openid'),
-				status: that.status
-			}).then(res => {
-				if (res.flag) {
-					that.isLoading = false;
-					that.goodsList = res.data;
-					that.loadStatus = 'over';
-				}
+				status: '0',
+				page: this.currentPage
 			});
 		},
-		// 商品票劵列表
-		getMixPackageOrderList() {
-			let that = this;
-			that.loadStatus = 'loading';
-			that.$api('goods.getMixPackageOrderList', {
-				custId: that.balInfo.custId,
-				placeId: that.storeInfo.v8PlaceId,				V8Url: that.storeInfo.v8Url,
-				status: 0
-			}).then(res => {
-				if (res.flag) {
-					that.isLoading = false;
-					that.goodsList = res.data.Data;
-					that.loadStatus = 'over';
-				}
+		fetchProductOrders() {
+			return this.$api('goods.getMixPackageOrderList', {
+				custId: this.balInfo.custId,
+				placeId: this.storeInfo.v8PlaceId,
+				V8Url: this.storeInfo.v8Url,
+				status: 0,
+				page: this.currentPage
 			});
 		}
 	}
@@ -254,93 +219,69 @@ export default {
 </script>
 
 <style scoped lang="scss">
-.head_box {
-	background-color: #2b4055;
+.order-page { background: var(--tt-bg); }
+
+.order-tabs {
+	display: flex;
+	flex: 0 0 92rpx;
+	height: 92rpx;
+	background: rgba(255, 255, 255, 0.98);
 }
-.tab-box {
-	overflow: hidden;
-	width: 100%;
-	height: 84rpx;
-	border: 1px solid #f8f8ff;
-	border-radius: 40rpx 40rpx 0 0;
-	.tab-item {
-		flex: 1;
-		line-height: 84rpx;
-		text-align: center;
-		background: #ffffff;
-		font-size: 28rpx;
-		font-family: PingFang SC;
-		font-weight: 500;
-		color: #999999;
-		position: relative;
-		border-right: 1rpx solid #fff;
-		.tab-triangle {
-			position: absolute;
-			z-index: 2;
-			bottom: 0;
-			left: 42%;
-			border-radius: 5rpx;
-			width: 45rpx;
-			height: 10rpx;
-			background: #2b4055;
-		}
-	}
-	.tab-active {
-		color: #333333;
-	}
-}
-.goods-item {
+
+.order-tab {
 	position: relative;
-	margin-bottom: 2rpx;
-	.cu-progress {
-		width: 225rpx;
-		height: 16rpx;
-		.progress--color {
-			background: #e6b873;
-		}
-	}
-	.progress-text {
-		color: #999999;
-		font-size: 20rpx;
-		margin-left: 25rpx;
-	}
-	.fot-text {
-		width: 100%;
-		height: 70rpx;
-		line-height: 70rpx;
-		display: flex;
-		.text-grey {
-			width: 50%;
-		}
-		.fot-btn {
-			text-align: right;
-			width: 50%;
-			height: 60rpx;
-			.buy-btn {
-				width: 140rpx;
-				height: 60rpx;
-				border-radius: 30rpx;
-				font-size: 26rpx;
-				font-family: PingFang SC;
-				font-weight: 400;
-				padding: 0;
-			}
-			.btn-end {
-				background: linear-gradient(90deg, #c6e2ff, #b9d3ee);
-				box-shadow: 1px 1px 1px 1px rgba(229, 138, 0, 0.22);
-				color: white;
-			}
-			.btn-nostart {
-				background: linear-gradient(90deg, #ffec8b, #eedc82);
-				box-shadow: 1px 1px 1px 1px rgba(229, 138, 0, 0.22);
-				color: #ff8247;
-			}
-			.btn-ing {
-				background: linear-gradient(90deg, #fff0f5, #ffe4e1);
-				box-shadow: 1px 1px 1px 1px rgba(229, 138, 0, 0.22);
-				color: rgba(238, 99, 99, 1);
-			}
-		}
-	}
+	display: flex;
+	flex: 1;
+	align-items: center;
+	justify-content: center;
+	height: 92rpx;
+	color: var(--tt-text-secondary);
+}
+
+.order-tab__title {
+	font-size: 29rpx;
+	font-weight: 600;
+	line-height: 42rpx;
+}
+
+.order-tab--active { color: var(--tt-primary-strong); }
+
+.order-tab__indicator {
+	position: absolute;
+	left: 50%;
+	bottom: 0;
+	width: 72rpx;
+	height: 6rpx;
+	transform: translateX(-50%);
+	border-radius: 6rpx 6rpx 0 0;
+	background: var(--tt-primary);
+}
+
+.order-scroll { background: var(--tt-bg); }
+
+.order-load-more {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	min-height: 90rpx;
+	font-size: 23rpx;
+	line-height: 34rpx;
+	color: var(--tt-text-muted);
+}
+
+.order-safe-bottom {
+	height: calc(24rpx + env(safe-area-inset-bottom));
+}
+
+:deep(.empty-img) {
+	width: 360rpx;
+	height: 220rpx;
+	margin-top: 120rpx;
+}
+
+:deep(.empty-text) {
+	font-size: 25rpx;
+	line-height: 38rpx;
+	color: var(--tt-text-muted);
 }
 </style>

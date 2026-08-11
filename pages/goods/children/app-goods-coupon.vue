@@ -49,7 +49,7 @@ export default {
 	height: 220rpx;
 	margin-bottom: 20rpx;
 	.tab-list {
-		/deep/.coupon-wrap{
+		:deep(.coupon-wrap) {
 			width: 710rpx;
 		}
 	}

@@ -1,6 +1,6 @@
 <template>
 	<view v-if="floatList && floatList.length" class="app-float-btn">
-		<view :class="{ 'btn-mark': showBtnList }" cathctouchmove @tap="hideBtnModal"></view>
+		<view v-if="showBtnList" class="btn-mark" @touchmove.stop.prevent @tap="hideBtnModal"></view>
 		<button class="cu-btn wechat-btn" @tap="onBtn">
 			<image class="wechat_img" :src="floatList.length == 1 ? floatList[0].btnimage : floatData.image" mode="widthFix"></image>
 		</button>
@@ -12,14 +12,12 @@
 				</view>
 			</view>
 		</view>
-		<view class="cu-modal" :class="{ show: showModal }" cathctouchmove @tap="hideModal">
-			<view class="cu-dialog" @tap.stop style="background: none;overflow: visible;">
+		<app-safe-popup v-model="showModal" plain max-width="680rpx">
 				<view class="img-box">
 					<image class="modal-img" :src="modalImg" mode="widthFix" @longtap="saveImg(modalImg)"></image>
 					<text class="cuIcon-roundclose" @tap="hideModal"></text>
 				</view>
-			</view>
-		</view>
+		</app-safe-popup>
 	</view>
 </template>
 
@@ -124,9 +122,6 @@ export default {
 	top: 50%;
 	transform: translate(-50%, -50%);
 	background: rgba(#000, 0.4);
-}
-.cu-modal {
-	z-index: 999999;
 }
 .app-float-btn {
 	position: fixed;

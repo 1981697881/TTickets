@@ -1,8 +1,7 @@
 <template>
 	<view class="">
 		<!-- 规格 -->
-		<view class="cu-modal sku-modal  bottom-modal" style="z-index: 999;" :class="{ show: showModal }" @tap="hideModal" v-if="goodsInfo.sku_price">
-			<view class="cu-dialog" @tap.stop style="background: none;">
+		<app-safe-popup v-if="goodsInfo.sku_price" v-model="showModal" type="bottom" aria-label="选择商品规格">
 				<view class="shop-modal page_box" :style="goodsInfo.is_sku == 0 ? 'height:500rpx' : ''">
 					<text class="cuIcon-roundclosefill" @tap="hideModal"></text>
 					<!-- 商品信息 -->
@@ -46,7 +45,7 @@
 									@change="changeNum"
 									:step="1"
 									:min="0"
-									:currentSkuPrice.sync="currentSkuPrice"
+									:currentSkuPrice="currentSkuPrice"
 									:goodsInfo="goodsInfo"
 									:value="goodsNum"
 								></uni-number-box>
@@ -59,8 +58,7 @@
 						<button class="cu-btn  buy-btn" @tap="confirmBuy">立即购买</button>
 					</view>
 				</view>
-			</view>
-		</view>
+		</app-safe-popup>
 	</view>
 </template>
 
@@ -78,12 +76,12 @@ export default {
 			currentSkuPrice: {},
 			currentSkuArray: [],
 			goodsNum: 1,
-			confirmGoodsInfo: {},
-			type: this.buyType
+			confirmGoodsInfo: {}
 		};
 	},
 	props: {
 		goodsInfo: {},
+		modelValue: { type: Boolean, default: undefined },
 		value: {},
 		buyType: {
 			type: String,
@@ -113,20 +111,16 @@ export default {
 			this.currentSkuPrice = this.skuPrice[0];
 		}
 	},
-	watch: {
-		type(nweVal, oldVal) {
-			return newVal;
-		}
-	},
 	computed: {
 		skuPrice() {
 			return this.goodsInfo.sku_price;
 		},
 		showModal: {
 			get() {
-				return this.value;
+				return this.modelValue === undefined ? Boolean(this.value) : this.modelValue;
 			},
 			set(val) {
+				this.$emit('update:modelValue', val);
 				this.$emit('input', val);
 			}
 		},
@@ -167,7 +161,7 @@ export default {
 				that.currentSkuArray.splice(pid, 1, '');
 			} else {
 				// 选中
-				that.$set(that.currentSkuArray, pid, skuId);
+				that.currentSkuArray[pid] = skuId;
 			}
 
 			let chooseSkuId = []; // 选中的规格大类

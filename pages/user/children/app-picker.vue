@@ -1,26 +1,27 @@
 <template>
-	<div class="app-picker">
-		<div :class="{ pickerMask: showPicker }" @click="maskClick" catchtouchmove="true"></div>
-		<div class="app-picker-content " :class="{ 'app-picker-view-show': showPicker }">
-			<div class="app-picker__hd" catchtouchmove="true">
-				<div class="app-picker__action" @click="pickerCancel">取消</div>
-				<div class="app-picker__action" :style="{ color: themeColor }" @click="pickerConfirm">确定</div>
-			</div>
+	<view class="app-picker">
+		<app-safe-popup v-model="showPicker" type="bottom" @mask-click="maskClick">
+		<view class="app-picker-content">
+			<view class="app-picker__hd">
+				<view class="app-picker__action" @tap="pickerCancel">取消</view>
+				<view class="app-picker__action" :style="{ color: themeColor }" @tap="pickerConfirm">确定</view>
+			</view>
 			<picker-view indicator-style="height: 40px;" class="app-picker-view" :value="pickerValue" @change="pickerChange">
 				<block>
 					<picker-view-column>
-						<div class="picker-item" v-for="(item, index) in provinceDataList" :key="index">{{ item.label }}</div>
+						<view class="picker-item" v-for="item in provinceDataList" :key="item.value">{{ item.label }}</view>
 					</picker-view-column>
 					<picker-view-column>
-						<div class="picker-item" v-for="(item, index) in cityDataList" :key="index">{{ item.label }}</div>
+						<view class="picker-item" v-for="item in cityDataList" :key="item.value">{{ item.label }}</view>
 					</picker-view-column>
 					<picker-view-column>
-						<div class="picker-item" v-for="(item, index) in areaDataList" :key="index">{{ item.label }}</div>
+						<view class="picker-item" v-for="item in areaDataList" :key="item.value">{{ item.label }}</view>
 					</picker-view-column>
 				</block>
 			</picker-view>
-		</div>
-	</div>
+		</view>
+		</app-safe-popup>
+	</view>
 </template>
 
 <script>
@@ -100,7 +101,7 @@ export default {
 			}
 		},
 		pickerChange(e) {
-			let changePickerValue = e.mp.detail.value;
+			let changePickerValue = e.detail.value;
 			if (this.pickerValue[0] !== changePickerValue[0]) {
 				// 第一级发生滚动
 				this.cityDataList = this.pcaData.cityData[changePickerValue[0]];
@@ -136,26 +137,11 @@ export default {
 </script>
 
 <style>
-.pickerMask {
-	position: fixed;
-	z-index: 1000;
-	top: 0;
-	right: 0;
-	left: 0;
-	bottom: 0;
-	background: rgba(0, 0, 0, 0.6);
-}
 .app-picker-content {
-	position: fixed;
-	bottom: 0;
-	left: 0;
 	width: 100%;
-	transition: all 0.3s ease;
-	transform: translateY(100%);
-	z-index: 3000;
-}
-.app-picker-view-show {
-	transform: translateY(0);
+	background: #fff;
+	border-radius: var(--tt-radius-lg) var(--tt-radius-lg) 0 0;
+	overflow: hidden;
 }
 .app-picker__hd {
 	display: flex;

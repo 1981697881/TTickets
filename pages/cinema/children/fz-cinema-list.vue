@@ -197,7 +197,7 @@ export default {
 		display: inline-flex;
 		width: 40%;
 		padding: 20rpx;
-		image {
+		.cir-logo-image {
 			border-radius: 15rpx;
 			width: 100%;
 		}

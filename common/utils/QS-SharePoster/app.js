@@ -555,4 +555,4 @@ function checkMPUrl(url) {
 	return url;
 }
 
-module.exports = _app;
+export default _app;

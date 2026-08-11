@@ -98,43 +98,47 @@ const actions = {
 					}
 				});
 			}
-			let res = template
-			api('posterList').then(reso => {
-				let data = []
-				reso.data.A.forEach((v)=>{
-					let obj = {
-					"name": v.posterName,
-					"bgcolor": "#2B4055",
-					"image": "https://cfzx.gzfzdev.com/movie/uploadFiles/image/"+v.posterPhoto,
-					"path": v.posterUrl || 'pages/index/index',
-					"path_name": "",
-					"path_type": 1
-					}
-					data.push(obj)
-				})
-				res.data.home[1].content.list=data
-				res.data.home[4].content.list=reso.data.B
-			})
-			api('menuList').then(reso => {
-				let data = []
-				reso.data.forEach((v,vindex)=>{
-					let obj = {
-					"name": v.menuName,
-					"image": v.menuPhoto,
-					"path": v.menuUrl,
-					"path_name": "",
-					"path_type": 1
-					}
-					data.push(obj)
-				})
-				res.data.home[2].content.list=data
-			})
-			uni.setStorageSync('templateData', res.data);
-			commit('TEMPLATE_DATA', res.data);
-			if(res.code == 0){
-				commit('hasTemplate', false);
+			const res = JSON.parse(JSON.stringify(template));
+			const cached = uni.getStorageSync('templateData');
+			if (cached && Array.isArray(cached.home)) {
+				const cachedBanner = cached.home[1]?.content?.list;
+				const cachedSpread = cached.home[4]?.content?.list;
+				if (Array.isArray(cachedBanner) && cachedBanner.length) res.data.home[1].content.list = cachedBanner;
+				if (Array.isArray(cachedSpread) && cachedSpread.length) res.data.home[4].content.list = cachedSpread;
 			}
-			resolve(res)
+
+			Promise.all([
+				api('posterList').catch(() => null),
+				api('menuList').catch(() => null)
+			]).then(([posterResponse, menuResponse]) => {
+				const posterGroups = posterResponse && posterResponse.data && typeof posterResponse.data === 'object' ? posterResponse.data : {};
+				if (Array.isArray(posterGroups.A)) {
+					res.data.home[1].content.list = posterGroups.A.map(item => ({
+						name: item.posterName,
+						bgcolor: '#2B4055',
+						image: /^https?:\/\//.test(item.posterPhoto || '') ? item.posterPhoto : 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/' + item.posterPhoto,
+						path: item.posterUrl || '/pages/index/index',
+						path_name: '',
+						path_type: 1
+					}));
+				}
+				if (Array.isArray(posterGroups.B)) res.data.home[4].content.list = posterGroups.B;
+
+				if (menuResponse && Array.isArray(menuResponse.data)) {
+					res.data.home[2].content.list = menuResponse.data.map(item => ({
+						name: item.menuName,
+						image: item.menuPhoto,
+						path: item.menuUrl,
+						path_name: '',
+						path_type: 1
+					}));
+				}
+
+				uni.setStorageSync('templateData', res.data);
+				commit('TEMPLATE_DATA', res.data);
+				if (res.code == 0) commit('hasTemplate', false);
+				resolve(res);
+			}).catch(reject)
 			/* api('template', params).then(res => {
 				uni.setStorageSync('templateData', res.data);
 				commit('TEMPLATE_DATA', res.data);

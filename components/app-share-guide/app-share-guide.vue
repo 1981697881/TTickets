@@ -1,9 +1,9 @@
 <template>
-	<view class="cu-modal" :class="[{ show: showModal }]" cathctouchmove @tap="hideModal">
-		<view class="cu-dialog cu-dialog1" @tap.stop style="background: none;overflow: visible;">
+	<app-safe-popup v-model="showModal" plain max-width="640rpx">
+		<view class="cu-dialog1">
 			<image class="guide-img" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/share_guide.png" mode=""></image>
 		</view>
-	</view>
+	</app-safe-popup>
 </template>
 
 <script>
@@ -14,6 +14,7 @@ export default {
 		return {};
 	},
 	props: {
+		modelValue: { type: Boolean, default: undefined },
 		value: {},
 		modalType: {
 			type: String,
@@ -23,9 +24,10 @@ export default {
 	computed: {
 		showModal: {
 			get() {
-				return this.value;
+				return this.modelValue === undefined ? Boolean(this.value) : this.modelValue;
 			},
 			set(val) {
+				this.$emit('update:modelValue', val);
 				this.$emit('input', val);
 			}
 		}

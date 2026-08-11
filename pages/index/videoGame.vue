@@ -1,251 +1,299 @@
 <template>
-	<view class="page_box">
-		<view class="head_box">
-			<view class="box-head bg-white sh-grid-box">
-				<view class="tool-item y-f" @tap="jump('/pages/cinema/machine/index')">
-					<image class="tool-img" src="https://i.postimg.cc/CLLJSwsf/d2b3a41f329684fe1233940e60a2fec4.png" mode="aspectFill"></image>
-					<text class="item-title">机台展示</text>
-				</view>
-			</view>
-			<view class="box-head margin-top bg-white flex flex-wrap justify-between align-center">
-				<view class="padding-sm"><text class="text-xl text-bold text-orange">在线购币</text></view>
-				<view class="padding-sm text-gray">游戏币全场通用</view>
-			</view>
-		</view>
+	<view class="page_box arcade-page">
 		<view class="content_box">
-			<scroll-view :style="{ height: hHeight + 'px' }" class="scroll-box bg-white" scroll-y enable-back-to-top scroll-with-animation @scrolltolower="loadMore">
-				<view class="content-box">
-					<view class="goods-list x-f">
-						<view
-							class="goods-item"
-							v-for="(goods, index) in goodsList"
-							:key="index"
-							@tap="
-								jump('/pages/order/payment/chargeMoney', {
-									goodsDescribe: goods.goodsDescribe,
-									coinCount: goods.coinCount,
-									goodsName: goods.goodsName,
-									goodsPrice: goods.goodsPrice,
-									goodsId: goods.goodsId,
-									integral: goods.integral
-								})
-							"
-						>
-							<fz-circuit-meal :detail="goods" :colorItem="colorList[index].name" :tabId="tabId" :isTag="true"></fz-circuit-meal>
+			<scroll-view class="scroll-box" scroll-y enable-back-to-top scroll-with-animation @scrolltolower="loadMore">
+				<view class="arcade-content">
+					<view class="machine-entry" @tap="jump('/pages/cinema/machine/index')">
+						<view class="machine-copy">
+							<text class="machine-title">机台展示</text>
+							<text class="machine-caption">查看门店热门设备</text>
+							<view class="machine-action">
+								<text>去查看</text>
+								<text class="cuIcon-right"></text>
+							</view>
+						</view>
+						<view class="machine-media">
+							<image v-if="machineImage" class="machine-image" :src="machineImage" mode="aspectFill" lazy-load></image>
+							<image v-else class="machine-placeholder" src="/static/tabbar/game-active.png" mode="aspectFit"></image>
 						</view>
 					</view>
-					<!-- 加载更多 -->
-					<view v-if="goodsList.length" class="cu-load text-gray" :class="loadStatus"></view>
-					<!-- load -->
+
+					<view class="section-heading">
+						<view class="section-mark"></view>
+						<text class="section-title">在线购币</text>
+					</view>
+
+					<view class="coin-list">
+						<view
+							v-for="goods in goodsList"
+							:key="goods.goodsId"
+							class="coin-item"
+							@tap="openPayment(goods)"
+						>
+							<fz-circuit-meal :detail="goods"></fz-circuit-meal>
+						</view>
+					</view>
+
+					<view v-if="!isLoading && !goodsList.length" class="empty-state">
+						<image class="empty-icon" src="/static/imgs/user/menu/arcade-coins.jpg" mode="aspectFit"></image>
+						<text class="empty-title">暂无可购买的游戏币</text>
+						<text class="empty-caption">请稍后再试</text>
+					</view>
+					<view v-if="goodsList.length" class="cu-load" :class="loadStatus"></view>
 					<app-load v-model="isLoading"></app-load>
 				</view>
 			</scroll-view>
 		</view>
 		<view class="foot_box"></view>
-		<!-- 自定义底部导航 -->
-		<!-- <app-tabbar></app-tabbar> -->
-		<!-- 关注弹窗 -->
 		<app-float-btn></app-float-btn>
-		<!-- 连续弹窗提醒 -->
 		<app-notice-modal></app-notice-modal>
-		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>
-		<!-- 门店选择 -->
-		<app-address-model @init="init"></app-address-model>
+		<app-address-model @init="handleStoreReady"></app-address-model>
 	</view>
 </template>
 
 <script>
-import moreGoodList from '@/csJson/moreGoodList.json';
 import fzCircuitMeal from '@/components/fz-circuit-card/fz-circuit-meal.vue';
-import AppPay from '@/common/app-pay';
-import { mapMutations, mapActions, mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
+import { normalizePage, mergeUnique } from '@/common/utils/pagination';
+
+const IMAGE_BASE_URL = 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/';
+
 export default {
 	components: {
 		fzCircuitMeal
 	},
 	data() {
 		return {
-			hHeight: '0',
 			listParams: {
-				keywords: '',
 				page: 1
 			},
-			payType: 'wechat',
-			colorList: this.ColorList,
-			isLoading: false, //loading和空白页。
-			loadStatus: '', //loading,over
+			isLoading: false,
+			loadStatus: '',
 			lastPage: 1,
-			goodsList: []
+			goodsList: [],
+			machinePreview: {}
 		};
-	},
-	props: {
-		tabId: ''
-	},
-	mounted() {
-		this.getScrHeight();
-		this.init();
 	},
 	computed: {
 		...mapState({
-			balInfo: state => state.user.balInfo,
-			userInfo: state => state.user.userInfo
-		})
+			storeInfo: state => state.user.storeInfo || {}
+		}),
+		machineImage() {
+			const image = this.machinePreview.playPhoto;
+			if (!image) return '';
+			return /^https?:\/\//.test(image) ? image : `${IMAGE_BASE_URL}${image}`;
+		}
 	},
-	created() {},
+	mounted() {
+		this.init();
+	},
 	methods: {
-		...mapActions(['getUserBalance','getUserDetails']),
-		init() {
-			this.getGoodsList();
-			this.getUserBalance()
+		...mapActions(['getUserBalance']),
+		async init() {
+			this.listParams.page = 1;
+			this.lastPage = 1;
+			this.goodsList = [];
+			await Promise.all([
+				this.getGoodsList(),
+				this.getMachinePreview(),
+				Object.keys(this.storeInfo).length ? this.getUserBalance().catch(() => undefined) : Promise.resolve()
+			]);
 		},
-		// 加载更多
+		handleStoreReady() {
+			this.init();
+		},
 		loadMore() {
-			if (this.listParams.page < this.lastPage) {
+			if (!this.isLoading && this.listParams.page < this.lastPage) {
 				this.listParams.page += 1;
 				this.getGoodsList();
 			}
 		},
-		getScrHeight() {
-			let me = this;
-			uni.getSystemInfo({
-				success: function(res) {
-					// res - 各种参数
-					let info = uni.createSelectorQuery().select('.head_box');
-					info.boundingClientRect(function(data) {
-						//data - 各种参数
-						me.hHeight = res.windowHeight - data.height;
-					}).exec();
+		async getMachinePreview() {
+			try {
+				const res = await this.$api('cinema.playList', { page: 1 });
+				const page = normalizePage(res?.data, 1);
+				this.machinePreview = page.items[0] || {};
+			} catch (error) {
+				this.machinePreview = {};
+			}
+		},
+		async getGoodsList() {
+			if (this.isLoading) return;
+			this.isLoading = true;
+			this.loadStatus = 'loading';
+			try {
+				const res = await this.$api('goods.commodityList', {
+					goodsType: 1,
+					page: this.listParams.page
+				});
+				if (res?.flag || res?.code === 1) {
+					const page = normalizePage(res.data, this.listParams.page);
+					this.goodsList = mergeUnique(this.goodsList, page.items, 'goodsId', this.listParams.page === 1);
+					this.lastPage = page.lastPage;
+					this.loadStatus = this.listParams.page < page.lastPage ? '' : 'over';
 				}
+			} catch (error) {
+				this.loadStatus = '';
+				console.warn('[arcade] failed to load coin packages', error);
+			} finally {
+				this.isLoading = false;
+			}
+		},
+		openPayment(goods) {
+			this.jump('/pages/order/payment/chargeMoney', {
+				goodsDescribe: goods.goodsDescribe,
+				coinCount: goods.coinCount,
+				goodsName: goods.goodsName,
+				goodsPrice: goods.goodsPrice,
+				goodsId: goods.goodsId,
+				integral: goods.integral
 			});
 		},
-		// 商品列表
-		getGoodsList() {
-			let me = this;
-			let that = this;
-			that.isLoading = true;
-			that.loadStatus = 'loading';
-			that.$api('goods.commodityList', { goodsType: 1 }).then(res => {
-				if (res.flag) {
-					that.isLoading = false;
-					that.goodsList = [ ...res.data];
-					that.lastPage = res.data.last_page;
-					if (that.listParams.page < res.data.last_page) {
-						that.loadStatus = '';
-					} else {
-						that.loadStatus = 'over';
-					}
-				}
-			});
-		},
-
-		// 路由跳转
-		jump(path, parmas) {
-			this.$Router.push({
-				path: path,
-				query: parmas
-			});
+		jump(path, params) {
+			this.$Router.push({ path, query: params });
 		}
 	}
 };
 </script>
 
 <style lang="scss">
-// 宫格
-.sh-grid-box {
+.arcade-page {
 	background: #fff;
+}
+
+.arcade-content {
+	padding: 24rpx 28rpx 40rpx;
+	background: #fff;
+}
+
+.machine-entry {
+	min-height: 286rpx;
 	display: flex;
-	flex-wrap: wrap;
-	padding-bottom: 30rpx;
+	overflow: hidden;
+	background: #fbfaf6;
+	border: 1rpx solid var(--tt-border);
+	border-radius: 28rpx;
+	box-shadow: 0 12rpx 34rpx rgba(23, 24, 18, 0.05);
+}
 
-	.tool-item {
-		width: (750rpx/3);
-		.tool-img {
-			width: 100rpx;
-			height: 100rpx;
-			border-radius: 50%;
-			// background: #ccc;
-		}
+.machine-copy {
+	width: 42%;
+	z-index: 1;
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+	justify-content: center;
+	padding: 30rpx 0 30rpx 30rpx;
+	box-sizing: border-box;
+}
 
-		.item-title {
-			font-size: 24rpx;
-			font-family: PingFang SC;
-			font-weight: 500;
-			line-height: 24rpx;
-			padding-top: 10rpx;
-		}
+.machine-title {
+	font-size: 38rpx;
+	font-weight: 750;
+	line-height: 52rpx;
+	color: var(--tt-text);
+}
+
+.machine-caption {
+	margin-top: 12rpx;
+	font-size: 23rpx;
+	line-height: 34rpx;
+	color: var(--tt-text-secondary);
+}
+
+.machine-action {
+	min-width: 132rpx;
+	height: 64rpx;
+	margin-top: 28rpx;
+	padding: 0 20rpx 0 24rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 8rpx;
+	background: var(--tt-primary);
+	border-radius: 999rpx;
+	font-size: 25rpx;
+	font-weight: 650;
+	color: #fff;
+	box-sizing: border-box;
+
+	.cuIcon-right {
+		font-size: 24rpx;
 	}
 }
-.card-swiper {
-	height: 350upx !important;
+
+.machine-media {
+	width: 58%;
+	min-height: 286rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	overflow: hidden;
+	background: var(--tt-primary-soft);
+	border-radius: 48% 0 0 48%;
 }
-.card-swiper uni-swiper-item {
-	padding: 5px 0 15px !important;
-}
-.content-box {
-	width: 750rpx;
-}
-.box-head {
-	border-bottom: 1px solid #e8eacf;
-}
-.goods-list {
-	flex-wrap: wrap;
-	.goods-item {
-		width: 100%;
-	}
-}
-.cir_group {
+
+.machine-image {
 	width: 100%;
 	height: 100%;
-	background-color: red; /* 对于不支持渐变的浏览器*/
-	background-image: linear-gradient(#2b4055, #5c92c1, #2b4055); /* 标准语法(必须是最后一个) */
-	display: flex;
-	.cir_logo {
-		display: inline-flex;
-		width: 40%;
-		padding: 20rpx;
-		image {
-			border-radius: 15rpx;
-			width: 100%;
-		}
-		.tag {
-			position: absolute;
-			left: 10rpx;
-			top: 40rpx;
-			z-index: 2;
-			line-height: 30rpx;
-			background: linear-gradient(132deg, rgba(28, 28, 28, 1), rgba(54, 54, 54, 1), rgba(236, 190, 96, 1));
-			border-radius: 0px 18rpx 18rpx 0px;
-			padding: 0 10rpx;
-			-webkit-transform: scale(0.8);
-			font-family: PingFang SC;
-			color: white;
-		}
-	}
-	.cir_detail {
-		width: 60%;
-		padding: 20rpx;
-		padding-left: 0;
-		font-family: PingFang SC;
-		display: inline-block;
-		.de_name {
-			width: 100%;
-			font-size: 40rpx;
-			line-height: 60rpx;
-		}
-		.de_pin {
-			line-height: 40rpx;
-			width: 100%;
-		}
-		.de_info {
-			line-height: 40rpx;
-			width: 100%;
-		}
-	}
 }
-.tower-swiper .tower-item {
-	transform: scale(calc(0.5 + var(--index) / 10));
-	margin-left: calc(var(--left) * 100upx - 150upx);
-	z-index: var(--index);
+
+.machine-placeholder {
+	width: 112rpx;
+	height: 112rpx;
+}
+
+.section-heading {
+	display: flex;
+	align-items: center;
+	gap: 14rpx;
+	padding: 42rpx 0 10rpx;
+}
+
+.section-mark {
+	width: 7rpx;
+	height: 34rpx;
+	background: var(--tt-primary);
+	border-radius: 999rpx;
+}
+
+.section-title {
+	font-size: 34rpx;
+	font-weight: 750;
+	line-height: 48rpx;
+	color: var(--tt-text);
+}
+
+.coin-list,
+.coin-item {
+	width: 100%;
+}
+
+.empty-state {
+	min-height: 400rpx;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	color: var(--tt-text-muted);
+}
+
+.empty-icon {
+	width: 110rpx;
+	height: 110rpx;
+	opacity: 0.5;
+}
+
+.empty-title {
+	margin-top: 20rpx;
+	font-size: 28rpx;
+	font-weight: 600;
+	color: var(--tt-text-secondary);
+}
+
+.empty-caption {
+	margin-top: 6rpx;
+	font-size: 23rpx;
 }
 </style>

@@ -1,24 +1,20 @@
 <template>
-	<view class="page_box">
-		<!-- 空白页 -->
-		<app-empty v-if="!hasTemplate" :emptyData="emptyData"></app-empty>
-		<view v-else class="page_box app-selector">
-			<!-- 导航栏 -->
-			<view class="head_box active" :style="{ background: bgcolor }">
-				<cu-custom :isBack="true" v-if="info && info.name">
-					<block slot="content">
-						<text class="nav-title app-selector-rect text-black">{{ info.name || '推荐' }}</text>
-					</block>
-				</cu-custom>
-			</view>
-			<view class="content_box" style="margin-top: -4rpx;overflow: hidden;">
-				<scroll-view class="scroll-box" scroll-y scroll-with-animation enable-back-to-top>
-					<block v-if="template" v-for="(item, index) in template" :key="index">
-						<!-- 轮播 -->
-						<sh-banner v-if="item.type === 'banner'" :detail="item.content"></sh-banner>
-						<!-- 二级广告 -->
-						<sh-spread v-if="item.type === 'spread'" :detail="item.content"></sh-spread>
-					</block>
+	<view class="activity-page">
+		<app-empty v-if="!hasTemplate || !hasActivityData" :emptyData="emptyData"></app-empty>
+		<view v-else class="activity-layout app-selector">
+			<view class="activity-content">
+				<scroll-view class="activity-scroll" scroll-y enable-back-to-top>
+					<view v-if="bannerBlocks.length" class="activity-banner-section">
+						<sh-banner v-for="item in bannerBlocks" :key="item.id" :detail="item.content"></sh-banner>
+					</view>
+					<view v-if="activityBlocks.length" class="activity-list-section">
+						<view class="activity-section-heading">
+							<text class="activity-section-mark"></text>
+							<text class="activity-section-title">正在进行</text>
+						</view>
+						<sh-spread v-for="item in activityBlocks" :key="item.id" :detail="item.content"></sh-spread>
+					</view>
+					<view class="activity-safe-space"></view>
 				</scroll-view>
 			</view>
 			<view class="foot_box"></view>
@@ -58,39 +54,18 @@
 <script>
 import shBanner from './components/sh-banner.vue';
 import shSpread from './components/sh-spread.vue';
-import shNav from './components/sh-nav.vue';
 import appNoticeModal from '@/components/app-notice-modal/app-notice-modal.vue';
 import appSkeletons from '@/components/app-skeletons/app-skeletons.vue';
-// #ifdef MP-WEIXIN
-import { HAS_LIVE } from '@/env';
-import shLive from './components/sh-live.vue';
-// #endif
-import { mapMutations, mapActions, mapState } from 'vuex';
-// #ifdef H5
-import html2canvas from '@/common/utils/sdk/html2canvas.js';
-let listenMove = document.body; //禁止手机h5下拉刷新带动整个页面。
-let handle = function(e) {
-	e.preventDefault();
-};
-// #endif
-
+import { mapActions, mapState } from 'vuex';
 export default {
 	components: {
 		shBanner,
 		shSpread,
-		shNav,
 		appNoticeModal,
-		appSkeletons,
-		// #ifdef MP-WEIXIN
-		shLive
-		// #endif
+		appSkeletons
 	},
 	data() {
 		return {
-			bgcolor: 'white',
-			// #ifdef MP-WEIXIN
-			HAS_LIVE: HAS_LIVE,
-			// #endif
 			mode: '',
 			showPrivacy: false,
 			showNoticeModal: false,
@@ -98,7 +73,7 @@ export default {
 			_freshing: false, //下拉刷新状态
 			emptyData: {
 				img: '/static/imgs/empty/template_empty.png',
-				tip: '暂未找到模板，赶快去装修吧~'
+				tip: '当前暂无活动，敬请期待'
 			}
 		};
 	},
@@ -120,6 +95,15 @@ export default {
 			if (this.initData.info) {
 				return this.initData.info;
 			}
+		},
+		bannerBlocks() {
+			return (this.template || []).filter(item => item.type === 'banner' && item.content?.list?.length);
+		},
+		activityBlocks() {
+			return (this.template || []).filter(item => item.type === 'spread' && item.content?.list?.length);
+		},
+		hasActivityData() {
+			return this.bannerBlocks.length > 0 || this.activityBlocks.length > 0;
 		}
 	},
 	onPullDownRefresh() {
@@ -158,10 +142,6 @@ export default {
 				uni.stopPullDownRefresh();
 			});
 		},
-		// 获取轮播背景色
-		getbgcolor(e) {
-			this.bgcolor = e;
-		},
 		// 路由跳转
 		jump(path, parmas) {
 			this.$Router.push({
@@ -181,16 +161,59 @@ export default {
 </script>
 
 <style lang="scss">
+.activity-page,
+.activity-layout {
+	height: 100vh;
+	overflow: hidden;
+	background: #fbfbf8;
+}
+.activity-layout {
+	display: flex;
+	flex-direction: column;
+}
+.activity-content {
+	flex: 1;
+	min-height: 0;
+}
+.activity-scroll {
+	height: 100%;
+}
+.activity-banner-section {
+	padding-top: 1rpx;
+}
+.activity-list-section {
+	padding-top: 4rpx;
+}
+.activity-section-heading {
+	display: flex;
+	align-items: center;
+	padding: 0 30rpx 24rpx;
+}
+.activity-section-mark {
+	width: 8rpx;
+	height: 34rpx;
+	margin-right: 16rpx;
+	border-radius: 8rpx;
+	background: var(--tt-primary);
+}
+.activity-section-title {
+	font-size: 34rpx;
+	font-weight: 700;
+	line-height: 46rpx;
+	color: var(--tt-text);
+}
+.activity-safe-space {
+	height: calc(34rpx + env(safe-area-inset-bottom));
+}
+
+@media screen and (max-width: 340px) {
+	.activity-section-heading { padding-left: 24rpx; padding-right: 24rpx; }
+}
+
 // 标题搜索栏
 .active {
 	// 动画时间跟随轮播组件动画时间
 	transition: all linear 0.5s;
-}
-// 服务协议
-.modal-wrap {
-	/deep/ .cu-modal {
-		z-index: 99999;
-	}
 }
 .service-contract-wrap {
 	background-color: #fff;
@@ -268,7 +291,7 @@ export default {
 	width: 750rpx;
 	// background: #fff;
 	transition: all linear 0.3s;
-	/deep/.cuIcon-back {
+	:deep(.cuIcon-back) {
 		display: none;
 	}
 	.nav-title {

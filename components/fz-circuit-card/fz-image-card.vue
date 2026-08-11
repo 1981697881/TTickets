@@ -1,81 +1,104 @@
 <template>
-	<view class="adv-box mb10" v-if="detail" @tap="jump('/pages/cinema/machine/detail', {playId: detail.playId})">
-		<!-- 模板1 -->
-		<view class="x-f x-image">
-			<image :src='"https://cfzx.gzfzdev.com/movie/uploadFiles/image/"+detail.playPhoto' mode="scaleToFill" lazy-load></image>
-		</view>
-		<view class="box-fot flex flex-wrap justify-between " >
-			<view class="fot-left">
-				<view class="text-xl padding-left  text-red text-bold">{{detail.playName}}</view>
-			</view>
-			<view class="fot-right">
-				<button class="cu-btn round  lines-blue sm shadow margin-right">机台简介</button>
+	<view v-if="detail" class="machine-card" @tap="openDetail">
+		<image class="machine-photo" :src="imageUrl" mode="aspectFill" lazy-load></image>
+		<view class="machine-footer">
+			<text class="machine-name">{{ detail.playName }}</text>
+			<view class="detail-action">
+				<text>查看详情</text>
+				<text class="cuIcon-right"></text>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
+const IMAGE_BASE_URL = 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/';
+
 export default {
-	components: {},
-	data() {
-		return {
-			routerTo: this.$tools.routerTo
-		};
-	},
+	name: 'FzImageCard',
 	props: {
 		detail: {
 			type: Object,
-			default: {}
+			default: () => ({})
+		},
+		tabId: {
+			type: [String, Number],
+			default: ''
+		},
+		isTag: {
+			type: [Boolean, String],
+			default: false
 		}
 	},
-	computed: {},
-	created() {
-		console.log(this.detail)
+	computed: {
+		imageUrl() {
+			const image = this.detail.playPhoto;
+			if (!image) return '';
+			return /^https?:\/\//.test(image) ? image : `${IMAGE_BASE_URL}${image}`;
+		}
 	},
 	methods: {
-		// 路由跳转
-		jump(path, parmas) {
+		openDetail() {
 			this.$Router.push({
-				path: path,
-				query: parmas
+				path: '/pages/cinema/machine/detail',
+				query: { playId: this.detail.playId }
 			});
 		}
 	}
 };
 </script>
 
-<style lang="scss">
-.adv-box {
-	background-color: #fff;
-	border-radius: 20rpx;
-	margin-left: 30rpx;
-	margin-right: 30rpx;
-	margin-top: 30rpx;
+<style scoped lang="scss">
+.machine-card {
+	width: 100%;
+	padding: 26rpx 0 30rpx;
+	background: #fff;
+	border-bottom: 1rpx solid var(--tt-border);
+}
+
+.machine-photo {
+	width: 100%;
+	height: 380rpx;
+	display: block;
+	background: #f1f2ed;
+	border-radius: 26rpx;
+}
+
+.machine-footer {
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 24rpx;
+	padding: 22rpx 10rpx 0;
+}
+
+.machine-name {
+	min-width: 0;
+	flex: 1;
+	font-size: 34rpx;
+	font-weight: 720;
+	line-height: 48rpx;
+	color: var(--tt-text);
 	overflow: hidden;
-	position: relative;
-	box-shadow: -1px 1px 1px 1px #FAB6B6;
-	.box-fot{
-		height: 80rpx;
-		.fot-left{
-			line-height: 80rpx;
-			text-shadow: 1px 1px 1px #CCCCCC;
-			font-style:italic;
-		}
-		.fot-right{
-			line-height: 80rpx;
-		}
-	}
-	.x-image{
-		height: 250rpx;
-		position: relative;
-	}
-	image {
-		width:100%;
-		height: 250rpx;
-		z-index: 99;
-		position: absolute;
-		// background-color: #ccc;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.detail-action {
+	height: 64rpx;
+	padding: 0 22rpx 0 26rpx;
+	display: flex;
+	align-items: center;
+	gap: 8rpx;
+	background: var(--tt-primary);
+	border-radius: 999rpx;
+	font-size: 25rpx;
+	font-weight: 650;
+	color: #fff;
+	box-sizing: border-box;
+
+	.cuIcon-right {
+		font-size: 23rpx;
 	}
 }
 </style>

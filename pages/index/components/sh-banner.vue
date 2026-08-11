@@ -1,8 +1,8 @@
 <template>
 	<!-- 轮播 -->
-	<view class="banner-swiper-box mb10" v-if="detail.list">
+	<view class="banner-swiper-box" v-if="detail.list && detail.list.length">
 		<canvas canvas-id="colorThief" class="hide-canvas"></canvas>
-		<swiper class="banner-carousel app-selector-rect" circular @change="swiperChange" :autoplay="true">
+		<swiper class="banner-carousel app-selector-rect" circular @change="swiperChange" :autoplay="detail.list.length > 1" :interval="4200">
 			<swiper-item v-for="(item, index) in detail.list" :key="index" class="carousel-item " @tap="routerTo(item.path)">
 				<image class="swiper-image " :src="item.image" mode="scaleToFill" lazy-load></image>
 			</swiper-item>
@@ -28,7 +28,7 @@ export default {
 	props: {
 		detail: {
 			type: Object,
-			default: null
+			default: () => ({ list: [] })
 		}
 	},
 	computed: {},
@@ -71,27 +71,29 @@ export default {
 
 // 轮播
 .banner-swiper-box {
-	background: #fff;
+	background: transparent;
+	margin: 28rpx 30rpx 34rpx;
+	overflow: hidden;
+	border-radius: 26rpx;
+	box-shadow: 0 14rpx 38rpx rgba(25, 27, 18, 0.09);
 }
 
 .banner-swiper-box,
 .banner-carousel {
-	width: 750rpx;
-	height: 350rpx;
+	width: calc(100vw - 60rpx);
+	height: 360rpx;
 	position: relative;
 
 	.carousel-item {
 		width: 100%;
 		height: 100%;
-		// padding: 0 28upx;
 		overflow: hidden;
 	}
 
 	.swiper-image {
 		width: 100%;
 		height: 100%;
-		// border-radius: 10upx;
-		// background: #ccc;
+		border-radius: 26rpx;
 	}
 }
 
@@ -100,22 +102,22 @@ export default {
 	position: absolute;
 	left: 50%;
 	transform: translateX(-50%);
-	bottom: 20rpx;
+	bottom: 18rpx;
 	z-index: 66;
 
 	.banner-dot {
-		width: 14rpx;
-		height: 14rpx;
-		background: rgba(255, 255, 255, 1);
-		border-radius: 50%;
+		width: 10rpx;
+		height: 10rpx;
+		background: rgba(255, 255, 255, 0.75);
+		border-radius: 10rpx;
 		margin-right: 10rpx;
 	}
 
 	.banner-dot-active {
-		width: 14rpx;
-		height: 14rpx;
-		background: #a8700d;
-		border-radius: 50%;
+		width: 28rpx;
+		height: 10rpx;
+		background: var(--tt-primary);
+		border-radius: 10rpx;
 		margin-right: 10rpx;
 	}
 }

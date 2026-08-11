@@ -226,7 +226,7 @@ export default {
 }
 
 .load-box {
-	/deep/.skeletons_box {
+	:deep(.skeletons_box) {
 		z-index: 11;
 	}
 }
@@ -359,7 +359,7 @@ export default {
 	background: #fff;
 
 	.rich-box {
-		/deep/ img {
+		:deep(img) {
 			display: block;
 		}
 	}

@@ -23,7 +23,7 @@
 						<text class="cuIcon-ticket text-blue padding-xs">普通票 ￥{{ ticeket.cdkeyPrice }}</text>
 					</view>
 					<view class="x-f">
-						<uni-number-box @change="changeNum($event, ticeket)" :step="1" :min="0" :currentSkuPrice.sync="currentSkuPrice" :value="ticketNum"></uni-number-box>
+						<uni-number-box @change="changeNum($event, ticeket)" :step="1" :min="0" :currentSkuPrice="currentSkuPrice" :value="ticketNum"></uni-number-box>
 					</view>
 				</view>
 				<view v-else class="logistic item-list x-bc">
@@ -31,7 +31,7 @@
 						<text class="cuIcon-ticket text-red padding-xs">通用票 ￥{{ ticeket.cdkeyPrice }}</text>
 					</view>
 					<view class="x-f">
-						<uni-number-box @change="changeNumt($event, ticeket)" :step="1" :min="0" :currentSkuPrice.sync="currentSkuPrice" :value="tickettNum"></uni-number-box>
+						<uni-number-box @change="changeNumt($event, ticeket)" :step="1" :min="0" :currentSkuPrice="currentSkuPrice" :value="tickettNum"></uni-number-box>
 					</view>
 				</view>
 			</view>
@@ -232,7 +232,7 @@ export default {
 	color: white;
 	border-radius: 15rpx;
 	box-shadow: 1px 1px 1px #c0c0c0;
-	/deep/ .goods-title {
+	:deep(.goods-title) {
 		width: 460rpx !important;
 	}
 	.goods-card {

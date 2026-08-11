@@ -94,7 +94,7 @@ export default {
 
 	.type2 {
 		.type2-img1 {
-			width: (710rpx/2);
+			width: 355rpx;
 			height: 340rpx;
 			border-right: 1rpx solid #f6f6f6;
 		}
@@ -102,21 +102,21 @@ export default {
 		.type2-box {
 			flex: 1;
 			height: 340rpx;
-			width: (710rpx/2);
+			width: 355rpx;
 
 			.type2-img2 {
-				height: (340rpx/2);
+				height: 170rpx;
 			}
 		}
 	}
 
 	.type3 {
 		.type3-box {
-			width: (710rpx/2);
+			width: 355rpx;
 			border-right: 1rpx solid #f6f6f6;
 			.type3-img1 {
 				flex: 1;
-				height: (340rpx/2);
+				height: 170rpx;
 
 				&:first-child {
 					border-bottom: 1rpx solid #f6f6f6;
@@ -127,7 +127,7 @@ export default {
 		.type3-img2 {
 			flex: 1;
 			height: 340rpx;
-			width: (710rpx/2);
+			width: 355rpx;
 		}
 	}
 
@@ -136,7 +136,7 @@ export default {
 			border-bottom: 1rpx solid #f6f6f6;
 			.type4-img1 {
 				flex: 1;
-				height: (340rpx/2);
+				height: 170rpx;
 
 				&:first-child {
 					border-right: 1rpx solid #f6f6f6;
@@ -146,7 +146,7 @@ export default {
 
 		.type4-img2 {
 			flex: 1;
-			height: (340rpx/2);
+			height: 170rpx;
 			width: 710rpx;
 		}
 	}
@@ -154,17 +154,17 @@ export default {
 	.type5 {
 		.type5-img1 {
 			width: 710rpx;
-			height: (340rpx/2);
+			height: 170rpx;
 			border-bottom: 1rpx solid #f6f6f6;
 		}
 
 		.type5-box {
 			flex: 1;
-			height: (340rpx/2);
+			height: 170rpx;
 			width: 710rpx;
 
 			.type5-img2 {
-				height: (340rpx/2);
+				height: 170rpx;
 
 				&:first-child {
 					border-right: 1rpx solid #f6f6f6;
@@ -176,8 +176,8 @@ export default {
 	.type6 {
 		.type6-box1 {
 			.type6-img1 {
-				width: (710rpx/2);
-				height: (340rpx/2);
+				width: 355rpx;
+				height: 170rpx;
 
 				&:first-child {
 					border-right: 1rpx solid #f6f6f6;
@@ -189,8 +189,8 @@ export default {
 			border-top: 1rpx solid #f6f6f6;
 
 			.type6-img2 {
-				width: (710rpx/3);
-				height: (340rpx/2);
+				width: calc(710rpx / 3);
+				height: 170rpx;
 				border-right: 1rpx solid #f6f6f6;
 
 				&:last-child {
@@ -198,10 +198,6 @@ export default {
 				}
 			}
 		}
-	}
-
-	image {
-		// background-color: #ccc;
 	}
 }
 </style>

@@ -432,7 +432,7 @@ export default {
 }
 
 .load-box {
-	/deep/.skeletons_box {
+	:deep(.skeletons_box) {
 		z-index: 11;
 	}
 }
@@ -564,12 +564,6 @@ export default {
 	min-height: 300rpx;
 	background: #fff;
 	background: #fff;
-
-	.rich-box {
-		/deep/ img {
-			display: block;
-		}
-	}
 
 	.goods-size {
 		padding-top: 30rpx;

@@ -1,78 +1,75 @@
 <template>
 	<view class="sh-user-menu-box mb10">
-		<view class="cu-modal" :class="modalName == 'RadioModal' ? 'show' : ''" @tap="hideModal">
-			<view class="cu-dialog" @tap.stop="">
-				<radio-group class="block" @change="RadioChange">
+		<app-safe-popup v-model="phonePopupVisible" max-width="640rpx">
+			<view class="phone-dialog">
+				<view class="phone-dialog__title">联系客服</view>
+				<view class="phone-dialog__hint">选择客服电话后直接拨打</view>
+				<view class="block" v-if="servicePhones.length">
 					<view class="cu-list menu text-left">
-						<view class="cu-item" v-for="(item, index) in storeInfo.customerServicePhoneList" :key="index">
+						<view class="cu-item phone-row" v-for="(item, index) in servicePhones" :key="item">
 							<label class="flex justify-between align-center flex-sub">
-								<view class="flex-sub" @tap="CallPhone(item)">客服电话 ({{ index+1 }}):{{ item }}</view>
+								<view class="flex-sub" @tap="callPhone(item)">客服电话 {{ index + 1 }}<text class="phone-number">{{ item }}</text></view>
 							</label>
 						</view>
 					</view>
-				</radio-group>
-			</view>
-		</view>
-		<view class="menu-list-box">
-			<view class="menu-item x-bc" v-for="(nav, index) in detail.list" :key="index" @tap="onCheck(nav)">
-				<view class="x-f">
-					<image v-if="nav.image" class="item-img" :src="nav.image" mode=""></image>
-					<text class="item-title">{{ nav.name }}</text>
 				</view>
-				<text class="cuIcon-right item-arrow"></text>
+				<view class="phone-empty" v-else>当前门店暂未配置客服电话</view>
+			</view>
+		</app-safe-popup>
+		<view class="menu-list-box">
+			<view class="menu-list-title">常用服务</view>
+			<view class="menu-list-panel">
+				<view class="menu-item x-bc" v-for="(nav, index) in navList" :key="nav.path || index" @tap="onCheck(nav)">
+					<view class="x-f">
+						<view class="item-icon x-c"><image v-if="nav.image" class="item-img" :src="nav.image" mode="aspectFit"></image></view>
+						<text class="item-title">{{ nav.name }}</text>
+					</view>
+					<text class="cuIcon-right item-arrow"></text>
+				</view>
 			</view>
 		</view>
 	</view>
 </template>
 
 <script>
-import { mapMutations, mapActions, mapState } from 'vuex';
+import { mapState } from 'vuex';
 export default {
 	components: {},
 	data() {
 		return {
-			modalName: null,
-			PhoneList: [
-				{
-					Name: '客服电话(1)',
-					Phone: '182-8809-0152'
-				},
-				{
-					Name: '客服电话(2)',
-					Phone: '189-8814-9921'
-				}
-			]
+			phonePopupVisible: false
 		};
 	},
 	props: {
 		detail: {
 			type: Object,
-			default: null
+			default: () => ({ list: [] })
 		}
 	},
 	computed: {
 		...mapState({
-			storeInfo: state => state.user.storeInfo,
+			storeInfo: state => state.user.storeInfo || {}
 		}),
+		servicePhones() {
+			return (this.storeInfo.customerServicePhoneList || []).filter(Boolean);
+		},
+		navList() {
+			return this.detail.list || [];
+		}
 	},
 	methods: {
-		//第二部分  模态框的显示与隐藏
-		showModal(e) {
-			this.modalName = e;
+		showModal() {
+			this.phonePopupVisible = true;
 		},
-		hideModal(e) {
-			this.modalName = null;
-		},
-		/*拨打电话*/
-		CallPhone(e) {
+		callPhone(phoneNumber) {
 			uni.makePhoneCall({
-				phoneNumber: e
+				phoneNumber
 			});
 		},
 		onCheck(data) {
 			let that = this;
 			if (data.path_type == 2) {
-				this.showModal('RadioModal');
+				this.showModal();
 			} else if (data.path_type == 3) {
 				uni.navigateToMiniProgram({
 					appId: 'wx181a62e86068b2a7', //测试wxe16a10c527a8e244
@@ -83,9 +80,11 @@ export default {
 						console.log(res);
 						// 打开成功
 					},
-					fail(res) {
-						console.log(res);
-						// 打开失败
+					fail(error) {
+						if (!String(error.errMsg || '').includes('cancel')) {
+							uni.showToast({ title: '正在打开本地积分商城', icon: 'none' });
+							that.jump(data);
+						}
 					}
 				});
 			} else if (data.path_type == 4) {
@@ -116,7 +115,7 @@ export default {
 	margin-bottom: 20rpx;
 
 	.tool-item {
-		width: (750rpx/4);
+		width: 187.5rpx;
 		padding-top: 40rpx;
 
 		.tool-img {
@@ -137,28 +136,64 @@ export default {
 }
 // 列表
 .menu-list-box {
+	margin: 0 30rpx 20rpx;
+	.menu-list-title {
+		margin-bottom: 20rpx;
+		font-size: 32rpx;
+		font-weight: 700;
+		line-height: 44rpx;
+		color: var(--tt-text);
+	}
+	.menu-list-panel {
+		overflow: hidden;
+		border: 1rpx solid var(--tt-border);
+		border-radius: var(--tt-radius-lg);
+		box-shadow: 0 8rpx 24rpx rgba(23, 24, 18, 0.035);
+	}
 	.menu-item {
-		height: 100rpx;
-		padding: 0 30rpx;
+		min-height: 106rpx;
+		padding: 0 26rpx;
 		background: #fff;
-		border-bottom: 1rpx solid #f3f3f3;
-		.item-img {
-			width: 44rpx;
-			height: 44rpx;
+		border-bottom: 1rpx solid var(--tt-border);
+		.item-icon {
+			width: 60rpx;
+			height: 60rpx;
 			margin-right: 20rpx;
-			// background: #ccc;
+			border-radius: 50%;
+			background: #fff;
+		}
+		.item-img {
+			width: 54rpx;
+			height: 54rpx;
+			border-radius: 12rpx;
 		}
 
 		.item-title {
-			font-size: 24rpx;
-			font-family: PingFang SC;
+			font-size: 28rpx;
 			font-weight: 500;
-			color: rgba(153, 153, 153, 1);
-			line-height: 24rpx;
+			color: var(--tt-text);
+			line-height: 40rpx;
 		}
 		.item-arrow {
-			color: rgba(153, 153, 153, 1);
+			font-size: 28rpx;
+			color: var(--tt-text-muted);
 		}
 	}
+	.menu-item:last-child { border-bottom: 0; }
+}
+.phone-dialog {
+	padding: 36rpx 32rpx 32rpx;
+	background: #fff;
+	border-radius: var(--tt-radius-lg);
+	.phone-dialog__title {
+		font-size: 32rpx;
+		font-weight: 700;
+		line-height: 44rpx;
+		color: var(--tt-text);
+	}
+	.phone-dialog__hint { margin: 8rpx 0 24rpx; font-size: 23rpx; color: var(--tt-text-muted); }
+	.phone-row { min-height: 88rpx; border-top: 1rpx solid var(--tt-border); color: var(--tt-text); }
+	.phone-number { display: block; margin-top: 4rpx; color: var(--tt-primary-strong); }
+	.phone-empty { padding: 32rpx 0 20rpx; text-align: center; font-size: 24rpx; color: var(--tt-text-muted); }
 }
 </style>

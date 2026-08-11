@@ -1,6 +1,6 @@
 <template>
 	<!-- #ifdef MP-WEIXIN  -->
-	<view class="force-login-wrap page_box" v-if="Object.keys(storeInfo).length == 0 && Object.keys(storeInfo).length == 1">
+	<view class="force-login-wrap page_box" v-if="!hasStore && addressList.length">
 		<view class="head_box"></view>
 		<view class="content_box" :style="'margin-top:'+marginTop">
 			<view class="address-list" v-for="(address,index) in addressList" :key="address.id" @tap="useAddress(address)">
@@ -19,6 +19,7 @@
 <script>
 import Wechat from '@/common/wechat/wechat';
 import { mapMutations, mapActions, mapState } from 'vuex';
+import { extractArray, isApiSuccess } from '@/common/utils/api-data';
 export default {
 	components: {},
 	data() {
@@ -38,7 +39,7 @@ export default {
 		},
 	},
 	created() {
-		this.getAddressList();
+		if (!this.hasStore) this.getAddressList();
 	},
 	computed: {
 		...mapState({
@@ -46,6 +47,12 @@ export default {
 			storeInfo: state => state.user.storeInfo,
 			forceOauth: state => state.user.forceOauth
 		}),
+		hasStore() {
+			const info = this.storeInfo || {};
+			const hasIdentity = Boolean(info.id || info.storeId || info.storeName);
+			const hasBusinessLink = Boolean(info.cinemaLinkId || info.cinemalinkId || (info.v8PlaceId && info.v8Url));
+			return hasIdentity && hasBusinessLink;
+		},
 		showLogin: {
 			get() {
 				return this.showLoginTip;
@@ -59,26 +66,32 @@ export default {
 		...mapActions(['setTokenAndBack']),
 		useAddress(val){
 			this.$store.commit('STORE_INFO', val);
-			 this.$emit('init');
+			this.$emit('init');
 		},
 		getAddressList() {
-			let that = this;
+			const that = this;
+			const loadStores = location => {
+				that.$api('storesForm', location || {}).then(reso => {
+					const list = extractArray(reso && reso.data);
+					if (!isApiSuccess(reso) && !list.length) return;
+					if (list.length === 1) {
+						that.$store.commit('STORE_INFO', list[0]);
+						that.$emit('init');
+					}
+					that.addressList = list;
+				}).catch(() => undefined);
+			};
 			uni.getLocation({
 			  type: 'gcj02',
 			  success: function(res) {
-				that.$api('storesForm',{
+				loadStores({
 			      longitude: res.longitude,
 			      latitude: res.latitude,
-			    }).then(reso => {
-					if (reso.flag) {
-						if(reso.data.length == 1){
-							that.$store.commit('STORE_INFO', reso.data[0]);
-							 that.$emit('init');
-						}
-						that.addressList = reso.data;
-					}
 				});
 			  },
+			  fail() {
+				loadStores({});
+			  }
 			})
 			
 		}

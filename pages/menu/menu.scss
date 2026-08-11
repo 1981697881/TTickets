@@ -16,7 +16,7 @@ page {
 	align-items: center;
 	justify-content: center;
 
-	image {
+	.loading-image {
 		width: 260rpx;
 		height: 260rpx;
 		position: relative;
@@ -279,7 +279,7 @@ page {
 			.ads {
 				height: calc(300 / 550 * 510rpx);
 
-				image {
+				.ads-image {
 					width: 100%;
 					height: 100%;
 					border-radius: 8rpx;
@@ -450,7 +450,7 @@ page {
 			align-items: center;
 			justify-content: space-around;
 
-			image {
+			.modal-action-icon {
 				width: 80rpx;
 				height: 80rpx;
 			}
@@ -755,6 +755,87 @@ page {
 						height: 46rpx;
 						text-align: center;
 						line-height: 46rpx;
+					}
+				}
+			}
+		}
+	}
+}
+
+// Vue 3 visual refresh: compact, touch-friendly merchandise list.
+.container {
+	background: var(--tt-bg);
+	min-height: 100vh;
+}
+
+.main {
+	height: calc(100vh - var(--window-bottom));
+	background: var(--tt-bg);
+}
+
+.nav {
+	height: 116rpx;
+	padding: 18rpx 24rpx 10rpx;
+	background: rgba(255, 255, 255, 0.97);
+	border-bottom: 1rpx solid var(--tt-border);
+
+	.coupon {
+		padding: 0;
+		background: transparent;
+		color: var(--tt-text);
+
+		.title {
+			margin-left: 0;
+			font-size: 38rpx;
+			font-weight: 700;
+		}
+
+		.iconfont { color: var(--tt-text-muted); }
+	}
+}
+
+.content .goods {
+	background: var(--tt-bg);
+
+	.wrapper {
+		padding: 20rpx 24rpx;
+
+		.list .items .good {
+			align-items: stretch;
+			margin-bottom: 20rpx;
+			padding: 18rpx;
+			background: #fff;
+			border: 1rpx solid var(--tt-border);
+			border-radius: var(--tt-radius-md);
+			box-shadow: var(--tt-shadow);
+
+			.image {
+				width: 176rpx;
+				height: 176rpx;
+				border-radius: 16rpx;
+				background: var(--tt-bg);
+			}
+
+			.right {
+				height: 176rpx;
+				padding-right: 0;
+
+				.name {
+					font-size: 30rpx;
+					font-weight: 650;
+					color: var(--tt-text);
+				}
+
+				.tips { color: var(--tt-text-secondary); }
+
+				.price_and_action {
+					.price { color: var(--tt-text); }
+
+					.btn-group .cu-btn {
+						min-width: 60rpx;
+						min-height: 60rpx;
+						background: var(--tt-primary) !important;
+						box-shadow: none;
 					}
 				}
 			}

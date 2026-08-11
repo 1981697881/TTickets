@@ -1,6 +1,8 @@
-var jweixin = require('jweixin-module');
+import 'jweixin-module';
 import api from '@/common/request/index'
 import tools from '@/common/utils/tools.js'
+
+const jweixin = typeof window !== 'undefined' ? (window.jWeixin || window.wx || {}) : {};
 export default {
 	//判断是否在微信中
 	isWechat: function() {

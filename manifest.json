@@ -2,6 +2,7 @@
     "name" : "财富中心嘉年华",
     "appid" : "__UNI__1EBB285",
     "description" : "",
+    "vueVersion" : "3",
     "versionName" : "1.1.2",
     "versionCode" : 215,
     "transformPx" : false,
@@ -160,6 +161,7 @@
     "quickapp" : {},
     /* 快应用特有相关 */
     "mp-weixin" : {
+        "mergeVirtualHostAttributes" : true,
         /* 小程序特有相关 */
         "usingComponents" : {
             "subscribe" : "plugin-private://wx2b03c6e691cd7370/components/subscribe/subscribe"

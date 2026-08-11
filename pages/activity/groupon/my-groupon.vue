@@ -211,7 +211,7 @@ export default {
 		padding: 0 20rpx;
 		position: relative;
 		z-index: 3;
-		/deep/.activity-goods-box {
+		:deep(.activity-goods-box) {
 			background: none;
 		}
 		.group-num {

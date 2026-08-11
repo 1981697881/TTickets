@@ -16,11 +16,11 @@
 					<view class="box-text text-gray">剩余：7</view>
 				</view>
 				<view class="img-box">
-					<image class="img" src="https://i.postimg.cc/nryKKkJp/wx-guojixinze.jpg" mode="scaleToFill"></image>
+					<image class="img" src="/static/imgs/user/menu/qrcode-v2.png" mode="aspectFit"></image>
 					<button class="margin-top cu-btn round sm lines-red"><text class="cuIcon-barcode" @tap="unYsc">已生成</text></button>
 				</view>
 				<view class="box-gift flex flex-wrap justify-end align-center">
-					<uni-number-box class="cknumber" @change="changeNum" :step="1" :min="0" :currentSkuPrice.sync="currentSkuPrice" :value="ticketNum"></uni-number-box>
+					<uni-number-box class="cknumber" @change="changeNum" :step="1" :min="0" :currentSkuPrice="currentSkuPrice" :value="ticketNum"></uni-number-box>
 					<button class="cu-btn round sm bg-olive" @tap="generate">生成兑换码</button>
 				</view>
 				<view class="box-record">

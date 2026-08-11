@@ -95,13 +95,16 @@
 				</view>
 				<!-- 购物车栏 end -->
 			</view>
+			<view v-else class="menu-empty">
+				<app-empty :isFixed="false" :emptyData="emptyData"></app-empty>
+			</view>
 			<!-- 商品详情模态框 begin -->
 			<modal :show="goodDetailModalVisible" class="good-detail-modal" color="#5A5B5C" width="90%" custom padding="0rpx" radius="12rpx">
 				<view class="cover">
 					<image v-if="good.images" :src="good.images" class="image"></image>
 					<view class="btn-group">
-						<image src="/static/imgs/menu/share-good.png"></image>
-						<image src="/static/imgs/menu/close.png" @tap="closeGoodDetailModal"></image>
+						<image class="modal-action-icon" src="/static/imgs/menu/share-good.png"></image>
+						<image class="modal-action-icon" src="/static/imgs/menu/close.png" @tap="closeGoodDetailModal"></image>
 					</view>
 				</view>
 				<scroll-view class="detail" scroll-y>
@@ -186,7 +189,7 @@
 			</popup-layer> -->
 			<!-- 购物车详情popup -->
 		</view>
-		<view class="loading" v-else><image src="/static/imgs/loading.gif"></image></view>
+		<view class="loading" v-else><image class="loading-image" src="/static/loading.gif"></image></view>
 		<view class="foot_box"></view>
 		<!-- 自定义底部导航 -->
 		<!-- <app-tabbar></app-tabbar> -->
@@ -206,6 +209,7 @@ import modal from '@/components/modal/modal';
 import popupLayer from '@/components/popup-layer/popup-layer';
 import goods from '@/csJson/goods.js';
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex';
+import { extractArray, isApiSuccess } from '@/common/utils/api-data';
 
 export default {
 	components: {
@@ -215,6 +219,10 @@ export default {
 	data() {
 		return {
 			goods: [], //所有商品
+			emptyData: {
+				img: '/static/imgs/empty/empty_goods.png',
+				tip: '当前暂无可售卖品'
+			},
 			ads: [
 				{ image: 'http://139.159.136.187:50080/uploadFiles/image/32a545c356d8054f42612132a3535d31.jpeg' },
 			],
@@ -236,9 +244,7 @@ export default {
 		};
 	},
 	async onShow() {
-		let that = this
-		await this.getUserDetails();
-		
+		await this.getUserDetails().catch(() => null);
 		await this.init();
 	},
 	/* async onLoad() {
@@ -293,20 +299,22 @@ export default {
 		async init() {
 			//页面初始化
 			this.loading = true;
-			let me = this;
-			await this.getUserBalance();
-			this.goods = {}
-			me.$api('goods.lists', {
-				custId: me.balInfo.custId,
-				placeId: me.storeInfo.v8PlaceId,
-				V8Url: me.storeInfo.v8Url,
-			}).then(res => {
-				if (res.flag) {
-					this.goods = res.data.Data;
-				}
-			});
-			this.loading = false;
-			this.cart = uni.getStorageSync('cart') || [];
+			const me = this;
+			this.goods = [];
+			try {
+				if (!me.storeInfo || !me.storeInfo.v8PlaceId || !me.storeInfo.v8Url) return;
+				await this.getUserBalance().catch(() => null);
+				const res = await me.$api('goods.lists', {
+					custId: me.balInfo && me.balInfo.custId,
+					placeId: me.storeInfo.v8PlaceId,
+					V8Url: me.storeInfo.v8Url
+				});
+				const list = extractArray(res && res.data);
+				if (isApiSuccess(res) || list.length) this.goods = list;
+				this.cart = uni.getStorageSync('cart') || [];
+			} finally {
+				this.loading = false;
+			}
 		},
 		takout() {
 			if (this.orderType == 'takeout') return;
@@ -401,7 +409,9 @@ export default {
 		},
 		changePropertyDefault(index, key) {
 			//改变默认属性值
-			this.good.property[index].values.forEach(value => this.$set(value, 'is_default', 0));
+			this.good.property[index].values.forEach(value => {
+				value.is_default = 0;
+			});
 			this.good.property[index].values[key].is_default = 1;
 			this.good.number = 1;
 		},
@@ -496,4 +506,9 @@ export default {
 
 <style lang="scss" scoped>
 @import '~@/pages/menu/menu.scss';
+
+.menu-empty {
+	min-height: 70vh;
+	padding-top: 80rpx;
+}
 </style>

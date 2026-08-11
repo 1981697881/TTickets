@@ -13,14 +13,17 @@ export default {
 		return {};
 	},
 	props: {
-		value: {}
+		modelValue: { default: undefined },
+		value: { default: undefined }
 	},
+	emits: ['update:modelValue', 'input'],
 	computed: {
 		loadModal: {
 			get() {
-				return this.value;
+				return this.modelValue === undefined ? this.value : this.modelValue;
 			},
 			set(val) {
+				this.$emit('update:modelValue', val);
 				this.$emit('input', val);
 			}
 		}

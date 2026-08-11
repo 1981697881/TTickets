@@ -1,77 +1,107 @@
 <template>
-	<view>
-		<scroll-view scroll-x class="bg-white nav" scroll-with-animation :scroll-left="scrollLeft">
-			<view class="cu-item" :class="index==TabCur?'text-orange cur':''" v-for="(item,index) in detail" :key="index" @tap="tabSelect" :data-id="index">
-				<text>{{item.week}} {{item.date}}</text>
+	<scroll-view class="date-strip" scroll-x scroll-with-animation :scroll-left="scrollLeft" show-scrollbar="false">
+		<view class="date-list">
+			<view
+				v-for="(item, index) in detail"
+				:key="item.day || index"
+				class="date-item"
+				:class="{ active: index === tabCurrent }"
+				@tap="selectDate(index)"
+			>
+				<text class="date-week">{{ item.week }}</text>
+				<text class="date-value">{{ item.date }}</text>
 			</view>
-		</scroll-view>
-	</view>
+		</view>
+	</scroll-view>
 </template>
 
 <script>
-import tools from '@/common/utils/tools'
+import tools from '@/common/utils/tools';
+
 export default {
-	components: {},
+	name: 'ShDate',
+	props: {
+		movieDates: {
+			type: Array,
+			default: () => []
+		}
+	},
 	data() {
 		return {
-			TabCur: 0,
+			tabCurrent: 0,
 			detail: [],
 			scrollLeft: 0
 		};
 	},
 	methods: {
-		tabSelect(e) {
-			this.TabCur = e.currentTarget.dataset.id;
-			this.$emit('subClickFtn',{day: this.detail[this.TabCur].day})
-			this.scrollLeft = (e.currentTarget.dataset.id - 1) * 60
+		selectDate(index) {
+			if (!this.detail[index]) return;
+			this.tabCurrent = index;
+			this.scrollLeft = Math.max(0, (index - 1) * 74);
+			this.$emit('subClickFtn', { day: this.detail[index].day });
 		},
-		getDateList(){
-			this.TabCur = 0
-			this.scrollLeft = 0
-			let date =new Date()
-			let that = this
-			let year=date.getFullYear();
-			let month=date.getMonth()+1;
-			/* let lastDay=new Date(year,month,0).getDate() */
-			let lastDay=15
-			let arr=[]
-			for(let i = 0;i<lastDay;i++){
-				let obj = tools.getDayList('',i)
-				that.movieDates.forEach((item,index)=>{
-					if(item == obj.day){
-						if(i==0){
-							obj.week = '今天'
-							arr.push(obj)
-						}else if(i==1){
-							obj.week = '明天'
-							arr.push(obj)
-						}else if(i==2){
-							obj.week = '后天'
-							arr.push(obj)
-						}else{
-							arr.push(obj)
-						}
-					}
-					
-				})
+		getDateList() {
+			this.tabCurrent = 0;
+			this.scrollLeft = 0;
+			const available = new Set(this.movieDates || []);
+			const dates = [];
+			for (let index = 0; index < 15; index += 1) {
+				const item = tools.getDayList('', index);
+				if (!available.has(item.day)) continue;
+				if (index === 0) item.week = '今天';
+				if (index === 1) item.week = '明天';
+				if (index === 2) item.week = '后天';
+				dates.push(item);
 			}
-			this.detail = arr
+			this.detail = dates;
 		}
-	},
-	props: {
-		movieDates: {
-			type: Array,
-			default: []
-		}
-	},
-	created(){ 
-		
-	},
-	computed: {},
-	
+	}
 };
 </script>
 
 <style scoped lang="scss">
-	
+.date-strip {
+	width: 100%;
+	background: #fff;
+	border-top: 1rpx solid var(--tt-border);
+	border-bottom: 1rpx solid var(--tt-border);
+	white-space: nowrap;
+}
+
+.date-list {
+	display: inline-flex;
+	align-items: stretch;
+	gap: 10rpx;
+	padding: 18rpx 28rpx;
+}
+
+.date-item {
+	min-width: 116rpx;
+	height: 88rpx;
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 0 16rpx;
+	box-sizing: border-box;
+	border-radius: 14rpx;
+	color: var(--tt-text-secondary);
+}
+
+.date-item.active {
+	background: var(--tt-primary);
+	color: #fff;
+}
+
+.date-week {
+	font-size: 25rpx;
+	font-weight: 650;
+	line-height: 34rpx;
+}
+
+.date-value {
+	margin-top: 2rpx;
+	font-size: 21rpx;
+	line-height: 30rpx;
+}
 </style>

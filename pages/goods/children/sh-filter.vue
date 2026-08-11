@@ -1,6 +1,6 @@
 <template>
 	<view class="filter-box">
-		<view class="mask cu-modal" :class="{ show: showSel }" style="z-index: 8;" @tap="hideModal"></view>
+		<view v-if="showSel" class="mask" @touchmove.stop.prevent @tap="hideModal"></view>
 		<view class="navbar">
 			<view class="sel-box flex flex-direction" v-show="showSel">
 				<view class="sel-item" @tap="onSel(0)" :class="{ 'sel-active': defaultOrder === 0 && filterIndex === 0 }">综合推荐</view>

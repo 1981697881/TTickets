@@ -1,207 +1,137 @@
 <template>
-	<div class="app-picker">
-		<div :class="{ pickerMask: showPicker }" @click="maskClick" catchtouchmove="true"></div>
-		<div class="app-picker-content " :class="{ 'app-picker-view-show': showPicker }">
-			<div class="app-picker__hd" catchtouchmove="true">
-				<div class="app-picker__action" @click="pickerCancel">取消</div>
-				<div class="app-picker__action" :style="{ color: themeColor }" @click="pickerConfirm">确定</div>
-			</div>
-			<picker-view indicator-style="height: 40px;" class="app-picker-view" :value="pickerValue" @change="pickerChange">
-				<block>
-					<picker-view-column>
-						<div class="picker-item" v-for="(item, index) in provinceDataList" :key="index">{{ item.label }}</div>
-					</picker-view-column>
-					<picker-view-column>
-						<div class="picker-item" v-for="(item, index) in cityDataList" :key="index">{{ item.label }}</div>
-					</picker-view-column>
-					<picker-view-column>
-						<div class="picker-item" v-for="(item, index) in areaDataList" :key="index">{{ item.label }}</div>
-					</picker-view-column>
-				</block>
-			</picker-view>
-		</div>
-	</div>
+  <app-safe-popup :model-value="showPicker" type="bottom" @update:modelValue="pickerCancel">
+    <view class="app-picker-content">
+      <view class="app-picker__hd">
+        <button class="app-picker__action app-picker__cancel" @tap="pickerCancel">取消</button>
+        <text class="app-picker__title">选择地区</text>
+        <button class="app-picker__action" :style="{ color: themeColor }" @tap="pickerConfirm">确定</button>
+      </view>
+      <picker-view indicator-style="height: 44px;" class="app-picker-view" :value="pickerValue" @change="pickerChange">
+        <picker-view-column>
+          <view v-for="(item, index) in provinceDataList" :key="index" class="picker-item">{{ item.label }}</view>
+        </picker-view-column>
+        <picker-view-column>
+          <view v-for="(item, index) in cityDataList" :key="index" class="picker-item">{{ item.label }}</view>
+        </picker-view-column>
+        <picker-view-column>
+          <view v-for="(item, index) in areaDataList" :key="index" class="picker-item">{{ item.label }}</view>
+        </picker-view-column>
+      </picker-view>
+    </view>
+  </app-safe-popup>
 </template>
 
 <script>
+import AppSafePopup from '@/components/app-safe-popup/app-safe-popup.vue';
+
 export default {
-	data() {
-		return {
-			pickerValue: [0, 0, 0],
-			provinceDataList: [],
-			cityDataList: [],
-			areaDataList: [],
-			pcaData: {}, //省市区总数据
-			/* 是否显示控件 */
-			showPicker: false
-		};
-	},
-	created() {
-		this.init();
-	},
-	props: {
-		/* 默认值 */
-		pickerValueDefault: {
-			type: Array,
-			default() {
-				return [0, 0, 0];
-			}
-		},
-		pickerData: {},
-		/* 主题色 */
-		themeColor: String
-	},
-	watch: {
-		pickerValueDefault() {
-			this.init();
-		}
-	},
-	methods: {
-		init() {
-			this.$api('address.area').then(res => {
-				this.pcaData = res.data;
-				this.pickerValue = this.pickerValueDefault;
-				this.handPickValueDefault(); // 对 pickerValueDefault 做兼容处理
-				this.provinceDataList = res.data.provinceData;
-				this.cityDataList = res.data.cityData[this.pickerValueDefault[0]];
-				this.areaDataList = res.data.areaData[this.pickerValueDefault[0]][this.pickerValueDefault[1]];
-			});
-		},
-		show() {
-			setTimeout(() => {
-				this.showPicker = true;
-			}, 0);
-		},
-		maskClick() {
-			this.pickerCancel();
-		},
-		pickerCancel() {
-			this.showPicker = false;
-			this._$emit('onCancel');
-		},
-		pickerConfirm(e) {
-			this.showPicker = false;
-			this._$emit('onConfirm');
-		},
-		showPickerView() {
-			this.showPicker = true;
-		},
-		handPickValueDefault() {
-			if (this.pickerValueDefault !== [0, 0, 0]) {
-				if (this.pickerValueDefault[0] > this.pcaData.provinceData.length - 1) {
-					this.pickerValueDefault[0] = this.pcaData.provinceData.length - 1;
-				}
-				if (this.pickerValueDefault[1] > this.pcaData.cityData[this.pickerValueDefault[0]].length - 1) {
-					this.pickerValueDefault[1] = this.pcaData.cityData[this.pickerValueDefault[0]].length - 1;
-				}
-				if (this.pickerValueDefault[2] > this.pcaData.areaData[this.pickerValueDefault[0]][this.pickerValueDefault[1]].length - 1) {
-					this.pickerValueDefault[2] = this.pcaData.areaData[this.pickerValueDefault[0]][this.pickerValueDefault[1]].length - 1;
-				}
-			}
-		},
-		pickerChange(e) {
-			let changePickerValue = e.mp.detail.value;
-			if (this.pickerValue[0] !== changePickerValue[0]) {
-				// 第一级发生滚动
-				this.cityDataList = this.pcaData.cityData[changePickerValue[0]];
-				this.areaDataList = this.pcaData.areaData[changePickerValue[0]][0];
-				changePickerValue[1] = 0;
-				changePickerValue[2] = 0;
-			} else if (this.pickerValue[1] !== changePickerValue[1]) {
-				// 第二级滚动
-				this.areaDataList = this.pcaData.areaData[changePickerValue[0]][changePickerValue[1]];
-				changePickerValue[2] = 0;
-			}
-			this.pickerValue = changePickerValue;
-			this._$emit('onChange');
-		},
-		_$emit(emitName) {
-			let pickObj = {
-				label: this._getLabel(),
-				value: this.pickerValue,
-				cityCode: this._getCityCode()
-			};
-			this.$emit(emitName, pickObj);
-		},
-		_getLabel() {
-			let pcikerLabel =
-				this.provinceDataList[this.pickerValue[0]].label + '-' + this.cityDataList[this.pickerValue[1]].label + '-' + this.areaDataList[this.pickerValue[2]].label;
-			return pcikerLabel;
-		},
-		_getCityCode() {
-			return this.areaDataList[this.pickerValue[2]].value;
-		}
-	}
+  components: { AppSafePopup },
+  props: {
+    pickerValueDefault: { type: Array, default: () => [0, 0, 0] },
+    pickerData: { type: Object, default: () => ({}) },
+    themeColor: { type: String, default: '#8f981e' }
+  },
+  data() {
+    return {
+      pickerValue: [0, 0, 0],
+      provinceDataList: [],
+      cityDataList: [],
+      areaDataList: [],
+      pcaData: {},
+      showPicker: false
+    };
+  },
+  watch: {
+    pickerValueDefault: { handler() { this.init(); }, deep: true }
+  },
+  created() { this.init(); },
+  methods: {
+    async init() {
+      const res = Object.keys(this.pickerData).length ? { data: this.pickerData } : await this.$api('address.area');
+      this.pcaData = res.data || {};
+      this.provinceDataList = this.pcaData.provinceData || [];
+      this.pickerValue = this.clampValue(this.pickerValueDefault);
+      this.refreshColumns();
+    },
+    clampValue(value) {
+      const next = [...(value || [0, 0, 0])];
+      next[0] = Math.min(Math.max(Number(next[0]) || 0, 0), Math.max((this.pcaData.provinceData?.length || 1) - 1, 0));
+      next[1] = Math.min(Math.max(Number(next[1]) || 0, 0), Math.max((this.pcaData.cityData?.[next[0]]?.length || 1) - 1, 0));
+      next[2] = Math.min(Math.max(Number(next[2]) || 0, 0), Math.max((this.pcaData.areaData?.[next[0]]?.[next[1]]?.length || 1) - 1, 0));
+      return next;
+    },
+    refreshColumns() {
+      const [province, city] = this.pickerValue;
+      this.cityDataList = this.pcaData.cityData?.[province] || [];
+      this.areaDataList = this.pcaData.areaData?.[province]?.[city] || [];
+    },
+    show() { this.showPicker = true; },
+    showPickerView() { this.show(); },
+    pickerCancel() {
+      this.showPicker = false;
+      this.emitValue('onCancel');
+    },
+    pickerConfirm() {
+      this.showPicker = false;
+      this.emitValue('onConfirm');
+    },
+    pickerChange(e) {
+      const next = [...(e.detail?.value || [0, 0, 0])];
+      if (this.pickerValue[0] !== next[0]) {
+        next[1] = 0;
+        next[2] = 0;
+      } else if (this.pickerValue[1] !== next[1]) {
+        next[2] = 0;
+      }
+      this.pickerValue = this.clampValue(next);
+      this.refreshColumns();
+      this.emitValue('onChange');
+    },
+    emitValue(name) {
+      const province = this.provinceDataList[this.pickerValue[0]];
+      const city = this.cityDataList[this.pickerValue[1]];
+      const area = this.areaDataList[this.pickerValue[2]];
+      this.$emit(name, {
+        label: [province?.label, city?.label, area?.label].filter(Boolean).join('-'),
+        value: [...this.pickerValue],
+        cityCode: area?.value
+      });
+    }
+  }
 };
 </script>
 
-<style>
-.pickerMask {
-	position: fixed;
-	z-index: 1000;
-	top: 0;
-	right: 0;
-	left: 0;
-	bottom: 0;
-	background: rgba(0, 0, 0, 0.6);
-}
-.app-picker-content {
-	position: fixed;
-	bottom: 0;
-	left: 0;
-	width: 100%;
-	transition: all 0.3s ease;
-	transform: translateY(100%);
-	z-index: 3000;
-}
-.app-picker-view-show {
-	transform: translateY(0);
-}
+<style lang="scss" scoped>
+.app-picker-content { width: 100%; background: #fff; }
 .app-picker__hd {
-	display: flex;
-	padding: 9px 15px;
-	background-color: #fff;
-	position: relative;
-	text-align: center;
-	font-size: 17px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  min-height: 96rpx;
+  padding: 0 24rpx;
+  border-bottom: 1rpx solid #e8e9e3;
 }
-.app-picker__hd:after {
-	content: ' ';
-	position: absolute;
-	left: 0;
-	bottom: 0;
-	right: 0;
-	height: 1px;
-	border-bottom: 1px solid #e5e5e5;
-	color: #e5e5e5;
-	transform-origin: 0 100%;
-	transform: scaleY(0.5);
-}
+.app-picker__title { color: #171812; font-size: 30rpx; font-weight: 600; }
 .app-picker__action {
-	display: block;
-	flex: 1;
-	color: #1aad19;
+  min-width: 112rpx;
+  min-height: 72rpx;
+  margin: 0;
+  padding: 0 16rpx;
+  background: transparent;
+  color: #8f981e;
+  font-size: 28rpx;
+  line-height: 72rpx;
 }
-.app-picker__action:first-child {
-	text-align: left;
-	color: #888;
-}
-.app-picker__action:last-child {
-	text-align: right;
-}
+.app-picker__cancel { color: #686a61; }
+.app-picker-view { width: 100%; height: 520rpx; background: #fff; }
 .picker-item {
-	text-align: center;
-	line-height: 40px;
-	text-overflow: ellipsis;
-	white-space: nowrap;
-	font-size: 16px;
-}
-.app-picker-view {
-	position: relative;
-	bottom: 0;
-	left: 0;
-	width: 100%;
-	height: 238px;
-	background-color: rgba(255, 255, 255, 1);
+  overflow: hidden;
+  padding: 0 12rpx;
+  color: #171812;
+  font-size: 30rpx;
+  line-height: 44px;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 </style>

@@ -1,6 +1,5 @@
 <template>
-	<view class="cu-modal bottom-modal" :class="{ show: showModal }" @tap="hideModal">
-		<view class="cu-dialog shop-modal" @tap.stop style="background: none;">
+	<app-safe-popup v-model="showModal" type="bottom">
 			<view class="modal-box page_box">
 				<view class="modal-head x-bc">
 					<text></text>
@@ -19,8 +18,7 @@
 				</view>
 				<view class="modal-foot x-c"><button class="cu-btn serve-btn" @tap="saveCoupon">确定</button></view>
 			</view>
-		</view>
-	</view>
+	</app-safe-popup>
 </template>
 
 <script>
@@ -32,15 +30,17 @@ export default {
 		};
 	},
 	props: {
+		modelValue: { type: Boolean, default: undefined },
 		value: {},
 		pickerData: {}
 	},
 	computed: {
 		showModal: {
 			get() {
-				return this.value;
+				return this.modelValue === undefined ? Boolean(this.value) : this.modelValue;
 			},
 			set(val) {
+				this.$emit('update:modelValue', val);
 				this.$emit('input', val);
 			}
 		}

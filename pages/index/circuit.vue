@@ -1,33 +1,51 @@
 <template>
-	<view class="page_box">
-		<view class="head_box">
-			<image class="logo-img" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/_20210531145946.jpg" mode="scaleToFill"></image>
-		</view>
-		<view class="content_box">
-			<scroll-view :style="{ height: headHeight + 'px' }" class="scroll-box" scroll-y enable-back-to-top scroll-with-animation @scrolltolower="loadMore">
-				<view class="content-box">
-					<view class="goods-list x-f">
-						<view class="goods-item" v-for="goods in goodsList" :key="goods.filmId"><fz-unmovie-list :detail="goods" :isTag="true"></fz-unmovie-list></view>
-					</view>
-					<!-- 空白页 -->
-					<app-empty :isFixed="false" v-if="!goodsList.length && !isLoading" :emptyData="emptyData"></app-empty>
-					<!-- 加载更多 -->
-					<view v-if="goodsList.length" class="cu-load text-gray" :class="loadStatus"></view>
-					<!-- load -->
-					<app-load v-model="isLoading"></app-load>
+	<view class="page-box">
+		<view class="head-box">
+			<view class="cinema-summary">
+				<view class="summary-copy">
+					<text class="summary-title">{{ displayCinemaName }}</text>
+					<text class="summary-address one-t">{{ displayCinemaAddress }}</text>
 				</view>
+			</view>
+
+			<view class="hero-card">
+				<image class="cinema-hero" src="/static/imgs/cinema/cinema-hero.jpg" mode="aspectFill"></image>
+				<view class="hero-copy">
+					<text class="hero-title">光影之间</text>
+					<text class="hero-title hero-title-second">遇见美好</text>
+					<text class="hero-subtitle">与你共赴电影时光</text>
+				</view>
+			</view>
+		</view>
+
+		<view class="content-box">
+			<scroll-view class="scroll-box" scroll-y enable-back-to-top @scrolltolower="loadMore">
+				<view class="section-heading">
+					<text class="section-title">正在热映</text>
+					<text class="section-accent"></text>
+				</view>
+
+				<view class="goods-list">
+					<fz-unmovie-list
+						v-for="goods in goodsList"
+						:key="goods.filmId"
+						:detail="goods"
+					></fz-unmovie-list>
+				</view>
+
+				<app-empty
+					v-if="!goodsList.length && !isLoading"
+					:isFixed="false"
+					:emptyData="emptyData"
+				></app-empty>
+				<view v-if="goodsList.length" class="cu-load text-gray list-load" :class="loadStatus"></view>
+				<app-load v-model="isLoading"></app-load>
 			</scroll-view>
 		</view>
-		<!-- <view class="foot_box"></view> -->
-		<!-- 自定义底部导航 -->
-		<!-- <app-tabbar></app-tabbar> -->
-		<!-- 关注弹窗 -->
+
 		<app-float-btn></app-float-btn>
-		<!-- 连续弹窗提醒 -->
 		<app-notice-modal></app-notice-modal>
-		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>
-		<!-- 门店选择 -->
 		<app-address-model @init="init"></app-address-model>
 	</view>
 </template>
@@ -35,9 +53,11 @@
 <script>
 import fzUnmovieList from './components/fz-unmovie-list.vue';
 import appEmpty from '@/components/app-empty/app-empty.vue';
-import { mapMutations, mapActions, mapState } from 'vuex';
+import { mapState } from 'vuex';
 import tools from '@/common/utils/tools';
-let timer = null;
+import { normalizePage, mergeUnique } from '@/common/utils/pagination';
+import { extractArray, isApiSuccess, unwrapPayload } from '@/common/utils/api-data';
+
 export default {
 	components: {
 		fzUnmovieList,
@@ -45,255 +65,256 @@ export default {
 	},
 	data() {
 		return {
-			cardCur: 0,
-			activeItem: 0,
-			Msg: '0',
 			cinemaName: '',
 			cinemaAddress: '',
-			circuit: '',
 			cinemaList: [],
-			direction: '',
 			emptyData: {
 				img: '/static/imgs/empty/empty_goods.png',
-				tip: '当前没有可观影影片,敬请期待~'
+				tip: '当前没有可观影影片，敬请期待~'
 			},
-			headHeight: '0',
 			goodsList: [],
 			searchVal: '',
 			listParams: {
 				filmId: null,
 				cinemaId: null,
+				cinemalinkId: null,
 				keywords: '',
-				page: 1
+				page: 1,
+				showDatetime: ''
 			},
-			
-			isLoading: false, //loading和空白页。
-			loadStatus: '', //loading,over
+			isLoading: false,
+			loadStatus: '',
 			lastPage: 1
 		};
 	},
 	computed: {
 		...mapState({
-			storeInfo: state => state.user.storeInfo,
+			storeInfo: state => state.user.storeInfo || {}
 		}),
-	},
-	// 触底加载更多
-	onReachBottom() {
-		if (this.listParams.page < this.lastPage) {
-			this.listParams.page += 1;
-			this.getGoodsList();
+		displayCinemaName() {
+			return this.cinemaName || this.storeInfo.storeName || '影院信息加载中';
+		},
+		displayCinemaAddress() {
+			return this.cinemaAddress || this.storeInfo.storeAddress || '正在获取影院地址';
 		}
 	},
-	mounted() {
-		this.getScrHeight()
-	},
-	onLoad() {
+	onLoad(options) {
+		const routeQuery = this.$Route && this.$Route.query ? this.$Route.query : {};
+		const query = options && Object.keys(options).length ? options : routeQuery;
 		this.listParams.showDatetime = tools.getDayList('', 0).day;
-		if (this.$Route.query.filmId) {
-			this.listParams.filmId = this.$Route.query.filmId;
-		} 
-		if (this.$Route.query) {
-			this.detail = this.$Route.query
-			this.listParams.cinemaId = this.$Route.query.cinemaId;
-		}
-		if (this.$Route.query) {
-			this.listParams.cinemalinkId = this.$Route.query.cinemalinkId;
-		}else{
-			this.listParams.cinemalinkId = this.storeInfo.cinemalinkId;
-		}
-		if (this.$Route.query.keywords) {
-			this.listParams.keywords = this.$Route.query.keywords;
-			this.searchVal = this.$Route.query.keywords;
-		}
-		
-		/* this.init() */
+		this.listParams.filmId = query.filmId || null;
+		this.listParams.cinemaId = query.cinemaId || null;
+		this.listParams.cinemalinkId = query.cinemalinkId || this.getStoredCinemaLinkId();
+		this.listParams.keywords = query.keywords || '';
+		this.searchVal = this.listParams.keywords;
+		this.init();
 	},
 	methods: {
-		...mapActions(['getUserBalance','getUserDetails']),
-		init() {
-			this.getCinemaList()
-			this.getUserBalance()
+		getStoredCinemaLinkId() {
+			return this.storeInfo.cinemalinkId || this.storeInfo.cinemaLinkId || null;
 		},
-		// 路由跳转
-		jump(path, parmas) {
-			this.$Router.push({ path: path, query: parmas });
+		async init() {
+			this.listParams.page = 1;
+			this.goodsList = [];
+			this.lastPage = 1;
+			await this.getCinemaList();
 		},
-		getScrHeight() {
-			let me = this
-			uni.getSystemInfo({
-				success: function(res) {
-					// res - 各种参数
-					let info = uni.createSelectorQuery().select('.head_box');
-					info.boundingClientRect(function(data) {
-						//data - 各种参数
-						me.headHeight = res.windowHeight - data.height;
-					}).exec();
-				}
-			});
-		},
-		// 加载更多
 		loadMore() {
-			if (this.listParams.page < this.lastPage) {
+			if (!this.isLoading && this.listParams.page < this.lastPage) {
 				this.listParams.page += 1;
-				this.getGoodsList();
+				this.getMoviesList();
 			}
 		},
-		// 获取影城
-		getCinemaList() {
-			let that = this;
-			that.$api('cinema.locationList', {cinemalinkId: that.storeInfo.cinemaLinkId, filmId: that.listParams.filmId }).then(res => {
-				if (res.flag) {
-					that.cinemaList = res.data;
-					that.cinemaName = res.data[0].cinemaName;
-					that.cinemaAddress = res.data[0].cinemaAddress;
-					that.listParams.cinemalinkId = res.data[0].cinemalinkId
-					that.getMoviesList();
+		async getCinemaList() {
+			const requestedCinemaLinkId = this.listParams.cinemalinkId || this.getStoredCinemaLinkId();
+			try {
+				const res = await this.$api('cinema.locationList', {
+					cinemalinkId: requestedCinemaLinkId,
+					filmId: this.listParams.filmId
+				});
+				const list = extractArray(res && res.data);
+				if (isApiSuccess(res) || list.length) this.cinemaList = list;
+				if (list.length) {
+					const cinema = list[0];
+					this.cinemaName = cinema.cinemaName || '';
+					this.cinemaAddress = cinema.cinemaAddress || '';
+					this.listParams.cinemalinkId = cinema.cinemalinkId || cinema.cinemaLinkId || requestedCinemaLinkId;
 				}
-			});
-		},// 获取影城影片
-		getMoviesList() {
-			let that = this;
-			that.$api('cinema.locationMovies', {cinemalinkId: that.listParams.cinemalinkId,  }).then(res => {
-				if (res.flag) {
-					that.isLoading = false;
-					that.goodsList = res.data;
-					that.lastPage = res.data.last_page;
-					if (that.listParams.page < res.data.last_page) {
-						that.loadStatus = '';
-					} else {
-						that.loadStatus = 'over';
-					}
+			} catch (error) {
+				console.warn('[cinema] failed to load cinema information', error);
+			}
+
+			if (this.listParams.cinemalinkId) {
+				await this.getMoviesList();
+			}
+		},
+		async getMoviesList() {
+			if (this.isLoading || !this.listParams.cinemalinkId) return;
+			this.isLoading = true;
+			this.loadStatus = 'loading';
+			try {
+				const res = await this.$api('cinema.locationMovies', {
+					cinemalinkId: this.listParams.cinemalinkId,
+					page: this.listParams.page
+				});
+				const payload = unwrapPayload(res && res.data);
+				const page = normalizePage(payload, this.listParams.page);
+				if (isApiSuccess(res) || page.items.length) {
+					this.goodsList = mergeUnique(this.goodsList, page.items, 'filmId', this.listParams.page === 1);
+					this.lastPage = page.lastPage;
+					this.loadStatus = this.listParams.page < page.lastPage ? '' : 'over';
 				}
-			});
-		},	
+			} catch (error) {
+				this.loadStatus = '';
+				console.warn('[cinema] failed to load movie list', error);
+			} finally {
+				this.isLoading = false;
+			}
+		}
 	}
 };
 </script>
 
 <style lang="scss">
-.cir_group {
-	width: 100%;
-	height: 100%;
-	background-color: red; /* 对于不支持渐变的浏览器*/
-	background-image: linear-gradient(#2b4055, #5c92c1, #2b4055); /* 标准语法(必须是最后一个) */
+.page-box {
+	height: 100vh;
 	display: flex;
-	.cir_logo {
-		display: inline-flex;
-		width: 40%;
-		padding: 20rpx;
-		image {
-			border-radius: 15rpx;
-			width: 100%;
-		}
-		.tag {
-			position: absolute;
-			left: 10rpx;
-			top: 40rpx;
-			z-index: 2;
-			line-height: 30rpx;
-			background: linear-gradient(132deg, rgba(28, 28, 28, 1), rgba(54, 54, 54, 1), rgba(236, 190, 96, 1));
-			border-radius: 0px 18rpx 18rpx 0px;
-			padding: 0 10rpx;
-			-webkit-transform: scale(0.8);
-			font-family: PingFang SC;
-			color: white;
-		}
-	}
-	.cir_detail {
-		width: 60%;
-		padding: 20rpx;
-		padding-left: 0;
-		font-family: PingFang SC;
-		display: inline-block;
-		.de_name {
-			width: 100%;
-			font-size: 40rpx;
-			line-height: 60rpx;
-		}
-		.de_pin {
-			line-height: 40rpx;
-			width: 100%;
-		}
-		.de_info {
-			line-height: 40rpx;
-			width: 100%;
-		}
-	}
-}
-.page_box {
-	height: auto;
-	display: inline-block;
-}
-.tag {
-	position: absolute;
-	left: 35rpx;
-	top: 35rpx;
-	z-index: 2;
-	line-height: 30rpx;
-	background: linear-gradient(132deg, rgba(28, 28, 28, 1), rgba(54, 54, 54, 1), rgba(236, 190, 96, 1));
-	border-radius: 0px 18rpx 18rpx 0px;
-	padding: 0 10rpx;
-	font-size: 18rpx;
-	font-family: PingFang SC;
-	color: white;
-}
-.head_box {
-	position: -webkit-sticky;
-	position: sticky;
-	top: 0;
-	z-index: 998;
-	background: linear-gradient(#060210, #fff 20%);
-	.logo-img {
-		top: 5rpx;
-		height: 170rpx;
-		width: 100%;
-		box-shadow: 0 0 10rpx 0 #A5A5A5;
-	}
-	.ci-header {
-		background: #fff;
-		border-radius: 10rpx;
-		display: inline-flex;
-		.header-info {
-			padding: 20rpx;
-			width: 600rpx;
-			.info-local {
-				display: inline-flex;
-				.local-adr {
-					width: 430rpx;
-				}
-			}
-		}
-		.locate-logo {
-			border-radius:0 10rpx 0 0;
-			background-color: #8B4513;
-			padding-top: 10rpx;
-			width: 150rpx;
-			color: #FFFFFF;
-			text-align: center;
-			.logo-img {
-				top: 5rpx;
-				width: 80rpx;
-				height: 80rpx;
-			}
-		}
-	}
+	flex-direction: column;
+	overflow: hidden;
+	background: #fff;
 }
 
-.list-box {
-	&:-webkit-scrollbar {
-		width: 0;
-		height: 0;
-		color: transparent;
-		display: none;
+.head-box {
+	flex: 0 0 auto;
+	padding: 28rpx 34rpx 22rpx;
+	background: #fff;
+
+	.cinema-summary {
+		margin-bottom: 28rpx;
 	}
+
+	.summary-copy {
+		min-width: 0;
+		flex: 1;
+	}
+
+	.summary-title {
+		display: block;
+		max-width: 480rpx;
+		font-size: 36rpx;
+		line-height: 48rpx;
+		font-weight: 700;
+		color: var(--tt-text);
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.summary-address {
+		display: block;
+		max-width: 100%;
+		margin-top: 8rpx;
+		font-size: 23rpx;
+		line-height: 34rpx;
+		color: var(--tt-text-muted);
+	}
+
 }
+
+.hero-card {
+	position: relative;
+	height: 300rpx;
+	overflow: hidden;
+	border-radius: 24rpx;
+	background: #202316;
+}
+
+.cinema-hero {
+	width: 100%;
+	height: 100%;
+}
+
+.hero-copy {
+	position: absolute;
+	left: 44rpx;
+	top: 48rpx;
+	display: flex;
+	flex-direction: column;
+	color: #e1e7a7;
+}
+
+.hero-title {
+	font-family: STSong, SimSun, serif;
+	font-size: 39rpx;
+	line-height: 52rpx;
+	letter-spacing: 4rpx;
+}
+
+.hero-title-second {
+	margin-left: 40rpx;
+}
+
+.hero-subtitle {
+	margin-top: 18rpx;
+	font-size: 20rpx;
+	line-height: 30rpx;
+	letter-spacing: 3rpx;
+	color: rgba(248, 248, 226, 0.88);
+}
+
 .content-box {
-	width: 750rpx;
+	flex: 1;
+	min-height: 0;
+	background: #fff;
 }
+
+.scroll-box {
+	height: 100%;
+}
+
+.section-heading {
+	padding: 24rpx 34rpx 22rpx;
+}
+
+.section-title {
+	display: block;
+	font-size: 36rpx;
+	line-height: 52rpx;
+	font-weight: 700;
+	color: var(--tt-text);
+}
+
+.section-accent {
+	display: block;
+	width: 30rpx;
+	height: 6rpx;
+	margin-top: 12rpx;
+	border-radius: 6rpx;
+	background: var(--tt-primary);
+}
+
 .goods-list {
-	flex-wrap: wrap;
-	.goods-item {
-		width: 100%;
+	padding: 0 34rpx;
+}
+
+.list-load {
+	padding-bottom: calc(18rpx + env(safe-area-inset-bottom));
+}
+
+@media screen and (max-width: 340px) {
+	.head-box {
+		padding-left: 26rpx;
+		padding-right: 26rpx;
+	}
+
+	.hero-card {
+		height: 274rpx;
+	}
+
+	.goods-list,
+	.section-heading {
+		padding-left: 26rpx;
+		padding-right: 26rpx;
 	}
 }
 </style>

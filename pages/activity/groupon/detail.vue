@@ -233,7 +233,7 @@ export default {
 				color: #f7979c;
 			}
 		}
-		/deep/.activity-goods-box {
+		:deep(.activity-goods-box) {
 			border-bottom: none;
 			background: none;
 			.goods-right {

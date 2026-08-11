@@ -159,11 +159,11 @@ export default {
 	methods: {
 		...mapActions(['getUserBalance','getUserDetails']),
 		handlePropertyAdd(item) {
-			this.$set(item,'goodsCount',item.goodsCount+1)
+			item.goodsCount += 1;
 		},
 		handlePropertyReduce(item) {
 			if (item.goodsCount === 1) return;
-			this.$set(item,'goodsCount',item.goodsCount-1)
+			item.goodsCount -= 1;
 		},
 		// 关闭弹窗
 		hideExpressType() {
@@ -419,11 +419,11 @@ export default {
 		width: 100%;
 		height: 74rpx;
 		background: #f8e3bd;
-		@include flex($align: center);
+		@include tt-flex($align: center);
 		border-radius: 20rpx 20rpx 0 0;
 		&-nav {
-			width: (750rpx/4);
-			@include flex($align: center, $justify: center);
+			width: 187.5rpx;
+			@include tt-flex($align: center, $justify: center);
 			position: relative;
 			height: 100%;
 		}
@@ -524,7 +524,7 @@ export default {
 		.empty-address {
 			height: 120rpx;
 			padding: 0 25rpx;
-			@include flex($justify: null, $align: center, $direction: null, $warp: null, $warpAlign: null);
+			@include tt-flex($justify: null, $align: center, $direction: null, $warp: null, $warpAlign: null);
 			font-size: 28rpx;
 			font-family: PingFang SC;
 			font-weight: 400;

@@ -234,7 +234,7 @@ export default {
 	margin: 20rpx;
 	padding: 20rpx;
 	border-radius: 20rpx;
-	/deep/.goods-title {
+	:deep(.goods-title) {
 		width: 420rpx;
 	}
 	.goods-list {

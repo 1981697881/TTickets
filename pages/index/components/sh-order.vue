@@ -100,7 +100,7 @@ export default {
 			position: absolute;
 			top: 50%;
 			transform: translateY(-50%);
-			right: (750rpx/5) - 15rpx;
+			right: 135rpx;
 			width: 30rpx;
 			height: 136rpx;
 		}

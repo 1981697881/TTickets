@@ -1,8 +1,7 @@
 <template>
 	<view class="">
 		<!-- 规格 -->
-		<view class="cu-modal sku-modal" style="z-index: 999;" :class="{ show: showModal }" @tap="hideModal" v-if="goodsInfo.sku_price">
-			<view class="cu-dialog" @tap.stop style="background: none;">
+		<app-safe-popup v-if="goodsInfo.sku_price" v-model="showModal" type="bottom">
 				<view class="shop-modal page_box" :style="goodsInfo.is_sku == 0 ? 'height:500rpx' : ''">
 					<view @tap="hideModal" class="close-btn x-c"><text class="cuIcon-close"></text></view>
 
@@ -44,7 +43,7 @@
 									@change="changeNum"
 									:step="1"
 									:min="0"
-									:currentSkuPrice.sync="currentSkuPrice"
+									:currentSkuPrice="currentSkuPrice"
 									:goodsInfo="goodsInfo"
 									:value="goodsNum"
 								></uni-number-box>
@@ -53,8 +52,7 @@
 						<button class="cu-btn  seckill-btn" @tap="confirm">立即购买</button>
 					</view>
 				</view>
-			</view>
-		</view>
+		</app-safe-popup>
 	</view>
 </template>
 
@@ -78,6 +76,7 @@ export default {
 	},
 	props: {
 		goodsInfo: {},
+		modelValue: { type: Boolean, default: undefined },
 		value: {},
 		buyType: {
 			type: String,
@@ -108,7 +107,7 @@ export default {
 		}
 	},
 	watch: {
-		type(nweVal, oldVal) {
+		type(newVal) {
 			return newVal;
 		}
 	},
@@ -118,9 +117,10 @@ export default {
 		},
 		showModal: {
 			get() {
-				return this.value;
+				return this.modelValue === undefined ? Boolean(this.value) : this.modelValue;
 			},
 			set(val) {
+				this.$emit('update:modelValue', val);
 				this.$emit('input', val);
 			}
 		},
