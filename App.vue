@@ -23,7 +23,6 @@ export default {
 							platform = 'H5';
 						}
 						// #endif
-
 						// #ifdef APP-PLUS
 						platform = 'App';
 						if (e.platform == 'android') {
@@ -34,7 +33,6 @@ export default {
 							uni.setStorageSync('isAndroid', false);
 						}
 						// #endif
-
 						// #ifdef MP-WEIXIN
 						platform = 'wxMiniProgram';
 						new Wechat().getWxMiniProgramSessionKey();

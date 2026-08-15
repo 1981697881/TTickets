@@ -648,9 +648,11 @@ export default {
 					}) */
 					that.jump('/pages/index/wallet', res.data);
 				} else {
-					uni.showToast({
-						icon: 'none',
-						title: res.msg
+					uni.showModal({
+						title: '提示',
+						content: res.msg,
+						success: function(res) {
+						}
 					});
 				}
 			});
@@ -738,7 +740,7 @@ export default {
 		getCoupons() {
 			let that = this;
 			that.$api('coupons.list', {
-				couponType: 1,
+				couponType: 2,
 				openId: uni.getStorageSync('openid'),
 				status: 0,
 				payType: that.payType == 'wechat' ? 1 : 0,

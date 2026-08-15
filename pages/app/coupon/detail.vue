@@ -7,10 +7,14 @@
 			</cu-custom>
 		</view>
 		<view class="content_box">
-			<scroll-view class="scroll-box" scroll-y="true" scroll-with-animation enable-back-to-top :scroll-into-view="scrollId" @scroll="onScroll">
+			<scroll-view class="scroll-box" scroll-y="true" scroll-with-animation enable-back-to-top
+				:scroll-into-view="scrollId" @scroll="onScroll">
 				<view class="coupon-box">
 					<view class="top y-f" v-if="options.stateCurrent!=4">
-						<view class="img-box x-c"><image class="coupon-img" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/coupon.png" mode=""></image></view>
+						<view class="img-box x-c">
+							<image class="coupon-img" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/coupon.png"
+								mode=""></image>
+						</view>
 						<view class="title">{{ options.couponName }}</view>
 						<view class="tip" v-if="options.reducePrice">满{{ options.reducePrice }}元可用</view>
 						<view class="tip" v-if="options.deductionAmount">升级影厅需补 {{ options.deductionAmount }} 元差额</view>
@@ -18,15 +22,20 @@
 							{{ btnStatusText[btnStataus] || '立即领取' }}
 						</button> -->
 						<view class="time">
-							有效期：{{tools.dateFormat('YYYY-mm-dd HH:MM:SS',new Date(options.startDate))}} 至 {{tools.dateFormat('YYYY-mm-dd HH:MM:SS',new Date(options.endDate))}}
+							有效期：{{ $tools.dateFormat('YYYY-mm-dd HH:MM:SS',new Date(options.startDate))}}
+							至 {{ $tools.dateFormat('YYYY-mm-dd HH:MM:SS',new Date(options.endDate))}}
 						</view>
 					</view>
 					<view class="top y-f" v-else>
-						<view class="img-box x-c"><image class="coupon-img" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/coupon.png" mode=""></image></view>
+						<view class="img-box x-c">
+							<image class="coupon-img" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/coupon.png"
+								mode=""></image>
+						</view>
 						<view class="title">{{ options.cname }}</view>
-						<view class="tip" >满{{ options.useMinPrice }}元可用</view>
+						<view class="tip">满{{ options.useMinPrice }}元可用</view>
 						<view class="time">
-							有效期：{{tools.dateFormat('YYYY-mm-dd HH:MM:SS',new Date(options.startDate))}} 至 {{tools.dateFormat('YYYY-mm-dd HH:MM:SS',new Date(options.endDate))}}
+							有效期：{{$tools.dateFormat('YYYY-mm-dd HH:MM:SS',new Date(options.startDate))}}
+							至 {{$tools.dateFormat('YYYY-mm-dd HH:MM:SS',new Date(options.endDate))}}
 						</view>
 					</view>
 					<view class="bottom y-start" v-if="options.description">
@@ -38,7 +47,9 @@
 				</view>
 				<view class="coupon-goods" v-if="couponGoods.length">
 					<view class="coupon-goods-title x-f" id="couponGoods">适用商品</view>
-					<view class="goods-list" v-for="goods in couponGoods" :key="goods.id"><app-mini-card :detail="goods"></app-mini-card></view>
+					<view class="goods-list" v-for="goods in couponGoods" :key="goods.id">
+						<app-mini-card :detail="goods"></app-mini-card>
+					</view>
 				</view>
 			</scroll-view>
 		</view>
@@ -55,92 +66,92 @@
 </template>
 
 <script>
-import appMiniCard from '@/components/app-mini-card/app-mini-card.vue';
-export default {
-	components: {
-		appMiniCard
-	},
-	data() {
-		return {
-			couponDetail: {},
-			tools: this.$tools,
-			couponGoods: [],
-			scrollId: '',
-			nowTime: new Date().getTime(),
-			options: {},
-			btnStatusText: {
-				no_use: '立即使用',
-				used: '已使用',
-				expired: '已失效',
-				no_can_use: '暂不可用'
-			},
-			btnStataus: ''
-		};
-	},
-	computed: {},
-	onLoad() {
-		this.options = JSON.parse(this.$Route.query.detail)[0];
-		console.log(this.options)
-		/* this.getCouponDetail();
-		this.getCouponGoods(); */
-	},
-	methods: {
-		// 领取优惠劵
-		getCoupon() {
-			let that = this;
-			that.$api('coupons.get', {
-				id: that.$Route.query.id
-			}).then(res => {
-				if (res.code === 1) {
-					that.$tools.toast(res.msg);
-					this.options.userCouponId = res.data.id;
-					that.getCouponDetail();
-				}
-			});
+	import appMiniCard from '@/components/app-mini-card/app-mini-card.vue';
+	
+	export default {
+		components: {
+			appMiniCard
 		},
-		// 优惠券详情
-		getCouponDetail() {
-			let that = this;
-			that.$api('coupons.detail', {
-				id: that.$Route.query.id,
-				user_coupons_id: that.options.userCouponId
-			}).then(res => {
-				if (res.code === 1) {
-					that.couponDetail = res.data;
-					if (res.data.status_code) {
-						this.btnStataus = res.data.status_code;
+		data() {
+			return {
+				couponDetail: {},
+				tools: this.$tools,
+				couponGoods: [],
+				scrollId: '',
+				nowTime: new Date().getTime(),
+				options: {},
+				btnStatusText: {
+					no_use: '立即使用',
+					used: '已使用',
+					expired: '已失效',
+					no_can_use: '暂不可用'
+				},
+				btnStataus: ''
+			};
+		},
+		computed: {},
+		onLoad() {
+			this.options = JSON.parse(this.$Route.query.detail)[0];
+			/* this.getCouponDetail();
+			this.getCouponGoods(); */
+		},
+		methods: {
+			// 领取优惠劵
+			getCoupon() {
+				let that = this;
+				that.$api('coupons.get', {
+					id: that.$Route.query.id
+				}).then(res => {
+					if (res.code === 1) {
+						that.$tools.toast(res.msg);
+						this.options.userCouponId = res.data.id;
+						that.getCouponDetail();
 					}
+				});
+			},
+			// 优惠券详情
+			getCouponDetail() {
+				let that = this;
+				that.$api('coupons.detail', {
+					id: that.$Route.query.id,
+					user_coupons_id: that.options.userCouponId
+				}).then(res => {
+					if (res.code === 1) {
+						that.couponDetail = res.data;
+						if (res.data.status_code) {
+							this.btnStataus = res.data.status_code;
+						}
+					}
+				});
+			},
+			// 适用商品
+			getCouponGoods() {
+				let that = this;
+				that.$api('coupons.goods', {
+					id: that.$Route.query.id
+				}).then(res => {
+					if (res.code === 1) {
+						that.couponGoods = res.data.data;
+					}
+				});
+			},
+			onScroll() {
+				this.scrollId = '';
+			},
+			goScroll() {
+				if (!this.options.userCouponId) {
+					this.getCoupon();
+				} else {
+					if (this.couponDetail.goods_ids === '0' && this.btnStataus == 'no_use') {
+						this.$Router.push({
+							path: '/pages/goods/list'
+						});
+					}
+					this.scrollId = 'couponGoods';
 				}
-			});
-		},
-		// 适用商品
-		getCouponGoods() {
-			let that = this;
-			that.$api('coupons.goods', {
-				id: that.$Route.query.id
-			}).then(res => {
-				if (res.code === 1) {
-					that.couponGoods = res.data.data;
-				}
-			});
-		},
-		onScroll() {
-			this.scrollId = '';
-		},
-		goScroll() {
-			if (!this.options.userCouponId) {
-				this.getCoupon();
-			} else {
-				if (this.couponDetail.goods_ids === '0' && this.btnStataus == 'no_use') {
-					this.$Router.push({
-						path: '/pages/goods/list'
-					});
-				}
-				this.scrollId = 'couponGoods';
 			}
 		}
-	}
-};
+	};
 </script>
 
 <style lang="scss">

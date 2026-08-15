@@ -77,12 +77,29 @@ export default {
 		},
 		getUserProfile() {
 			return new Promise((resolve, reject) => {
-				uni.getUserProfile({
-					desc: '用于完善会员资料',
-					success: resolve,
-					fail: reject
-				});
-			});
+			        uni.getUserProfile({
+			        	desc: 'Wexin', // 这个参数是必须的
+			        	success: res => {
+							console.log(res)
+			        		 resolve(res);
+			        	},
+						fail: (err) => {
+						    // 获取失败，可能用户拒绝授权，尝试引导用户到设置页面
+						    if (err.errMsg.indexOf('user deny') > -1) {
+						      uni.showModal({
+						        title: '提示',
+						        content: '需要获取您的信息，请确认授权',
+						        success: (modalRes) => {
+						          if (modalRes.confirm) {
+						            // 引导用户到设置页面
+						            uni.openSetting();
+						          }
+						        }
+						      });
+						    }
+						  }
+			        });
+			 })
 		},
 		// 小程序，获取用户信息登录
 		async getuserinfo(e) {

@@ -72,6 +72,7 @@ export default {
 		onNav(id) {
 			this.stateCurrent = id;
 			this.couponList = [];
+			console.log(this.stateCurrent)
 			if (this.stateCurrent == 0) {
 				this.listParams.couponType = 0;
 				this.listParams.status = 0;
@@ -114,6 +115,7 @@ export default {
 			let that = this;
 			that.$api('coupons.couponIssueList', that.listParams).then(res => {
 				if (res.flag) {
+					console.log(res.data)
 					that.couponList = res.data;
 				}
 			});
@@ -123,8 +125,13 @@ export default {
 			let obj = {};
 			let data = {...val}
 			data.stateCurrent = this.stateCurrent
-			data.startDate = Date.parse(data.startDate)
-			data.endDate = Date.parse(data.endDate)
+			if(isNaN(data.startDate)){
+				data.startDate = Date.parse(data.startDate.replace(/-/g, "/"))
+				data.endDate = Date.parse(data.endDate.replace(/-/g, "/"))
+			}else{
+				data.startDate = Date.parse(data.startDate)
+				data.endDate = Date.parse(data.endDate)
+			}
 			obj.detail = JSON.stringify([data]);
 			this.jump('/pages/app/coupon/detail', obj);
 			/* if (data.user_coupons_id) {
