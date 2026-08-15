@@ -130,6 +130,7 @@ export default class Wechat {
 					title: '未获取到session_key,请重启应用',
 					icon: 'none'
 				})
+				that.getWxMiniProgramSessionKey();
 				return;
 			}
 			if (e.errMsg === "getUserProfile:ok") {

@@ -107,7 +107,7 @@ export default {
 				width: 350rpx;
 				text-align: left;
 				.cent-tip{
-					width: 200rpx;
+					width: 210rpx;
 					border-radius: 0 30rpx 30rpx 25rpx;
 					padding: 3rpx;
 					padding-left: 15rpx

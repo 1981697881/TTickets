@@ -121,7 +121,7 @@ export default {
 		bindingCard(){
 			let that = this
 			if (that.userInfo.phoneNumber) {
-				that.routerTo('https://server.zk2016.com/outside/web/auth/miniAuth.do?placeId=77BAF153-CDE4-466E-B394-C69240E79077&redirect_uri=/pages/user/wallet/bind-bank')
+				that.routerTo('https://server.zk2016.com/outside/web/auth/miniAuth.do?placeId='+that.storeInfo.v8PlaceId+'&redirect_uri=/pages/user/wallet/bind-bank')
 			} else {
 				uni.showToast({
 					icon: 'none',
@@ -132,7 +132,7 @@ export default {
 		register(){
 			let that = this
 			if (that.userInfo.phoneNumber) {
-				that.routerTo('https://server.zk2016.com/outside/web/auth/miniAuth.do?placeId=77BAF153-CDE4-466E-B394-C69240E79077&redirect_uri=/pages/user/register')
+				that.routerTo('https://server.zk2016.com/outside/web/auth/miniAuth.do?placeId='+that.storeInfo.v8PlaceId+'&redirect_uri=/pages/user/register')
 			} else {
 				uni.showToast({
 					icon: 'none',

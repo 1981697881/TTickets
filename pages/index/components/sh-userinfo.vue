@@ -5,7 +5,7 @@
 			<view class="head-wrap">
 				<view class="titleNav pad">
 					<view class="status-bar"></view>
-					<text class="nav-title x-f"><!-- <text @tap="onService" class="cuIcon-servicefill"></text> --></text>
+					<text class="nav-title x-f"></text>
 				</view>
 				<view class="user-head x-bc">
 					<view class="x-f">
@@ -31,14 +31,6 @@
 								<text @tap.stop="jump('/pages/user/info')" class="user-name one-t">{{ userInfo.username || '请登录~' }}</text>
 							</view>
 						</view>
-						<!-- <view class="grade-tag tag-box x-f" v-if="userInfo.group">
-							<image class="tag-img" :src="userInfo.group.image" mode=""></image>
-							<text class="tag-title">{{ userInfo.group.name }}</text>
-						</view> -->
-					</view>
-					<view class="x-f">
-						<button class="cu-btn code-btn" v-if="balInfo.custId" @tap="jump('/pages/user/personal')"><text class="cuIcon-qr_code"></text></button>
-						<!-- <button v-if="userInfo.is_store" @tap="goStore" class="cu-btn merchant-btn">切换商家版</button> -->
 					</view>
 				</view>
 			</view>
@@ -47,11 +39,6 @@
 		<view class="notice-box x-bc pad" v-if="!userInfo.phoneNumber && userInfo.username">
 			<view class="notice-detail one-t">点击绑定手机号，确保账户安全</view>
 			<button class="bindPhone cu-btn" open-type="getPhoneNumber" @getphonenumber="bindPhone">去绑定</button>
-		</view>
-		<!-- 绑定微信 -->
-		<view class="notice-box x-bc pad" v-if="false" @tap="jump('/pages/user/edit-phone', { fromType: 'bind' })">
-			<view class="notice-detail one-t">绑定微信用户！</view>
-			<button class="bindPhone cu-btn">去绑定</button>
 		</view>
 	</view>
 </template>
@@ -69,7 +56,6 @@ export default {
 	computed: {
 		...mapState({
 			userInfo: state => state.user.userInfo,
-			balInfo: state => state.user.balInfo
 		})
 	},
 	props: {
@@ -85,26 +71,6 @@ export default {
 				path: path,
 				query: query
 			});
-		},
-		// 跳转门店
-		goStore() {
-			if (this.userInfo.store_id) {
-				uni.setStorageSync('storeId', this.userInfo.store_id);
-				this.jump('/pages/app/merchant/index', { storeId: this.userInfo.store_id });
-			} else {
-				if (uni.getStorageSync('storeId')) {
-					this.jump('/pages/app/merchant/index');
-				} else {
-					this.jump('/pages/app/merchant/list');
-				}
-			}
-			//  #ifdef MP-WEIXIN
-			this.$store.dispatch('getMessageIds', 'store');
-			//  #endif
-		},
-		// 跳转客服
-		onService() {
-			this.$Router.push('/pages/public/kefu/index');
 		},
 		// 更新信息
 		onRefresh() {
@@ -125,12 +91,25 @@ export default {
 					desc: 'Wexin', // 这个参数是必须的
 					success: res => {
 						that.$store.commit('FORCE_OAUTH', true);
-					}
+					},fail: (err) => {
+						    // 获取失败，可能用户拒绝授权，尝试引导用户到设置页面
+						    if (err.errMsg.indexOf('user deny') > -1) {
+						      uni.showModal({
+						        title: '提示',
+						        content: '需要获取您的信息，请确认授权',
+						        success: (modalRes) => {
+						          if (modalRes.confirm) {
+						            // 引导用户到设置页面
+						            uni.openSetting();
+						          }
+						        }
+						      });
+						    }
+						  }
 				});
 			}
 		},
 		bindPhone(e) {
-			console.log(e);
 			let me = this;
 			me.$api('user.getWxMiniPhoneNumber', {
 				sessionKey: uni.getStorageSync('session_key'),
@@ -140,7 +119,6 @@ export default {
 			}).then(res => {
 				if (res.flag) {
 					me.getUserDetails();
-					/* me.jump('/pages/user/edit-phone', { fromType: 'bind',phone:res.data }) */
 				}
 			});
 		}

@@ -44,6 +44,7 @@ export default {
 		//兑换
 		exchange() {
 			let that = this;
+			console.log(that.type)
 			if(that.type =='exchangeCode'){
 				that.$api('user.exchangeCdKey', {
 					openId: uni.getStorageSync('openid'),
@@ -92,7 +93,14 @@ export default {
 			let that = this
 			uni.scanCode({
 				success: function(res) {
-					that.code.value= that.GetRequest(res.result).exchangeCode
+					if (typeof that.GetRequest(res.result).exchangeCode != "undefined") {
+						that.type = 'exchangeCode'
+						that.code.value = that.GetRequest(res.result).exchangeCode
+					}
+					if(typeof that.GetRequest(res.result).exchangeTCode != "undefined"){
+						that.type = 'exchangeTCode' 
+						that.code.value = that.GetRequest(res.result).exchangeTCode
+					}
 				}
 			});
 		}

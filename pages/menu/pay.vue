@@ -233,7 +233,7 @@ export default {
 		getCoupons() {
 			let that = this;
 			that.$api('coupons.list', {
-				couponType: 2,
+				couponType: 3,
 				openId: uni.getStorageSync('openid'),
 				status: 0,
 				payType: that.payType == 'wechat' ? 1 : 0,

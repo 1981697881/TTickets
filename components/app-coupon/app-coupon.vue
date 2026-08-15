@@ -10,11 +10,11 @@
 						<text class="sub">{{ couponData.cname }}</text>
 					</view>
 					<view class="notice">满{{ couponData.useMinPrice }}元可用</view>
-					<view class="notice">领取日期：{{couponData.startTime}} 至 {{couponData.endTime}}</view>
+					<view class="notice">领取日期：{{couponData.startDate}} 至 {{couponData.endDate}}</view>
 				</view>
 				<view class="coupon-right y-f">
 					<button class="cu-btn get-btn" v-if="couponData.getStatus ==0" @tap.stop="getCoupon">立即领取</button>
-					<button class="cu-btn get-btn bg-gray" v-else>已领取</button>
+					<button class="cu-btn get-btn bg	-gray" v-else>已领取</button>
 					<view class="surplus-num">仅剩{{ couponData.remainCount }}张</view>
 				</view>
 			</view>

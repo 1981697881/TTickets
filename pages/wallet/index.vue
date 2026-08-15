@@ -24,6 +24,7 @@
 <script>
 import walletHead from '@/pages/wallet/children/wallet-head.vue';
 import walletInfo from '@/pages/wallet/children/wallet-info.vue';
+import { mapMutations, mapActions, mapState, mapGetters } from 'vuex';
 export default {
 	components: {
 		walletHead,
@@ -72,7 +73,11 @@ export default {
 		})
 	},
 	onPullDownRefresh() {},
-	computed: {},
+	computed: {
+		...mapState({
+			 storeInfo: state => state.user.storeInfo,
+		})
+	},
 	methods: {
 		// 加载更多
 		loadMore() {
