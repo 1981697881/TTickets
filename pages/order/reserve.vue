@@ -1,108 +1,87 @@
 <template>
-	<view class="page_box checkout-page">
-		<view class="content_box checkout-content">
-			<!-- 确认订单商品卡片 -->
-			<view class="goods-list checkout-card">
-				<view class="goods-card">
-					<app-mini-card @overTime="escOrder" ref="appMini" :detail="perGoodsList" :type="'sku'">
-						<block slot="goodsBottom">
-							<view class="goods-price">
-								<view class="goods-hald">
-									<text>{{ perGoodsList.schedule.filmName }} ({{ perGoodsList.schedule.language }})</text>
-								</view>
-								<view class="goods-num">
-									<text v-for="(item, index) in perGoodsList.seats" :key="index">{{ item.rowId }}排{{ item.columnId }}座</text>
-								</view>
-							</view>
-						</block>
-					</app-mini-card>
-				</view>
-				<view class="logistic item-list x-bc">
-					<view class="x-f">
-						<text class="cuIcon-roundclose text-red padding-xs">不可改签</text>
-						<text class="cuIcon-roundclose text-red padding-xs">不可退票</text>
-					</view>
-					<view class="x-f">
-						<!-- 会员价 ￥{{ Number(perGoodsList.schedule.settleprice) * Number(perGoodsList.seats.length) }} -->
-						<view class="detail">共{{ perGoodsList.seats.length }}张 原价 ￥{{ Number(perGoodsList.schedule.standardprice) * Number(perGoodsList.seats.length) }}</view>
-					</view>
-				</view>
-			</view>
-			<!-- 优惠券 -->
-			<view class="coupon checkout-card x-bc item-list">
-				<view class="item-title">优惠券</view>
-				<view class="x-f" @tap="selCoupon">
-					<text class="price" v-if="Number(pickerData.couponList.length) + Number(groupCouponsList.length) > 0">{{ pickerData.title }}</text>
-					<text class="sel-coupon" v-else>暂无优惠券</text>
-					<text class="cuIcon-right"></text>
-				</view>
-			</view>
-			<!-- <view class="goods x-bc item-list" style="margin-bottom: 0;">
-				<view class="item-title">商品套餐</view>
-				<view class="x-f">
-					<text class="price" v-if="goodsTitle!=''">{{ goodsTitle }}</text>
-					<text class="sel-coupon" v-else>暂无商品</text>
-				</view>
-			</view>
-			<scroll-view class="goods-tier scroll-box bg-white" scroll-y enable-back-to-top scroll-with-animation>
-				<view class="content-box">
-					<radio-group @change="radioChange">
-						<view class="goods-box x-start" v-for="(item, index) in cart" :key="index">
-							<image class="goods-img" :src="decodeURI(item.ImagePath) || 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/zanwu.jpg'" mode=""></image>
-							<view class="y-start">
-								<view class="goods-title more-t">{{ item.PackageName }}</view>
-								<view class="size-tip">{{ item.Note || '' }}</view>
-								<slot name="goodsBottom">
-									<view class="price">￥{{ item.PackageAmount }}</view>
-								</slot>
-							</view>
-							<view style="line-height: 150rpx;">
-								<radio :value="item.PackageId" :class="item.PackageId === current" class="pay-radio orange" :checked="item.PackageId === current"></radio>
+	<view class="page_box reserve-page">
+		<view v-if="orderReady" class="reserve-content">
+			<!-- 电影票信息使用页面专用结构，避免通用商品卡片固定宽度造成溢出。 -->
+			<view class="reserve-card reserve-movie-card">
+				<view class="reserve-movie-main">
+					<image class="reserve-poster" :src="moviePoster" mode="aspectFill"></image>
+					<view class="reserve-movie-copy">
+						<view class="reserve-title-row">
+							<text class="reserve-movie-title">{{ filmTitle }}</text>
+							<view class="reserve-countdown">
+								<text class="cuIcon-time"></text>
+								<text>{{ countdownText }}</text>
 							</view>
 						</view>
-					</radio-group>
-				</view>
-			</scroll-view> -->
-			<radio-group @change="selPay" class="pay-box checkout-card">
-				<label class="x-bc pay-item">
-					<view class="x-f">
-						<image class="pay-img" src="/static/image/wei.png" mode="aspectFit"></image>
-						<text>微信支付</text>
+						<text class="reserve-session">{{ showDateText }}</text>
+						<view class="reserve-meta-row">
+							<text v-if="versionText" class="reserve-version">{{ versionText }}</text>
+							<text class="reserve-hall">{{ hallName }}</text>
+						</view>
+						<scroll-view v-if="seatList.length" class="reserve-seat-scroll" scroll-x :show-scrollbar="false">
+							<view class="reserve-seat-chip" v-for="(item, index) in seatList" :key="item.seatId || index">
+								{{ item.rowId }}排{{ item.columnId }}座
+							</view>
+						</scroll-view>
 					</view>
-					<radio value="wechat" :class="{ checked: payType === 'wechat' }" class=" pay-radio orange" :checked="payType === 'wechat'"></radio>
+				</view>
+				<view class="reserve-ticket-summary">
+					<view class="reserve-rules">
+						<text class="reserve-rule">不可改签</text>
+						<text class="reserve-rule">不可退票</text>
+					</view>
+					<text class="reserve-original">共{{ seatCount }}张 · 原价 ¥{{ originalTotal }}</text>
+				</view>
+			</view>
+
+			<!-- 优惠券 -->
+			<view class="reserve-card reserve-row" @tap="selCoupon">
+				<text class="reserve-row-title">优惠券</text>
+				<view class="reserve-row-value">
+					<text :class="couponCount > 0 ? 'reserve-accent' : 'reserve-muted'">{{ couponCount > 0 ? pickerData.title : '暂无优惠券' }}</text>
+					<text class="cuIcon-right reserve-arrow"></text>
+				</view>
+			</view>
+			<radio-group @change="selPay" class="reserve-card reserve-pay-card">
+				<label class="reserve-pay-row">
+					<view class="reserve-pay-copy">
+						<image class="reserve-pay-icon" src="/static/image/wei.png" mode="aspectFit"></image>
+						<text class="reserve-pay-name">微信支付</text>
+					</view>
+					<radio value="wechat" :class="{ checked: payType === 'wechat' }" class="reserve-radio orange" :checked="payType === 'wechat'"></radio>
 				</label>
-				<label class="x-bc pay-item">
-					<view class="x-f">
-						<image class="pay-img" src="/static/imgs/user/wallet.png" mode="aspectFit"></image>
-						<text>
-							余额支付
-							<text class="text-red padding-left">{{ balInfo.Money == 0 || balInfo.Money == null ? '余额不足' : '' }}({{ balInfo.Money || '0.00' }})</text>
-						</text>
+				<label class="reserve-pay-row">
+					<view class="reserve-pay-copy">
+						<image class="reserve-pay-icon" src="/static/imgs/user/wallet.png" mode="aspectFit"></image>
+						<view class="reserve-pay-text">
+							<text class="reserve-pay-name">余额支付</text>
+							<text class="reserve-balance">余额 ¥{{ balanceMoney }}{{ balanceInsufficient ? '，余额不足' : '' }}</text>
+						</view>
 					</view>
 					<radio
 						value="wallet"
 						:class="{ checked: payType === 'wallet' }"
-						:disabled="balInfo.Money == 0 || balInfo.Money == null ? true : false"
-						class="pay-radio orange"
+						:disabled="balanceInsufficient"
+						class="reserve-radio orange"
 						:checked="payType === 'wallet'"
 					></radio>
 				</label>
 			</radio-group>
 			<!-- 手机号码 -->
-			<view class="phone checkout-card x-bc item-list">
-				<view class="item-title">手机号码</view>
-				<view class="x-f" v-if="userInfo.phoneNumber">
-					<text class="price">{{ userInfo.phoneNumber }}</text>
+			<view class="reserve-card reserve-row">
+				<text class="reserve-row-title">手机号码</text>
+				<view class="reserve-row-value" v-if="phoneNumber">
+					<text class="reserve-accent">{{ phoneNumber }}</text>
 				</view>
-				<view v-else class="x-f">
-					<text class="sel-coupon">无手机号码</text>
-					<button class="cu-btn round lines-red" open-type="getPhoneNumber" @getphonenumber="bindPhone">获取</button>
+				<view v-else class="reserve-row-value">
+					<text class="reserve-muted">未绑定手机号</text>
+					<button class="reserve-phone-button" open-type="getPhoneNumber" @getphonenumber="bindPhone">获取</button>
 				</view>
 			</view>
 			<!-- 购票须知 -->
-			<view class="notice checkout-card x-bc">
-				<view class="notice-title">购票须知</view>
-				<view class="notice-detail">
+			<view class="reserve-card reserve-notice">
+				<view class="reserve-notice-title">购票须知</view>
+				<view class="reserve-notice-detail">
 					<view>1.由于设备故障等不可抗力因素，存在少量场次取消的情况下，会进行退票退款</view>
 					<view>2.由于影院系统不稳定等因素，存在出票失败的情况，会进行退款</view>
 					<view>3.取票码可以在“票夹-电影票”中查看</view>
@@ -110,15 +89,21 @@
 				</view>
 			</view>
 		</view>
-		<view class="foot_box order-footer x-f">
-			<text class="num">共{{ perGoodsList.seats.length }}张</text>
-			<view class="all-money">
-				<text>合计：</text>
-				<text class="price">￥{{ ticketPaymoney || '0.00' }}</text>
+		<view v-else class="order-placeholder">
+			<text class="cuIcon-info order-placeholder-icon"></text>
+			<text>订单信息不完整，请返回重新选座</text>
+		</view>
+		<view v-if="orderReady" class="reserve-footer">
+			<view class="reserve-footer-total">
+				<text class="reserve-footer-count">共{{ seatCount }}张</text>
+				<view class="reserve-footer-price">
+					<text>合计：</text>
+					<text class="reserve-footer-amount">¥{{ payableTotal }}</text>
+				</view>
 			</view>
-			<button class="cu-btn sub-btn" @tap="combuy" :disabled="isSubOrder">
+			<button class="reserve-submit" @tap="combuy" :disabled="isSubOrder">
 				<text v-if="isSubOrder" class="cuIcon-loading2 cuIconfont-spin"></text>
-				立即购买
+				{{ isSubOrder ? '处理中...' : '立即购买' }}
 			</button>
 		</view>
 		<!-- 登录提示 -->
@@ -156,26 +141,19 @@
 </template>
 
 <script>
-import appMiniCard from '@/components/fz-mini-card/fz-mini-card.vue';
 import fzGroupCard from './children/fz-group-card.vue';
 import fzCouponCard from './children/fz-coupon-card.vue';
 import AppPay from '@/common/app-pay';
-import { mapMutations, mapActions, mapState } from 'vuex';
-// #ifdef H5
-import wxsdk from '@/common/wechat/sdk';
-// #endif
-// #ifdef APP-PLUS
-import permision from '@/common/permission.js';
-// #endif
-import goods from '@/csJson/scoreList.json';
+import { mapActions, mapState } from 'vuex';
 export default {
 	components: {
-		appMiniCard,
 		fzGroupCard,
 		fzCouponCard
 	},
 	data() {
 		return {
+			orderTimer: null,
+			remainingSeconds: 600,
 			showPicker: false,
 			showGroup: false,
 			isSubOrder: false,
@@ -196,7 +174,11 @@ export default {
 			goodsTitle: '',
 			grouponBuyType: 'alone',
 			grouponId: 0,
-			perGoodsList: {}, //确认单订单
+			perGoodsList: {
+				schedule: {},
+				locationHall: {},
+				seats: []
+			}, //确认单订单
 			orderPre: {},
 			couponId: 0,
 			ticketPaymoney: 0,
@@ -258,18 +240,79 @@ export default {
 				cl = 'head-nav__right--active';
 			}
 			return cl;
+		},
+		orderReady() {
+			return Object.keys(this.scheduleInfo).length > 0 && Array.isArray(this.seatList);
+		},
+		scheduleInfo() {
+			const schedule = this.perGoodsList && this.perGoodsList.schedule;
+			return schedule && typeof schedule === 'object' && !Array.isArray(schedule) ? schedule : {};
+		},
+		hallInfo() {
+			const hall = this.perGoodsList && this.perGoodsList.locationHall;
+			return hall && typeof hall === 'object' && !Array.isArray(hall) ? hall : {};
+		},
+		seatList() {
+			return this.perGoodsList && Array.isArray(this.perGoodsList.seats) ? this.perGoodsList.seats : [];
+		},
+		seatCount() {
+			return this.seatList.length;
+		},
+		filmTitle() {
+			return this.scheduleInfo.filmName || (this.perGoodsList && this.perGoodsList.filmName) || '影片信息';
+		},
+		moviePoster() {
+			const source = (this.perGoodsList && this.perGoodsList.filmPhoto) || this.scheduleInfo.filmPhoto || '';
+			if (/^https?:\/\//.test(source) || String(source).startsWith('/')) return source;
+			return source
+				? `https://cfzx.gzfzdev.com/movie/uploadFiles/image/${source}`
+				: 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/zanwu.jpg';
+		},
+		showDateText() {
+			return String(this.scheduleInfo.showDatetime || '场次时间待确认').replace('T', ' ');
+		},
+		versionText() {
+			return [this.scheduleInfo.language, this.scheduleInfo.dimensional].filter(Boolean).join(' ');
+		},
+		hallName() {
+			return this.hallInfo.hallName || this.scheduleInfo.hallName || '影厅信息待确认';
+		},
+		originalTotal() {
+			return this.formatMoney(Number(this.scheduleInfo.standardprice || 0) * this.seatCount);
+		},
+		payableTotal() {
+			return this.formatMoney(this.ticketPaymoney || 0);
+		},
+		couponCount() {
+			const normalCount = this.pickerData && Array.isArray(this.pickerData.couponList) ? this.pickerData.couponList.length : 0;
+			const groupCount = Array.isArray(this.groupCouponsList) ? this.groupCouponsList.length : 0;
+			return normalCount + groupCount;
+		},
+		phoneNumber() {
+			return this.userInfo && this.userInfo.phoneNumber ? this.userInfo.phoneNumber : '';
+		},
+		balanceMoney() {
+			const value = this.balInfo && this.balInfo.Money != null ? Number(this.balInfo.Money) : 0;
+			return Number.isFinite(value) ? value.toFixed(2) : '0.00';
+		},
+		walletPayableTotal() {
+			return Math.max(0, Number(this.scheduleInfo.settleprice || 0) * this.seatCount - Number(this.preferentialAmount || 0));
+		},
+		balanceInsufficient() {
+			return Number(this.balanceMoney) < this.walletPayableTotal;
+		},
+		countdownText() {
+			const seconds = Math.max(0, Number(this.remainingSeconds) || 0);
+			const minuteText = String(Math.floor(seconds / 60)).padStart(2, '0');
+			const secondText = String(seconds % 60).padStart(2, '0');
+			return `${minuteText}:${secondText}`;
 		}
-		/* ticketPaymoney(){
-			console.log('進入')
-			let that = this
-			return Number(that.perGoodsList.schedule.standardprice) *Number(that.perGoodsList.seats.length)
-		} */
 	},
 	watch: {},
 	onHide() {
-		console.log('页面隐藏');
 		let that = this;
-		that.$refs.appMini.clearTime();
+		if (!that.orderReady) return;
+		that.clearOrderTimer();
 		that.isSubOrder = true;
 		let seats = [];
 		that.perGoodsList.seats.forEach(item => {
@@ -288,8 +331,8 @@ export default {
 	},
 	onUnload(options) {
 		let that = this;
-		console.log('页面关闭');
-		that.$refs.appMini.clearTime();
+		if (!that.orderReady) return;
+		that.clearOrderTimer();
 		that.isSubOrder = true;
 		let seats = [];
 		that.perGoodsList.seats.forEach(item => {
@@ -305,12 +348,11 @@ export default {
 		uni.$emit('escLoack', params);
 	},
 	onBackPress(options) {
-		console.log('触发返回');
-		if (e.from == 'backbutton') {
+		if (options && options.from == 'backbutton') {
 			uni.showModal({
 				title: '提示',
 				content: '还没付款，是否退出',
-				success: function(res) {
+				success: res => {
 					if (res.confirm) {
 						this.escOrder();
 						uni.showToast({
@@ -333,20 +375,34 @@ export default {
 	},
 	async onLoad(options) {
 		this.options = options;
-		let that = this;
-		if (options.openid) {
+		const optionQuery = options || {};
+		const routeQuery = this.$Route && this.$Route.query ? this.$Route.query : {};
+		const routeHasOrder = Boolean(routeQuery.schedule || routeQuery.seats);
+		const query = routeHasOrder ? { ...optionQuery, ...routeQuery } : { ...routeQuery, ...optionQuery };
+		if (query.openid) {
 			//检测到回传openid
-			uni.setStorageSync('openid', options.openid);
+			uni.setStorageSync('openid', query.openid);
 		}
-		if (this.$Route.query) {
-			this.perGoodsList = { ...this.$Route.query };
-			this.perGoodsList.schedule = JSON.parse(this.$Route.query.schedule);
-			this.perGoodsList.schedule.showDatetime = decodeURI(this.perGoodsList.schedule.showDatetime);
-			this.perGoodsList.locationHall = JSON.parse(this.perGoodsList.locationHall);
-			this.perGoodsList.seats = JSON.parse(this.perGoodsList.seats);
+		if (Object.keys(query).length) {
+			const schedule = this.parseRouteJSON(query.schedule, {});
+			const locationHall = this.parseRouteJSON(query.locationHall, {});
+			const seats = this.parseRouteJSON(query.seats, []);
+			if (schedule.showDatetime) {
+				try {
+					schedule.showDatetime = decodeURIComponent(schedule.showDatetime);
+				} catch (error) {
+					schedule.showDatetime = String(schedule.showDatetime);
+				}
+			}
+			this.perGoodsList = {
+				...query,
+				schedule,
+				locationHall,
+				seats: Array.isArray(seats) ? seats : []
+			};
 			this.hallLength = this.perGoodsList.seats.length;
-			this.hallImbalance = this.perGoodsList.locationHall.hallImbalance;
-			this.ticketPaymoney = Number(this.perGoodsList.schedule.standardprice) * Number(this.perGoodsList.seats.length);
+			this.hallImbalance = Number(locationHall.hallImbalance || 0);
+			this.ticketPaymoney = Math.max(0, Number(schedule.standardprice || 0) * this.perGoodsList.seats.length);
 		}
 		/* this.goodsList = JSON.parse(this.$Route.query.goodsList); 
 		this.from = this.$Route.query.from;
@@ -354,35 +410,70 @@ export default {
 		this.grouponBuyType = this.$Route.query.grouponBuyType;
 		this.grouponId = this.$Route.query.grouponId;*/
 		this.initDate();
-		this.getGoodsList();
+		if (!this.orderReady) {
+			this.$tools.toast('订单信息不完整，请重新选择座位');
+			return;
+		}
 		this.getGroupCoupons();
 		this.getCoupons();
+		this.startOrderTimer();
 	},
 	onShow() {
 		/* this.$isPreviewApi = true */
 	},
 	methods: {
 		...mapActions(['getUserDetails']),
-		radioChange(evt) {
-			for (let i = 0; i < this.cart.length; i++) {
-				if (this.cart[i].PackageId === evt.detail.value) {
-					this.current = evt.detail.value;
-					this.goodsTitle = this.cart[i].PackageName+'('+this.cart[i].PackageAmount+')元';
-					this.goodsPrice = this.cart[i].PackageAmount
-					break;
+		formatMoney(value) {
+			const amount = Number(value);
+			if (!Number.isFinite(amount)) return '0.00';
+			return amount % 1 === 0 ? String(amount) : amount.toFixed(2);
+		},
+		startOrderTimer() {
+			this.clearOrderTimer();
+			this.orderTimer = setInterval(() => {
+				if (this.remainingSeconds <= 1) {
+					this.remainingSeconds = 0;
+					this.clearOrderTimer();
+					this.isPast = false;
+					this.escOrder();
+					return;
+				}
+				this.remainingSeconds -= 1;
+			}, 1000);
+		},
+		clearOrderTimer() {
+			if (this.orderTimer) clearInterval(this.orderTimer);
+			this.orderTimer = null;
+		},
+		parseRouteJSON(value, fallback) {
+			if (value && typeof value === 'object') return value;
+			if (typeof value !== 'string' || !value) return fallback;
+			let candidate = value;
+			for (let attempt = 0; attempt < 3; attempt++) {
+				try {
+					return JSON.parse(candidate);
+				} catch (error) {
+					try {
+						const decoded = decodeURIComponent(candidate);
+						if (decoded === candidate) break;
+						candidate = decoded;
+					} catch (decodeError) {
+						break;
+					}
 				}
 			}
+			return fallback;
 		},
-		getGoodsList() {
-			let me = this;
-			me.$api('goods.lists', {
-				custId: me.balInfo.custId,
-				placeId: me.storeInfo.v8PlaceId,
-				V8Url: me.storeInfo.v8Url, 
-			}).then(res => {
-				if (res.flag) {
-					this.cart = res.data.Data;
-				}
+		parseLocalDate(value) {
+			const match = String(value || '').match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})(?:[ T](\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?/);
+			if (!match) return null;
+			const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]), Number(match[4] || 0), Number(match[5] || 0), Number(match[6] || 0));
+			return Number.isNaN(date.getTime()) ? null : date;
+		},
+		resetCouponCard(type = this.expressTypeCur) {
+			this.$nextTick(() => {
+				const ref = type === 'express' ? this.$refs.groupCard : this.$refs.couponCard;
+				if (ref && typeof ref.resetCouponList === 'function') ref.resetCouponList();
 			});
 		},
 		async changeExpressType(cur) {
@@ -391,15 +482,7 @@ export default {
 			this.couponArray = [];
 			this.couponId = 0;
 			this.couponPrice = 0;
-			if (cur == 'express') {
-				this.$nextTick(function() {
-					this.$refs.groupCard.resetCouponList();
-				});
-			} else {
-				this.$nextTick(function() {
-					this.$refs.couponCard.resetCouponList();
-				});
-			}
+			this.resetCouponCard(cur);
 			this.calculateBenefits();
 		},
 		// 显示弹窗
@@ -416,10 +499,15 @@ export default {
 		},
 		combuy() {
 			let that = this;
-			if (new Date().getTime() < new Date(Date.parse(that.perGoodsList.schedule.showDatetime.replace(/-/g, '/'))).getTime()) {
+			const showDate = this.parseLocalDate(that.scheduleInfo.showDatetime);
+			if (!showDate) {
+				this.$tools.toast('场次时间格式异常，请重新选择场次');
+				return;
+			}
+			if (new Date().getTime() < showDate.getTime()) {
 				if (that.ticketPaymoney == 0 && this.couponArray.length > 0) {
 					let ticketList = [];
-					that.perGoodsList.seats.forEach(item => {
+					that.seatList.forEach(item => {
 						let obj = {};
 						obj.seatId = item.seatId;
 						obj.ticketFee = item.ticketfee;
@@ -428,7 +516,7 @@ export default {
 					});
 					if (that.ticketPaymoney == 0) {
 						that.ifCdkeyPay = true;
-						if (that.userInfo.phoneNumber) {
+						if (that.phoneNumber) {
 							that.isSubOrder = true;
 							that.confirmOrder(ticketList);
 						} else {
@@ -448,7 +536,7 @@ export default {
 					that.ifCdkeyPay = false;
 					if (that.payType == 'wallet') {
 						let ticketList = [];
-						that.perGoodsList.seats.forEach((item, index) => {
+						that.seatList.forEach((item, index) => {
 							let obj = {};
 							if (index + 1 > that.couponArray.length) {
 								obj.seatId = item.seatId;
@@ -464,7 +552,7 @@ export default {
 						that.blanBuy(ticketList);
 					} else {
 						let ticketList = [];
-						that.perGoodsList.seats.forEach((item, index) => {
+						that.seatList.forEach((item, index) => {
 							let obj = {};
 							if (index + 1 > that.couponArray.length) {
 								obj.seatId = item.seatId;
@@ -493,18 +581,10 @@ export default {
 			that.couponArray = [];
 			that.couponId = 0;
 			that.couponPrice = 0;
-			if (that.expressTypeCur == 'express') {
-				that.$nextTick(function() {
-					that.$refs.groupCard.resetCouponList();
-				});
-			} else {
-				this.$nextTick(function() {
-					this.$refs.couponCard.resetCouponList();
-				});
-			}
+			that.resetCouponCard();
 			if (e.detail.value == 'wallet') {
-				let countPrce = Number(that.perGoodsList.schedule.settleprice) * Number(that.perGoodsList.seats.length) - that.preferentialAmount;
-				if (Number(countPrce) <= Number(that.balInfo.Money)) {
+				let countPrce = Math.max(0, Number(that.scheduleInfo.settleprice || 0) * that.seatCount - that.preferentialAmount);
+				if (Number(countPrce) <= Number(that.balanceMoney)) {
 					that.payType = e.detail.value;
 					that.ticketPaymoney = countPrce;
 				} else {
@@ -515,7 +595,7 @@ export default {
 				}
 			} else {
 				that.payType = e.detail.value;
-				that.ticketPaymoney = Number(that.perGoodsList.schedule.standardprice) * Number(that.perGoodsList.seats.length) - that.preferentialAmount;
+				that.ticketPaymoney = Math.max(0, Number(that.scheduleInfo.standardprice || 0) * that.seatCount - that.preferentialAmount);
 			}
 			this.getCoupons();
 			//切换支付方式重新计算优惠
@@ -540,7 +620,7 @@ export default {
 		confirmPay(confirmParam) {
 			let that = this;
 			if (that.ticketPaymoney > 0) {
-				if (that.userInfo.phoneNumber) {
+				if (that.phoneNumber) {
 					let params = {
 						ticketId: that.perGoodsList.ticketId,
 						ticketPaymoney: that.ticketPaymoney
@@ -604,7 +684,7 @@ export default {
 			this.checkTime = obj;
 		},
 		escOrder() {
-			console.log('进入取消订单流程');
+			this.clearOrderTimer();
 			let that = this;
 			that.isSubOrder = true;
 			let seats = [];
@@ -617,10 +697,6 @@ export default {
 				scheduleId: that.perGoodsList.scheduleId,
 				lockOrderId: that.perGoodsList.lockOrderId,
 				seats: seats
-			}).then(res => {
-				if (res.flag) {
-					console.log(res);
-				}
 			});
 		},
 		//确认订单
@@ -633,7 +709,7 @@ export default {
 				lockOrderId: this.perGoodsList.lockOrderId,
 				scheduleId: this.perGoodsList.scheduleId,
 				scheduleKey: this.perGoodsList.scheduleKey,
-				mobile: this.userInfo.phoneNumber,
+				mobile: this.phoneNumber,
 				ticketList: array,
 				couponId: that.couponId,
 				ifCdkeyPay: that.ifCdkeyPay,
@@ -659,7 +735,7 @@ export default {
 			let ticketList = [];
 			let that = this;
 			uni.showLoading({ title: '出票中~~为了避免购票失败，请勿退出！' });
-			if (that.userInfo.phoneNumber) {
+			if (that.phoneNumber) {
 				that.isSubOrder = true;
 				let params = {
 					ticketId: that.perGoodsList.ticketId,
@@ -669,7 +745,7 @@ export default {
 					V8Url: that.storeInfo.v8Url, 
 					storeId: that.storeInfo.id,
 					note: '[使用' + that.ticketPaymoney + '预存款购买电影票]',
-					phoneNumber: that.userInfo.phoneNumber
+					phoneNumber: that.phoneNumber
 				};
 				this.$api('user.deduction', params).then(res => {
 					if (res.flag) {
@@ -688,52 +764,6 @@ export default {
 				});
 			}
 		},
-		// 订单信息
-		getPre() {
-			let that = this;
-			let res = goods;
-			if (res.code === 1) {
-				that.orderPre = res.data;
-				that.perGoodsList = res.data.data;
-				that.perGoodsList.map(item => {
-					item.selType = item.dispatch_type;
-					that.goodsList.forEach(goods => {
-						if (item.goods_id == goods.goods_id && item.sku_price_id == goods.sku_price_id) {
-							goods.dispatch_type = item.dispatch_type;
-							if (item.store_id) {
-								goods.store_id = item.store_id;
-							}
-						}
-					});
-				});
-			}
-			/* that.$api('order.pre', {
-				goods_list: that.goodsList,
-				from: that.from,
-				address_id: that.addressId,
-				coupons_id: that.couponId,
-				order_type: that.orderType,
-				buy_type: that.grouponBuyType,
-				groupon_id: that.grouponId
-			}).then(res => {
-				if (res.code === 1) {
-					that.orderPre = res.data;
-					that.perGoodsList = res.data.new_goods_list
-					that.perGoodsList.map(item =>{
-						item.selType = item.dispatch_type;
-						that.goodsList.forEach(goods =>{
-							if(item.goods_id == goods.goods_id && item.sku_price_id == goods.sku_price_id){
-								goods.dispatch_type = item.dispatch_type;
-								
-								if(item.store_id){
-									goods.store_id = item.store_id;
-								}
-							}
-						})
-					})
-				}
-			}); */
-		},
 		// 可用优惠券
 		getCoupons() {
 			let that = this;
@@ -743,10 +773,10 @@ export default {
 				status: 0,
 				payType: that.payType == 'wechat' ? 1 : 0,
 				scheduleId: that.perGoodsList.scheduleId,
-				seatCount: that.perGoodsList.seats.length
+				seatCount: that.seatCount
 			}).then(res => {
 				if (res.flag) {
-					that.pickerData.couponList = res.data;
+					that.pickerData.couponList = Array.isArray(res.data) ? res.data : [];
 					that.pickerData.title = '可用优惠券(' + (Number(that.pickerData.couponList.length) + Number(that.groupCouponsList.length)) + '张)';
 				}
 			});
@@ -759,7 +789,7 @@ export default {
 				status: 0
 			}).then(res => {
 				if (res.flag) {
-					that.groupCouponsList = res.data;
+					that.groupCouponsList = Array.isArray(res.data) ? res.data : [];
 					that.pickerData.title = '可用优惠券(' + (Number(that.pickerData.couponList.length) + Number(that.groupCouponsList.length)) + '张)';
 					/* if (that.groupCouponsList.length > 0) {
 						if (that.perGoodsList.seats.length > that.groupCouponsList.length) {
@@ -773,7 +803,7 @@ export default {
 		},
 		// 选择优惠券
 		selCoupon() {
-			if (Number(this.pickerData.couponList.length) + Number(this.groupCouponsList.length)) {
+			if (this.couponCount > 0) {
 				this.showExpressType = true;
 			} else {
 				this.$tools.toast('暂无优惠券');
@@ -782,37 +812,36 @@ export default {
 		changeCoupon(index) {
 			this.couponArray = [];
 			this.couponId = 0;
-			if (index >= 0) {
+			if (index >= 0 && this.pickerData.couponList[index]) {
 				this.couponId = this.pickerData.couponList[index].id;
 				this.couponPrice = this.pickerData.couponList[index].reducePrice;
-				/* this.getPre(); */
 				this.calculateBenefits();
 			} else {
 				this.couponId = 0;
 				this.pickerData.title = '选择优惠券';
-				/* this.getPre(); */
 			}
 		},
 		//计算团体票优惠
 		calculateBenefits(val = []) {
 			let that = this;
 			let countPrice = 0;
+			const selectedCoupons = Array.isArray(val) ? val : [];
 			if (that.expressTypeCur == 'express') {
-				val.forEach(item => {
+				selectedCoupons.forEach(item => {
 					that.groupCouponsList.forEach((items, index) => {
 						if (item == items.id) {
 							if (that.payType == 'wallet') {
 								if (items.couponId == '2') {
-									countPrice += Number(that.perGoodsList.schedule.settleprice);
+									countPrice += Number(that.scheduleInfo.settleprice || 0);
 								} else {
-									countPrice += Number(that.perGoodsList.schedule.settleprice);
+									countPrice += Number(that.scheduleInfo.settleprice || 0);
 									countPrice = countPrice - Number(that.hallImbalance);
 								}
 							} else {
 								if (items.couponId == '2') {
-									countPrice += Number(that.perGoodsList.schedule.standardprice);
+									countPrice += Number(that.scheduleInfo.standardprice || 0);
 								} else {
-									countPrice += Number(that.perGoodsList.schedule.standardprice);
+									countPrice += Number(that.scheduleInfo.standardprice || 0);
 									countPrice = countPrice - Number(that.hallImbalance);
 								}
 							}
@@ -823,9 +852,9 @@ export default {
 				countPrice = Number(that.couponPrice);
 			}
 			if (that.payType == 'wallet') {
-				this.ticketPaymoney = Number(that.perGoodsList.schedule.settleprice) * Number(that.perGoodsList.seats.length) - countPrice;
+				this.ticketPaymoney = Math.max(0, Number(that.scheduleInfo.settleprice || 0) * that.seatCount - countPrice);
 			} else {
-				this.ticketPaymoney = Number(that.perGoodsList.schedule.standardprice) * Number(that.perGoodsList.seats.length) - countPrice;
+				this.ticketPaymoney = Math.max(0, Number(that.scheduleInfo.standardprice || 0) * that.seatCount - countPrice);
 			}
 			if (countPrice == 0) {
 				this.pickerData.title = '选择优惠券';
@@ -836,14 +865,15 @@ export default {
 		},
 		changeCouponGroup(val) {
 			let that = this;
+			const selected = Array.isArray(val) ? val : [];
 			this.couponArray = [];
 			that.couponId = 0;
-			if (val.length > 0) {
-				this.couponArray = val;
-				that.calculateBenefits(val);
+			if (selected.length > 0) {
+				this.couponArray = selected;
+				that.calculateBenefits(selected);
 			} else {
 				this.couponArray = [];
-				that.calculateBenefits(val);
+				that.calculateBenefits(selected);
 				this.pickerData.title = '选择优惠券';
 			}
 		},
@@ -1653,5 +1683,436 @@ export default {
 	.price {
 		color: #e1212b;
 	}
+}
+
+.reserve-page {
+	height: 100vh;
+	min-height: 0;
+	overflow: hidden;
+	background: var(--tt-bg, #f5f6f2);
+}
+
+.reserve-content {
+	min-height: 0;
+	flex: 1;
+	overflow-y: auto;
+	overflow-x: hidden;
+	padding: 24rpx 24rpx 32rpx;
+	box-sizing: border-box;
+	-webkit-overflow-scrolling: touch;
+}
+
+.reserve-card {
+	width: 100%;
+	box-sizing: border-box;
+	background: #fff;
+	border: 1rpx solid var(--tt-border, #e9ebe4);
+	border-radius: 20rpx;
+	box-shadow: 0 8rpx 24rpx rgba(31, 35, 24, 0.05);
+}
+
+.reserve-movie-card,
+.reserve-pay-card,
+.reserve-row {
+	margin-bottom: 20rpx;
+}
+
+.reserve-movie-card {
+	overflow: hidden;
+}
+
+.reserve-movie-main {
+	display: flex;
+	align-items: flex-start;
+	width: 100%;
+	min-width: 0;
+	padding: 24rpx;
+	box-sizing: border-box;
+}
+
+.reserve-poster {
+	width: 152rpx;
+	height: 210rpx;
+	flex: 0 0 152rpx;
+	display: block;
+	border-radius: 12rpx;
+	background: #eef0eb;
+	box-shadow: 0 5rpx 14rpx rgba(23, 24, 18, 0.12);
+}
+
+.reserve-movie-copy {
+	min-width: 0;
+	flex: 1;
+	margin-left: 22rpx;
+	overflow: hidden;
+}
+
+.reserve-title-row {
+	display: flex;
+	align-items: flex-start;
+	width: 100%;
+	min-width: 0;
+}
+
+.reserve-movie-title {
+	min-width: 0;
+	flex: 1;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: 31rpx;
+	font-weight: 750;
+	line-height: 44rpx;
+	color: var(--tt-text, #20231c);
+}
+
+.reserve-countdown {
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+	gap: 5rpx;
+	margin-left: 12rpx;
+	padding: 4rpx 10rpx;
+	border-radius: 18rpx;
+	background: #fff5f2;
+	font-size: 20rpx;
+	line-height: 28rpx;
+	color: #e65b4e;
+}
+
+.reserve-session {
+	display: block;
+	max-width: 100%;
+	margin-top: 9rpx;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: 24rpx;
+	line-height: 34rpx;
+	color: var(--tt-text-secondary, #60665a);
+}
+
+.reserve-meta-row {
+	display: flex;
+	align-items: center;
+	min-width: 0;
+	margin-top: 9rpx;
+	font-size: 22rpx;
+	line-height: 32rpx;
+}
+
+.reserve-version {
+	flex: 0 0 auto;
+	margin-right: 12rpx;
+	padding: 2rpx 9rpx;
+	border-radius: 6rpx;
+	background: var(--tt-primary-soft, #f3f5db);
+	color: var(--tt-primary-strong, #747e10);
+}
+
+.reserve-hall {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: var(--tt-text-muted, #92978d);
+}
+
+.reserve-seat-scroll {
+	width: 100%;
+	height: 48rpx;
+	margin-top: 11rpx;
+	white-space: nowrap;
+}
+
+.reserve-seat-chip {
+	height: 42rpx;
+	display: inline-flex;
+	align-items: center;
+	margin-right: 9rpx;
+	padding: 0 11rpx;
+	box-sizing: border-box;
+	border-radius: 7rpx;
+	background: #f4f5f2;
+	font-size: 20rpx;
+	line-height: 42rpx;
+	color: #62685e;
+}
+
+.reserve-ticket-summary {
+	min-height: 82rpx;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 16rpx;
+	padding: 16rpx 24rpx;
+	box-sizing: border-box;
+	border-top: 1rpx solid var(--tt-border, #eceee8);
+}
+
+.reserve-rules {
+	min-width: 0;
+	display: flex;
+	align-items: center;
+	gap: 12rpx;
+}
+
+.reserve-rule {
+	flex: 0 0 auto;
+	padding: 3rpx 9rpx;
+	border-radius: 6rpx;
+	background: #fff1ef;
+	font-size: 19rpx;
+	line-height: 29rpx;
+	color: #e95b51;
+}
+
+.reserve-original {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: 22rpx;
+	line-height: 32rpx;
+	color: var(--tt-text-secondary, #646a60);
+}
+
+.reserve-row {
+	min-height: 96rpx;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 20rpx;
+	padding: 18rpx 26rpx;
+}
+
+.reserve-row-title {
+	flex: 0 0 auto;
+	font-size: 27rpx;
+	font-weight: 650;
+	line-height: 38rpx;
+	color: var(--tt-text, #20231c);
+}
+
+.reserve-row-value {
+	min-width: 0;
+	display: flex;
+	align-items: center;
+	justify-content: flex-end;
+	gap: 12rpx;
+	font-size: 24rpx;
+	line-height: 34rpx;
+}
+
+.reserve-accent {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	color: var(--tt-danger, #eb5757);
+}
+
+.reserve-muted {
+	color: var(--tt-text-muted, #969b92);
+}
+
+.reserve-arrow {
+	font-size: 30rpx;
+	color: #b5bab1;
+}
+
+.reserve-pay-card {
+	display: block;
+	overflow: hidden;
+}
+
+.reserve-pay-row {
+	width: 100%;
+	min-height: 104rpx;
+	display: flex;
+	align-items: center;
+	justify-content: space-between;
+	gap: 18rpx;
+	padding: 18rpx 26rpx;
+	box-sizing: border-box;
+	border-bottom: 1rpx solid var(--tt-border, #eceee8);
+}
+
+.reserve-pay-row:last-child {
+	border-bottom: 0;
+}
+
+.reserve-pay-copy {
+	min-width: 0;
+	flex: 1;
+	display: flex;
+	align-items: center;
+}
+
+.reserve-pay-icon {
+	width: 44rpx;
+	height: 44rpx;
+	flex: 0 0 44rpx;
+	margin-right: 20rpx;
+}
+
+.reserve-pay-text {
+	min-width: 0;
+	display: flex;
+	flex-direction: column;
+}
+
+.reserve-pay-name {
+	font-size: 26rpx;
+	line-height: 36rpx;
+	color: var(--tt-text, #20231c);
+}
+
+.reserve-balance {
+	margin-top: 2rpx;
+	font-size: 20rpx;
+	line-height: 29rpx;
+	color: var(--tt-text-muted, #92978d);
+}
+
+.reserve-radio {
+	flex: 0 0 auto;
+	transform: scale(0.82);
+}
+
+.reserve-phone-button {
+	min-width: 88rpx;
+	min-height: 52rpx;
+	height: 52rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0;
+	padding: 0 18rpx;
+	border: 1rpx solid var(--tt-danger, #eb5757);
+	border-radius: 27rpx;
+	background: #fff;
+	font-size: 22rpx;
+	line-height: 50rpx;
+	color: var(--tt-danger, #eb5757);
+}
+
+.reserve-phone-button::after {
+	display: none;
+}
+
+.reserve-notice {
+	margin-bottom: 24rpx;
+	padding: 0 26rpx 24rpx;
+}
+
+.reserve-notice-title {
+	height: 82rpx;
+	display: flex;
+	align-items: center;
+	border-bottom: 1rpx solid var(--tt-border, #eceee8);
+	font-size: 28rpx;
+	font-weight: 700;
+	color: var(--tt-text, #20231c);
+}
+
+.reserve-notice-detail {
+	padding-top: 15rpx;
+	font-size: 23rpx;
+	line-height: 40rpx;
+	color: var(--tt-text-secondary, #686e64);
+}
+
+.reserve-notice-detail view {
+	margin-bottom: 8rpx;
+}
+
+.reserve-footer {
+	width: 100%;
+	min-height: 108rpx;
+	flex: 0 0 auto;
+	display: flex;
+	align-items: center;
+	gap: 18rpx;
+	padding: 12rpx 24rpx calc(12rpx + env(safe-area-inset-bottom));
+	box-sizing: border-box;
+	background: rgba(255, 255, 255, 0.98);
+	border-top: 1rpx solid var(--tt-border, #e8eae5);
+	box-shadow: 0 -9rpx 28rpx rgba(26, 29, 21, 0.08);
+}
+
+.reserve-footer-total {
+	min-width: 0;
+	flex: 1;
+	display: flex;
+	align-items: baseline;
+}
+
+.reserve-footer-count {
+	flex: 0 0 auto;
+	font-size: 21rpx;
+	color: var(--tt-text-muted, #92978d);
+}
+
+.reserve-footer-price {
+	min-width: 0;
+	display: flex;
+	align-items: baseline;
+	margin-left: 13rpx;
+	font-size: 24rpx;
+	color: var(--tt-text-secondary, #60665a);
+}
+
+.reserve-footer-amount {
+	font-size: 34rpx;
+	font-weight: 750;
+	line-height: 44rpx;
+	color: var(--tt-danger, #eb5757);
+}
+
+.reserve-submit {
+	width: 216rpx;
+	min-height: 76rpx;
+	height: 76rpx;
+	flex: 0 0 216rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0;
+	padding: 0;
+	border: 0;
+	border-radius: 39rpx;
+	background: var(--tt-primary, #a3ad34);
+	box-shadow: 0 8rpx 18rpx rgba(143, 152, 30, 0.2);
+	font-size: 27rpx;
+	font-weight: 700;
+	line-height: 76rpx;
+	color: #fff;
+}
+
+.reserve-submit[disabled] {
+	background: #cfd2c7;
+	color: #fff;
+	opacity: 1;
+}
+
+.reserve-submit::after {
+	display: none;
+}
+
+.order-placeholder {
+	height: 70vh;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 18rpx;
+	font-size: 26rpx;
+	color: var(--tt-text-muted, #999);
+}
+
+.order-placeholder-icon {
+	font-size: 60rpx;
+	color: var(--tt-primary, #9aa52d);
 }
 </style>

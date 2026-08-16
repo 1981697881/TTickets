@@ -1,109 +1,96 @@
 <template>
-	<view class="w-100 seat-page">
-		<view class="bg-f1 h-100vh seat-canvas">
-			<view class="pt-f left-0 w-100 p-0-32 bg-white z1000 seat-summary" :style="'height: 162rpx;top:0'">
-				<view>
-					<view class="fz-34 fw-b pt-20">{{ head.filmName }}({{ head.hallName }})</view>
-					<view class="mt-10 fz-28 color-666">{{ head.showDatetime }}</view>
+	<view class="seat-page">
+		<view class="seat-canvas">
+			<view class="seat-summary">
+				<view class="summary-title-row">
+					<text class="summary-film">{{ head.filmName || '影片信息' }}</text>
+					<text v-if="head.hallName" class="summary-hall">{{ head.hallName }}</text>
+				</view>
+				<view class="summary-meta">
+					<text class="summary-session">{{ sessionDisplayText }}</text>
+					<text v-if="head.language || head.dimensional" class="summary-version">{{ head.language }} {{ head.dimensional }}</text>
 				</view>
 			</view>
-			<movable-area :style="'height:' + (seatRow * 40 + 350) + 'rpx;width: 100vw;top:' + rpxNum * 132 + 'px'" class="pt-f left-0 seat-map">
+
+			<view class="seat-legend">
+				<view class="legend-item"><view class="legend-seat seat-status-0"></view><text>可选</text></view>
+				<view class="legend-item"><view class="legend-seat seat-status-1"><text>✓</text></view><text>已选</text></view>
+				<view class="legend-item"><view class="legend-seat seat-status-2"></view><text>已售</text></view>
+				<view class="legend-item"><view class="legend-seat seat-status-3"><text>×</text></view><text>维修</text></view>
+			</view>
+
+			<movable-area class="seat-map">
 				<movable-view
-					:style="'width: 100vw;height:' + (seatRow * 40 + 350) + 'rpx;'"
+					:style="{ width: boxWidth + 'px', height: seatContentHeight + 'px' }"
 					:inertia="true"
 					:scale="true"
-					:scale-min="0.95"
+					:scale-min="scaleMin"
 					:scale-max="2"
 					direction="all"
 					@change="onMove"
 					@scale="onScale"
 				>
-					<view class="thumbnail" v-show="thumbnailShow" :style="'left: ' + (10 - moveX / scale) + 'px;'">
-						<!--红色外框开始-->
-						<view class="thumbnail-border" :style="{ transform: 'scale(' + scalereciprocal + ')', top: topthumbnail + 'rpx', left: leftthumbnail + 'rpx' }"></view>
-						<view v-for="(item, index) in seatArray" :key="index" :style="'width:' + boxWidth / 2 + 'rpx;height:' + seatSize / 2 + 'rpx'">
+					<view class="screen-wrap">
+						<view class="screen-arc"></view>
+						<text class="screen-label">银幕中央</text>
+					</view>
+					<view class="seat-center-line" :style="{ height: Math.max(0, seatRow * (seatSize + 10)) + 'px' }"></view>
+					<view v-if="seatArray.length" class="seat-rows">
+						<view v-for="(item, index) in seatArray" :key="index" class="seat-row" :style="{ width: boxWidth + 'px', height: seatSize + 'px' }">
+							<text class="row-number">{{ mArr[index] }}</text>
 							<view
 								v-for="(seat, col) in item"
 								:key="col"
-								class="thumbnailSeatClass"
-								:style="{ height: seatSize / 5 + 'rpx', width: seatSize / 5 + 'rpx', background: thumbnailBackgroud(seat) }"
-								@click="handleChooseSeat(index, col)"
-							></view>
+								class="seat-cell"
+								:style="{ width: seatSize + 'px', height: seatSize + 'px' }"
+								@tap="handleChooseSeat(index, col, seat)"
+							>
+								<view v-if="seat && seat.type !== -1" class="seat-icon" :class="'seat-status-' + seat.type">
+									<text v-if="seat.type === 1">✓</text>
+									<text v-else-if="seat.type === 3">×</text>
+								</view>
+							</view>
 						</view>
 					</view>
-
-					<view class="Stage screen-stage dp-f jc-c ai-c fz-22 color-333">{{ head.language }} {{ head.dimensional }}</view>
-					<view style="width: 120rpx;height: 34rpx;" class="screen-label m-0-a mt-48 dp-f jc-c ai-c fz-20 color-999 b-1 br-5">银幕中央</view>
-					<view class="pt-f pa-v-2 b-d-1" :style="'height:' + seatRow * (20 + seatSize * pxNum) + 'rpx;top:165rpx;width:0'"></view>
-					<view v-for="(item, index) in seatArray" :key="index" class="dp-f jc-c mt-20" :style="'width:' + boxWidth + 'px;height:' + seatSize + 'px'">
-						<view
-							v-for="(seat, col) in item"
-							:key="col"
-							class="dp-ib"
-							:style="'width:' + seatSize + 'px;height:' + seatSize + 'px'"
-							@click="handleChooseSeat(index, col, seat)"
-						>
-							<image v-if="seat.type === 0" class="w-100 h-100" src="../../../static/unselected.png" mode="aspectFit"></image>
-							<image v-else-if="seat.type === 1" class="w-100 h-100" src="../../../static/selected.png" mode="aspectFit"></image>
-							<image v-else-if="seat.type === 2" class="w-100 h-100" src="../../../static/bought.png" mode="aspectFit"></image>
-							<image v-else-if="seat.type === 3" class="w-100 h-100" src="../../../static/lockwei.png" mode="aspectFit"></image>
-						</view>
-					</view>
-					<view class="pt-f bg-line br-15 over-h" :style="'left: ' + (10 - moveX / scale) + 'px;top:109rpx;width:30rpx;'">
-						<view class="w-100 dp-f ai-c jc-c fz-22 color-fff" :style="'height:' + seatSize + 'px;margin-top:20rpx;'" v-for="(m, mindex) in mArr" :key="mindex">
-							{{ m }}
-						</view>
-						<view :style="'height: 20rpx;'"></view>
-					</view>
+					<view v-else class="seat-empty">暂无可选座位</view>
 				</movable-view>
 			</movable-area>
-			<view class="pt-f bottom-bar seat-bottom-bar left-0 dp-f fd-cr z1000">
-				<view class="bg-white p-all-32 seat-actions">
-					<view class="recommend-row dp-f ai-c jc-c fz-28 color-333 mb-20" v-if="SelectNum === 0">
-						推荐选座
+
+			<view class="seat-bottom-bar">
+				<view class="seat-actions">
+					<view class="recommend-row" v-if="SelectNum === 0">
+						<text class="action-label">推荐选座</text>
 						<view
-							style="width: 106rpx;height: 60rpx;"
-							class="recommend-chip b-1 br-5 dp-f ai-c jc-c fz-28 ml-20"
+							class="recommend-chip"
 							v-for="(n, numindex) in 4"
 							:key="n"
-							@click="smartChoose(numindex + 1)"
+							@tap="smartChoose(numindex + 1)"
 						>
 							{{ numindex + 1 }}人
 						</view>
 					</view>
-					<view class="selected-row dp-f ai-c fw-w fz-28 color-333 mb-20" v-if="SelectNum > 0">
-						<text>已选</text>
-						<view class="selected-chip p-all-10 b-1 br-5 dp-f ai-c jc-c fz-28 ml-20" v-for="(optItem, optindex) in optArr" :key="optindex">
-							{{ optItem.rowNum + '排' + optItem.columnNum + '座' }}
+					<view class="selected-row" v-else>
+						<text class="action-label">已选 {{ SelectNum }} 座</text>
+						<scroll-view class="selected-scroll" scroll-x :show-scrollbar="false">
+							<view class="selected-chip" v-for="(optItem, optindex) in optArr" :key="optItem.sid || optindex" @tap="removeSelectedSeat(optItem)">
+								<text>{{ optItem.rowNum }}排{{ optItem.columnNum }}座</text>
+								<text class="chip-close">×</text>
+							</view>
+						</scroll-view>
+					</view>
+					<view class="submit-row">
+						<view v-if="SelectNum > 0" class="price-summary">
+							<text class="total-price">¥{{ totalPrice }}</text>
+							<text class="price-tip">含服务费</text>
 						</view>
-					</view>
-					<button
-						:disabled="isSubOrder"
-						style="width: 686rpx;height: 90rpx;"
-						class="seat-submit dp-f jc-c ai-c br-10 fz-34 color-fff"
-						:class="SelectNum > 0 ? 'bg-red-1' : 'bg-unbtn'"
-						@click="buySeat"
-					>
-						<!-- {{ SelectNum > 0 ? '￥ ' + totalPrice + ' 确认座位' : '请选座位' }} -->
-						{{ SelectNum > 0 ? `￥${totalPrice} 确认座位` : '请先选择座位' }}
-					</button>
-				</view>
-				<view class="seat-legend dp-f jc-c ai-c mb-20 fz-28" v-if="showTis">
-					<view class="legend-item dp-f jc-c ai-c m-0-10">
-						<image :style="'width:' + seatSize + 'px;height:' + seatSize + 'px'" src="../../../static/unselected.png" mode="aspectFit"></image>
-						<span class="ml-10">可选</span>
-					</view>
-					<view class="legend-item dp-f jc-c ai-c m-0-10">
-						<image :style="'width:' + seatSize + 'px;height:' + seatSize + 'px'" src="../../../static/bought.png" mode="aspectFit"></image>
-						<span class="ml-10">不可选</span>
-					</view>
-					<view class="legend-item dp-f jc-c ai-c m-0-10">
-						<image :style="'width:' + seatSize + 'px;height:' + seatSize + 'px'" src="../../../static/selected.png" mode="aspectFit"></image>
-						<span class="ml-10">选中</span>
-					</view>
-					<view class="legend-item dp-f jc-c ai-c m-0-10">
-						<image :style="'width:' + seatSize + 'px;height:' + seatSize + 'px'" src="../../../static/lockwei.png" mode="aspectFit"></image>
-						<span class="ml-10">维修</span>
+						<button
+							:disabled="isSubOrder || SelectNum === 0"
+							class="seat-submit"
+							:class="{ active: SelectNum > 0 }"
+							@tap="buySeat"
+						>
+							{{ isSubOrder ? '正在锁座...' : SelectNum > 0 ? '确认选座' : '请先选择座位' }}
+						</button>
 					</view>
 				</view>
 			</view>
@@ -182,12 +169,38 @@ export default {
 		},
 		pxNum() {
 			return 750 / this.boxWidth;
+		},
+		seatContentHeight() {
+			return Math.max(360, 86 + this.seatRow * (this.seatSize + 10) + 50);
+		},
+		sessionDisplayText() {
+			const raw = this.head.showDatetime || this.head.sessionsStarttime || '';
+			if (!raw) return '场次时间加载中';
+			const match = String(raw).match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})(?:[ T](\d{1,2}):(\d{1,2}))?/);
+			if (!match) {
+				const timeMatch = String(raw).match(/(\d{1,2}):(\d{2})/);
+				return timeMatch ? `${timeMatch[1].padStart(2, '0')}:${timeMatch[2]}场` : String(raw);
+			}
+			const year = Number(match[1]);
+			const month = Number(match[2]);
+			const day = Number(match[3]);
+			const hour = String(match[4] || '0').padStart(2, '0');
+			const minute = String(match[5] || '00').padStart(2, '0');
+			const target = new Date(year, month - 1, day);
+			const now = new Date();
+			const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+			const dayOffset = Math.round((target.getTime() - today.getTime()) / 86400000);
+			const weekText = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][target.getDay()];
+			const dateText = `${String(month).padStart(2, '0')}月${String(day).padStart(2, '0')}日`;
+			if (dayOffset === 0) return `今天 · ${hour}:${minute}场`;
+			if (dayOffset === 1) return `明天 ${dateText} ${weekText} · ${hour}:${minute}场`;
+			if (dayOffset === 2) return `后天 ${dateText} ${weekText} · ${hour}:${minute}场`;
+			return `${dateText} ${weekText} · ${hour}:${minute}场`;
 		}
 	},
 	onShow() {
 		let that = this;
 
-		console.log('来过');
 		uni.showLoading({ title: '加载中' });
 		uni.$once('escLoack', function(data) {
 			that.isEsc = false;
@@ -213,20 +226,32 @@ export default {
 		};
 		uni.$emit('escUpload', params);
 	},
-	onLoad() {
+	onLoad(options) {
 		this.isSubOrder = false;
-		this.head = this.$Route.query;
-		this.filmId = this.$Route.query.filmId;
-		this.head.showDatetime = decodeURI(this.head.showDatetime);
-		this.listParams.scheduleId = this.$Route.query.scheduleId;
-		this.listParams.hallId = this.$Route.query.hallId; 
-		this.listParams.schedulekey = this.$Route.query.schedulekey;
-		this.listParams.scheduleKey = this.$Route.query.schedulekey;
-		this.listParams.sectionId = this.$Route.query.sectionId;
+		const routeQuery = this.$Route && this.$Route.query ? this.$Route.query : {};
+		const query = options && Object.keys(options).length ? options : routeQuery;
+		this.head = { ...this.head, ...query };
+		this.filmId = query.filmId || '';
+		if (this.head.showDatetime) {
+			try {
+				this.head.showDatetime = decodeURIComponent(this.head.showDatetime);
+			} catch (error) {
+				this.head.showDatetime = String(this.head.showDatetime);
+			}
+		}
+		this.listParams.scheduleId = query.scheduleId;
+		this.listParams.hallId = query.hallId;
+		this.listParams.schedulekey = query.schedulekey;
+		this.listParams.scheduleKey = query.schedulekey;
+		this.listParams.sectionId = query.sectionId;
 		//获取宽度
 		uni.getSystemInfo({
-			success: function(e) {
-				this.boxWidth = e.screenWidth;
+			success: e => {
+				this.boxWidth = e.windowWidth || e.screenWidth || 375;
+				if (this.seatCol > 0) {
+					const naturalSize = parseInt(this.boxWidth / (this.seatCol + 1), 10);
+					this.seatSize = Math.max(20, Math.min(34, naturalSize));
+				}
 				//#ifdef H5
 				this.scaleMin = 0.95;
 				//#endif
@@ -265,7 +290,15 @@ export default {
 					that.SelectNum = 0;
 					that.totalPrice = 0;
 					that.optArr = [];
-					let arr = res.data.scheduleSeats;
+					let arr = res.data && Array.isArray(res.data.scheduleSeats) ? res.data.scheduleSeats : [];
+					if (!arr.length) {
+						that.seatList = [];
+						that.seatArray = [];
+						that.seatRow = 0;
+						that.seatCol = 0;
+						uni.hideLoading();
+						return;
+					}
 					let minCol = parseInt(arr[0].x);
 					let minRow = parseInt(arr[0].y);
 					for (let i of arr) {
@@ -290,11 +323,15 @@ export default {
 						that.$tools.toast(res.data.tipMessage,'none',{duration: 2500});
 					}
 				} else {
+					uni.hideLoading();
 					uni.showToast({
 						icon: 'none',
 						title: res.msg
 					});
 				}
+			}).catch(() => {
+				uni.hideLoading();
+				that.seatArray = [];
 			});
 			/* } else {
 					uni.showToast({
@@ -309,15 +346,16 @@ export default {
 			let seatArray = Array(this.seatRow)
 				.fill(0)
 				.map(() =>
-					Array(this.seatCol).fill({
+					Array(this.seatCol).fill(0).map(() => ({
 						type: -1,
 						sid: '',
 						rowNum: '',
 						columnNum: ''
-					})
+					}))
 				);
 			this.seatArray = seatArray;
-			this.seatSize = this.boxWidth > 0 ? parseInt(parseInt(this.boxWidth, 10) / (this.seatCol + 1), 10) : parseInt(parseInt(414, 10) / (this.seatCol + 1), 10);
+			const naturalSize = parseInt((this.boxWidth || 375) / (this.seatCol + 1), 10);
+			this.seatSize = Math.max(20, Math.min(34, naturalSize));
 			this.initNonSeatPlace();
 		},
 		//初始化是座位的地方
@@ -450,6 +488,7 @@ export default {
 		},
 		//处理座位选择逻辑
 		handleChooseSeat: function(row, col, seat) {
+			if (!seat || !this.seatArray[row] || !this.seatArray[row][col]) return;
 			let seatValue = this.seatArray[row][col].type;
 			let newArray = this.seatArray;
 			//如果是已购座位，直接返回
@@ -476,6 +515,15 @@ export default {
 			//必须整体更新二维数组，Vue无法检测到数组某一项更新,必须slice复制一个数组才行
 			this.seatArray = newArray.slice();
 		},
+		removeSelectedSeat(item) {
+			for (let row = 0; row < this.seatArray.length; row++) {
+				const col = this.seatArray[row].findIndex(seat => seat.sid === item.sid);
+				if (col >= 0) {
+					this.handleChooseSeat(row, col, this.seatArray[row][col]);
+					return;
+				}
+			}
+		},
 		//处理已选座位数组
 		getOptArr: function(item, type) {
 			let optArr = this.optArr;
@@ -494,7 +542,6 @@ export default {
 		},
 		//推荐选座,参数是推荐座位数目，
 		smartChoose: function(num) {
-			console.log('num===', num);
 			// 先重置
 			this.resetSeat();
 			//找到影院座位水平垂直中间位置的后一排
@@ -514,7 +561,7 @@ export default {
 				return;
 			}
 			//提示用户无合法位置可选
-			alert('无合法位置可选!');
+			uni.showToast({ icon: 'none', title: '暂无连续的推荐座位' });
 		},
 
 		//搜索函数,参数:fromRow起始行，toRow终止行,num推荐座位数
@@ -935,5 +982,386 @@ export default {
 .bought-seat {
 	background: url('../../../static/bought.png') center center no-repeat;
 	background-size: 100% 100%;
+}
+
+/* 选座页视觉与布局覆盖：固定信息区，中间座位区自适应剩余高度。 */
+.seat-page,
+.seat-canvas {
+	width: 100%;
+	height: 100vh;
+	overflow: hidden;
+	background: #f6f7f8;
+}
+
+.seat-summary {
+	position: fixed;
+	top: 0;
+	left: 0;
+	right: 0;
+	z-index: 20;
+	height: 120rpx;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 14rpx 28rpx;
+	box-sizing: border-box;
+	background: rgba(255, 255, 255, 0.98);
+	border-bottom: 0;
+	box-shadow: 0 4rpx 18rpx rgba(24, 28, 36, 0.04);
+}
+
+.summary-title-row,
+.summary-meta {
+	display: flex;
+	align-items: center;
+	min-width: 0;
+}
+
+.summary-film {
+	min-width: 0;
+	max-width: 470rpx;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: 31rpx;
+	font-weight: 700;
+	line-height: 44rpx;
+	color: #1d2129;
+}
+
+.summary-hall {
+	margin-left: 12rpx;
+	padding: 3rpx 12rpx;
+	border-radius: 8rpx;
+	background: #f1f2f4;
+	font-size: 21rpx;
+	line-height: 30rpx;
+	color: #69707d;
+}
+
+.summary-meta {
+	margin-top: 4rpx;
+	font-size: 23rpx;
+	line-height: 32rpx;
+	color: #7a808c;
+}
+
+.summary-version {
+	margin-left: 16rpx;
+	color: #4d5562;
+}
+
+.summary-session {
+	min-width: 0;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+}
+
+.seat-legend {
+	position: fixed;
+	top: 120rpx;
+	left: 0;
+	right: 0;
+	z-index: 19;
+	height: 72rpx;
+	min-height: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	gap: 36rpx;
+	margin: 0;
+	box-sizing: border-box;
+	background: rgba(255, 255, 255, 0.94);
+	border-bottom: 1rpx solid #eceef1;
+}
+
+.legend-item {
+	display: flex;
+	align-items: center;
+	gap: 8rpx;
+	font-size: 20rpx;
+	line-height: 28rpx;
+	color: #858b96;
+}
+
+.legend-seat {
+	width: 25rpx;
+	height: 20rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	border-radius: 5rpx 5rpx 4rpx 4rpx;
+	font-size: 15rpx;
+	font-weight: 800;
+}
+
+.seat-map {
+	position: fixed;
+	top: 192rpx;
+	left: 0;
+	right: 0;
+	bottom: calc(272rpx + env(safe-area-inset-bottom));
+	width: 100%;
+	height: auto;
+	background:
+		radial-gradient(circle at 50% 0, rgba(255, 255, 255, 0.96) 0, rgba(248, 249, 250, 0.88) 42%, #f1f2f4 100%);
+}
+
+.screen-wrap {
+	height: 86px;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	box-sizing: border-box;
+	padding-top: 20rpx;
+}
+
+.screen-arc {
+	width: 430rpx;
+	height: 36rpx;
+	border-top: 6rpx solid #d8dce2;
+	border-radius: 50% 50% 0 0;
+	background: linear-gradient(180deg, rgba(213, 217, 224, 0.34), rgba(247, 248, 250, 0));
+	box-shadow: 0 -5rpx 14rpx rgba(92, 101, 116, 0.08);
+}
+
+.screen-label {
+	margin-top: 8rpx;
+	font-size: 20rpx;
+	line-height: 30rpx;
+	letter-spacing: 3rpx;
+	color: #9aa0aa;
+}
+
+.seat-center-line {
+	position: absolute;
+	top: 86px;
+	left: 50%;
+	z-index: 0;
+	width: 0;
+	border-left: 1px dashed rgba(164, 169, 178, 0.45);
+	transform: translateX(-50%);
+}
+
+.seat-rows {
+	position: relative;
+	z-index: 1;
+}
+
+.seat-row {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+	margin-bottom: 10px;
+}
+
+.row-number {
+	position: absolute;
+	left: 13rpx;
+	top: 50%;
+	min-width: 30rpx;
+	height: 30rpx;
+	padding: 0 5rpx;
+	box-sizing: border-box;
+	border-radius: 15rpx;
+	background: rgba(81, 87, 98, 0.64);
+	text-align: center;
+	font-size: 18rpx;
+	line-height: 30rpx;
+	color: #fff;
+	transform: translateY(-50%);
+}
+
+.seat-cell {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+}
+
+.seat-icon {
+	width: 72%;
+	height: 62%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	box-sizing: border-box;
+	border: 2rpx solid #aeb4bd;
+	border-radius: 7rpx 7rpx 5rpx 5rpx;
+	box-shadow: inset 0 -5rpx 0 rgba(110, 117, 128, 0.12);
+	font-size: 18rpx;
+	font-weight: 900;
+	line-height: 1;
+	color: #fff;
+}
+
+.seat-status-0 {
+	border: 2rpx solid #aeb4bd;
+	background: #fff;
+	color: transparent;
+}
+
+.seat-status-1 {
+	border-color: var(--tt-primary, #9aa52d);
+	background: var(--tt-primary, #9aa52d);
+	box-shadow: inset 0 -5rpx 0 rgba(63, 70, 0, 0.14), 0 3rpx 8rpx rgba(143, 152, 30, 0.2);
+	color: #fff;
+}
+
+.seat-status-2 {
+	border-color: #d0d3d8;
+	background: #d8dbe0;
+	box-shadow: inset 0 -5rpx 0 rgba(114, 120, 130, 0.08);
+	color: transparent;
+}
+
+.seat-status-3 {
+	border-color: #bcc0c7;
+	background: repeating-linear-gradient(135deg, #c9ccd2 0, #c9ccd2 5rpx, #b9bdc5 5rpx, #b9bdc5 10rpx);
+	color: #fff;
+}
+
+.seat-empty {
+	padding-top: 90rpx;
+	text-align: center;
+	font-size: 25rpx;
+	color: #9aa0aa;
+}
+
+.seat-bottom-bar {
+	position: fixed;
+	left: 0;
+	right: 0;
+	bottom: var(--window-bottom, 0);
+	z-index: 30;
+	width: 100%;
+	overflow: hidden;
+	border-radius: 28rpx 28rpx 0 0;
+	background: #fff;
+	box-shadow: 0 -10rpx 32rpx rgba(31, 35, 43, 0.1);
+}
+
+.seat-actions {
+	padding: 22rpx 28rpx calc(22rpx + env(safe-area-inset-bottom));
+}
+
+.recommend-row,
+.selected-row {
+	height: 64rpx;
+	display: flex;
+	align-items: center;
+	margin-bottom: 18rpx;
+}
+
+.action-label {
+	flex: 0 0 auto;
+	margin-right: 16rpx;
+	font-size: 24rpx;
+	font-weight: 600;
+	color: #4e5561;
+}
+
+.recommend-chip {
+	width: 88rpx;
+	height: 52rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin-left: 12rpx;
+	box-sizing: border-box;
+	border: 1rpx solid #dfe2e6;
+	border-radius: 27rpx;
+	background: #fff;
+	font-size: 23rpx;
+	color: #555c68;
+}
+
+.selected-scroll {
+	min-width: 0;
+	flex: 1;
+	width: 1px;
+	white-space: nowrap;
+}
+
+.selected-chip {
+	height: 54rpx;
+	display: inline-flex;
+	align-items: center;
+	margin-right: 12rpx;
+	padding: 0 14rpx;
+	box-sizing: border-box;
+	border: 1rpx solid rgba(143, 152, 30, 0.28);
+	border-radius: 10rpx;
+	background: var(--tt-primary-soft, #f6f7df);
+	font-size: 22rpx;
+	color: var(--tt-primary-strong, #77800f);
+}
+
+.chip-close {
+	margin-left: 9rpx;
+	font-size: 26rpx;
+	color: #979d61;
+}
+
+.submit-row {
+	display: flex;
+	align-items: center;
+	gap: 20rpx;
+}
+
+.price-summary {
+	width: 174rpx;
+	flex: 0 0 174rpx;
+	display: flex;
+	flex-direction: column;
+}
+
+.total-price {
+	font-size: 36rpx;
+	font-weight: 750;
+	line-height: 42rpx;
+	color: #e54d59;
+}
+
+.price-tip {
+	font-size: 19rpx;
+	line-height: 26rpx;
+	color: #9aa0aa;
+}
+
+.seat-submit {
+	height: 84rpx;
+	flex: 1;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	margin: 0;
+	padding: 0 28rpx;
+	border: 0;
+	border-radius: 44rpx;
+	background: #d9dce1;
+	box-shadow: none;
+	font-size: 29rpx;
+	font-weight: 700;
+	line-height: 84rpx;
+	color: #fff;
+}
+
+.seat-submit.active {
+	background: linear-gradient(135deg, var(--tt-primary, #a3ad34), var(--tt-primary-strong, #7d8615));
+	box-shadow: 0 9rpx 20rpx rgba(126, 136, 18, 0.22);
+}
+
+.seat-submit::after {
+	display: none;
+}
+
+.seat-submit[disabled] {
+	background: #d9dce1;
+	color: #fff;
+	opacity: 1;
 }
 </style>

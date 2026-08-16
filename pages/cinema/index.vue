@@ -35,8 +35,8 @@
 					<swiper
 						class="card-swiper"
 						:current="activeItem"
-						previous-margin="270rpx"
-						next-margin="270rpx"
+						previous-margin="275rpx"
+						next-margin="275rpx"
 						:circular="false"
 						duration="300"
 						@change="cardSwiper"
@@ -330,7 +330,7 @@ export default {
 
 .poster-stage {
 	position: relative;
-	height: 300rpx;
+	height: 286rpx;
 	overflow: hidden;
 	background: #181914;
 }
@@ -360,18 +360,22 @@ export default {
 .card-swiper {
 	position: relative;
 	z-index: 2;
-	height: 300rpx;
+	height: 286rpx;
 }
 
 .poster-slide {
+	display: flex;
+	align-items: center;
+	justify-content: center;
 	box-sizing: border-box;
-	padding: 22rpx 14rpx 28rpx;
+	padding: 16rpx 8rpx 20rpx;
 }
 
 .poster-card {
 	position: relative;
-	width: 100%;
-	height: 100%;
+	width: 174rpx;
+	height: 250rpx;
+	flex: 0 0 174rpx;
 	overflow: hidden;
 	border: 4rpx solid transparent;
 	border-radius: 14rpx;

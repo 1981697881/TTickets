@@ -1,19 +1,19 @@
 <template>
 	<view class="">
 		<view class="goods-box x-start">
-			<image class="goods-img" :src="'https://cfzx.gzfzdev.com/movie/uploadFiles/image/'+detail.filmPhoto" mode="aspectFill"></image>
+			<image class="goods-img" :src="movieImage" mode="aspectFill"></image>
 			<view class="y-start">
 				<view class="goods-title more-t">
-					<view class="item-title">{{ detail.locationHall.hallName }}</view>
+					<view class="item-title">{{ safeHall.hallName || '影厅信息' }}</view>
 					<view class="item-time">
 						<text class="time cuIcon-time" v-if="isPast">{{ timeText }}</text>
 						<text class="time" v-else>{{ timeText }}</text>
 					</view>
 				</view>
-				<slot name="tipTag">{{checkTime.week || ''}} {{detail.schedule.showDatetime}} ({{detail.schedule.dimensional}})</slot>
-				<view class="size-tip">{{detail.cinemaName}}</view>
+				<slot name="tipTag">{{ checkTime.week || '' }} {{ safeSchedule.showDatetime || '' }} ({{ safeSchedule.dimensional || '' }})</slot>
+				<view class="size-tip">{{ safeDetail.cinemaName || '' }}</view>
 				<slot name="goodsBottom">
-					<view class="price">￥{{ detail.money }}</view>
+					<view class="price">￥{{ safeDetail.money || 0 }}</view>
 				</slot>
 			</view>
 		</view>
@@ -21,13 +21,13 @@
 </template>
 
 <script>
-let timer;
 import tools from '@/common/utils/tools'
 export default {
 	name: 'appMiniCard',
 	components: {},
 	data() {
 		return {
+			timer: null,
 			checkTime: {
 				week: ''
 			},
@@ -43,50 +43,71 @@ export default {
 	props: {
 		detail: {
 			type: Object,
-			default: null
+			default: () => ({})
 		},
 		sku: {},
 		type: ''
 	},
 	mounted() {
-		clearInterval(timer);
-		timer = null
+		this.clearTime();
 		this.countDown();
-		this.initDate(this.detail.schedule.showDatetime);
+		this.initDate(this.safeSchedule.showDatetime);
 	},
-	created() {
-		
+	beforeUnmount() {
+		this.clearTime();
 	},
-	onHide() {
-		
+	computed: {
+		safeDetail() {
+			return this.detail && typeof this.detail === 'object' ? this.detail : {};
+		},
+		safeSchedule() {
+			return this.safeDetail.schedule && typeof this.safeDetail.schedule === 'object' ? this.safeDetail.schedule : {};
+		},
+		safeHall() {
+			return this.safeDetail.locationHall && typeof this.safeDetail.locationHall === 'object' ? this.safeDetail.locationHall : {};
+		},
+		movieImage() {
+			const image = this.safeDetail.filmPhoto || '';
+			if (/^https?:\/\//.test(image) || image.startsWith('/')) return image;
+			return `https://cfzx.gzfzdev.com/movie/uploadFiles/image/${image}`;
+		}
 	},
-	computed: {},
 	methods: {
 		clearTime(){
-			clearInterval(timer);
-			timer = null
+			if (this.timer) clearInterval(this.timer);
+			this.timer = null;
 		},
 		initDate(dval) {
-			let that = this
-			let date =new Date()
-			let year=date.getFullYear();
-			let month=date.getMonth()+1;
-			let lastDay=new Date(dval).getDate() - new Date().getDate() +1
-			for(let i = 0;i<lastDay;i++){
-				let obj = tools.getDayList('',i)
-				if(i==0){
-					obj.week = '今天'
-					that.checkTime = obj
-				}else if(i==1){
-					obj.week = '明天'
-					that.checkTime = obj
-				}else if(i==2){
-					obj.week = '后天'
-					that.checkTime = obj
-				}else{
-					that.checkTime = obj
-				}
+			const target = this.parseLocalDate(dval);
+			if (!target) return;
+			const now = new Date();
+			const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+			const targetDay = new Date(target.getFullYear(), target.getMonth(), target.getDate());
+			const offset = Math.round((targetDay.getTime() - today.getTime()) / 86400000);
+			const obj = tools.getDayList('', offset);
+			if (offset === 0) obj.week = '今天';
+			else if (offset === 1) obj.week = '明天';
+			else if (offset === 2) obj.week = '后天';
+			this.checkTime = obj;
+		},
+		parseLocalDate(value) {
+			if (!value) return null;
+			if (value instanceof Date) return Number.isNaN(value.getTime()) ? null : value;
+			if (typeof value === 'number') {
+				const date = new Date(value);
+				return Number.isNaN(date.getTime()) ? null : date;
 			}
+			const match = String(value).match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})(?:[ T](\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?/);
+			if (!match) return null;
+			const date = new Date(
+				Number(match[1]),
+				Number(match[2]) - 1,
+				Number(match[3]),
+				Number(match[4] || 0),
+				Number(match[5] || 0),
+				Number(match[6] || 0)
+			);
+			return Number.isNaN(date.getTime()) ? null : date;
 		},
 		// 路由跳转
 		jump(path, parmas) {
@@ -102,16 +123,14 @@ export default {
 		countDown() {
 			let that = this;
 			let maxtime = 10 * 30;
-			timer = setInterval(() => {
+			this.timer = setInterval(() => {
 				if (maxtime >= 0) {
 					let minutes = Math.floor(maxtime / 60);
 					let seconds = Math.floor(maxtime % 60);
 					that.timeText = `${that.num(minutes)}:${that.num(seconds)}`;
 					--maxtime;
 				} else {
-					clearInterval(timer);
-					timer = null
-					console.log('订单过期')
+					this.clearTime();
 					that.timeText = '订单已过期!';
 					that.isPast = false;
 					 that.$emit('overTime')
