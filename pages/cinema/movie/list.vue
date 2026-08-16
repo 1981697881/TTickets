@@ -13,10 +13,10 @@
 			</view>
 
 			<view class="seat-legend">
-				<view class="legend-item"><view class="legend-seat seat-status-0"></view><text>可选</text></view>
-				<view class="legend-item"><view class="legend-seat seat-status-1"><text>✓</text></view><text>已选</text></view>
-				<view class="legend-item"><view class="legend-seat seat-status-2"></view><text>已售</text></view>
-				<view class="legend-item"><view class="legend-seat seat-status-3"><text>×</text></view><text>维修</text></view>
+				<view class="legend-item"><image class="legend-seat-image" src="/static/unselected.png" mode="aspectFit"></image><text>可选</text></view>
+				<view class="legend-item"><image class="legend-seat-image" src="/static/selected.png" mode="aspectFit"></image><text>已选</text></view>
+				<view class="legend-item"><image class="legend-seat-image is-sold" src="/static/bought.png" mode="aspectFit"></image><text>已售</text></view>
+				<view class="legend-item"><image class="legend-seat-image is-maintenance" src="/static/lockwei.png" mode="aspectFit"></image><text>维修</text></view>
 			</view>
 
 			<movable-area class="seat-map">
@@ -45,10 +45,10 @@
 								:style="{ width: seatSize + 'px', height: seatSize + 'px' }"
 								@tap="handleChooseSeat(index, col, seat)"
 							>
-								<view v-if="seat && seat.type !== -1" class="seat-icon" :class="'seat-status-' + seat.type">
-									<text v-if="seat.type === 1">✓</text>
-									<text v-else-if="seat.type === 3">×</text>
-								</view>
+								<image v-if="seat && seat.type === 0" class="seat-image" src="/static/unselected.png" mode="aspectFit"></image>
+								<image v-else-if="seat && seat.type === 1" class="seat-image" src="/static/selected.png" mode="aspectFit"></image>
+								<image v-else-if="seat && seat.type === 2" class="seat-image is-sold" src="/static/bought.png" mode="aspectFit"></image>
+								<image v-else-if="seat && seat.type === 3" class="seat-image is-maintenance" src="/static/lockwei.png" mode="aspectFit"></image>
 							</view>
 						</view>
 					</view>
@@ -229,16 +229,9 @@ export default {
 	onLoad(options) {
 		this.isSubOrder = false;
 		const routeQuery = this.$Route && this.$Route.query ? this.$Route.query : {};
-		const query = options && Object.keys(options).length ? options : routeQuery;
+		const query = this.decodeRouteQuery({ ...routeQuery, ...(options || {}) });
 		this.head = { ...this.head, ...query };
 		this.filmId = query.filmId || '';
-		if (this.head.showDatetime) {
-			try {
-				this.head.showDatetime = decodeURIComponent(this.head.showDatetime);
-			} catch (error) {
-				this.head.showDatetime = String(this.head.showDatetime);
-			}
-		}
 		this.listParams.scheduleId = query.scheduleId;
 		this.listParams.hallId = query.hallId;
 		this.listParams.schedulekey = query.schedulekey;
@@ -261,6 +254,26 @@ export default {
 	},
 	methods: {
 		...mapActions(['getUserBalance']),
+		decodeRouteValue(value) {
+			if (typeof value !== 'string') return value;
+			let result = value;
+			for (let count = 0; count < 3; count += 1) {
+				try {
+					const decoded = decodeURIComponent(result);
+					if (decoded === result) break;
+					result = decoded;
+				} catch (error) {
+					break;
+				}
+			}
+			return result;
+		},
+		decodeRouteQuery(query) {
+			return Object.keys(query || {}).reduce((result, key) => {
+				result[key] = this.decodeRouteValue(query[key]);
+				return result;
+			}, {});
+		},
 		// 根据影厅的大小缩放比例(需要把影厅全部显示出来)
 		seatScale: function() {
 			let seatScaleX = 1;
@@ -677,314 +690,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.thumbnail {
-	position: absolute;
-	z-index: 3;
-	top: 0;
-	width: 125rpx;
-	height: 125rpx;
-	left: 0;
-	background: rgba(23, 24, 18, 0.72);
-	border-radius: 10rpx;
-	overflow: hidden;
-	transform-origin: 0 0;
-	.thumbnail-border {
-		position: absolute;
-		z-index: 4;
-		box-sizing: border-box;
-		width: 100%;
-		height: 100%;
-		padding: 1px;
-		border: 2rpx solid var(--tt-primary);
-	}
-	.thumbnailSeatClass {
-		margin: 1rpx;
-		display: inline-block;
-	}
-}
-.p-all-10 {
-	padding: 10rpx;
-}
-.ml-10 {
-	margin-left: 10rpx;
-}
-
-.m-0-10 {
-	margin: 0 10rpx;
-}
-
-.bg-unbtn {
-	background-color: #d8dbcf;
-}
-
-.bg-red-1 {
-	background-color: var(--tt-primary);
-}
-
-.br-10 {
-	border-radius: 10rpx;
-}
-
-.ml-20 {
-	margin-left: 20rpx;
-}
-
-.mb-20 {
-	margin-bottom: 20rpx;
-}
-
-.p-all-32 {
-	padding: 32rpx;
-}
-
-.fd-cr {
-	flex-direction: column-reverse;
-	/* 主轴方向从下到上,默认从左到右 */
-}
-
-.bottom-bar {
-	bottom: var(--window-bottom);
-}
-
-.seat-page,
-.seat-canvas {
-	background: var(--tt-bg);
-}
-
-.seat-summary {
-	box-sizing: border-box;
-	border-bottom: 1rpx solid var(--tt-border);
-	box-shadow: 0 8rpx 24rpx rgba(23, 24, 18, 0.05);
-}
-
-.seat-map {
-	background: radial-gradient(circle at 50% 10%, #fff 0, #f7f8f3 44%, #f1f2ec 100%);
-}
-
-.seat-bottom-bar {
-	width: 100%;
-	overflow: hidden;
-	border-radius: 28rpx 28rpx 0 0;
-	background: #fff;
-	box-shadow: 0 -12rpx 34rpx rgba(23, 24, 18, 0.1);
-}
-
-.seat-actions {
-	padding: 24rpx 28rpx calc(24rpx + env(safe-area-inset-bottom));
-}
-
-.recommend-row,
-.selected-row {
-	min-height: 62rpx;
-}
-
-.recommend-chip {
-	box-sizing: border-box;
-	border-color: #d9ddae;
-	border-radius: 30rpx;
-	background: var(--tt-primary-soft);
-	color: var(--tt-primary-strong);
-}
-
-.selected-chip {
-	border-color: #d9ddae;
-	border-radius: 12rpx;
-	background: var(--tt-primary-soft);
-	color: var(--tt-primary-strong);
-}
-
-.seat-submit {
-	border-radius: 45rpx;
-	font-weight: 650;
-	box-shadow: 0 8rpx 18rpx rgba(143, 152, 30, 0.2);
-}
-
-.seat-submit[disabled] {
-	box-shadow: none;
-	color: #fff;
-}
-
-.seat-legend {
-	min-height: 74rpx;
-	margin: 0;
-	background: #fbfcf8;
-	border-bottom: 1rpx solid var(--tt-border);
-	color: var(--tt-text-secondary);
-}
-
-.legend-item {
-	font-size: 22rpx;
-}
-
-.color-fff {
-	color: #fff;
-}
-
-.br-15 {
-	border-radius: 15rpx;
-}
-
-.over-h {
-	overflow: hidden;
-}
-
-.dp-ib {
-	display: inline-block;
-}
-
-.mt-20 {
-	margin-top: 20rpx;
-}
-
-.pa-v-2 {
-	/* 定位垂直对齐 */
-	left: 50%;
-	transform: translateX(-50%);
-}
-
-.b-d-1 {
-	border: 1px dashed #e5e5e5;
-}
-
-.w-100 {
-	width: 100%;
-}
-
-.h-100 {
-	height: 100%;
-}
-
-.bg-f1 {
-	background-color: #f1f1f1;
-}
-
-.h-100vh {
-	height: 100vh;
-}
-
-.pt-f {
-	position: fixed;
-}
-
-.left-0 {
-	left: 0;
-}
-
-.p-0-32 {
-	padding: 0 32rpx;
-}
-
-.pt-20 {
-	padding-top: 20rpx;
-}
-
-.bg-white {
-	background-color: #fff;
-}
-
-.z1000 {
-	z-index: 1000;
-}
-
-.fz-34 {
-	font-size: 34rpx;
-}
-
-.fw-b {
-	font-weight: bold;
-}
-
-.mt-10 {
-	margin-top: 10rpx;
-}
-
-.fz-28 {
-	font-size: 28rpx;
-}
-
-.color-666 {
-	color: #666666;
-}
-
-.dp-f {
-	display: flex;
-}
-
-.jc-c {
-	justify-content: center;
-}
-
-.ai-c {
-	align-items: center;
-}
-
-.fz-22 {
-	font-size: 22rpx;
-}
-
-.color-333 {
-	color: #333333;
-}
-
-.m-0-a {
-	margin: 0 auto;
-}
-
-.mt-48 {
-	margin-top: 48rpx;
-}
-
-.fz-20 {
-	font-size: 20rpx;
-}
-
-.color-999 {
-	color: #999999;
-}
-
-.b-1 {
-	border: 1px solid #cccccc;
-}
-
-.br-5 {
-	border-radius: 5rpx;
-}
-
-.Stage {
-	background: linear-gradient(180deg, #e5e6df, #f8f9f5);
-	width: 380rpx;
-	height: 42rpx;
-	transform: perspective(34rpx) rotateX(-10deg);
-	margin: 0 auto;
-	border-radius: 0 0 18rpx 18rpx;
-	box-shadow: 0 10rpx 22rpx rgba(23, 24, 18, 0.08);
-}
-
-.screen-label {
-	border-color: var(--tt-border);
-	background: rgba(255, 255, 255, 0.82);
-}
-
-.bg-line {
-	background-color: rgba(0, 0, 0, 0.3);
-}
-
-.sel-seat {
-	background: url('../../../static/selected.png') center center no-repeat;
-	background-size: 100% 100%;
-}
-
-.unsel-seat {
-	background: url('../../../static/unselected.png') center center no-repeat;
-	background-size: 100% 100%;
-}
-
-.bought-seat {
-	background: url('../../../static/bought.png') center center no-repeat;
-	background-size: 100% 100%;
-}
-
-/* 选座页视觉与布局覆盖：固定信息区，中间座位区自适应剩余高度。 */
+/* 固定信息区，中间座位区自适应剩余高度。 */
 .seat-page,
 .seat-canvas {
 	width: 100%;
@@ -1030,10 +736,15 @@ export default {
 }
 
 .summary-hall {
+	flex: 0 1 auto;
+	max-width: 240rpx;
 	margin-left: 12rpx;
 	padding: 3rpx 12rpx;
+	overflow: hidden;
 	border-radius: 8rpx;
 	background: #f1f2f4;
+	text-overflow: ellipsis;
+	white-space: nowrap;
 	font-size: 21rpx;
 	line-height: 30rpx;
 	color: #69707d;
@@ -1047,6 +758,7 @@ export default {
 }
 
 .summary-version {
+	flex: 0 0 auto;
 	margin-left: 16rpx;
 	color: #4d5562;
 }
@@ -1085,16 +797,10 @@ export default {
 	color: #858b96;
 }
 
-.legend-seat {
-	width: 25rpx;
-	height: 20rpx;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	box-sizing: border-box;
-	border-radius: 5rpx 5rpx 4rpx 4rpx;
-	font-size: 15rpx;
-	font-weight: 800;
+.legend-seat-image {
+	width: 30rpx;
+	height: 30rpx;
+	display: block;
 }
 
 .seat-map {
@@ -1182,46 +888,22 @@ export default {
 	box-sizing: border-box;
 }
 
-.seat-icon {
-	width: 72%;
-	height: 62%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	box-sizing: border-box;
-	border: 2rpx solid #aeb4bd;
-	border-radius: 7rpx 7rpx 5rpx 5rpx;
-	box-shadow: inset 0 -5rpx 0 rgba(110, 117, 128, 0.12);
-	font-size: 18rpx;
-	font-weight: 900;
-	line-height: 1;
-	color: #fff;
+.seat-image {
+	width: 88%;
+	height: 88%;
+	display: block;
 }
 
-.seat-status-0 {
-	border: 2rpx solid #aeb4bd;
-	background: #fff;
-	color: transparent;
+.seat-image.is-sold,
+.legend-seat-image.is-sold {
+	filter: grayscale(1);
+	opacity: 0.44;
 }
 
-.seat-status-1 {
-	border-color: var(--tt-primary, #9aa52d);
-	background: var(--tt-primary, #9aa52d);
-	box-shadow: inset 0 -5rpx 0 rgba(63, 70, 0, 0.14), 0 3rpx 8rpx rgba(143, 152, 30, 0.2);
-	color: #fff;
-}
-
-.seat-status-2 {
-	border-color: #d0d3d8;
-	background: #d8dbe0;
-	box-shadow: inset 0 -5rpx 0 rgba(114, 120, 130, 0.08);
-	color: transparent;
-}
-
-.seat-status-3 {
-	border-color: #bcc0c7;
-	background: repeating-linear-gradient(135deg, #c9ccd2 0, #c9ccd2 5rpx, #b9bdc5 5rpx, #b9bdc5 10rpx);
-	color: #fff;
+.seat-image.is-maintenance,
+.legend-seat-image.is-maintenance {
+	filter: grayscale(0.85);
+	opacity: 0.66;
 }
 
 .seat-empty {

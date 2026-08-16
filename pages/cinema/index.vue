@@ -18,10 +18,10 @@
 
 		<scroll-view class="schedule-scroll" scroll-y enable-back-to-top @scrolltolower="loadMore">
 			<view class="schedule-head">
-				<view class="cinema-header">
-					<view class="cinema-copy">
-						<text class="cinema-name">{{ cinemaName || storeInfo.storeName || '影院信息加载中' }}</text>
-						<text class="cinema-address one-t">{{ cinemaAddress || storeInfo.storeAddress || '正在获取影院地址' }}</text>
+				<view class="venue-bar">
+					<view class="venue-copy">
+						<text class="venue-name">{{ cinemaName || storeInfo.storeName || '影院信息加载中' }}</text>
+						<text class="venue-address one-t">{{ cinemaAddress || storeInfo.storeAddress || '正在获取影院地址' }}</text>
 					</view>
 					<view class="service-action" @tap="showModal">
 						<text class="cuIcon-service service-icon"></text>
@@ -29,44 +29,40 @@
 					</view>
 				</view>
 
-				<view v-if="swiperList.length" class="poster-stage">
-					<image class="poster-backdrop" :src="cardInfo.filmPhoto" mode="aspectFill"></image>
-					<view class="poster-mask"></view>
-					<swiper
-						class="card-swiper"
-						:current="activeItem"
-						previous-margin="275rpx"
-						next-margin="275rpx"
-						:circular="false"
-						duration="300"
-						@change="cardSwiper"
-					>
-						<swiper-item
-							v-for="(movie, index) in swiperList"
-							:key="movie.filmId || index"
-							class="poster-slide"
-							@tap="selectMovie(index)"
-						>
-							<view class="poster-card" :class="{ active: index === activeItem }">
-								<text v-if="movie.dimensional" class="poster-tag">{{ movie.dimensional }}</text>
-								<image class="poster-image" :src="movie.filmPhoto" mode="aspectFill" lazy-load></image>
+				<view v-if="swiperList.length" class="movie-picker">
+					<scroll-view class="poster-scroll" scroll-x scroll-with-animation :scroll-into-view="activePosterId" :show-scrollbar="false">
+						<view class="poster-list">
+							<view
+								v-for="(movie, index) in swiperList"
+								:id="`poster-${movie.filmId || index}`"
+								:key="movie.filmId || index"
+								class="poster-item"
+								:class="{ active: index === activeItem }"
+								@tap="selectMovie(index)"
+							>
+								<image class="poster-image" :src="getMoviePoster(movie, index)" mode="aspectFill" lazy-load @error="markPosterFailed(movie, index)"></image>
+								<text class="poster-name one-t">{{ movie.filmName || '影片' }}</text>
 							</view>
-						</swiper-item>
-					</swiper>
-				</view>
+						</view>
+					</scroll-view>
 
-				<view v-if="swiperList.length" class="movie-info" @tap="openMovieDetail">
-					<text class="movie-name">{{ cardInfo.filmName }}</text>
-					<view class="movie-meta-row">
-						<text class="movie-meta one-t">{{ movieMeta }}</text>
+					<view class="movie-summary" @tap="openMovieDetail">
+						<view class="movie-summary-copy">
+							<text class="movie-name">{{ cardInfo.filmName }}</text>
+							<text class="movie-meta one-t">{{ movieMeta }}</text>
+						</view>
 						<text class="cuIcon-right summary-arrow"></text>
 					</view>
-				</view>
 
-				<sh-date ref="shDate" :movieDates="movieDates" @subClickFtn="selectDate"></sh-date>
+					<sh-date ref="shDate" :movieDates="movieDates" @subClickFtn="selectDate"></sh-date>
+				</view>
 			</view>
 
 			<view class="session-section">
+				<view class="section-heading">
+					<view class="section-mark"></view>
+					<text class="section-title">场次</text>
+				</view>
 				<view class="session-list">
 					<fz-circuit-card
 						v-for="session in goodsList"
@@ -124,7 +120,8 @@ export default {
 			},
 			isLoading: false,
 			loadStatus: '',
-			lastPage: 1
+			lastPage: 1,
+			failedPosters: {}
 		};
 	},
 	computed: {
@@ -143,6 +140,10 @@ export default {
 				this.cardInfo.filmDirector ? `导演：${this.cardInfo.filmDirector}` : ''
 			].filter(Boolean).join(' | ');
 		},
+		activePosterId() {
+			const movie = this.swiperList[this.activeItem];
+			return movie ? `poster-${movie.filmId || this.activeItem}` : '';
+		}
 	},
 	onLoad(options) {
 		const routeQuery = this.$Route && this.$Route.query ? this.$Route.query : {};
@@ -183,9 +184,6 @@ export default {
 			this.resetSessions();
 			this.getGoodsList();
 		},
-		cardSwiper(event) {
-			this.selectMovie(event.detail.current);
-		},
 		selectMovie(index, shouldLoad = true) {
 			const movie = this.swiperList[index];
 			if (!movie) return;
@@ -197,6 +195,24 @@ export default {
 			this.resetSessions();
 			this.$nextTick(() => this.$refs.shDate && this.$refs.shDate.getDateList());
 			if (shouldLoad) this.getGoodsList();
+		},
+		getMoviePoster(movie, index) {
+			const key = String((movie && movie.filmId) || index);
+			const origin = 'https://cfzx.gzfzdev.com';
+			const fallback = `${origin}/movie/uploadFiles/image/zanwu.jpg`;
+			if (this.failedPosters[key]) return fallback;
+			const source = movie && movie.filmPhoto ? String(movie.filmPhoto) : '';
+			if (!source) return fallback;
+			if (/^https?:\/\//.test(source) || source.startsWith('data:') || source.startsWith('/static/')) return source;
+			if (source.startsWith('//')) return `https:${source}`;
+			if (source.startsWith('/')) return `${origin}${source}`;
+			if (source.includes('/')) return `${origin}/${source}`;
+			return `${origin}/movie/uploadFiles/image/${source}`;
+		},
+		markPosterFailed(movie, index) {
+			const key = String((movie && movie.filmId) || index);
+			if (this.failedPosters[key]) return;
+			this.failedPosters = { ...this.failedPosters, [key]: true };
 		},
 		resetSessions() {
 			this.listParams.page = 1;
@@ -284,36 +300,6 @@ export default {
 	background: #fff;
 }
 
-.cinema-header {
-	display: flex;
-	align-items: center;
-	gap: 20rpx;
-	padding: 22rpx 28rpx;
-	background: #fff;
-	border-bottom: 1rpx solid var(--tt-border);
-}
-
-.cinema-copy {
-	min-width: 0;
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-}
-
-.cinema-name {
-	font-size: 34rpx;
-	font-weight: 700;
-	line-height: 48rpx;
-	color: var(--tt-text);
-}
-
-.cinema-address {
-	margin-top: 6rpx;
-	font-size: 23rpx;
-	line-height: 32rpx;
-	color: var(--tt-text-muted);
-}
-
 .service-action {
 	flex: 0 0 auto;
 	display: flex;
@@ -326,103 +312,6 @@ export default {
 
 .service-icon {
 	font-size: 29rpx;
-}
-
-.poster-stage {
-	position: relative;
-	height: 286rpx;
-	overflow: hidden;
-	background: #181914;
-}
-
-.poster-backdrop,
-.poster-mask {
-	position: absolute;
-	top: -40rpx;
-	right: -40rpx;
-	bottom: -40rpx;
-	left: -40rpx;
-	width: calc(100% + 80rpx);
-	height: calc(100% + 80rpx);
-}
-
-.poster-backdrop {
-	-webkit-filter: blur(28rpx);
-	filter: blur(28rpx);
-	transform: scale(1.12);
-	opacity: 0.7;
-}
-
-.poster-mask {
-	background: rgba(12, 13, 9, 0.42);
-}
-
-.card-swiper {
-	position: relative;
-	z-index: 2;
-	height: 286rpx;
-}
-
-.poster-slide {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	box-sizing: border-box;
-	padding: 16rpx 8rpx 20rpx;
-}
-
-.poster-card {
-	position: relative;
-	width: 174rpx;
-	height: 250rpx;
-	flex: 0 0 174rpx;
-	overflow: hidden;
-	border: 4rpx solid transparent;
-	border-radius: 14rpx;
-	box-sizing: border-box;
-	transform: scale(0.88);
-	transition: transform 0.25s ease, border-color 0.25s ease;
-	box-shadow: 0 12rpx 28rpx rgba(0, 0, 0, 0.28);
-}
-
-.poster-card.active {
-	border-color: #fff;
-	transform: scale(1);
-}
-
-.poster-image {
-	width: 100%;
-	height: 100%;
-	display: block;
-}
-
-.poster-tag {
-	position: absolute;
-	left: 0;
-	top: 14rpx;
-	z-index: 2;
-	padding: 5rpx 14rpx;
-	border-radius: 0 18rpx 18rpx 0;
-	background: linear-gradient(132deg, #1c1c1c, #363636, #ecbe60);
-	font-size: 19rpx;
-	color: #fff;
-}
-
-.movie-info {
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	padding: 20rpx 30rpx 22rpx;
-	text-align: center;
-	background: #fff;
-}
-
-.movie-meta-row {
-	width: 100%;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	margin-top: 6rpx;
 }
 
 .movie-name {
@@ -442,11 +331,6 @@ export default {
 .summary-arrow {
 	font-size: 30rpx;
 	color: var(--tt-text-muted);
-}
-
-.session-section {
-	padding: 18rpx 24rpx calc(30rpx + env(safe-area-inset-bottom));
-	background: var(--tt-bg);
 }
 
 .session-list {
@@ -485,5 +369,141 @@ export default {
 	text-align: center;
 	font-size: 25rpx;
 	color: var(--tt-text-muted);
+}
+
+/* 采用早期稳定的横向海报选择结构，避免 swiper 边距导致当前影片移出可视区。 */
+.venue-bar {
+	display: flex;
+	align-items: center;
+	gap: 24rpx;
+	padding: 26rpx 30rpx 22rpx;
+	background: #fff;
+}
+
+.venue-copy {
+	min-width: 0;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.venue-name {
+	font-size: 31rpx;
+	font-weight: 720;
+	line-height: 44rpx;
+	color: var(--tt-text);
+}
+
+.venue-address {
+	margin-top: 5rpx;
+	font-size: 21rpx;
+	line-height: 32rpx;
+	color: var(--tt-text-muted);
+}
+
+.movie-picker {
+	background: #fff;
+}
+
+.poster-scroll {
+	width: 100%;
+	white-space: nowrap;
+}
+
+.poster-list {
+	display: inline-flex;
+	align-items: flex-start;
+	gap: 20rpx;
+	padding: 16rpx 30rpx 20rpx;
+}
+
+.poster-item {
+	width: 136rpx;
+	display: inline-flex;
+	flex-direction: column;
+	align-items: center;
+}
+
+.poster-image {
+	width: 132rpx;
+	height: 184rpx;
+	display: block;
+	box-sizing: border-box;
+	border: 4rpx solid transparent;
+	border-radius: 14rpx;
+	background: var(--tt-bg);
+}
+
+.poster-item.active .poster-image {
+	border-color: var(--tt-primary);
+}
+
+.poster-name {
+	width: 100%;
+	margin-top: 10rpx;
+	font-size: 21rpx;
+	line-height: 32rpx;
+	text-align: center;
+	color: var(--tt-text-secondary);
+}
+
+.poster-item.active .poster-name {
+	font-weight: 650;
+	color: var(--tt-primary-strong);
+}
+
+.movie-summary {
+	display: flex;
+	align-items: center;
+	gap: 20rpx;
+	padding: 18rpx 30rpx 24rpx;
+	background: #fff;
+}
+
+.movie-summary-copy {
+	min-width: 0;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+}
+
+.movie-summary .movie-name {
+	font-size: 34rpx;
+	font-weight: 740;
+	line-height: 48rpx;
+	color: var(--tt-text);
+}
+
+.movie-summary .movie-meta {
+	margin-top: 5rpx;
+	font-size: 21rpx;
+	line-height: 32rpx;
+	color: var(--tt-text-muted);
+}
+
+.session-section {
+	padding: 0 30rpx calc(30rpx + env(safe-area-inset-bottom));
+	background: #fff;
+}
+
+.section-heading {
+	display: flex;
+	align-items: center;
+	gap: 13rpx;
+	padding: 28rpx 0 8rpx;
+}
+
+.section-mark {
+	width: 7rpx;
+	height: 32rpx;
+	border-radius: 6rpx;
+	background: var(--tt-primary);
+}
+
+.section-title {
+	font-size: 32rpx;
+	font-weight: 720;
+	line-height: 44rpx;
+	color: var(--tt-text);
 }
 </style>
