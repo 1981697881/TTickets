@@ -1,5 +1,5 @@
 <template>
-	<view class="page_box">
+	<view class="page_box user-subpage user-sign-page">
 		<view class="head_box"></view>
 		<view class="content_box">
 			<view class="">

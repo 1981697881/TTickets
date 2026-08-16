@@ -1,5 +1,5 @@
 <template>
-	<view class="container">
+	<view class="container user-subpage user-wallet-log-page">
 		<view class="wallet-list x-f" v-for="(item,index) in walletList" :key="index">
 			<!-- <image class="head-img" :src="item.avatar" mode=""></image> -->
 			<view class="list-content y-f">

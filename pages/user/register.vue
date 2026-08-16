@@ -1,5 +1,5 @@
 <template>
-	<view class="container">
+	<view class="container user-subpage user-register-page">
 		<view class="head_box text-white">
 			<cu-custom :isBack="true">
 				<block slot="backText"></block>

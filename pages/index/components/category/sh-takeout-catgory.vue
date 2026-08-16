@@ -464,9 +464,14 @@ export default {
 // 购物车列表
 .mask {
 	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 	background: rgba(#000, 0.3);
 	width: 100%;
 	height: 100%;
+	z-index: 70;
 }
 
 // 最外层结构包裹
@@ -490,12 +495,18 @@ export default {
 	bottom: 80rpx;
 	background: #fff;
 	height: 700rpx;
+	height: min(700rpx, calc(100vh - 180rpx));
+	height: min(700rpx, calc(100dvh - 180rpx));
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
 	z-index: 66;
 	transform-origin: center bottom;
 	transition: all linear 0.1s;
 	border-radius: 20rpx 20rpx 0 0;
 
 	.cart-list__head {
+		flex-shrink: 0;
 		height: 90rpx;
 		border-bottom: 1rpx solid rgba(#dfdfdf, 0.5);
 
@@ -523,7 +534,9 @@ export default {
 	// 购物车列表
 	.block {
 		flex: 1;
+		min-height: 0;
 		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
 	}
 
 	.collect-list {

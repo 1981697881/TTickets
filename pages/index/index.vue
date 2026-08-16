@@ -1,6 +1,12 @@
 <template>
 	<view class="activity-page">
-		<app-empty v-if="!hasTemplate || !hasActivityData" :emptyData="emptyData"></app-empty>
+		<view class="tab-page-nav">
+			<view class="tab-page-status"></view>
+			<view class="tab-page-bar"><text>活动</text></view>
+		</view>
+		<view class="activity-empty" v-if="!hasTemplate || !hasActivityData">
+			<app-empty :isFixed="false" :emptyData="emptyData"></app-empty>
+		</view>
 		<view v-else class="activity-layout app-selector">
 			<view class="activity-content">
 				<scroll-view class="activity-scroll" scroll-y enable-back-to-top>
@@ -163,13 +169,47 @@ export default {
 <style lang="scss">
 .activity-page,
 .activity-layout {
-	height: 100vh;
 	overflow: hidden;
 	background: #fbfbf8;
 }
-.activity-layout {
+.activity-page {
+	height: 100vh;
 	display: flex;
 	flex-direction: column;
+}
+.activity-layout {
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	flex-direction: column;
+}
+.activity-empty {
+	position: relative;
+	flex: 1;
+	min-height: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+.tab-page-nav {
+	flex: 0 0 auto;
+	background: rgba(255, 255, 255, 0.98);
+	border-bottom: 1rpx solid var(--tt-border);
+}
+.tab-page-status {
+	height: var(--status-bar-height);
+	/* #ifdef H5 */
+	height: 44rpx;
+	/* #endif */
+}
+.tab-page-bar {
+	height: 88rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 34rpx;
+	font-weight: 700;
+	color: var(--tt-text);
 }
 .activity-content {
 	flex: 1;
@@ -222,6 +262,7 @@ export default {
 	transform: translateX(-50%);
 	width: 610rpx;
 	min-height: 850rpx;
+	margin-bottom: 112rpx;
 	border-radius: 20rpx;
 	.service-title {
 		font-size: 35rpx;

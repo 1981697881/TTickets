@@ -381,7 +381,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .size-box {
 	line-height: 82rpx;
 	background: #fff;
@@ -403,8 +403,12 @@ export default {
 // 规格
 .shop-modal {
 	height: 1080rpx;
+	height: min(1080rpx, calc(100vh - 80rpx));
+	height: min(1080rpx, calc(100dvh - 80rpx));
+	display: flex;
+	flex-direction: column;
 	background: rgba(255, 255, 255, 1);
-	border-radius: 10rpx;
+	border-radius: 30rpx 30rpx 0 0;
 	overflow: hidden;
 	.close-btn {
 		width: 48rpx;
@@ -425,6 +429,7 @@ export default {
 	}
 
 	.top {
+		flex-shrink: 0;
 		padding: 20rpx 0;
 		.shop-img-box {
 			width: 640rpx;
@@ -439,6 +444,12 @@ export default {
 				background: #ccc;
 			}
 		}
+	}
+	.content_box {
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
 	}
 	.goods-box {
 		width: 640rpx;
@@ -531,6 +542,7 @@ export default {
 	}
 }
 .btn-box {
+	flex-shrink: 0;
 	min-height: 178rpx;
 	background: rgba(255, 255, 255, 1);
 	box-shadow: 0px -4rpx 7rpx 0px rgba(175, 175, 175, 0.16);

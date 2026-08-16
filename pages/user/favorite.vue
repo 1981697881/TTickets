@@ -1,5 +1,5 @@
 <template>
-	<view class="page_box">
+	<view class="page_box user-subpage user-collection-page">
 		<view class="head_box x-bc" v-if="favoriteList.length">
 			<view class="count-box">
 				共

@@ -37,7 +37,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .guide-img {
 	width: 580rpx;
 	height: 430rpx;

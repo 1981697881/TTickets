@@ -1,8 +1,8 @@
 <template>
-	<view class="page_box">
-		<view class="content_box">
+	<view class="page_box checkout-page">
+		<view class="content_box checkout-content">
 			<!-- 确认订单商品卡片 -->
-			<view class="goods-list">
+			<view class="goods-list checkout-card">
 				<view class="goods-card">
 					<app-mini-card @overTime="escOrder" ref="appMini" :detail="perGoodsList" :type="'sku'">
 						<block slot="goodsBottom">
@@ -29,7 +29,7 @@
 				</view>
 			</view>
 			<!-- 优惠券 -->
-			<view class="coupon x-bc item-list">
+			<view class="coupon checkout-card x-bc item-list">
 				<view class="item-title">优惠券</view>
 				<view class="x-f" @tap="selCoupon">
 					<text class="price" v-if="Number(pickerData.couponList.length) + Number(groupCouponsList.length) > 0">{{ pickerData.title }}</text>
@@ -63,7 +63,7 @@
 					</radio-group>
 				</view>
 			</scroll-view> -->
-			<radio-group @change="selPay" class="pay-box">
+			<radio-group @change="selPay" class="pay-box checkout-card">
 				<label class="x-bc pay-item">
 					<view class="x-f">
 						<image class="pay-img" src="/static/image/wei.png" mode="aspectFit"></image>
@@ -89,7 +89,7 @@
 				</label>
 			</radio-group>
 			<!-- 手机号码 -->
-			<view class="phone x-bc item-list">
+			<view class="phone checkout-card x-bc item-list">
 				<view class="item-title">手机号码</view>
 				<view class="x-f" v-if="userInfo.phoneNumber">
 					<text class="price">{{ userInfo.phoneNumber }}</text>
@@ -100,7 +100,7 @@
 				</view>
 			</view>
 			<!-- 购票须知 -->
-			<view class="notice x-bc">
+			<view class="notice checkout-card x-bc">
 				<view class="notice-title">购票须知</view>
 				<view class="notice-detail">
 					<view>1.由于设备故障等不可抗力因素，存在少量场次取消的情况下，会进行退票退款</view>
@@ -110,13 +110,13 @@
 				</view>
 			</view>
 		</view>
-		<view class="foot_box x-f">
-			<text class="num">共1件</text>
+		<view class="foot_box order-footer x-f">
+			<text class="num">共{{ perGoodsList.seats.length }}张</text>
 			<view class="all-money">
 				<text>合计：</text>
 				<text class="price">￥{{ ticketPaymoney || '0.00' }}</text>
 			</view>
-			<button class="cu-btn sub-btn bg-red" @tap="combuy" :disabled="isSubOrder">
+			<button class="cu-btn sub-btn" @tap="combuy" :disabled="isSubOrder">
 				<text v-if="isSubOrder" class="cuIcon-loading2 cuIconfont-spin"></text>
 				立即购买
 			</button>
@@ -126,7 +126,7 @@
 		<app-modal v-model="showExpressType" :modalType="'bottom-modal'">
 			<block slot="modalContent">
 				<!-- 选择优惠券 -->
-				<view class="express-type page_box">
+				<view class="express-type coupon-sheet page_box">
 					<view class="express-type__head head-box">
 						<view class="express-type__head-nav" v-for="(nav, index) in expressType" :key="nav.id" @tap="changeExpressType(nav.value)">
 							<text class="head-nav__title" :class="{ 'head-nav__title--active': expressTypeCur === nav.value }">{{ nav.title }}</text>
@@ -650,9 +650,7 @@ export default {
 				} else {
 					uni.showModal({
 						title: '提示',
-						content: res.msg,
-						success: function(res) {
-						}
+						content: res.msg
 					});
 				}
 			});
@@ -883,6 +881,22 @@ export default {
 </script>
 
 <style lang="scss">
+.checkout-page {
+	background: var(--tt-bg);
+}
+
+.checkout-content {
+	padding: 24rpx 24rpx 32rpx;
+}
+
+.checkout-card {
+	box-sizing: border-box;
+	background: var(--tt-surface);
+	border: 1rpx solid var(--tt-border);
+	border-radius: var(--tt-radius-md);
+	box-shadow: var(--tt-shadow);
+}
+
 .add-address-box {
 	height: 100rpx;
 	background: #fff;
@@ -958,14 +972,16 @@ export default {
 	}
 }
 .pay-box {
-	margin: 20rpx;
+	margin: 0 0 20rpx;
+	overflow: hidden;
 	.pay-item {
-		height: 90rpx;
+		height: 104rpx;
 		padding: 0 30rpx;
-		font-size: 26rpx;
+		font-size: 28rpx;
 		background: #fff;
-		width: 710rpx;
-		border-bottom: 1rpx solid #eeeeee;
+		width: 100%;
+		box-sizing: border-box;
+		border-bottom: 1rpx solid var(--tt-border);
 		&:last-child {
 			border-bottom: none;
 		}
@@ -975,8 +991,8 @@ export default {
 		}
 
 		.pay-img {
-			width: 40rpx;
-			height: 40rpx;
+			width: 44rpx;
+			height: 44rpx;
 			// background: #ccc;
 			margin-right: 25rpx;
 		}
@@ -986,25 +1002,24 @@ export default {
 .goods-list {
 	background: #fff;
 	position: relative;
-	margin: 20rpx;
-	border-radius: 15rpx;
-	box-shadow: 1px 1px 1px #c0c0c0;
+	margin: 0 0 20rpx;
+	overflow: hidden;
 	:deep(.goods-title) {
 		width: 460rpx !important;
 	}
 	.goods-card {
-		padding: 30rpx;
+		padding: 26rpx;
 	}
 	.goods-price {
 		font-size: 30rpx;
 		font-weight: 500;
 		width: 480rpx;
 		.goods-num {
-			padding-left: 10rpx;
+			padding: 8rpx 0 0;
 			width: 80%;
 			float: left;
 			font-size: 28rpx;
-			color: #c4c4c4;
+			color: var(--tt-text-muted);
 			text {
 				padding-left: 10rpx;
 			}
@@ -1016,12 +1031,14 @@ export default {
 }
 
 .item-list {
-	height: 100rpx;
+	min-height: 104rpx;
 	background: #fff;
-	padding: 0 25rpx;
+	padding: 0 28rpx;
 
 	.item-title {
 		font-size: 28rpx;
+		font-weight: 600;
+		color: var(--tt-text);
 		margin-right: 20rpx;
 	}
 
@@ -1032,12 +1049,12 @@ export default {
 
 	.price {
 		font-size: 26rpx;
-		color: #e1212b;
+		color: var(--tt-danger);
 		margin-right: 20rpx;
 	}
 	.sel-coupon {
 		font-size: 26rpx;
-		color: #c4c4c4;
+		color: var(--tt-text-muted);
 		margin-right: 20rpx;
 	}
 	.cuIcon-right {
@@ -1053,9 +1070,7 @@ export default {
 }
 .coupon,
 .phone {
-	margin: 20rpx;
-	border-radius: 15rpx;
-	box-shadow: 1px 1px 1px #c0c0c0;
+	margin: 0 0 20rpx;
 }
 .goods {
 	margin: 20rpx;
@@ -1071,23 +1086,24 @@ export default {
 	box-shadow: 1px 1px 1px #c0c0c0;
 }
 .notice {
-	margin: 20rpx;
-	border-radius: 15rpx;
-	box-shadow: 1px 1px 1px #c0c0c0;
+	margin: 0;
 	background: #fff;
-	padding: 0 25rpx;
+	padding: 0 28rpx 22rpx;
 	display: inline-block;
 	.notice-title {
-		height: 80rpx;
-		line-height: 80rpx;
-		font-size: 35rpx;
-		font-weight: bold;
-		border-bottom: 1px solid #eeeed1;
+		height: 88rpx;
+		line-height: 88rpx;
+		font-size: 30rpx;
+		font-weight: 700;
+		border-bottom: 1rpx solid var(--tt-border);
 	}
 	.notice-detail {
-		padding-top: 10rpx;
+		padding-top: 14rpx;
+		font-size: 24rpx;
+		color: var(--tt-text-secondary);
 		view {
-			line-height: 50rpx;
+			line-height: 42rpx;
+			margin-bottom: 6rpx;
 		}
 	}
 }
@@ -1096,10 +1112,12 @@ export default {
 }
 
 .foot_box {
-	height: 100rpx;
-	padding: 0 25rpx;
+	min-height: 112rpx;
+	padding: 10rpx 24rpx calc(10rpx + env(safe-area-inset-bottom));
 	justify-content: flex-end;
 	background-color: #fff;
+	border-top: 1rpx solid var(--tt-border);
+	box-shadow: 0 -10rpx 28rpx rgba(23, 24, 18, 0.07);
 
 	.num {
 		font-size: 26rpx;
@@ -1107,19 +1125,21 @@ export default {
 	}
 
 	.all-money {
-		margin: 0 60rpx 0 20rpx;
+		margin: 0 24rpx 0 16rpx;
 
 		.price {
-			color: #e1212b;
+			color: var(--tt-danger);
+			font-size: 34rpx;
+			font-weight: 700;
 		}
 	}
 
 	.sub-btn {
-		width: 210rpx;
-		height: 70rpx;
-		background: linear-gradient(90deg, rgba(233, 180, 97, 1), rgba(238, 204, 137, 1));
-		box-shadow: 0px 7rpx 6rpx 0px rgba(229, 138, 0, 0.22);
-		border-radius: 35rpx;
+		width: 220rpx;
+		height: 76rpx;
+		background: var(--tt-primary);
+		box-shadow: 0 8rpx 18rpx rgba(143, 152, 30, 0.2);
+		border-radius: 40rpx;
 		font-size: 28rpx;
 		color: #fff;
 	}
@@ -1130,16 +1150,21 @@ export default {
 	width: 750rpx;
 	background-color: #fff;
 	border-radius: 20rpx 20rpx 0 0;
-	height: 700rpx;
-	overflow: visible;
+	height: 760rpx;
+	height: min(760rpx, calc(100vh - 100rpx));
+	height: min(760rpx, calc(100dvh - 100rpx));
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
 	.express-type__head {
+		flex-shrink: 0;
 		width: 100%;
 		height: 74rpx;
-		background: #f8e3bd;
+		background: var(--tt-primary-soft);
 		@include tt-flex($align: center);
 		border-radius: 20rpx 20rpx 0 0;
 		&-nav {
-			width: 187.5rpx;
+			flex: 1;
 			@include tt-flex($align: center, $justify: center);
 			position: relative;
 			height: 100%;
@@ -1233,11 +1258,15 @@ export default {
 			z-index: 6;
 		}
 		.head-nav__title--active {
-			color: #a8700d;
+			color: var(--tt-primary-strong);
 			font-size: 26rpx;
 		}
 	}
 	.express-type__content {
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
 		.empty-address {
 			height: 120rpx;
 			padding: 0 25rpx;
@@ -1285,12 +1314,13 @@ export default {
 		
 	}
 	.express-type__bottom {
+		flex-shrink: 0;
 		height: 90rpx;
 		padding: 0 30rpx;
 		.cancel-btn {
 			width: 335rpx;
 			height: 74rpx;
-			background: rgba(238, 238, 238, 1);
+			background: #eef0e8;
 			border-radius: 37rpx;
 			font-size: 28rpx;
 			font-family: PingFang SC;
@@ -1300,7 +1330,7 @@ export default {
 		.save-btn {
 			width: 335rpx;
 			height: 74rpx;
-			background: linear-gradient(90deg, rgba(233, 180, 97, 1), rgba(238, 204, 137, 1));
+			background: var(--tt-primary);
 			border-radius: 37rpx;
 			font-size: 28rpx;
 			font-family: PingFang SC;
@@ -1387,16 +1417,21 @@ export default {
 	width: 750rpx;
 	background-color: #fff;
 	border-radius: 20rpx 20rpx 0 0;
-	height: 700rpx;
-	overflow: visible;
+	height: 760rpx;
+	height: min(760rpx, calc(100vh - 100rpx));
+	height: min(760rpx, calc(100dvh - 100rpx));
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
 	.express-type__head {
+		flex-shrink: 0;
 		width: 100%;
 		height: 74rpx;
-		background: #f8e3bd;
+		background: var(--tt-primary-soft);
 		@include tt-flex($align: center);
 		border-radius: 20rpx 20rpx 0 0;
 		&-nav {
-			width: 187.5rpx;
+			flex: 1;
 			@include tt-flex($align: center, $justify: center);
 			position: relative;
 			height: 100%;
@@ -1490,11 +1525,15 @@ export default {
 			z-index: 6;
 		}
 		.head-nav__title--active {
-			color: #a8700d;
+			color: var(--tt-primary-strong);
 			font-size: 26rpx;
 		}
 	}
 	.express-type__content {
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
 		.empty-address {
 			height: 120rpx;
 			padding: 0 25rpx;
@@ -1542,12 +1581,13 @@ export default {
 		
 	}
 	.express-type__bottom {
+		flex-shrink: 0;
 		height: 90rpx;
 		padding: 0 30rpx;
 		.cancel-btn {
 			width: 335rpx;
 			height: 74rpx;
-			background: rgba(238, 238, 238, 1);
+			background: #eef0e8;
 			border-radius: 37rpx;
 			font-size: 28rpx;
 			font-family: PingFang SC;
@@ -1557,7 +1597,7 @@ export default {
 		.save-btn {
 			width: 335rpx;
 			height: 74rpx;
-			background: linear-gradient(90deg, rgba(233, 180, 97, 1), rgba(238, 204, 137, 1));
+			background: var(--tt-primary);
 			border-radius: 37rpx;
 			font-size: 28rpx;
 			font-family: PingFang SC;

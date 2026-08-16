@@ -1,13 +1,13 @@
 <template>
-	<view class="w-100">
-		<view class="bg-f1 h-100vh">
-			<view class="pt-f left-0 w-100 p-0-32 bg-white z1000" :style="'height: 162rpx;top:0'">
+	<view class="w-100 seat-page">
+		<view class="bg-f1 h-100vh seat-canvas">
+			<view class="pt-f left-0 w-100 p-0-32 bg-white z1000 seat-summary" :style="'height: 162rpx;top:0'">
 				<view>
 					<view class="fz-34 fw-b pt-20">{{ head.filmName }}({{ head.hallName }})</view>
 					<view class="mt-10 fz-28 color-666">{{ head.showDatetime }}</view>
 				</view>
 			</view>
-			<movable-area :style="'height:' + (seatRow * 40 + 350) + 'rpx;width: 100vw;top:' + rpxNum * 132 + 'px'" class="pt-f left-0">
+			<movable-area :style="'height:' + (seatRow * 40 + 350) + 'rpx;width: 100vw;top:' + rpxNum * 132 + 'px'" class="pt-f left-0 seat-map">
 				<movable-view
 					:style="'width: 100vw;height:' + (seatRow * 40 + 350) + 'rpx;'"
 					:inertia="true"
@@ -32,8 +32,8 @@
 						</view>
 					</view>
 
-					<view class="Stage dp-f jc-c ai-c fz-22 color-333">{{ head.language }} {{ head.dimensional }}</view>
-					<view style="width: 100rpx;height: 30rpx;" class="m-0-a mt-48 dp-f jc-c ai-c fz-20 color-999 b-1 br-5">银幕中央</view>
+					<view class="Stage screen-stage dp-f jc-c ai-c fz-22 color-333">{{ head.language }} {{ head.dimensional }}</view>
+					<view style="width: 120rpx;height: 34rpx;" class="screen-label m-0-a mt-48 dp-f jc-c ai-c fz-20 color-999 b-1 br-5">银幕中央</view>
 					<view class="pt-f pa-v-2 b-d-1" :style="'height:' + seatRow * (20 + seatSize * pxNum) + 'rpx;top:165rpx;width:0'"></view>
 					<view v-for="(item, index) in seatArray" :key="index" class="dp-f jc-c mt-20" :style="'width:' + boxWidth + 'px;height:' + seatSize + 'px'">
 						<view
@@ -57,13 +57,13 @@
 					</view>
 				</movable-view>
 			</movable-area>
-			<view class="pt-f bottom-bar left-0 dp-f fd-cr z1000">
-				<view class="bg-white p-all-32">
-					<view class="dp-f ai-c jc-c fz-28 color-333 mb-20" v-if="SelectNum === 0">
+			<view class="pt-f bottom-bar seat-bottom-bar left-0 dp-f fd-cr z1000">
+				<view class="bg-white p-all-32 seat-actions">
+					<view class="recommend-row dp-f ai-c jc-c fz-28 color-333 mb-20" v-if="SelectNum === 0">
 						推荐选座
 						<view
 							style="width: 106rpx;height: 60rpx;"
-							class="b-1 br-5 dp-f ai-c jc-c fz-28 ml-20"
+							class="recommend-chip b-1 br-5 dp-f ai-c jc-c fz-28 ml-20"
 							v-for="(n, numindex) in 4"
 							:key="n"
 							@click="smartChoose(numindex + 1)"
@@ -71,37 +71,37 @@
 							{{ numindex + 1 }}人
 						</view>
 					</view>
-					<view class="dp-f ai-c fw-w fz-28 color-333 mb-20" v-if="SelectNum > 0">
+					<view class="selected-row dp-f ai-c fw-w fz-28 color-333 mb-20" v-if="SelectNum > 0">
 						<text>已选</text>
-						<view class="p-all-10 b-1 br-5 dp-f ai-c jc-c fz-28 ml-20" v-for="(optItem, optindex) in optArr" :key="optindex">
+						<view class="selected-chip p-all-10 b-1 br-5 dp-f ai-c jc-c fz-28 ml-20" v-for="(optItem, optindex) in optArr" :key="optindex">
 							{{ optItem.rowNum + '排' + optItem.columnNum + '座' }}
 						</view>
 					</view>
 					<button
 						:disabled="isSubOrder"
 						style="width: 686rpx;height: 90rpx;"
-						class="dp-f jc-c ai-c br-10 fz-34 color-fff"
+						class="seat-submit dp-f jc-c ai-c br-10 fz-34 color-fff"
 						:class="SelectNum > 0 ? 'bg-red-1' : 'bg-unbtn'"
 						@click="buySeat"
 					>
 						<!-- {{ SelectNum > 0 ? '￥ ' + totalPrice + ' 确认座位' : '请选座位' }} -->
-						{{ SelectNum > 0 ? ' 确认座位' : '请选座位' }}
+						{{ SelectNum > 0 ? `￥${totalPrice} 确认座位` : '请先选择座位' }}
 					</button>
 				</view>
-				<view class="dp-f jc-c ai-c mb-20 fz-28" v-if="showTis">
-					<view class="dp-f jc-c ai-c m-0-10">
+				<view class="seat-legend dp-f jc-c ai-c mb-20 fz-28" v-if="showTis">
+					<view class="legend-item dp-f jc-c ai-c m-0-10">
 						<image :style="'width:' + seatSize + 'px;height:' + seatSize + 'px'" src="../../../static/unselected.png" mode="aspectFit"></image>
 						<span class="ml-10">可选</span>
 					</view>
-					<view class="dp-f jc-c ai-c m-0-10">
+					<view class="legend-item dp-f jc-c ai-c m-0-10">
 						<image :style="'width:' + seatSize + 'px;height:' + seatSize + 'px'" src="../../../static/bought.png" mode="aspectFit"></image>
 						<span class="ml-10">不可选</span>
 					</view>
-					<view class="dp-f jc-c ai-c m-0-10">
+					<view class="legend-item dp-f jc-c ai-c m-0-10">
 						<image :style="'width:' + seatSize + 'px;height:' + seatSize + 'px'" src="../../../static/selected.png" mode="aspectFit"></image>
 						<span class="ml-10">选中</span>
 					</view>
-					<view class="dp-f jc-c ai-c m-0-10">
+					<view class="legend-item dp-f jc-c ai-c m-0-10">
 						<image :style="'width:' + seatSize + 'px;height:' + seatSize + 'px'" src="../../../static/lockwei.png" mode="aspectFit"></image>
 						<span class="ml-10">维修</span>
 					</view>
@@ -637,7 +637,8 @@ export default {
 	width: 125rpx;
 	height: 125rpx;
 	left: 0;
-	background: rgba(0, 0, 0, 0.4);
+	background: rgba(23, 24, 18, 0.72);
+	border-radius: 10rpx;
 	overflow: hidden;
 	transform-origin: 0 0;
 	.thumbnail-border {
@@ -647,7 +648,7 @@ export default {
 		width: 100%;
 		height: 100%;
 		padding: 1px;
-		border: 1px solid red;
+		border: 2rpx solid var(--tt-primary);
 	}
 	.thumbnailSeatClass {
 		margin: 1rpx;
@@ -666,11 +667,11 @@ export default {
 }
 
 .bg-unbtn {
-	background-color: #f9abb3;
+	background-color: #d8dbcf;
 }
 
 .bg-red-1 {
-	background-color: #f45664;
+	background-color: var(--tt-primary);
 }
 
 .br-10 {
@@ -696,6 +697,76 @@ export default {
 
 .bottom-bar {
 	bottom: var(--window-bottom);
+}
+
+.seat-page,
+.seat-canvas {
+	background: var(--tt-bg);
+}
+
+.seat-summary {
+	box-sizing: border-box;
+	border-bottom: 1rpx solid var(--tt-border);
+	box-shadow: 0 8rpx 24rpx rgba(23, 24, 18, 0.05);
+}
+
+.seat-map {
+	background: radial-gradient(circle at 50% 10%, #fff 0, #f7f8f3 44%, #f1f2ec 100%);
+}
+
+.seat-bottom-bar {
+	width: 100%;
+	overflow: hidden;
+	border-radius: 28rpx 28rpx 0 0;
+	background: #fff;
+	box-shadow: 0 -12rpx 34rpx rgba(23, 24, 18, 0.1);
+}
+
+.seat-actions {
+	padding: 24rpx 28rpx calc(24rpx + env(safe-area-inset-bottom));
+}
+
+.recommend-row,
+.selected-row {
+	min-height: 62rpx;
+}
+
+.recommend-chip {
+	box-sizing: border-box;
+	border-color: #d9ddae;
+	border-radius: 30rpx;
+	background: var(--tt-primary-soft);
+	color: var(--tt-primary-strong);
+}
+
+.selected-chip {
+	border-color: #d9ddae;
+	border-radius: 12rpx;
+	background: var(--tt-primary-soft);
+	color: var(--tt-primary-strong);
+}
+
+.seat-submit {
+	border-radius: 45rpx;
+	font-weight: 650;
+	box-shadow: 0 8rpx 18rpx rgba(143, 152, 30, 0.2);
+}
+
+.seat-submit[disabled] {
+	box-shadow: none;
+	color: #fff;
+}
+
+.seat-legend {
+	min-height: 74rpx;
+	margin: 0;
+	background: #fbfcf8;
+	border-bottom: 1rpx solid var(--tt-border);
+	color: var(--tt-text-secondary);
+}
+
+.legend-item {
+	font-size: 22rpx;
 }
 
 .color-fff {
@@ -833,11 +904,18 @@ export default {
 }
 
 .Stage {
-	background-color: #dddddd;
+	background: linear-gradient(180deg, #e5e6df, #f8f9f5);
 	width: 380rpx;
-	height: 34rpx;
+	height: 42rpx;
 	transform: perspective(34rpx) rotateX(-10deg);
 	margin: 0 auto;
+	border-radius: 0 0 18rpx 18rpx;
+	box-shadow: 0 10rpx 22rpx rgba(23, 24, 18, 0.08);
+}
+
+.screen-label {
+	border-color: var(--tt-border);
+	background: rgba(255, 255, 255, 0.82);
 }
 
 .bg-line {

@@ -1,5 +1,5 @@
 <template>
-	<view class="container">
+	<view class="container user-subpage user-profile-page">
 		<view class="user-list x-bc">
 			<text class="list-name">头像</text>
 			<view class="x-f">

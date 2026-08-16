@@ -84,70 +84,56 @@ export default class Wechat {
 
 	// #ifdef MP-WEIXIN
 	getWxMiniProgramSessionKey() {
-		console.log('进入')
-		let that = this;
-		let sessionStatus = false;
-		let session_key = '';
 		return new Promise((resolve, reject) => {
+			const login = () => {
+				uni.login({
+					success: info => {
+						api('user.getWxMiniProgramSessionKey', { code: info.code })
+							.then(res => {
+								if (!res.flag || !res.data?.session_key) {
+									reject(new Error(res.msg || '获取微信会话失败'));
+									return;
+								}
+								uni.setStorageSync('session_key', res.data.session_key);
+								uni.setStorageSync('openid', res.data.openid);
+								uni.setStorageSync('token', res.data.token);
+								resolve(res.data.session_key);
+							})
+							.catch(reject);
+					},
+					fail: reject
+				});
+			};
+
+			const sessionKey = uni.getStorageSync('session_key');
+			if (!sessionKey) {
+				login();
+				return;
+			}
+
 			uni.checkSession({
-				success(res) {
-					if (res.errMsg === 'checkSession:ok') sessionStatus = true;
-				},
-				complete() {
-					/* 	 */
-						uni.login({
-							success: function(info) {
-								let code = info.code;
-								api('user.getWxMiniProgramSessionKey', {
-									code: code,
-								}).then(res => {
-									if (res.flag) {
-										uni.setStorageSync('session_key', res.data.session_key);
-										uni.setStorageSync('openid', res.data.openid);
-										uni.setStorageSync('token', res.data.token);
-										session_key = res.data.session_key;
-									}
-								});
-							}
-						});
-					/* } else {
-						session_key = uni.getStorageSync('session_key');
-					} */
-				}
-			})
-
-			resolve(session_key);
-
+				success: () => resolve(sessionKey),
+				fail: login
+			});
 		});
 	}
 
-	wxMiniProgramLogin(e) {
-		let that = this;
-		console.log(e)
-		return new Promise((resolve, reject) => {
-			if (!uni.getStorageSync('session_key')) {
-				uni.showToast({
-					title: '未获取到session_key,请重启应用',
-					icon: 'none'
-				})
-				that.getWxMiniProgramSessionKey();
-				return;
-			}
-			if (e.errMsg === "getUserProfile:ok") {
-				api('user.wxMiniProgramLogin', {
-					sessionKey: uni.getStorageSync('session_key'),
-					openid: uni.getStorageSync('openid'),
-					encryptedData: e.encryptedData,
-					iv: e.iv,
-					signature: e.signature
-				}).then(res => {
-					console.log(res)
-					if (res.flag) {
-						resolve(res.data);
-					}
-				});
-			}
+	async wxMiniProgramLogin(e) {
+		if (e?.errMsg !== 'getUserProfile:ok') {
+			throw new Error('未获得微信用户授权');
+		}
+
+		const sessionKey = uni.getStorageSync('session_key') || await this.getWxMiniProgramSessionKey();
+		const res = await api('user.wxMiniProgramLogin', {
+			sessionKey,
+			openid: uni.getStorageSync('openid'),
+			encryptedData: e.encryptedData,
+			iv: e.iv,
+			signature: e.signature
 		});
+
+		if (!res.flag) throw new Error(res.msg || '微信登录失败');
+		return res.data;
 	}
 
 	// 小程序更新

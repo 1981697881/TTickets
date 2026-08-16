@@ -1,5 +1,5 @@
 <template>
-	<view class="page_box">
+	<view class="page_box user-subpage user-collection-page">
 		<view class="head_box x-bc" v-if="browseList && browseList.length">
 			<view class="count-box"></view>
 			<button class="cu-btn set-btn" @tap="onSet">{{ isSel ? '完成' : '编辑' }}</button>

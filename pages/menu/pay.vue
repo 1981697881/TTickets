@@ -414,8 +414,13 @@ export default {
 	background-color: #fff;
 	border-radius: 20rpx 20rpx 0 0;
 	height: 700rpx;
-	overflow: visible;
+	height: min(700rpx, calc(100vh - 100rpx));
+	height: min(700rpx, calc(100dvh - 100rpx));
+	display: flex;
+	flex-direction: column;
+	overflow: hidden;
 	.express-type__head {
+		flex-shrink: 0;
 		width: 100%;
 		height: 74rpx;
 		background: #f8e3bd;
@@ -521,6 +526,10 @@ export default {
 		}
 	}
 	.express-type__content {
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
 		.empty-address {
 			height: 120rpx;
 			padding: 0 25rpx;
@@ -533,6 +542,7 @@ export default {
 		
 	}
 	.express-type__bottom {
+		flex-shrink: 0;
 		height: 90rpx;
 		padding: 0 30rpx;
 		.cancel-btn {

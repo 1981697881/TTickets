@@ -1,0 +1,920 @@
+/* “我的”模块子页面统一视觉层。仅在 user-subpage 内生效，避免影响其他业务页面。 */
+.user-subpage {
+	width: 100%;
+	min-height: 100vh;
+	box-sizing: border-box;
+	background: var(--tt-bg) !important;
+	color: var(--tt-text);
+}
+
+.user-subpage .content_box,
+.user-subpage .content-box {
+	box-sizing: border-box;
+}
+
+.user-subpage .cuIcon-right {
+	color: var(--tt-text-muted);
+}
+
+.user-subpage .confirem-btn,
+.user-subpage .login-btn,
+.user-subpage .pay-btn,
+.user-subpage .post-btn,
+.user-subpage .sign-btn {
+	height: 84rpx !important;
+	min-height: 84rpx !important;
+	border: 0 !important;
+	border-radius: 999rpx !important;
+	background: var(--tt-primary) !important;
+	box-shadow: 0 10rpx 22rpx rgba(143, 152, 30, 0.22) !important;
+	color: #fff !important;
+	font-size: 28rpx !important;
+	font-weight: 600 !important;
+}
+
+.user-subpage .confirem-btn[disabled],
+.user-subpage .login-btn[disabled],
+.user-subpage .pay-btn[disabled],
+.user-subpage .sign-btn[disabled] {
+	opacity: 0.5;
+	box-shadow: none !important;
+}
+
+/* 修改密码、手机号、绑定会员卡和兑换码 */
+.user-subpage.user-form-page,
+.user-subpage.user-exchange-page {
+	padding: 24rpx 24rpx calc(32rpx + var(--tt-safe-bottom));
+}
+
+.user-subpage.user-form-page .head_box {
+	margin: -24rpx -24rpx 24rpx;
+	background: var(--tt-surface) !important;
+	color: var(--tt-text) !important;
+}
+
+.user-subpage.user-form-page .form-box,
+.user-subpage.user-exchange-page .form-box {
+	margin: 0 !important;
+	overflow: hidden;
+	background: var(--tt-surface) !important;
+	border: 1rpx solid var(--tt-border);
+	border-radius: var(--tt-radius-md) !important;
+	box-shadow: var(--tt-shadow);
+}
+
+.user-subpage.user-form-page .form-item,
+.user-subpage.user-exchange-page .form-item {
+	min-height: 104rpx !important;
+	height: auto !important;
+	padding: 0 28rpx !important;
+	border-bottom: 1rpx solid var(--tt-border) !important;
+}
+
+.user-subpage.user-form-page label:last-child .form-item,
+.user-subpage.user-exchange-page label:last-child .form-item {
+	border-bottom: 0 !important;
+}
+
+.user-subpage.user-form-page .item-title,
+.user-subpage.user-exchange-page .item-title {
+	flex: 0 0 auto;
+	color: var(--tt-text) !important;
+	font-size: 28rpx !important;
+	font-weight: 500 !important;
+}
+
+.user-subpage.user-form-page .item-input,
+.user-subpage.user-exchange-page .item-input {
+	color: var(--tt-text) !important;
+	font-size: 28rpx !important;
+	text-align: right;
+}
+
+.user-subpage.user-form-page .pl-input,
+.user-subpage.user-exchange-page .pl-input {
+	color: var(--tt-text-muted) !important;
+}
+
+.user-subpage.user-form-page .code-btn,
+.user-subpage.user-exchange-page .code-btn {
+	color: var(--tt-primary-strong) !important;
+	font-size: 26rpx !important;
+}
+
+.user-subpage.user-form-page .notice,
+.user-subpage.user-exchange-page .notice {
+	height: auto !important;
+	min-height: 76rpx;
+	padding: 20rpx 8rpx 0 !important;
+	color: var(--tt-text-muted) !important;
+	line-height: 1.6;
+}
+
+.user-subpage.user-form-page .btn-box,
+.user-subpage.user-exchange-page .btn-box {
+	margin-top: 36rpx !important;
+}
+
+.user-subpage.user-form-page .confirem-btn,
+.user-subpage.user-exchange-page .confirem-btn {
+	width: 100% !important;
+}
+
+.user-subpage.user-card-bind-page .u-form-item {
+	margin: 0 28rpx !important;
+	border-color: var(--tt-border) !important;
+}
+
+/* 个人资料与设置 */
+.user-subpage.user-profile-page,
+.user-subpage.user-settings-page {
+	padding: 24rpx 24rpx calc(120rpx + var(--tt-safe-bottom));
+}
+
+.user-subpage.user-profile-page picker {
+	width: 100% !important;
+}
+
+.user-subpage.user-profile-page .user-list,
+.user-subpage.user-settings-page .list {
+	min-height: 104rpx !important;
+	height: auto !important;
+	padding: 0 28rpx !important;
+	background: var(--tt-surface) !important;
+	border-bottom: 1rpx solid var(--tt-border) !important;
+}
+
+.user-subpage.user-profile-page > .user-list:first-child,
+.user-subpage.user-settings-page > .list:first-of-type {
+	border-radius: var(--tt-radius-md) var(--tt-radius-md) 0 0;
+}
+
+.user-subpage.user-profile-page > .user-list:nth-child(4),
+.user-subpage.user-settings-page > .list:last-of-type {
+	border-bottom: 0 !important;
+	border-radius: 0 0 var(--tt-radius-md) var(--tt-radius-md);
+}
+
+.user-subpage.user-profile-page .list-name,
+.user-subpage.user-settings-page .title {
+	color: var(--tt-text) !important;
+	font-size: 28rpx !important;
+	font-weight: 500;
+}
+
+.user-subpage.user-profile-page .list-val {
+	max-width: 430rpx;
+	color: var(--tt-text-secondary) !important;
+	font-size: 28rpx !important;
+	text-align: right;
+}
+
+.user-subpage.user-profile-page .avatar {
+	width: 76rpx !important;
+	height: 76rpx !important;
+	border: 3rpx solid #fff;
+	box-shadow: 0 4rpx 14rpx rgba(23, 24, 18, 0.12);
+}
+
+.user-subpage.user-profile-page .btn-box {
+	margin-top: 36rpx !important;
+}
+
+.user-subpage.user-profile-page .confirem-btn {
+	width: 100% !important;
+}
+
+/* 收藏与浏览记录 */
+.user-subpage.user-collection-page .head_box {
+	height: 88rpx !important;
+	padding: 0 28rpx !important;
+	background: rgba(255, 255, 255, 0.96) !important;
+}
+
+.user-subpage.user-collection-page .count-box {
+	color: var(--tt-text-secondary) !important;
+}
+
+.user-subpage.user-collection-page .all-num,
+.user-subpage.user-collection-page .set-btn {
+	color: var(--tt-primary-strong) !important;
+}
+
+.user-subpage.user-collection-page .scroll-box {
+	box-sizing: border-box;
+	padding: 20rpx 24rpx 130rpx;
+}
+
+.user-subpage.user-collection-page .collect-list {
+	margin-bottom: 16rpx !important;
+	padding: 24rpx 20rpx !important;
+	background: var(--tt-surface) !important;
+	border: 1rpx solid var(--tt-border);
+	border-radius: var(--tt-radius-md);
+	box-shadow: var(--tt-shadow);
+}
+
+.user-subpage.user-collection-page .tools-box {
+	width: 100% !important;
+	height: auto !important;
+	min-height: 108rpx;
+	box-sizing: border-box;
+	padding: 14rpx 24rpx calc(14rpx + var(--tt-safe-bottom)) !important;
+	background: rgba(255, 255, 255, 0.97) !important;
+	border-top: 1rpx solid var(--tt-border);
+}
+
+.user-subpage.user-collection-page .close-btn {
+	height: 72rpx !important;
+	background: var(--tt-primary) !important;
+	box-shadow: none !important;
+}
+
+/* 团体票兑换与详情 */
+.user-subpage.user-exchange-page .content_box {
+	padding: 0 !important;
+}
+
+.user-subpage.user-ticket-detail-page {
+	padding: 24rpx;
+	background: var(--tt-bg) !important;
+}
+
+.user-subpage.user-ticket-detail-page .group-wrap,
+.user-subpage.user-ticket-detail-page .group-box {
+	width: 100% !important;
+	box-sizing: border-box;
+}
+
+.user-subpage.user-ticket-detail-page .group-box {
+	min-height: 0 !important;
+	margin: 0 !important;
+	padding: 24rpx;
+	background: var(--tt-surface) !important;
+	border: 1rpx solid var(--tt-border);
+	border-radius: var(--tt-radius-lg) !important;
+	box-shadow: var(--tt-shadow);
+}
+
+/* 签到 */
+.user-subpage.user-sign-page {
+	padding: 24rpx 24rpx calc(32rpx + var(--tt-safe-bottom));
+}
+
+.user-subpage.user-sign-page > .head_box {
+	display: none;
+}
+
+.user-subpage.user-sign-page .calendar,
+.user-subpage.user-sign-page .resign-box {
+	overflow: hidden;
+	background: var(--tt-surface) !important;
+	border: 1rpx solid var(--tt-border);
+	border-radius: var(--tt-radius-lg);
+	box-shadow: var(--tt-shadow);
+}
+
+.user-subpage.user-sign-page .resign-box {
+	margin-top: 20rpx;
+}
+
+.user-subpage.user-sign-page .sign-everyday {
+	padding: 0 28rpx;
+	border: 0 !important;
+	border-bottom: 1rpx solid var(--tt-border) !important;
+}
+
+.user-subpage.user-sign-page .sign-num,
+.user-subpage.user-sign-page .resign-card-num,
+.user-subpage.user-sign-page .sign-success {
+	color: var(--tt-primary-strong) !important;
+}
+
+.user-subpage.user-sign-page .is-sign,
+.user-subpage.user-sign-page .invite-btn {
+	background: var(--tt-primary) !important;
+	box-shadow: 0 0 0 6rpx var(--tt-primary-soft) !important;
+}
+
+.user-subpage.user-sign-page .invite-box {
+	width: 100% !important;
+	box-sizing: border-box;
+	background: var(--tt-primary-soft) !important;
+}
+
+.user-subpage.user-sign-page .invite-notice {
+	color: var(--tt-primary-strong) !important;
+}
+
+/* 钱包首页 */
+.user-subpage.user-wallet-page .head_box {
+	width: 100% !important;
+	height: 510rpx !important;
+	background: linear-gradient(145deg, #303523 0%, #8f981e 100%) !important;
+	border-bottom: 0;
+}
+
+.user-subpage.user-wallet-page .card-box {
+	width: calc(100% - 48rpx) !important;
+	height: 310rpx !important;
+	top: 150rpx !important;
+	padding: 30rpx !important;
+	box-sizing: border-box;
+	background: rgba(255, 255, 255, 0.12) !important;
+	border: 1rpx solid rgba(255, 255, 255, 0.2);
+	border-radius: var(--tt-radius-lg) !important;
+	box-shadow: 0 18rpx 42rpx rgba(20, 24, 10, 0.22) !important;
+	backdrop-filter: blur(12rpx);
+}
+
+.user-subpage.user-wallet-page .card-box .title,
+.user-subpage.user-wallet-page .card-box .money-num,
+.user-subpage.user-wallet-page .card-box .text-olive,
+.user-subpage.user-wallet-page .card-box .add,
+.user-subpage.user-wallet-page .card-box .text-red {
+	color: #fff !important;
+}
+
+.user-subpage.user-wallet-page .card-box .money-num {
+	font-size: 64rpx !important;
+	line-height: 1.2 !important;
+}
+
+.user-subpage.user-wallet-page .card-box .add {
+	width: 100% !important;
+	color: rgba(255, 255, 255, 0.72) !important;
+	line-height: 1.5 !important;
+}
+
+.user-subpage.user-wallet-page .content_box {
+	padding: 24rpx 24rpx calc(120rpx + var(--tt-safe-bottom));
+}
+
+.user-subpage.user-wallet-page .resale-list {
+	height: 104rpx !important;
+	margin-bottom: 14rpx;
+	padding: 0 28rpx !important;
+	background: var(--tt-surface) !important;
+	border: 1rpx solid var(--tt-border) !important;
+	border-radius: var(--tt-radius-md);
+	box-shadow: var(--tt-shadow);
+	color: var(--tt-text) !important;
+}
+
+.user-subpage.user-wallet-page .resale-list .cuicon {
+	margin-right: 22rpx !important;
+	color: var(--tt-primary-strong) !important;
+}
+
+/* 充值 */
+.user-subpage.user-recharge-page {
+	padding: 24rpx 24rpx calc(32rpx + var(--tt-safe-bottom));
+}
+
+.user-subpage.user-recharge-page .head_box {
+	margin-top: 0 !important;
+	overflow: hidden;
+	background: var(--tt-surface) !important;
+	border: 1rpx solid var(--tt-border);
+	border-radius: var(--tt-radius-md);
+	box-shadow: var(--tt-shadow);
+}
+
+.user-subpage.user-recharge-page .cu-form-group {
+	min-height: 88rpx;
+	padding: 0 28rpx;
+	color: var(--tt-text-secondary) !important;
+	border-color: var(--tt-border) !important;
+}
+
+.user-subpage.user-recharge-page .cu-form-group:first-child,
+.user-subpage.user-recharge-page .cu-form-group:last-child {
+	color: var(--tt-text) !important;
+}
+
+.user-subpage.user-recharge-page .pay-box {
+	display: block;
+	margin-top: 20rpx !important;
+	overflow: hidden;
+	background: var(--tt-surface);
+	border: 1rpx solid var(--tt-border);
+	border-radius: var(--tt-radius-md);
+	box-shadow: var(--tt-shadow);
+}
+
+.user-subpage.user-recharge-page .pay-item {
+	width: 100% !important;
+	height: auto !important;
+	min-height: 104rpx;
+	box-sizing: border-box;
+	padding: 20rpx 28rpx !important;
+	border-bottom: 1rpx solid var(--tt-border) !important;
+}
+
+.user-subpage.user-recharge-page .pay-item:last-child {
+	border-bottom: 0 !important;
+}
+
+.user-subpage.user-recharge-page .text-orange,
+.user-subpage.user-recharge-page .text-red {
+	color: var(--tt-primary-strong) !important;
+}
+
+.user-subpage.user-recharge-page .notice {
+	display: block;
+	margin-top: 20rpx;
+	padding: 8rpx 28rpx 24rpx;
+	background: var(--tt-surface) !important;
+	border: 1rpx solid var(--tt-border);
+	border-radius: var(--tt-radius-md);
+	box-shadow: var(--tt-shadow);
+}
+
+.user-subpage.user-recharge-page .notice-title {
+	color: var(--tt-text) !important;
+	font-size: 28rpx !important;
+	font-weight: 600;
+}
+
+.user-subpage.user-recharge-page .notice-detail {
+	color: var(--tt-text-secondary);
+	font-size: 25rpx;
+}
+
+.user-subpage.user-recharge-page .pay-btn {
+	width: 100% !important;
+	margin-top: 36rpx;
+}
+
+/* 钱包明细 */
+.user-subpage.user-wallet-log-page {
+	padding: 24rpx 24rpx calc(32rpx + var(--tt-safe-bottom));
+	border-top: 0 !important;
+}
+
+.user-subpage.user-wallet-log-page .wallet-list {
+	width: 100% !important;
+	margin-bottom: 14rpx;
+	background: var(--tt-surface);
+	border: 1rpx solid var(--tt-border);
+	border-radius: var(--tt-radius-md);
+	box-shadow: var(--tt-shadow);
+}
+
+.user-subpage.user-wallet-log-page .list-content {
+	height: auto !important;
+	min-height: 120rpx;
+	padding: 24rpx 28rpx !important;
+	border-bottom: 0 !important;
+}
+
+.user-subpage.user-wallet-log-page .title {
+	color: var(--tt-text) !important;
+	font-size: 28rpx !important;
+}
+
+.user-subpage.user-wallet-log-page .money .add {
+	color: var(--tt-primary-strong) !important;
+}
+
+.user-subpage.user-wallet-log-page .time {
+	color: var(--tt-text-muted) !important;
+	font-size: 24rpx !important;
+}
+
+/* 积分明细 */
+.user-subpage.user-score-page {
+	background: var(--tt-bg) !important;
+}
+
+.user-subpage.user-score-page .head_box {
+	width: 100% !important;
+	height: 430rpx !important;
+	background: linear-gradient(145deg, #303523 0%, #a9b238 100%) !important;
+	border-bottom: 0;
+}
+
+.user-subpage.user-score-page .head_box .bg {
+	opacity: 0.16;
+}
+
+.user-subpage.user-score-page .all-box {
+	width: 190rpx !important;
+	height: 190rpx !important;
+	background: rgba(255, 255, 255, 0.12);
+	border: 1rpx solid rgba(255, 255, 255, 0.22);
+	border-radius: 50%;
+}
+
+.user-subpage.user-score-page .all-num,
+.user-subpage.user-score-page .all-title {
+	color: #fff !important;
+}
+
+.user-subpage.user-score-page .tab-box {
+	width: calc(100% - 48rpx) !important;
+	bottom: -34rpx !important;
+	border: 1rpx solid var(--tt-border);
+	border-radius: var(--tt-radius-md) !important;
+	box-shadow: var(--tt-shadow);
+}
+
+.user-subpage.user-score-page .tab-active {
+	color: var(--tt-primary-strong) !important;
+	border-color: var(--tt-primary) !important;
+}
+
+.user-subpage.user-score-page .content_box {
+	padding: 60rpx 24rpx 24rpx;
+}
+
+.user-subpage.user-score-page .item-box {
+	min-height: 120rpx !important;
+	margin-bottom: 14rpx;
+	padding: 22rpx 28rpx !important;
+	background: var(--tt-surface) !important;
+	border: 1rpx solid var(--tt-border);
+	border-radius: var(--tt-radius-md);
+	box-shadow: var(--tt-shadow);
+}
+
+.user-subpage.user-score-page .item-box .name {
+	color: var(--tt-text) !important;
+}
+
+.user-subpage.user-score-page .item-box .time {
+	color: var(--tt-text-muted) !important;
+}
+
+.user-subpage.user-score-page .item-box .num {
+	color: var(--tt-primary-strong) !important;
+	font-weight: 600;
+}
+
+/* 注册 */
+.user-subpage.user-register-page {
+	min-height: 100vh !important;
+	height: auto !important;
+	padding-bottom: calc(40rpx + var(--tt-safe-bottom));
+	background: linear-gradient(180deg, var(--tt-primary-soft) 0, var(--tt-bg) 360rpx) !important;
+}
+
+.user-subpage.user-register-page .head_box {
+	background: transparent !important;
+	color: var(--tt-text) !important;
+	border-bottom: 0;
+}
+
+.user-subpage.user-register-page .head-img {
+	width: 132rpx !important;
+	height: 132rpx !important;
+	margin-top: 36rpx;
+	border: 5rpx solid #fff;
+	border-radius: 50%;
+	box-shadow: 0 10rpx 26rpx rgba(23, 24, 18, 0.12);
+}
+
+.user-subpage.user-register-page .wrapper {
+	position: relative !important;
+	top: auto !important;
+	z-index: auto !important;
+	width: auto !important;
+	height: auto !important;
+	margin: 40rpx 24rpx 0;
+	padding: 0 !important;
+}
+
+.user-subpage.user-register-page .login-box {
+	padding: 0 28rpx;
+	background: var(--tt-surface);
+	border: 1rpx solid var(--tt-border);
+	border-radius: var(--tt-radius-lg);
+	box-shadow: var(--tt-shadow);
+}
+
+.user-subpage.user-register-page .input-item {
+	width: 100% !important;
+	height: 104rpx !important;
+	border-bottom: 1rpx solid var(--tt-border) !important;
+}
+
+.user-subpage.user-register-page .inp-title {
+	color: var(--tt-text-secondary) !important;
+}
+
+.user-subpage.user-register-page .inp {
+	color: var(--tt-text) !important;
+}
+
+.user-subpage.user-register-page .tip-box {
+	width: 100% !important;
+	line-height: 1.6 !important;
+	padding: 24rpx 0;
+	color: var(--tt-text-secondary);
+}
+
+.user-subpage.user-register-page .tcp {
+	color: var(--tt-primary-strong) !important;
+}
+
+.user-subpage.user-register-page .login-btn {
+	width: 100% !important;
+	margin-top: 36rpx;
+}
+
+/* 邀请二维码 */
+.user-subpage.user-qr-page.content {
+	position: relative;
+	height: 100vh !important;
+	min-height: 1050rpx;
+	overflow: hidden;
+	background: linear-gradient(160deg, #303523 0%, #8f981e 56%, #d9de9f 100%) !important;
+}
+
+.user-subpage.user-qr-page .bg_img {
+	opacity: 0.12;
+}
+
+.user-subpage.user-qr-page .poster-box {
+	top: 90rpx !important;
+	right: 24rpx;
+	left: 24rpx !important;
+	transform: none !important;
+	align-items: center;
+}
+
+.user-subpage.user-qr-page .share-box {
+	width: 100% !important;
+	max-width: 640rpx;
+	box-sizing: border-box;
+	padding: 48rpx 28rpx;
+	background: #fff;
+	border-radius: 36rpx;
+	box-shadow: 0 24rpx 60rpx rgba(20, 24, 10, 0.28);
+}
+
+.user-subpage.user-qr-page .qr-title {
+	color: var(--tt-text);
+	font-size: 36rpx;
+	font-weight: 700;
+	text-align: center;
+}
+
+.user-subpage.user-qr-page .qr-subtitle {
+	margin-top: 10rpx;
+	color: var(--tt-text-muted);
+	font-size: 24rpx;
+	line-height: 1.5;
+	text-align: center;
+}
+
+.user-subpage.user-qr-page .share-list-box {
+	display: flex;
+	justify-content: center;
+	margin-top: 36rpx;
+	padding: 28rpx;
+	background: #fff;
+	border: 1rpx solid var(--tt-border);
+	border-radius: 24rpx;
+}
+
+.user-subpage.user-qr-page .qr-safe-tip {
+	margin-top: 30rpx;
+	color: var(--tt-text-secondary);
+	font-size: 23rpx;
+	text-align: center;
+}
+
+.user-subpage.user-qr-page .qr-safe-tip .cuIcon-safe {
+	margin-right: 8rpx;
+	color: var(--tt-primary-strong);
+}
+
+.user-subpage.user-qr-page .posterImage {
+	width: 100% !important;
+	border-radius: 24rpx;
+}
+
+/* “我的”页直达的优惠券列表与详情 */
+.user-subpage.user-coupon-page .head_box {
+	position: sticky;
+	top: 0;
+	z-index: 8;
+	background: rgba(255, 255, 255, 0.97) !important;
+}
+
+.user-subpage.user-coupon-page .coupon-nav {
+	height: 92rpx !important;
+	background: transparent !important;
+}
+
+.user-subpage.user-coupon-page .nav-item .item-title {
+	color: var(--tt-text-secondary) !important;
+	font-size: 27rpx !important;
+	line-height: 70rpx !important;
+}
+
+.user-subpage.user-coupon-page .nav-item .nav-line {
+	width: 40rpx !important;
+	height: 6rpx !important;
+	border-radius: 999rpx;
+	background: transparent !important;
+}
+
+.user-subpage.user-coupon-page .nav-item .line-active {
+	background: var(--tt-primary) !important;
+}
+
+.user-subpage.user-coupon-page .content_box {
+	padding: 20rpx 24rpx calc(120rpx + var(--tt-safe-bottom));
+}
+
+.user-subpage.user-coupon-page .coupon-list {
+	margin: 0 0 18rpx !important;
+}
+
+.user-subpage.user-coupon-detail-page {
+	background: linear-gradient(180deg, var(--tt-primary-soft) 0, var(--tt-bg) 440rpx) !important;
+}
+
+.user-subpage.user-coupon-detail-page .head_box {
+	background: transparent !important;
+	border-bottom: 0;
+}
+
+.user-subpage.user-coupon-detail-page .coupon-box {
+	margin: 90rpx 24rpx 0 !important;
+	overflow: hidden;
+	border: 1rpx solid var(--tt-border);
+	border-radius: var(--tt-radius-lg) !important;
+	box-shadow: var(--tt-shadow);
+}
+
+.user-subpage.user-coupon-detail-page .coupon-box .top,
+.user-subpage.user-coupon-detail-page .coupon-box .bottom {
+	background-image: none !important;
+}
+
+.user-subpage.user-coupon-detail-page .coupon-box .top {
+	border-color: var(--tt-border) !important;
+}
+
+.user-subpage.user-coupon-detail-page .coupon-box .title {
+	color: var(--tt-text) !important;
+	font-size: 36rpx !important;
+}
+
+.user-subpage.user-coupon-detail-page .coupon-box .tip,
+.user-subpage.user-coupon-detail-page .coupon-box .time,
+.user-subpage.user-coupon-detail-page .notice-detail {
+	color: var(--tt-text-secondary) !important;
+}
+
+.user-subpage.user-coupon-detail-page .coupon-goods {
+	margin: 20rpx 24rpx !important;
+	border: 1rpx solid var(--tt-border);
+	border-radius: var(--tt-radius-md) !important;
+	box-shadow: var(--tt-shadow);
+}
+
+/* 团体票内层组件，兼容将来重新开放“购买/已购买”标签。 */
+.user-subpage.user-exchange-page .goods-list,
+.user-subpage.user-exchange-page .notice,
+.user-subpage.user-exchange-page .coupon,
+.user-subpage.user-exchange-page .phone {
+	margin: 0 0 16rpx !important;
+	border: 1rpx solid var(--tt-border) !important;
+	border-radius: var(--tt-radius-md) !important;
+	box-shadow: var(--tt-shadow) !important;
+}
+
+.user-subpage.user-exchange-page .goods-list {
+	background: linear-gradient(145deg, #303523 0%, #8f981e 100%) !important;
+}
+
+.user-subpage.user-exchange-page .sub-btn {
+	background: var(--tt-primary) !important;
+	box-shadow: none !important;
+}
+
+.user-subpage.user-ticket-detail-page .tab-triangle,
+.user-subpage.user-ticket-detail-page .bg-olive {
+	background: var(--tt-primary) !important;
+}
+
+.user-subpage.user-ticket-detail-page .tab-active,
+.user-subpage.user-ticket-detail-page .text-orange {
+	color: var(--tt-primary-strong) !important;
+}
+
+.user-subpage.user-ticket-detail-page .cont-price,
+.user-subpage.user-ticket-detail-page .cont-notice,
+.user-subpage.user-ticket-detail-page .wallet-box,
+.user-subpage.user-ticket-detail-page .tab-item {
+	background: var(--tt-surface) !important;
+}
+
+/* “我的”页客服入口：只调整视觉，不介入聊天高度和键盘逻辑。 */
+.user-subpage.user-service-page .kefu_container,
+.user-subpage.user-service-page .chat_wrapper {
+	background: var(--tt-bg) !important;
+}
+
+.user-subpage.user-service-page .notice {
+	color: var(--tt-primary-strong) !important;
+	background: rgba(242, 244, 223, 0.96) !important;
+	border-bottom: 1rpx solid rgba(169, 178, 56, 0.2);
+}
+
+.user-subpage.user-service-page .chat_wrapper .status text {
+	background: rgba(104, 106, 97, 0.58) !important;
+	border-radius: 999rpx !important;
+}
+
+.user-subpage.user-service-page .message-item .head-img {
+	border: 2rpx solid #fff;
+	box-shadow: 0 4rpx 12rpx rgba(23, 24, 18, 0.1);
+}
+
+.user-subpage.user-service-page .chat_wrapper .bubble {
+	max-width: 68%;
+	padding: 20rpx 24rpx !important;
+	border-radius: 22rpx !important;
+	box-shadow: 0 6rpx 16rpx rgba(23, 24, 18, 0.05);
+}
+
+.user-subpage.user-service-page .chat_wrapper .bubble.me,
+.user-subpage.user-service-page .chat_wrapper .bubble.me::before {
+	background: var(--tt-primary) !important;
+}
+
+.user-subpage.user-service-page .chat_wrapper .bubble.you,
+.user-subpage.user-service-page .chat_wrapper .bubble.you::before {
+	background: var(--tt-surface) !important;
+}
+
+.user-subpage.user-service-page .content_wrapper .write {
+	padding: 14rpx 18rpx calc(14rpx + var(--tt-safe-bottom)) !important;
+	background: rgba(255, 255, 255, 0.97) !important;
+	box-shadow: 0 -1rpx 0 var(--tt-border) !important;
+}
+
+.user-subpage.user-service-page .widget_textarea {
+	min-height: 72rpx;
+	box-sizing: border-box;
+	padding: 16rpx 22rpx !important;
+	border: 1rpx solid var(--tt-border);
+	border-radius: 24rpx !important;
+}
+
+.user-subpage.user-service-page .send_btn {
+	min-height: 64rpx;
+	padding: 0 24rpx !important;
+	background: var(--tt-primary) !important;
+	border: 0 !important;
+	border-radius: 999rpx !important;
+	font-weight: 600;
+}
+
+.user-subpage.user-service-page .footer_div,
+.user-subpage.user-service-page .select_model {
+	background: var(--tt-bg) !important;
+	border-radius: var(--tt-radius-lg) var(--tt-radius-lg) 0 0;
+}
+
+.user-subpage.user-service-page .project_item {
+	border: 1rpx solid var(--tt-border);
+	border-radius: var(--tt-radius-md) !important;
+	box-shadow: var(--tt-shadow);
+}
+
+.user-subpage.user-service-page .title-line {
+	background: var(--tt-primary) !important;
+}
+
+.user-subpage.user-service-page .leave_message {
+	min-height: 100%;
+	box-sizing: border-box;
+	padding: 20rpx 24rpx 140rpx !important;
+	background: var(--tt-bg) !important;
+	border-top: 0 !important;
+}
+
+.user-subpage.user-service-page .leave_message .form-group {
+	margin-bottom: 18rpx;
+}
+
+.user-subpage.user-service-page .leave_message .form-control {
+	width: 100% !important;
+	box-sizing: border-box;
+	background: var(--tt-surface) !important;
+	border: 1rpx solid var(--tt-border);
+	border-radius: var(--tt-radius-md) !important;
+}
+
+.user-subpage.user-service-page .leave_success {
+	width: calc(100% - 48rpx) !important;
+	bottom: 24rpx !important;
+	background: var(--tt-primary) !important;
+	box-shadow: 0 10rpx 22rpx rgba(143, 152, 30, 0.22);
+}

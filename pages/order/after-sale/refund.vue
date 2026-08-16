@@ -403,15 +403,25 @@ export default {
 .modal-box {
 	width: 750rpx;
 	height: 680rpx;
+	height: min(680rpx, calc(100vh - 100rpx));
+	height: min(680rpx, calc(100dvh - 100rpx));
+	display: flex;
+	flex-direction: column;
 	border-radius: 30rpx 30rpx 0 0;
 	background: #fff;
+	overflow: hidden;
 
 	.modal-head {
+		flex-shrink: 0;
 		height: 100rpx;
 		font-size: 30rpx;
 	}
 
 	.modal-content {
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
 		font-size: 28rpx;
 
 		.sel-item {
@@ -427,6 +437,7 @@ export default {
 	}
 
 	.modal-foot {
+		flex-shrink: 0;
 		.close-btn {
 			width: 710rpx;
 			height: 80rpx;

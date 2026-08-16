@@ -1,5 +1,5 @@
 <template>
-	<view class="page_box">
+	<view class="page_box user-subpage user-coupon-detail-page">
 		<view class="head_box">
 			<cu-custom :isBack="true">
 				<block slot="backText">优惠券详情</block>
@@ -22,8 +22,8 @@
 							{{ btnStatusText[btnStataus] || '立即领取' }}
 						</button> -->
 						<view class="time">
-							有效期：{{ $tools.dateFormat('YYYY-mm-dd HH:MM:SS',new Date(options.startDate))}}
-							至 {{ $tools.dateFormat('YYYY-mm-dd HH:MM:SS',new Date(options.endDate))}}
+							有效期：{{ $tools.dateFormat('YYYY-mm-dd',new Date(options.startDate))}}
+							至 {{ $tools.dateFormat('YYYY-mm-dd',new Date(options.endDate))}}
 						</view>
 					</view>
 					<view class="top y-f" v-else>
@@ -34,8 +34,8 @@
 						<view class="title">{{ options.cname }}</view>
 						<view class="tip">满{{ options.useMinPrice }}元可用</view>
 						<view class="time">
-							有效期：{{$tools.dateFormat('YYYY-mm-dd HH:MM:SS',new Date(options.startDate))}}
-							至 {{$tools.dateFormat('YYYY-mm-dd HH:MM:SS',new Date(options.endDate))}}
+							有效期：{{$tools.dateFormat('YYYY-mm-dd',new Date(options.startDate))}}
+							至 {{$tools.dateFormat('YYYY-mm-dd',new Date(options.endDate))}}
 						</view>
 					</view>
 					<view class="bottom y-start" v-if="options.description">

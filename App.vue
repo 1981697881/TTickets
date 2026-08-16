@@ -197,6 +197,8 @@ export default {
 @import 'static/colorui/icon.css';
 @import 'uview-plus/index.scss';
 @import 'static/style/design-system.scss';
+@import 'static/style/user-center.scss';
+@import 'static/style/overlay-system.scss';
 // 其他scss集成在uni.scss,(变量,class,minix)
 
 uni-radio:not([disabled]) .uni-radio-input:hover,

@@ -105,7 +105,7 @@
 			@change="selDate"
 		></uni-calendar> -->
 		<!-- 输码弹窗 -->
-		<app-modal v-model="showInputModal" style="z-index: 88;">
+		<app-modal v-model="showInputModal">
 			<block slot="modalContent">
 				<view class="modal-box">
 					<view class="modal-head">
@@ -359,7 +359,12 @@ export default {
 	width: 100%;
 	height: 100%;
 	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
 	z-index: 20;
+	background: rgba(16, 17, 13, 0.36);
 }
 // 商户信息
 .shopinfo-box {

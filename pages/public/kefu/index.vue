@@ -1,6 +1,6 @@
 <!-- FastAdmin在线客服插件不是开源产品，所有文字、图片、样式、风格等版权归在线客服作者所有，如有复制、仿冒、抄袭、盗用，FastAdmin和在线客服作者将追究法律责任 -->
 <template>
-	<view>
+	<view class="user-subpage user-service-page">
 		<view class="kefu_container">
 			<view v-if="errorTips" class="error_tips">{{ errorTips }}</view>
 			<view v-if="config.announcement && errorTips == ''" class="notice x-start">

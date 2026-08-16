@@ -14,7 +14,7 @@
 				</view>
 				<view class="coupon-right y-f">
 					<button class="cu-btn get-btn" v-if="couponData.getStatus ==0" @tap.stop="getCoupon">立即领取</button>
-					<button class="cu-btn get-btn bg	-gray" v-else>已领取</button>
+					<button class="cu-btn get-btn bg-gray" v-else>已领取</button>
 					<view class="surplus-num">仅剩{{ couponData.remainCount }}张</view>
 				</view>
 			</view>

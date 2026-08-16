@@ -1,5 +1,5 @@
 <template>
-	<view class="page_box">
+	<view class="page_box user-subpage user-ticket-detail-page">
 		<view class="content_box">
 			<scroll-view class="scroll-box" scroll-y enable-back-to-top scroll-with-animation>
 				<view class="group-wrap">

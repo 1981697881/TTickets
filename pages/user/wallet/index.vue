@@ -1,5 +1,5 @@
 <template>
-	<view class="page_box">
+	<view class="page_box user-subpage user-wallet-page">
 		<view class="head_box">
 			<cu-custom :isBack="true">
 				<block slot="backText"></block>
@@ -61,7 +61,7 @@
 			</view> -->
 		</view>
 		<view class="foot_box"></view>
-		<app-modal v-model="showModal" style="z-index: 88;">
+		<app-modal v-model="showModal">
 			<block slot="modalContent">
 				<view class="modal-box">
 					<view class="modal-head">

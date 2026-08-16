@@ -1,5 +1,5 @@
 <template>
-	<view class="set-box">
+	<view class="set-box user-subpage user-settings-page">
 		<!-- <view class="list x-bc" @tap="jump('/pages/public/feedback')">
 			<view class="title">意见反馈</view>
 			<text class="cuIcon-right"></text>

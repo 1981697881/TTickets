@@ -1,25 +1,24 @@
 <template>
 	<view class="page-box">
-		<view class="head-box">
-			<view class="cinema-summary">
-				<view class="summary-copy">
-					<text class="summary-title">{{ displayCinemaName }}</text>
-					<text class="summary-address one-t">{{ displayCinemaAddress }}</text>
-				</view>
-			</view>
-
-			<view class="hero-card">
-				<image class="cinema-hero" src="/static/imgs/cinema/cinema-hero.jpg" mode="aspectFill"></image>
-				<view class="hero-copy">
-					<text class="hero-title">光影之间</text>
-					<text class="hero-title hero-title-second">遇见美好</text>
-					<text class="hero-subtitle">与你共赴电影时光</text>
-				</view>
-			</view>
-		</view>
-
 		<view class="content-box">
 			<scroll-view class="scroll-box" scroll-y enable-back-to-top @scrolltolower="loadMore">
+				<view class="head-box">
+					<view class="cinema-summary">
+						<view class="summary-copy">
+							<text class="summary-title">{{ displayCinemaName }}</text>
+							<text class="summary-address one-t">{{ displayCinemaAddress }}</text>
+						</view>
+					</view>
+
+					<view class="hero-card">
+						<image class="cinema-hero" src="/static/imgs/cinema/cinema-hero.jpg" mode="aspectFill"></image>
+						<view class="hero-copy">
+							<text class="hero-title">光影之间</text>
+							<text class="hero-title hero-title-second">遇见美好</text>
+							<text class="hero-subtitle">与你共赴电影时光</text>
+						</view>
+					</view>
+				</view>
 				<view class="section-heading">
 					<text class="section-title">正在热映</text>
 					<text class="section-accent"></text>
@@ -185,7 +184,6 @@ export default {
 }
 
 .head-box {
-	flex: 0 0 auto;
 	padding: 28rpx 34rpx 22rpx;
 	background: #fff;
 

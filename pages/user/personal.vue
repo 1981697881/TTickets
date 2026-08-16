@@ -1,8 +1,10 @@
 <template>
-	<view class="content">
+	<view class="content user-subpage user-qr-page">
 		<image class="bg_img" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/invite_poster.png" mode=""></image>
 		<view class="poster-box y-f">
 			<view class="share-box">
+				<view class="qr-title">会员付款码</view>
+				<view class="qr-subtitle">向工作人员出示二维码即可识别会员账户</view>
 				<view class="share-list-box">
 					<tki-qrcode
 						ref="userCode"
@@ -19,6 +21,7 @@
 						@result="qrR"
 					/>
 				</view>
+				<view class="qr-safe-tip"><text class="cuIcon-safe"></text> 请勿将付款码截图发送给他人</view>
 			</view>
 		</view>
 	</view>

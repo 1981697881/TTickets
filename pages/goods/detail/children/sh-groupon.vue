@@ -123,16 +123,22 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 
 // 弹窗
 .modal-box {
 	width: 750rpx;
 	height: 800rpx;
+	height: min(800rpx, calc(100vh - 120rpx));
+	height: min(800rpx, calc(100dvh - 120rpx));
+	display: flex;
+	flex-direction: column;
 	border-radius: 30rpx 30rpx 0 0;
 	background: #fff;
+	box-sizing: border-box;
 
 	.modal-head {
+		flex-shrink: 0;
 		height: 92rpx;
 		border-bottom: 1px solid rgba(223, 223, 223, 0.5);
 		padding: 0 30rpx;
@@ -148,9 +154,14 @@ export default {
 	}
 
 	.modal-content {
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
 		padding: 0 30rpx;
 	}
 	.modal-foot {
+		flex-shrink: 0;
 		font-size: 24rpx;
 		font-family: PingFang SC;
 		font-weight: 500;

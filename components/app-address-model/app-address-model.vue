@@ -99,7 +99,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .address-list {
 	padding: 20rpx;
 	position: relative;
@@ -172,12 +172,21 @@ export default {
 // 小程序登录提醒
 /* #ifdef MP-WEIXIN */
 .force-login-wrap {
-	position: absolute;
-	width: 100vw;
-	height: 100vh;
-	overflow: hidden;
-	z-index: 999;
+	position: fixed;
 	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	width: 100%;
+	height: 100vh;
+	height: 100dvh;
+	overflow-x: hidden;
+	overflow-y: auto;
+	-webkit-overflow-scrolling: touch;
+	z-index: 10900;
+	padding-bottom: calc(32rpx + env(safe-area-inset-bottom));
+	box-sizing: border-box;
+	background: var(--tt-bg);
 	/* background: linear-gradient(180deg, rgba(239, 196, 128, 1) 0%, rgba(248, 220, 165, 1) 25%, rgba(255, 255, 255, 1) 98%); */
 }
 /* #endif */

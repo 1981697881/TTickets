@@ -1,5 +1,5 @@
 <template>
-	<view class="page_box">
+	<view class="page_box user-subpage user-recharge-page">
 		<view class="head_box margin-top">
 			<view class="cu-form-group text-xl text-bold text-brown">我的账户：{{balInfo.Number || ''}}</view>
 			<view class="cu-form-group text-grey">我的余额：{{ balInfo.Money || "0.00" }} 元</view>

@@ -1,5 +1,9 @@
 <template>
 	<view class="wrap-box user-page">
+		<view class="tab-page-nav">
+			<view class="tab-page-status"></view>
+			<view class="tab-page-bar"><text>我的</text></view>
+		</view>
 		<view class="user-box">
 			<block v-if="template.length" v-for="(item, index) in template" :key="item.id || index">
 				<!-- 菜单 -->
@@ -103,6 +107,30 @@ export default {
 .user-page {
 	min-height: 100vh;
 	background: #fff;
+}
+
+.tab-page-nav {
+	position: relative;
+	z-index: 10;
+	background: rgba(255, 255, 255, 0.98);
+	border-bottom: 1rpx solid var(--tt-border);
+}
+
+.tab-page-status {
+	height: var(--status-bar-height);
+	/* #ifdef H5 */
+	height: 44rpx;
+	/* #endif */
+}
+
+.tab-page-bar {
+	height: 88rpx;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	font-size: 34rpx;
+	font-weight: 700;
+	color: var(--tt-text);
 }
 
 .user-box {

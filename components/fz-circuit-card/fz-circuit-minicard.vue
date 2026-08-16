@@ -87,10 +87,13 @@ export default {
 	display: flex;
 	align-items: center;
 	gap: 20rpx;
-	padding: 24rpx 4rpx;
+	padding: 24rpx 22rpx;
 	box-sizing: border-box;
 	background: #fff;
-	border-bottom: 1rpx solid var(--tt-border);
+	border: 1rpx solid var(--tt-border);
+	border-radius: 20rpx;
+	box-shadow: 0 8rpx 24rpx rgba(23, 24, 18, 0.05);
+	margin-bottom: 16rpx;
 }
 
 .time-column,
@@ -141,7 +144,7 @@ export default {
 	font-size: 31rpx;
 	font-weight: 720;
 	line-height: 42rpx;
-	color: var(--tt-primary-strong);
+	color: var(--tt-danger);
 }
 
 .currency {
@@ -164,7 +167,7 @@ export default {
 	padding: 0;
 	border: 0;
 	border-radius: 30rpx;
-	background: var(--tt-primary);
+	background: #e85d74;
 	color: #fff;
 	font-size: 24rpx;
 	font-weight: 650;

@@ -1,5 +1,5 @@
 <template>
-	<view class="bank-wrap">
+	<view class="bank-wrap user-subpage user-form-page user-card-bind-page">
 		<view class="head_box">
 			<cu-custom :isBack="true">
 				<block slot="backText"></block>

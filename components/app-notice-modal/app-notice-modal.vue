@@ -71,6 +71,7 @@ export default {
   position: relative;
   width: 610rpx;
   max-width: 100%;
+  margin-bottom: 104rpx;
 }
 
 .notice-modal__image {

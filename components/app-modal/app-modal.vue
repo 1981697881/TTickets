@@ -17,6 +17,7 @@ import AppSafePopup from '@/components/app-safe-popup/app-safe-popup.vue';
 
 export default {
   name: 'AppModal',
+  inheritAttrs: false,
   components: { AppSafePopup },
   props: {
     modelValue: { type: Boolean, default: undefined },

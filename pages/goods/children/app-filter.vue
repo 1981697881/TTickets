@@ -100,7 +100,16 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
+.mask {
+	position: fixed;
+	top: 0;
+	right: 0;
+	bottom: 0;
+	left: 0;
+	z-index: 998;
+	background: rgba(16, 17, 13, 0.46);
+}
 .sel-box {
 	position: absolute;
 	width: 750rpx;

@@ -2,6 +2,7 @@
   <app-safe-popup
     :model-value="visible"
     :type="popupType"
+    max-width="750rpx"
     :mask-closable="autoClose"
     @update:modelValue="onVisibleChange"
   >
@@ -33,7 +34,7 @@ export default {
       return this.modelValue === undefined ? (this.showPop || this.internalVisible) : this.modelValue;
     },
     popupType() {
-      return ['top', 'bottom'].includes(this.direction) ? 'bottom' : 'center';
+      return ['top', 'bottom', 'left', 'right'].includes(this.direction) ? this.direction : 'center';
     }
   },
   watch: {
@@ -70,5 +71,11 @@ export default {
   box-sizing: border-box;
   background: #fff;
   -webkit-overflow-scrolling: touch;
+}
+
+.popup-content--left,
+.popup-content--right {
+  height: 100%;
+  max-height: 100%;
 }
 </style>

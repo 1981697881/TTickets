@@ -20,7 +20,7 @@ export default {
 	props: {
 		exchangeCode: {
 			type: Object,
-			default: {}
+			default: () => ({})
 		},
 	},
 	data() {
@@ -44,7 +44,6 @@ export default {
 		//兑换
 		exchange() {
 			let that = this;
-			console.log(that.type)
 			if(that.type =='exchangeCode'){
 				that.$api('user.exchangeCdKey', {
 					openId: uni.getStorageSync('openid'),
@@ -93,13 +92,14 @@ export default {
 			let that = this
 			uni.scanCode({
 				success: function(res) {
-					if (typeof that.GetRequest(res.result).exchangeCode != "undefined") {
+					const params = that.GetRequest(res.result);
+					if (typeof params.exchangeCode !== 'undefined') {
 						that.type = 'exchangeCode'
-						that.code.value = that.GetRequest(res.result).exchangeCode
+						that.code.value = params.exchangeCode
 					}
-					if(typeof that.GetRequest(res.result).exchangeTCode != "undefined"){
-						that.type = 'exchangeTCode' 
-						that.code.value = that.GetRequest(res.result).exchangeTCode
+					if (typeof params.exchangeTCode !== 'undefined') {
+						that.type = 'exchangeTCode'
+						that.code.value = params.exchangeTCode
 					}
 				}
 			});

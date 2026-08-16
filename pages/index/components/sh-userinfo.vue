@@ -1,47 +1,25 @@
 <template>
-	<view>
-		<view class="sh-userinfo-box" :style="{ backgroundColor: detail.color }">
-			<view class="user-bg"></view>
-			<view class="head-wrap">
-				<view class="titleNav pad">
-					<view class="status-bar"></view>
-					<text class="nav-title x-f"></text>
+	<view class="user-profile">
+		<view class="user-head x-bc">
+			<view class="user-identity x-f" @tap="jump('/pages/user/info')">
+				<view class="head-img-wrap">
+					<image class="head-img" :src="userInfo.avatarUrl || '/static/imgs/base_avatar.png'" mode="aspectFill"></image>
 				</view>
-				<view class="user-head x-bc">
-					<view class="x-f">
-						<!-- 微信小程序 -->
-						<view class="info-box">
-							<view class="x-f">
-								<view class="head-img-wrap">
-									<image
-										class="head-img"
-										@tap.stop="jump('/pages/user/info')"
-										:src="userInfo.avatarUrl || '/static/imgs/base_avatar.png'"
-										mode="aspectFill"
-									></image>
-									<block v-if="platform !== 'H5'">
-										<button v-if="platform === 'wxMiniProgram'" @click="refreshWechatUser" class="cu-btn refresh-btn x-c">
-											<text class="cuIcon-refresh" :class="{ 'refresh-rotate': isRefresh }"></text>
-										</button>
-										<button v-if="platform === 'wxOfficialAccount'" @tap="refreshWechatUser" class="cu-btn refresh-btn x-c">
-											<text class="cuIcon-refresh" :class="{ 'refresh-rotate': isRefresh }"></text>
-										</button>
-									</block>
-								</view>
-								<text @tap.stop="jump('/pages/user/info')" class="user-name one-t">{{ userInfo.username || '请登录~' }}</text>
-							</view>
-						</view>
-					</view>
+				<view class="identity-copy">
+					<text class="user-name one-t">{{ userInfo.username || '请登录' }}</text>
+					<text class="user-hint" v-if="!userInfo.username">登录后查看账户与订单</text>
 				</view>
 			</view>
-			<button class="code-btn x-c" v-if="balInfo.custId" @tap.stop="jump('/pages/user/personal')" aria-label="打开我的二维码">
+			<button class="code-btn x-c" v-if="balInfo && balInfo.custId" @tap.stop="jump('/pages/user/personal')" aria-label="打开我的二维码">
 				<text class="cuIcon-qr_code"></text>
 			</button>
 		</view>
-		<!-- 绑定手机 -->
-		<view class="notice-box x-bc pad" v-if="!userInfo.phoneNumber && userInfo.username">
-			<view class="notice-detail one-t">点击绑定手机号，确保账户安全</view>
-			<button class="bindPhone cu-btn" open-type="getPhoneNumber" @getphonenumber="bindPhone">去绑定</button>
+		<view class="notice-box x-bc" v-if="!userInfo.phoneNumber && userInfo.username">
+			<view class="notice-copy x-f">
+				<text class="cuIcon-safe notice-icon"></text>
+				<text class="notice-detail one-t">绑定手机号，保障账户安全</text>
+			</view>
+			<button class="bind-phone" open-type="getPhoneNumber" @getphonenumber="bindPhone">去绑定</button>
 		</view>
 	</view>
 </template>
@@ -53,6 +31,7 @@ export default {
 	computed: {
 		...mapState({
 			userInfo: state => state.user.userInfo,
+			balInfo: state => state.user.balInfo || {}
 		})
 	},
 	props: {
@@ -69,53 +48,16 @@ export default {
 				query: query
 			});
 		},
-		// 更新信息
-		onRefresh() {
-			const that = this;
-			that.isRefresh = true;
-			setTimeout(() => {
-				that.isRefresh = false;
-			}, 200);
-		},
-		refreshWechatUser(e) {
-			const that = this;
-			this.onRefresh();
-			if (this.platform === 'wxOfficialAccount') {
-				let wechat = new Wechat();
-				wechat.login();
-			} else if (this.platform === 'wxMiniProgram') {
-				uni.getUserProfile({
-					desc: 'Wexin', // 这个参数是必须的
-					success: res => {
-						that.$store.commit('FORCE_OAUTH', true);
-					},fail: (err) => {
-						    // 获取失败，可能用户拒绝授权，尝试引导用户到设置页面
-						    if (err.errMsg.indexOf('user deny') > -1) {
-						      uni.showModal({
-						        title: '提示',
-						        content: '需要获取您的信息，请确认授权',
-						        success: (modalRes) => {
-						          if (modalRes.confirm) {
-						            // 引导用户到设置页面
-						            uni.openSetting();
-						          }
-						        }
-						      });
-						    }
-						  }
-				});
-			}
-		},
 		bindPhone(e) {
-			let me = this;
-			me.$api('user.getWxMiniPhoneNumber', {
+			if (!e.detail || !e.detail.encryptedData) return;
+			this.$api('user.getWxMiniPhoneNumber', {
 				sessionKey: uni.getStorageSync('session_key'),
 				openid: uni.getStorageSync('openid'),
 				encryptedData: e.detail.encryptedData,
 				iv: e.detail.iv
 			}).then(res => {
 				if (res.flag) {
-					me.getUserDetails();
+					this.getUserDetails();
 				}
 			});
 		}
@@ -125,28 +67,6 @@ export default {
 
 <style lang="scss">
 .user-profile { background: #fff; }
-
-.user-nav {
-	background: #fff;
-	.status-bar {
-		height: var(--status-bar-height);
-		/* #ifdef H5 */
-		height: 44rpx;
-		/* #endif */
-	}
-	.user-nav__bar {
-		height: 88rpx;
-		display: flex;
-		align-items: center;
-		justify-content: center;
-	}
-	.user-nav__title {
-		font-size: 34rpx;
-		font-weight: 700;
-		line-height: 48rpx;
-		color: var(--tt-text);
-	}
-}
 
 .user-head {
 	min-height: 176rpx;

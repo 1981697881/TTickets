@@ -1,5 +1,5 @@
 <template>
-	<view class="page_box">
+	<view class="page_box user-subpage user-score-page">
 		<view class="head_box">
 			<cu-custom :isBack="true">
 				<block slot="backText">积分余额</block>

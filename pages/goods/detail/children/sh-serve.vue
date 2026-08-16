@@ -68,7 +68,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .serve-box {
 	line-height: 82rpx;
 	background: #fff;
@@ -102,10 +102,15 @@ export default {
 
 .server-modal-box {
 	width: 750rpx;
-	height: 100%;
+	height: 900rpx;
+	height: min(900rpx, calc(100vh - 120rpx));
+	height: min(900rpx, calc(100dvh - 120rpx));
+	display: flex;
+	flex-direction: column;
 	border-radius: 30rpx 30rpx 0 0;
 	background: #fff;
 	padding: 30rpx;
+	box-sizing: border-box;
 	.serve-btn {
 		width: 690rpx;
 		height: 80rpx;
@@ -116,6 +121,7 @@ export default {
 	}
 
 	.modal-head {
+		flex-shrink: 0;
 		margin-bottom: 30rpx;
 		position: relative;
 		.head-title {
@@ -133,7 +139,10 @@ export default {
 	}
 
 	.modal-content {
+		flex: 1;
+		min-height: 0;
 		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
 		.serve-list {
 			padding-bottom: 40rpx;
 
@@ -158,5 +167,6 @@ export default {
 			}
 		}
 	}
+	.modal-foot { flex-shrink: 0; }
 }
 </style>

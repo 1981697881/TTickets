@@ -1,5 +1,5 @@
 <template>
-	<view class="bank-wrap">
+	<view class="bank-wrap user-subpage user-form-page">
 		<view class="form-box">
 			<label>
 				<view class="form-item flex align-center justify-between">

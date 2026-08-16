@@ -136,7 +136,7 @@ export default {
 };
 </script>
 
-<style>
+<style scoped>
 .app-picker-content {
 	width: 100%;
 	background: #fff;

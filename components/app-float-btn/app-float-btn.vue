@@ -112,9 +112,9 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .btn-mark {
-	z-index: -1;
+	z-index: 0;
 	position: fixed;
 	width: 100%;
 	height: 100%;
@@ -129,6 +129,7 @@ export default {
 	right: 30rpx;
 	z-index: 888;
 	.float--active {
+		z-index: 1;
 		position: absolute;
 		bottom: 80rpx;
 		left: 10rpx;
@@ -136,6 +137,7 @@ export default {
 		transition: all 0.2s linear;
 	}
 	.float-list-box {
+		z-index: 1;
 		position: absolute;
 		bottom: 0;
 		left: 10rpx;
@@ -160,6 +162,8 @@ export default {
 	}
 
 	.wechat-btn {
+		position: relative;
+		z-index: 1;
 		// background: #ccc;
 		box-shadow: 0px 0px 20px 4px rgba(199, 199, 199, 0.72);
 		border-radius: 50%;
@@ -176,6 +180,7 @@ export default {
 }
 .img-box {
 	position: relative;
+	margin-bottom: 96rpx;
 
 	.cuIcon-roundclose {
 		position: absolute;

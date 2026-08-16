@@ -17,50 +17,56 @@
 		</app-safe-popup>
 
 		<scroll-view class="schedule-scroll" scroll-y enable-back-to-top @scrolltolower="loadMore">
-			<view class="venue-bar">
-				<view class="venue-copy">
-					<text class="venue-name">{{ cinemaName || storeInfo.storeName || '影院信息加载中' }}</text>
-					<text class="venue-address one-t">{{ cinemaAddress || storeInfo.storeAddress || '正在获取影院地址' }}</text>
+			<view class="schedule-head">
+				<view class="cinema-header">
+					<view class="cinema-copy">
+						<text class="cinema-name">{{ cinemaName || storeInfo.storeName || '影院信息加载中' }}</text>
+						<text class="cinema-address one-t">{{ cinemaAddress || storeInfo.storeAddress || '正在获取影院地址' }}</text>
+					</view>
+					<view class="service-action" @tap="showModal">
+						<text class="cuIcon-service service-icon"></text>
+						<text>影院客服</text>
+					</view>
 				</view>
-				<view class="service-action" @tap="showModal">
-					<text class="cuIcon-service service-icon"></text>
-					<text>影院客服</text>
-				</view>
-			</view>
 
-			<view v-if="swiperList.length" class="movie-picker">
-				<scroll-view class="poster-scroll" scroll-x scroll-with-animation :scroll-into-view="activePosterId" show-scrollbar="false">
-					<view class="poster-list">
-						<view
+				<view v-if="swiperList.length" class="poster-stage">
+					<image class="poster-backdrop" :src="cardInfo.filmPhoto" mode="aspectFill"></image>
+					<view class="poster-mask"></view>
+					<swiper
+						class="card-swiper"
+						:current="activeItem"
+						previous-margin="270rpx"
+						next-margin="270rpx"
+						:circular="false"
+						duration="300"
+						@change="cardSwiper"
+					>
+						<swiper-item
 							v-for="(movie, index) in swiperList"
-							:id="`poster-${movie.filmId}`"
 							:key="movie.filmId || index"
-							class="poster-item"
-							:class="{ active: index === activeItem }"
+							class="poster-slide"
 							@tap="selectMovie(index)"
 						>
-							<image class="poster-image" :src="movie.filmPhoto" mode="aspectFill" lazy-load></image>
-							<text class="poster-name one-t">{{ movie.filmName }}</text>
-						</view>
-					</view>
-				</scroll-view>
+							<view class="poster-card" :class="{ active: index === activeItem }">
+								<text v-if="movie.dimensional" class="poster-tag">{{ movie.dimensional }}</text>
+								<image class="poster-image" :src="movie.filmPhoto" mode="aspectFill" lazy-load></image>
+							</view>
+						</swiper-item>
+					</swiper>
+				</view>
 
-				<view class="movie-summary" @tap="openMovieDetail">
-					<view class="movie-summary-copy">
-						<text class="movie-name">{{ cardInfo.filmName }}</text>
+				<view v-if="swiperList.length" class="movie-info" @tap="openMovieDetail">
+					<text class="movie-name">{{ cardInfo.filmName }}</text>
+					<view class="movie-meta-row">
 						<text class="movie-meta one-t">{{ movieMeta }}</text>
+						<text class="cuIcon-right summary-arrow"></text>
 					</view>
-					<text class="cuIcon-right summary-arrow"></text>
 				</view>
 
 				<sh-date ref="shDate" :movieDates="movieDates" @subClickFtn="selectDate"></sh-date>
 			</view>
 
 			<view class="session-section">
-				<view class="section-heading">
-					<view class="section-mark"></view>
-					<text class="section-title">场次</text>
-				</view>
 				<view class="session-list">
 					<fz-circuit-card
 						v-for="session in goodsList"
@@ -137,9 +143,6 @@ export default {
 				this.cardInfo.filmDirector ? `导演：${this.cardInfo.filmDirector}` : ''
 			].filter(Boolean).join(' | ');
 		},
-		activePosterId() {
-			return this.cardInfo.filmId ? `poster-${this.cardInfo.filmId}` : '';
-		}
 	},
 	onLoad(options) {
 		const routeQuery = this.$Route && this.$Route.query ? this.$Route.query : {};
@@ -179,6 +182,9 @@ export default {
 			this.listParams.showDatetime = value.day;
 			this.resetSessions();
 			this.getGoodsList();
+		},
+		cardSwiper(event) {
+			this.selectMovie(event.detail.current);
 		},
 		selectMovie(index, shouldLoad = true) {
 			const movie = this.swiperList[index];
@@ -272,31 +278,38 @@ export default {
 	height: 100%;
 }
 
-.venue-bar {
-	display: flex;
-	align-items: center;
-	gap: 24rpx;
-	padding: 26rpx 30rpx 22rpx;
+.schedule-head {
+	position: relative;
+	overflow: hidden;
 	background: #fff;
 }
 
-.venue-copy {
+.cinema-header {
+	display: flex;
+	align-items: center;
+	gap: 20rpx;
+	padding: 22rpx 28rpx;
+	background: #fff;
+	border-bottom: 1rpx solid var(--tt-border);
+}
+
+.cinema-copy {
 	min-width: 0;
 	flex: 1;
 	display: flex;
 	flex-direction: column;
 }
 
-.venue-name {
-	font-size: 31rpx;
-	font-weight: 720;
-	line-height: 44rpx;
+.cinema-name {
+	font-size: 34rpx;
+	font-weight: 700;
+	line-height: 48rpx;
 	color: var(--tt-text);
 }
 
-.venue-address {
-	margin-top: 5rpx;
-	font-size: 21rpx;
+.cinema-address {
+	margin-top: 6rpx;
+	font-size: 23rpx;
 	line-height: 32rpx;
 	color: var(--tt-text-muted);
 }
@@ -315,70 +328,97 @@ export default {
 	font-size: 29rpx;
 }
 
-.movie-picker {
-	background: #fff;
+.poster-stage {
+	position: relative;
+	height: 300rpx;
+	overflow: hidden;
+	background: #181914;
 }
 
-.poster-scroll {
+.poster-backdrop,
+.poster-mask {
+	position: absolute;
+	top: -40rpx;
+	right: -40rpx;
+	bottom: -40rpx;
+	left: -40rpx;
+	width: calc(100% + 80rpx);
+	height: calc(100% + 80rpx);
+}
+
+.poster-backdrop {
+	-webkit-filter: blur(28rpx);
+	filter: blur(28rpx);
+	transform: scale(1.12);
+	opacity: 0.7;
+}
+
+.poster-mask {
+	background: rgba(12, 13, 9, 0.42);
+}
+
+.card-swiper {
+	position: relative;
+	z-index: 2;
+	height: 300rpx;
+}
+
+.poster-slide {
+	box-sizing: border-box;
+	padding: 22rpx 14rpx 28rpx;
+}
+
+.poster-card {
+	position: relative;
 	width: 100%;
-	white-space: nowrap;
+	height: 100%;
+	overflow: hidden;
+	border: 4rpx solid transparent;
+	border-radius: 14rpx;
+	box-sizing: border-box;
+	transform: scale(0.88);
+	transition: transform 0.25s ease, border-color 0.25s ease;
+	box-shadow: 0 12rpx 28rpx rgba(0, 0, 0, 0.28);
 }
 
-.poster-list {
-	display: inline-flex;
-	align-items: flex-start;
-	gap: 20rpx;
-	padding: 16rpx 30rpx 20rpx;
-}
-
-.poster-item {
-	width: 136rpx;
-	display: inline-flex;
-	flex-direction: column;
-	align-items: center;
+.poster-card.active {
+	border-color: #fff;
+	transform: scale(1);
 }
 
 .poster-image {
-	width: 132rpx;
-	height: 184rpx;
-	display: block;
-	box-sizing: border-box;
-	border: 4rpx solid transparent;
-	border-radius: 14rpx;
-	background: var(--tt-bg);
-}
-
-.poster-item.active .poster-image {
-	border-color: var(--tt-primary);
-}
-
-.poster-name {
 	width: 100%;
-	margin-top: 10rpx;
-	font-size: 21rpx;
-	line-height: 32rpx;
-	text-align: center;
-	color: var(--tt-text-secondary);
+	height: 100%;
+	display: block;
 }
 
-.poster-item.active .poster-name {
-	font-weight: 650;
-	color: var(--tt-primary-strong);
+.poster-tag {
+	position: absolute;
+	left: 0;
+	top: 14rpx;
+	z-index: 2;
+	padding: 5rpx 14rpx;
+	border-radius: 0 18rpx 18rpx 0;
+	background: linear-gradient(132deg, #1c1c1c, #363636, #ecbe60);
+	font-size: 19rpx;
+	color: #fff;
 }
 
-.movie-summary {
+.movie-info {
 	display: flex;
+	flex-direction: column;
 	align-items: center;
-	gap: 20rpx;
-	padding: 18rpx 30rpx 24rpx;
+	padding: 20rpx 30rpx 22rpx;
+	text-align: center;
 	background: #fff;
 }
 
-.movie-summary-copy {
-	min-width: 0;
-	flex: 1;
+.movie-meta-row {
+	width: 100%;
 	display: flex;
-	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	margin-top: 6rpx;
 }
 
 .movie-name {
@@ -389,7 +429,7 @@ export default {
 }
 
 .movie-meta {
-	margin-top: 5rpx;
+	max-width: 620rpx;
 	font-size: 21rpx;
 	line-height: 32rpx;
 	color: var(--tt-text-muted);
@@ -401,29 +441,8 @@ export default {
 }
 
 .session-section {
-	padding: 0 30rpx calc(30rpx + env(safe-area-inset-bottom));
-	background: #fff;
-}
-
-.section-heading {
-	display: flex;
-	align-items: center;
-	gap: 13rpx;
-	padding: 28rpx 0 8rpx;
-}
-
-.section-mark {
-	width: 7rpx;
-	height: 32rpx;
-	border-radius: 6rpx;
-	background: var(--tt-primary);
-}
-
-.section-title {
-	font-size: 32rpx;
-	font-weight: 720;
-	line-height: 44rpx;
-	color: var(--tt-text);
+	padding: 18rpx 24rpx calc(30rpx + env(safe-area-inset-bottom));
+	background: var(--tt-bg);
 }
 
 .session-list {

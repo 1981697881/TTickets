@@ -8,10 +8,9 @@
       role="dialog"
       aria-modal="true"
       :aria-label="ariaLabel"
-      @touchmove.stop.prevent="preventScroll"
     >
-      <view class="safe-popup__mask" @tap="onMaskTap"></view>
-      <view class="safe-popup__panel" :style="panelStyle" @tap.stop>
+      <view class="safe-popup__mask" @tap="onMaskTap" @touchmove.stop.prevent="preventScroll"></view>
+      <view class="safe-popup__panel" :style="panelStyle" @tap.stop @touchmove.stop>
         <slot></slot>
       </view>
     </view>
@@ -85,7 +84,7 @@ export default {
       return this.modelValue === undefined ? Boolean(this.value) : Boolean(this.modelValue);
     },
     panelStyle() {
-      return this.type === 'center' ? { maxWidth: this.maxWidth } : {};
+      return ['center', 'left', 'right'].includes(this.type) ? { maxWidth: this.maxWidth } : {};
     }
   },
   watch: {
@@ -140,6 +139,10 @@ export default {
 <style lang="scss" scoped>
 .safe-popup {
   position: fixed;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   inset: 0;
   display: flex;
   width: 100vw;
@@ -151,6 +154,10 @@ export default {
 
 .safe-popup__mask {
   position: absolute;
+  top: 0;
+  right: 0;
+  bottom: 0;
+  left: 0;
   inset: 0;
   background: rgba(16, 17, 13, 0.58);
   animation: safe-popup-fade 180ms ease-out both;
@@ -162,9 +169,13 @@ export default {
   width: calc(100vw - 64rpx);
   max-height: calc(100vh - 160rpx);
   max-height: calc(100dvh - 160rpx);
-  overflow: auto;
+  min-height: 0;
+  overflow-x: hidden;
+  overflow-y: auto;
   box-sizing: border-box;
   -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  touch-action: pan-y;
   animation: safe-popup-in 220ms cubic-bezier(0.2, 0.8, 0.2, 1) both;
 }
 
@@ -177,6 +188,11 @@ export default {
 
 .safe-popup--bottom {
   align-items: flex-end;
+  justify-content: center;
+}
+
+.safe-popup--top {
+  align-items: flex-start;
   justify-content: center;
 }
 
@@ -193,11 +209,46 @@ export default {
   animation-name: safe-popup-up;
 }
 
+.safe-popup--top .safe-popup__panel {
+  width: 100%;
+  max-width: 750rpx;
+  max-height: calc(100vh - env(safe-area-inset-bottom) - 80rpx);
+  max-height: calc(100dvh - env(safe-area-inset-bottom) - 80rpx);
+  margin: 0 auto;
+  padding-top: constant(safe-area-inset-top);
+  padding-top: env(safe-area-inset-top);
+  background: #fff;
+  border-radius: 0 0 30rpx 30rpx;
+  animation-name: safe-popup-down;
+}
+
+.safe-popup--left,
+.safe-popup--right {
+  align-items: stretch;
+}
+
+.safe-popup--left { justify-content: flex-start; }
+.safe-popup--right { justify-content: flex-end; }
+
+.safe-popup--left .safe-popup__panel,
+.safe-popup--right .safe-popup__panel {
+  width: 100%;
+  height: 100%;
+  max-height: none;
+  background: #fff;
+}
+
+.safe-popup--left .safe-popup__panel { animation-name: safe-popup-from-left; }
+.safe-popup--right .safe-popup__panel { animation-name: safe-popup-from-right; }
+
 .safe-popup--plain .safe-popup__panel { background: transparent; }
 
 @keyframes safe-popup-fade { from { opacity: 0; } to { opacity: 1; } }
 @keyframes safe-popup-in { from { opacity: 0; transform: scale(0.96) translateY(12rpx); } to { opacity: 1; transform: none; } }
 @keyframes safe-popup-up { from { transform: translateY(100%); } to { transform: translateY(0); } }
+@keyframes safe-popup-down { from { transform: translateY(-100%); } to { transform: translateY(0); } }
+@keyframes safe-popup-from-left { from { transform: translateX(-100%); } to { transform: translateX(0); } }
+@keyframes safe-popup-from-right { from { transform: translateX(100%); } to { transform: translateX(0); } }
 
 /* #ifdef H5 */
 @media (prefers-reduced-motion: reduce) {

@@ -60,13 +60,18 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .modal-box {
 	width: 750rpx;
 	height: 700rpx;
+	height: min(700rpx, calc(100vh - 120rpx));
+	height: min(700rpx, calc(100dvh - 120rpx));
+	display: flex;
+	flex-direction: column;
 	border-radius: 30rpx 30rpx 0 0;
 	background: #fff;
 	padding: 30rpx;
+	box-sizing: border-box;
 
 	.serve-btn {
 		width: 690rpx;
@@ -78,6 +83,7 @@ export default {
 	}
 
 	.modal-head {
+		flex-shrink: 0;
 		margin-bottom: 30rpx;
 
 		.head-title {
@@ -92,6 +98,10 @@ export default {
 	}
 
 	.modal-content {
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
 		.radio-item {
 			width: 100%;
 			padding: 10rpx 0;
@@ -103,7 +113,8 @@ export default {
 			}
 		}
 	}
-	.uni-radio-input-checked {
+	.modal-foot { flex-shrink: 0; }
+	:deep(.uni-radio-input-checked) {
 		background-color: #f37b1d !important;
 		border: #f37b1d !important;
 	}

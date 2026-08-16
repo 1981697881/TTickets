@@ -378,7 +378,7 @@ export default {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .size-box {
 	line-height: 82rpx;
 	background: #fff;
@@ -401,9 +401,15 @@ export default {
 .shop-modal {
 	width: 750upx;
 	height: 950rpx;
+	height: min(950rpx, calc(100vh - 100rpx));
+	height: min(950rpx, calc(100dvh - 100rpx));
+	display: flex;
+	flex-direction: column;
 	background: rgba(255, 255, 255, 1);
 	border-radius: 30rpx 30rpx 0 0 !important;
 	padding: 60upx 20upx 30rpx;
+	box-sizing: border-box;
+	overflow: hidden;
 
 	.cuIcon-roundclosefill {
 		font-size: 34rpx;
@@ -414,6 +420,7 @@ export default {
 	}
 
 	.top {
+		flex-shrink: 0;
 		margin-bottom: 50upx;
 
 		.shop-img {
@@ -463,6 +470,13 @@ export default {
 		}
 	}
 
+	.content_box {
+		flex: 1;
+		min-height: 0;
+		overflow-y: auto;
+		-webkit-overflow-scrolling: touch;
+	}
+
 	.select-box {
 		margin-bottom: 25upx;
 
@@ -509,6 +523,7 @@ export default {
 }
 
 .btn-box {
+	flex-shrink: 0;
 	height: 100rpx;
 
 	.cu-btn {

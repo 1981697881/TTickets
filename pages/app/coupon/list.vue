@@ -1,5 +1,5 @@
 <template>
-	<view class="page_box">
+	<view class="page_box user-subpage user-coupon-page">
 		<view class="head_box">
 			<view class="coupon-nav x-f">
 				<view class="nav-item y-f" v-for="nav in couponsState" :key="nav.id" @tap="onNav(nav.id)">
@@ -72,7 +72,6 @@ export default {
 		onNav(id) {
 			this.stateCurrent = id;
 			this.couponList = [];
-			console.log(this.stateCurrent)
 			if (this.stateCurrent == 0) {
 				this.listParams.couponType = 0;
 				this.listParams.status = 0;
@@ -115,7 +114,6 @@ export default {
 			let that = this;
 			that.$api('coupons.couponIssueList', that.listParams).then(res => {
 				if (res.flag) {
-					console.log(res.data)
 					that.couponList = res.data;
 				}
 			});
@@ -123,15 +121,10 @@ export default {
 		//跳转优惠券详情
 		toCouponDetail(val) {
 			let obj = {};
-			let data = {...val}
-			data.stateCurrent = this.stateCurrent
-			if(isNaN(data.startDate)){
-				data.startDate = Date.parse(data.startDate.replace(/-/g, "/"))
-				data.endDate = Date.parse(data.endDate.replace(/-/g, "/"))
-			}else{
-				data.startDate = Date.parse(data.startDate)
-				data.endDate = Date.parse(data.endDate)
-			}
+			let data = { ...val };
+			data.stateCurrent = this.stateCurrent;
+			data.startDate = this.parseCouponDate(data.startDate);
+			data.endDate = this.parseCouponDate(data.endDate);
 			obj.detail = JSON.stringify([data]);
 			this.jump('/pages/app/coupon/detail', obj);
 			/* if (data.user_coupons_id) {
@@ -139,6 +132,13 @@ export default {
 			} else {
 				this.jump('/pages/app/coupon/detail', { id: data.id });
 			} */
+		},
+		parseCouponDate(value) {
+			if (value === null || value === undefined || value === '') return value;
+			if (typeof value === 'number') return value;
+
+			const timestamp = Date.parse(String(value).replace(/-/g, '/'));
+			return Number.isNaN(timestamp) ? value : timestamp;
 		}
 	}
 };

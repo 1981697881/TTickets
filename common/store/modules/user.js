@@ -20,7 +20,7 @@ const state = {
 	userInfo: uni.getStorageSync('userInfo') ? uni.getStorageSync('userInfo') : {},
 	showLoginTip: false,
 	orderNum: {},
-	balInfo: uni.getStorageSync('balInfo'),
+	balInfo: uni.getStorageSync('balInfo') || {},
 	storeInfo: uni.getStorageSync('storeInfo') || {},
 	// #ifdef MP-WEIXIN
 	forceOauth: false,
@@ -105,8 +105,9 @@ const actions = {
 			/* phone: state.userInfo.phoneNumber */
 			api('user.balance2',{placeId: state.storeInfo.v8PlaceId,V8Url: state.storeInfo.v8Url,WechatId: state.userInfo.wechatId,PublicOpenID:state.userInfo.publicOpenId}).then(res => {
 				if(res.flag){
-					commit('BAL_INFO', res.data[0]);
-					uni.setStorageSync('balInfo', res.data[0]);
+					const balInfo = res.data?.[0] || {};
+					commit('BAL_INFO', balInfo);
+					uni.setStorageSync('balInfo', balInfo);
 				}else{
 					commit('BAL_INFO', {});
 					uni.setStorageSync('balInfo', {});
@@ -191,7 +192,7 @@ const mutations = {
 	[USER_INFO](state, data) {
 		state.userInfo = data
 	},[BAL_INFO](state, data) {
-		state.balInfo = data
+		state.balInfo = data || {}
 	},[STORE_INFO](state, data) {
 		state.storeInfo = data || {}
 		if (data && Object.keys(data).length) {
