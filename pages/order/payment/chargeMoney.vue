@@ -3,9 +3,11 @@
 		<scroll-view class="content_box payment-scroll" scroll-y>
 			<view class="payment-content">
 				<view class="order-summary">
-					<view class="coin-media">
-						<image src="/static/imgs/user/menu/arcade-coins.jpg" mode="aspectFit"></image>
-					</view>
+					<image
+						class="goods-img"
+						src="/static/imgs/user/menu/arcade-coins.jpg"
+						mode="aspectFit"
+					></image>
 					<view class="order-copy">
 						<text class="order-name">{{ params.goodsName || '游戏币' }}</text>
 						<text v-if="params.goodsDescribe" class="order-description">{{ params.goodsDescribe }}</text>
@@ -22,24 +24,34 @@
 				<radio-group v-if="payment" class="pay-box" @change="selPay">
 					<label v-if="payment.includes('wechat')" class="pay-item">
 						<view class="pay-info">
-							<view class="pay-icon wechat-icon">
-								<image src="/static/imgs/pay/wei.png" mode="aspectFit"></image>
-							</view>
+							<image
+								class="pay-img"
+								src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/wx_pay.png"
+								mode="aspectFit"
+							></image>
 							<text class="pay-name">微信支付</text>
 						</view>
 						<radio value="wechat" color="#A9B238" class="pay-radio" :checked="payType === 'wechat'"></radio>
 					</label>
 					<label v-if="payment.includes('wallet')" class="pay-item">
 						<view class="pay-info">
-							<view class="pay-icon wallet-icon">
-								<image src="/static/imgs/user/wallet.png" mode="aspectFit"></image>
-							</view>
+							<image
+								class="pay-img"
+								src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/wallet_pay.png"
+								mode="aspectFit"
+							></image>
 							<view class="wallet-copy">
 								<text class="pay-name">余额支付</text>
 								<text class="balance">（¥{{ balInfo.Money || '0.00' }}）</text>
 							</view>
 						</view>
-						<radio value="wallet" color="#A9B238" class="pay-radio" :checked="payType === 'wallet'"></radio>
+						<radio
+							value="wallet"
+							color="#A9B238"
+							class="pay-radio"
+							:disabled="!hasBalance"
+							:checked="payType === 'wallet'"
+						></radio>
 					</label>
 				</radio-group>
 			</view>
@@ -55,9 +67,11 @@
 import AppPay from '@/common/app-pay';
 import { mapMutations, mapActions, mapState } from 'vuex';
 import { isIOSPlatform } from '@/common/runtime/system-info';
+import { createLoginRefreshMixin } from '@/common/mixins/login-refresh.js';
 let timer;
 export default {
 	components: {},
+	mixins: [createLoginRefreshMixin('onLoginRefresh')],
 	data() {
 		return {
 			payType: 'wechat',
@@ -79,7 +93,11 @@ export default {
 			payment: state => state.init.initData.payment,
 			storeInfo: state => state.user.storeInfo,
 			balInfo: state => state.user.balInfo || {}
-		})
+		}),
+		hasBalance() {
+			const money = Number(this.balInfo && this.balInfo.Money);
+			return Number.isFinite(money) && money > 0;
+		}
 	},
 	onLoad(options) {
 		timer = null;
@@ -110,12 +128,27 @@ export default {
 		timer = null;
 		this.isSubOrder = false;
 		this.countDown();
+		this.refreshPayContext();
 	},
 	onHide() {
 		timer = null;
 		clearInterval(timer);
 	},
 	methods: {
+		...mapActions(['getUserBalance', 'getUserDetails']),
+		shouldRefreshOnShow() {
+			return Boolean(uni.getStorageSync('token'));
+		},
+		onLoginRefresh() {
+			return this.refreshPayContext();
+		},
+		async refreshPayContext() {
+			if (!uni.getStorageSync('token')) return;
+			try {
+				await this.getUserDetails().catch(() => null);
+				await this.getUserBalance().catch(() => null);
+			} catch (e) {}
+		},
 		payMeal(val) {
 			let that = this;
 			if (that.balInfo.custId) {
@@ -318,26 +351,23 @@ export default {
 
 .order-summary {
 	display: flex;
-	align-items: stretch;
+	align-items: center;
 	min-height: 220rpx;
+	padding: 24rpx;
 	overflow: hidden;
 	background: #fff;
 	border: 1rpx solid var(--tt-border);
 	border-radius: 26rpx;
+	box-sizing: border-box;
 }
 
-.coin-media {
-	width: 220rpx;
-	flex: 0 0 220rpx;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	background: #f8f7f1;
-
-	image {
-		width: 156rpx;
-		height: 156rpx;
-	}
+.goods-img {
+	width: 180rpx;
+	height: 180rpx;
+	flex: 0 0 180rpx;
+	margin-right: 24rpx;
+	background: #f5f5f5;
+	border-radius: 12rpx;
 }
 
 .order-copy {
@@ -347,7 +377,6 @@ export default {
 	flex-direction: column;
 	align-items: flex-start;
 	justify-content: center;
-	padding: 24rpx 26rpx;
 }
 
 .order-name {
@@ -418,13 +447,17 @@ export default {
 }
 
 .pay-box {
+	display: block;
+	width: 100%;
 	overflow: hidden;
 	background: #fff;
 	border: 1rpx solid var(--tt-border);
 	border-radius: 24rpx;
+	box-sizing: border-box;
 }
 
 .pay-item {
+	width: 100%;
 	height: 102rpx;
 	padding: 0 22rpx;
 	display: flex;
@@ -440,31 +473,17 @@ export default {
 
 .pay-info,
 .wallet-copy {
+	min-width: 0;
+	flex: 1;
 	display: flex;
 	align-items: center;
 }
 
-.pay-icon {
-	width: 58rpx;
-	height: 58rpx;
-	margin-right: 18rpx;
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	border-radius: 15rpx;
-
-	image {
-		width: 42rpx;
-		height: 42rpx;
-	}
-}
-
-.wechat-icon {
-	background: #e8f8ea;
-}
-
-.wallet-icon {
-	background: var(--tt-primary-soft);
+.pay-img {
+	width: 40rpx;
+	height: 40rpx;
+	flex: 0 0 40rpx;
+	margin-right: 22rpx;
 }
 
 .pay-name {
@@ -479,6 +498,7 @@ export default {
 }
 
 .pay-radio {
+	flex: 0 0 auto;
 	transform: scale(0.82);
 }
 

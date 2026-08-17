@@ -1,6 +1,6 @@
 /**
  * 兼容微信新基础库：优先用拆分 API，避免 getSystemInfo(Sync) 废弃告警。
- * uni 框架 vendor 内部仍可能调用旧 API，需等 @dcloudio 升级才能消干净。
+ * uni 框架 vendor 的 getSystemTheme 仍可能调用旧 API，构建后由 vite 插件 patch。
  */
 
 function mergeSystemParts() {

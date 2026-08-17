@@ -56,12 +56,14 @@ import { mapState } from 'vuex';
 import tools from '@/common/utils/tools';
 import { normalizePage } from '@/common/utils/pagination';
 import { extractArray } from '@/common/utils/api-data';
+import { createLoginRefreshMixin } from '@/common/mixins/login-refresh.js';
 
 export default {
 	components: {
 		fzUnmovieList,
 		appEmpty
 	},
+	mixins: [createLoginRefreshMixin('onLoginRefresh')],
 	data() {
 		return {
 			cinemaName: '',
@@ -110,7 +112,26 @@ export default {
 	},
 	methods: {
 		getStoredCinemaLinkId() {
-			return this.storeInfo.cinemalinkId || this.storeInfo.cinemaLinkId || null;
+			let store = this.storeInfo || {};
+			if (!store.cinemalinkId && !store.cinemaLinkId) {
+				const cached = uni.getStorageSync('storeInfo');
+				if (cached && (cached.cinemalinkId || cached.cinemaLinkId)) {
+					this.$store.commit('STORE_INFO', cached);
+					store = cached;
+				}
+			}
+			return store.cinemalinkId || store.cinemaLinkId || null;
+		},
+		shouldRefreshOnShow() {
+			const hasToken = Boolean(uni.getStorageSync('token'));
+			const hasLink = Boolean(this.listParams.cinemalinkId || this.getStoredCinemaLinkId());
+			return hasToken && hasLink && !this.goodsList.length && !this.isLoading;
+		},
+		onLoginRefresh() {
+			if (!this.listParams.cinemalinkId) {
+				this.listParams.cinemalinkId = this.getStoredCinemaLinkId();
+			}
+			return this.init();
 		},
 		async init() {
 			this.listParams.page = 1;

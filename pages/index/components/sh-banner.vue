@@ -1,7 +1,6 @@
 <template>
 	<!-- 轮播 -->
 	<view class="banner-swiper-box" v-if="detail.list && detail.list.length">
-		<canvas canvas-id="colorThief" class="hide-canvas"></canvas>
 		<swiper class="banner-carousel app-selector-rect" circular @change="swiperChange" :autoplay="detail.list.length > 1" :interval="4200">
 			<swiper-item v-for="(item, index) in detail.list" :key="index" class="carousel-item " @tap="routerTo(item.path)">
 				<image class="swiper-image " :src="item.image" mode="scaleToFill" lazy-load></image>
@@ -14,14 +13,11 @@
 </template>
 
 <script>
-import colorThief from 'miniapp-color-thief';
-
 export default {
 	components: {},
 	data() {
 		return {
 			swiperCurrent: 0, //轮播下标
-			webviewId: 0,
 			routerTo: this.$tools.routerTo
 		};
 	},
@@ -31,26 +27,10 @@ export default {
 			default: () => ({ list: [] })
 		}
 	},
-	computed: {},
-	created() {
-		/* this.initBgColor(); */
-	},
 	methods: {
-		// 轮播切换
 		swiperChange(e) {
 			this.swiperCurrent = e.detail.current;
-			/* this.initBgColor(); */
 		},
-		// 初始化背景颜色，轮播图没滚动前
-		initBgColor() {
-			if (this.detail.list[this.swiperCurrent].bgcolor) {
-				let bgcolor = this.detail.list[this.swiperCurrent].bgcolor;
-			} else {
-				let bgcolor = '';
-			}
-			this.$emit('getbgcolor', bgcolor);
-		},
-		// 路由跳转
 		jump(path, parmas) {
 			this.$Router.push({
 				path: path,
@@ -62,13 +42,6 @@ export default {
 </script>
 
 <style lang="scss">
-.hide-canvas {
-	position: fixed !important;
-	top: -99999upx;
-	left: -99999upx;
-	z-index: -99999;
-}
-
 // 轮播
 .banner-swiper-box {
 	background: transparent;

@@ -133,7 +133,12 @@ export default class Wechat {
 		});
 
 		if (!res.flag) throw new Error(res.msg || '微信登录失败');
-		return res.data;
+		const data = res.data;
+		if (typeof data === 'string') return data;
+		if (data && typeof data === 'object') {
+			return data.token || data.accessToken || data.access_token || data;
+		}
+		return data;
 	}
 
 	// 小程序更新

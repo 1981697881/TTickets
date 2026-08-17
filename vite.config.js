@@ -209,6 +209,43 @@ function patchMpAssetsJs(inputDir, outputDir, cdn) {
   return true;
 }
 
+function patchVendorDeprecatedSystemInfo(outputDir) {
+  if (!isMpOutput(outputDir)) return false;
+  const vendorPath = path.join(outputDir, 'common', 'vendor.js');
+  if (!fs.existsSync(vendorPath)) return false;
+  let code = fs.readFileSync(vendorPath, 'utf8');
+  const before = code;
+  // 开发未压缩：getAppBaseInfo 已取到 theme 后仍调用 getSystemInfoSync
+  code = code.replace(
+    /function getSystemTheme\(\)\s*\{[\s\S]*?return normalizeThemeMode\(theme2\);\s*\}/,
+    `function getSystemTheme() {
+  let theme2 = "light";
+  try {
+    if (typeof index$1 !== "undefined" && typeof index$1.getAppBaseInfo === "function") {
+      const appBaseInfo = index$1.getAppBaseInfo() || {};
+      if (appBaseInfo.theme) {
+        return normalizeThemeMode(appBaseInfo.theme);
+      }
+    } else if (typeof index$1 !== "undefined" && typeof index$1.getSystemInfoSync === "function") {
+      const systemInfo2 = index$1.getSystemInfoSync() || {};
+      if (systemInfo2.theme) theme2 = systemInfo2.theme;
+    }
+  } catch (e2) {
+    theme2 = "light";
+  }
+  return normalizeThemeMode(theme2);
+}`
+  );
+  // 生产压缩：有 getAppBaseInfo 时不再回落 getSystemInfoSync（会触发废弃告警）
+  code = code.replace(
+    /typeof ([A-Za-z_$][\w$]*)\.getAppBaseInfo\)\{const ([A-Za-z_$][\w$]*)=\1\.getAppBaseInfo\(\)\|\|\{\};\2\.theme&&\(([A-Za-z_$][\w$]*)=\2\.theme\)\}if\(void 0!==\1&&"function"==typeof \1\.getSystemInfoSync\)\{const ([A-Za-z_$][\w$]*)=\1\.getSystemInfoSync\(\)\|\|\{\};\4\.theme&&\(\3=\4\.theme\)\}/g,
+    'typeof $1.getAppBaseInfo){const $2=$1.getAppBaseInfo()||{};$2.theme&&($3=$2.theme)}else if(void 0!==$1&&"function"==typeof $1.getSystemInfoSync){const $4=$1.getSystemInfoSync()||{};$4.theme&&($3=$4.theme)}'
+  );
+  if (code === before) return false;
+  fs.writeFileSync(vendorPath, code);
+  return true;
+}
+
 function copyStaticAssets() {
   let config;
 
@@ -223,6 +260,7 @@ function copyStaticAssets() {
       const outputDir = path.resolve(process.env.UNI_OUTPUT_DIR || config.build.outDir);
       const cdn = readStaticCdn(inputDir);
       copyReferencedStaticAssets(inputDir, outputDir, { cdn });
+      patchVendorDeprecatedSystemInfo(outputDir);
       rewriteOutputToCdn(outputDir, cdn);
       removePackagedImgs(outputDir, cdn);
     }
@@ -252,6 +290,7 @@ function fixMpHashedAssets() {
     const cdn = readStaticCdn(inputDir);
     copyReferencedStaticAssets(inputDir, outputDir, { cdn });
     patchMpAssetsJs(inputDir, outputDir, cdn);
+    patchVendorDeprecatedSystemInfo(outputDir);
     rewriteOutputToCdn(outputDir, cdn);
     removePackagedImgs(outputDir, cdn);
   }

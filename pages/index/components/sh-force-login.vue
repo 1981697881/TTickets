@@ -35,11 +35,16 @@ export default {
 			 })
 		},
 		async getuserinfo(e) {
-			var wechat = new Wechat();
-			let res = await this.getUserProfile();
-			let token = await wechat.wxMiniProgramLogin(res);
-			store.commit('FORCE_OAUTH', false);
-			this.setTokenAndBack(token);
+			try {
+				var wechat = new Wechat();
+				let res = await this.getUserProfile();
+				let token = await wechat.wxMiniProgramLogin(res);
+				store.commit('FORCE_OAUTH', false);
+				store.commit('LOGIN_TIP', false);
+				await this.setTokenAndBack(token);
+			} catch (error) {
+				uni.showToast({ icon: 'none', title: '未完成授权，请重试' });
+			}
 		},
 		closeAuth() {
 			store.commit('FORCE_OAUTH', false);

@@ -56,6 +56,7 @@
 import fzCircuitMeal from '@/components/fz-circuit-card/fz-circuit-meal.vue';
 import { mapActions, mapState } from 'vuex';
 import { normalizePage } from '@/common/utils/pagination';
+import { createLoginRefreshMixin } from '@/common/mixins/login-refresh.js';
 
 const IMAGE_BASE_URL = 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/';
 
@@ -63,6 +64,7 @@ export default {
 	components: {
 		fzCircuitMeal
 	},
+	mixins: [createLoginRefreshMixin('onLoginRefresh')],
 	data() {
 		return {
 			listParams: {
@@ -90,6 +92,12 @@ export default {
 	},
 	methods: {
 		...mapActions(['getUserBalance']),
+		shouldRefreshOnShow() {
+			return Boolean(uni.getStorageSync('token') && !this.goodsList.length && !this.isLoading);
+		},
+		onLoginRefresh() {
+			return this.init();
+		},
 		async init() {
 			this.listParams.page = 1;
 			this.lastPage = 1;

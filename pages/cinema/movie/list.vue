@@ -36,6 +36,8 @@
 					:box-width="boxWidth"
 					:screen-head-height="screenHeadHeight"
 					:scale-min="scaleMin"
+					:selected-count="SelectNum"
+					:selected-sids="selectedSeatSids"
 					:best-zone-visible="bestZoneVisible"
 					:best-zone-box-style="bestZoneBoxStyle"
 					@choose="onSeatChoose"
@@ -100,6 +102,7 @@ import {
 	isSessionStarted
 } from '@/common/utils/session-date';
 import FzSeatMap from './children/fz-seat-map.vue';
+import { createLoginRefreshMixin } from '@/common/mixins/login-refresh.js';
 
 type SeatCell = {
 	type: number;
@@ -128,6 +131,7 @@ export default defineComponent({
 	components: {
 		FzSeatMap
 	},
+	mixins: [createLoginRefreshMixin('onLoginRefresh', { refreshOnShow: false })],
 	data() {
 		return {
 			// 用运行时路径，避免模板字面量被 Vite 编成 /assets/*.hash（dev 常缺文件）
@@ -204,6 +208,9 @@ export default defineComponent({
 		bestZoneVisible(): boolean {
 			return this.seatRow > 3 && this.seatCol > 4 && this.seatSize > 0 && this.bestZoneBoxStyle.display !== 'none';
 		},
+		selectedSeatSids(): string[] {
+			return (this.optArr || []).map(item => String(item.sid || '')).filter(Boolean);
+		},
 		sessionRawTime(): string {
 			return String(this.head.showDatetime || this.head.sessionsStarttime || '');
 		},
@@ -253,8 +260,10 @@ export default defineComponent({
 				this.boxWidth = e.windowWidth || e.screenWidth || 375;
 				this.safeBottom = getSafeAreaInsets().bottom || this.safeBottom;
 				if (this.seatCol > 0) {
-					const naturalSize = parseInt(String(this.boxWidth / (this.seatCol + 1)), 10);
-					this.seatSize = Math.max(20, Math.min(34, naturalSize));
+					const usable = Math.max(200, this.boxWidth - 28);
+					const naturalSize = Math.floor(usable / this.seatCol);
+					this.seatSize = Math.max(16, Math.min(34, naturalSize));
+					this.updateBestZoneBox();
 				}
 				// #ifdef H5
 				this.scaleMin = 0.95;
@@ -264,6 +273,9 @@ export default defineComponent({
 	},
 	methods: {
 		...mapActions(['getUserBalance']),
+		onLoginRefresh() {
+			return this.initData();
+		},
 		onSeatChoose(payload: { row: number; col: number; seat: SeatCell }) {
 			this.handleChooseSeat(payload.row, payload.col, payload.seat);
 		},
@@ -345,8 +357,10 @@ export default defineComponent({
 					}))
 				);
 			this.seatArray = seatArray;
-			const naturalSize = parseInt(String((this.boxWidth || 375) / (this.seatCol + 1)), 10);
-			this.seatSize = Math.max(20, Math.min(34, naturalSize));
+			// 保证整厅横向尽量入屏；过小不低于 16，过大不超过 34
+			const usable = Math.max(200, (this.boxWidth || 375) - 28);
+			const naturalSize = this.seatCol > 0 ? Math.floor(usable / this.seatCol) : 28;
+			this.seatSize = Math.max(16, Math.min(34, naturalSize));
 			this.initNonSeatPlace();
 		},
 		initNonSeatPlace() {
@@ -382,37 +396,67 @@ export default defineComponent({
 				return;
 			}
 
+			// 以真实有座格子为边界（忽略矩阵左右/前后空白垫格）
+			let minSeatRow = this.seatRow;
+			let maxSeatRow = -1;
 			let minSeatCol = this.seatCol;
 			let maxSeatCol = -1;
-			for (const row of this.seatArray) {
+			for (let r = 0; r < this.seatArray.length; r++) {
+				const row = this.seatArray[r];
+				if (!row) continue;
 				row.forEach((seat, col) => {
 					if (seat && seat.sid) {
+						minSeatRow = Math.min(minSeatRow, r);
+						maxSeatRow = Math.max(maxSeatRow, r);
 						minSeatCol = Math.min(minSeatCol, col);
 						maxSeatCol = Math.max(maxSeatCol, col);
 					}
 				});
 			}
-			if (maxSeatCol < minSeatCol) {
+			if (maxSeatRow < minSeatRow || maxSeatCol < minSeatCol) {
 				this.bestZoneBoxStyle = { display: 'none' };
 				return;
 			}
 
-			// 淘票票式：中间偏前排 × 中间列（接口无最佳区字段，布局后只算一次）
-			const rowStart = Math.max(0, Math.floor(this.seatRow * 0.28));
-			const rowEnd = Math.min(this.seatRow - 1, Math.ceil(this.seatRow * 0.58) - 1);
+			/**
+			 * 淘票票 / 猫眼常见做法（接口通常无区域字段，前端几何估算）：
+			 * - 纵向：银幕方向「中间偏前」——落在有座进深约 22%～52%（避开最前几排与后区）
+			 * - 横向：居中约 60% 座区（左右各裁约 20%）
+			 * - 与「推荐选座」独立：框只做视觉引导，不改选座算法
+			 */
+			const rowSpan = maxSeatRow - minSeatRow + 1;
 			const colSpan = maxSeatCol - minSeatCol + 1;
-			const colStart = minSeatCol + Math.floor(colSpan * 0.18);
-			const colEnd = minSeatCol + Math.ceil(colSpan * 0.82) - 1;
+			let rowStart = minSeatRow + Math.floor(rowSpan * 0.22);
+			let rowEnd = minSeatRow + Math.ceil(rowSpan * 0.52) - 1;
+			let colStart = minSeatCol + Math.floor(colSpan * 0.2);
+			let colEnd = minSeatCol + Math.ceil(colSpan * 0.8) - 1;
+
+			// 至少覆盖 2 排 × 4 座，避免小厅框过碎
+			if (rowEnd - rowStart < 1) {
+				rowEnd = Math.min(maxSeatRow, rowStart + 1);
+			}
+			if (colEnd - colStart < 3) {
+				const mid = Math.floor((minSeatCol + maxSeatCol) / 2);
+				colStart = Math.max(minSeatCol, mid - 2);
+				colEnd = Math.min(maxSeatCol, colStart + 3);
+			}
+			rowStart = Math.max(minSeatRow, Math.min(rowStart, maxSeatRow));
+			rowEnd = Math.max(rowStart, Math.min(rowEnd, maxSeatRow));
+			colStart = Math.max(minSeatCol, Math.min(colStart, maxSeatCol));
+			colEnd = Math.max(colStart, Math.min(colEnd, maxSeatCol));
 
 			const cell = this.seatSize;
 			const gap = this.seatRowGap;
 			const screenH = this.screenHeadHeight;
 			const gridWidth = this.seatCol * cell;
-			const gridLeft = (this.boxWidth - gridWidth) / 2;
-			const top = screenH + rowStart * (cell + gap) - 4;
-			const height = Math.max(cell, (rowEnd - rowStart + 1) * (cell + gap) - gap + 8);
-			const left = gridLeft + colStart * cell - 4;
-			const width = Math.max(cell, (colEnd - colStart + 1) * cell + 8);
+			const contentWidth = Math.max(this.boxWidth, gridWidth + 24);
+			const gridLeft = (contentWidth - gridWidth) / 2;
+			// 框顶预留文案带，避免「最佳观影区」压到上一排座位
+			const tipBand = 16;
+			const top = screenH + rowStart * (cell + gap) - tipBand;
+			const height = Math.max(cell, (rowEnd - rowStart + 1) * (cell + gap) - gap + 4) + tipBand;
+			const left = gridLeft + colStart * cell - 2;
+			const width = Math.max(cell, (colEnd - colStart + 1) * cell + 4);
 
 			this.bestZoneBoxStyle = {
 				top: `${top}px`,

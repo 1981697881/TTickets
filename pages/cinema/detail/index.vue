@@ -72,6 +72,7 @@
 import MoteLinesDivide from '@/components/mote-lines-divide/mote-lines-divide';
 import fzDetailGallery from './children/fz-detail-gallery.vue';
 import appSkeletons from '@/components/app-skeletons/app-skeletons.vue';
+import { createLoginRefreshMixin } from '@/common/mixins/login-refresh.js';
 
 export default {
 	components: {
@@ -79,6 +80,7 @@ export default {
 		fzDetailGallery,
 		appSkeletons
 	},
+	mixins: [createLoginRefreshMixin('onLoginRefresh')],
 	data() {
 		return {
 			filmId: '',
@@ -96,6 +98,12 @@ export default {
 		if (this.filmId) uni.$emit('escUpload', { filmId: this.filmId });
 	},
 	methods: {
+		shouldRefreshOnShow() {
+			return Boolean(this.filmId && !this.goodsInfo.filmId && !this.isLoading);
+		},
+		onLoginRefresh() {
+			return this.getMovieDetail();
+		},
 		goHome() {
 			uni.switchTab({ url: '/pages/index/circuit' });
 		},

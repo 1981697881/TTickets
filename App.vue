@@ -99,6 +99,21 @@ export default {
 		await this.setAppInfo();
 		/* let local = await this.getAppLocal();
 		await this.getLocation(local); */
+		// 真机重编译后 Vuex 初始可能丢门店，启动时再灌一次本地缓存
+		try {
+			const cachedStore = uni.getStorageSync('storeInfo');
+			if (cachedStore && typeof cachedStore === 'object' && Object.keys(cachedStore).length) {
+				this.$store.commit('STORE_INFO', cachedStore);
+			}
+			const cachedBal = uni.getStorageSync('balInfo');
+			if (cachedBal && typeof cachedBal === 'object') {
+				this.$store.commit('BAL_INFO', cachedBal);
+			}
+			const cachedUser = uni.getStorageSync('userInfo');
+			if (cachedUser && typeof cachedUser === 'object' && Object.keys(cachedUser).length) {
+				this.$store.commit('USER_INFO', cachedUser);
+			}
+		} catch (e) {}
 		// 模板缓存秒开 + init 并行；登录/路由不挡首屏
 		const [, init] = await Promise.all([
 			this.getTemplate(options),
@@ -131,6 +146,7 @@ export default {
 @import 'uview-plus/index.scss';
 @import 'static/style/design-system.scss';
 @import 'static/style/overlay-system.scss';
+@import 'static/style/_theme.scss';
 // user-center.scss 仅用户分包页使用，已下沉到各 user-subpage，避免进主包 app.wxss
 // 其他scss集成在uni.scss,(变量,class,minix)
 

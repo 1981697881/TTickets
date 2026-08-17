@@ -108,6 +108,7 @@ import FzCircuitMinicard from '@/components/fz-circuit-card/fz-circuit-minicard.
 import appEmpty from '@/components/app-empty/app-empty.vue';
 import { normalizePage, mergeUnique, createRequestGate } from '@/common/utils/pagination';
 import { getSystemInfoSafe } from '@/common/runtime/system-info';
+import { createLoginRefreshMixin } from '@/common/mixins/login-refresh.js';
 
 type MovieItem = {
 	filmId?: string | number;
@@ -134,6 +135,7 @@ export default defineComponent({
 		FzCircuitMinicard,
 		appEmpty
 	},
+	mixins: [createLoginRefreshMixin('onLoginRefresh')],
 	data() {
 		return {
 			cardInfo: {} as MovieItem,
@@ -214,6 +216,17 @@ export default defineComponent({
 		getStoredCinemaLinkId() {
 			const store = (this as any).storeInfo || {};
 			return store.cinemalinkId || store.cinemaLinkId || null;
+		},
+		shouldRefreshOnShow() {
+			const hasToken = Boolean(uni.getStorageSync('token'));
+			const hasLink = Boolean(this.listParams.cinemalinkId || this.getStoredCinemaLinkId());
+			return hasToken && hasLink && !this.swiperList.length && !this.isLoading;
+		},
+		onLoginRefresh() {
+			if (!this.listParams.cinemalinkId) {
+				this.listParams.cinemalinkId = this.getStoredCinemaLinkId();
+			}
+			return this.getCinemaList();
 		},
 		getScrHeight() {
 			getSystemInfoSafe({

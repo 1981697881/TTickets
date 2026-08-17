@@ -1,6 +1,7 @@
-/* shopro主题颜色 */
+/* shopro 主题色：用 class，避免组件 wxss 禁用 #id 选择器 */
+
 /* 深黑 */
-#dark-theme {
+.theme-dark {
 	background: #000;
 	.bColor {
 		background: #333;
@@ -12,7 +13,7 @@
 }
 
 /* 粉红 */
-#red-theme {
+.theme-red {
 	background: #f9e5ee;
 	.bColor {
 		background: #f9e5ee;
@@ -22,8 +23,9 @@
 		border-color: #8e5a54;
 	}
 }
+
 /* 橘黄 */
-#yellow-theme {
+.theme-yellow {
 	background: #f6e1c9;
 	.bColor {
 		background: #f6e1c9;

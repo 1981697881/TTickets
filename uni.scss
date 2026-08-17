@@ -62,5 +62,5 @@ $box-shadow: 0 20rpx 20rpx -20rpx rgba($color: #333, $alpha: 0.1);
 @import '@/static/style/_variables.scss';
 @import '@/static/style/_utils.scss';
 @import '@/static/style/_mixin.scss';
-@import '@/static/style/_theme.scss';
+/* _theme.scss 含 #id 选择器，不可经 uni.scss 注入到组件 wxss（微信会告警） */
 

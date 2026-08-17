@@ -3,6 +3,7 @@ import api from '@/common/request/index'
 import store from '@/common/store'
 import router from '@/common/router.js'
 import tools from '@/common/utils/tools'
+import { normalizeAuthToken } from '@/common/mixins/login-refresh.js'
 
 import {
 	USER_INFO,
@@ -30,20 +31,53 @@ const state = {
 }
 
 const actions = {
-	//设置token并返回上次页面
-	setTokenAndBack({
+	//设置token并返回上次页面；同页授权时只发 login-success 刷新，不强制跳转
+	async setTokenAndBack({
 		commit
-	}, token) {
-		uni.setStorageSync('token', token);
-		store.dispatch('getUserDetails');
-		let fromLogin = uni.getStorageSync('fromLogin');
-		if (fromLogin) {
-			tools.routerTo(fromLogin.path, fromLogin.query, true);
-			uni.removeStorageSync('fromLogin')
-		} else {
-			//默认跳转首页S
-			router.replaceAll('/pages/index/index')
+	}, tokenPayload) {
+		const token = normalizeAuthToken(tokenPayload);
+		if (!token) {
+			uni.showToast({ icon: 'none', title: '登录凭证异常，请重试' });
+			return;
 		}
+		uni.setStorageSync('token', token);
+		commit('LOGIN_TIP', false);
+		// #ifdef MP-WEIXIN
+		commit('FORCE_OAUTH', false);
+		uni.showTabBar();
+		// #endif
+		try {
+			await store.dispatch('getUserDetails');
+		} catch (e) {
+			// 详情失败不阻断；页面仍可凭 token 继续
+		}
+		uni.$emit('login-success', { token });
+
+		const fromLogin = uni.getStorageSync('fromLogin');
+		if (fromLogin && fromLogin.path) {
+			uni.removeStorageSync('fromLogin');
+			// 同路径授权：留在当前页，交给 login-success / onShow 刷新
+			try {
+				const pages = getCurrentPages();
+				const cur = pages && pages.length ? pages[pages.length - 1] : null;
+				const curRoute = cur && cur.route ? `/${cur.route}` : '';
+				const target = String(fromLogin.path || '').split('?')[0];
+				if (curRoute && target && (curRoute === target || curRoute.endsWith(target.replace(/^\//, '')))) {
+					return;
+				}
+			} catch (e) {}
+			tools.routerTo(fromLogin.path, fromLogin.query, true);
+			return;
+		}
+		// 登录页完成登录且无回跳地址 → 回首页；弹窗授权则留在当前页
+		try {
+			const pages = getCurrentPages();
+			const cur = pages && pages.length ? pages[pages.length - 1] : null;
+			const route = cur && cur.route ? String(cur.route) : '';
+			if (route.includes('public/login')) {
+				router.replaceAll('/pages/index/index');
+			}
+		} catch (e) {}
 	},
 
 	// 获取用户信息
@@ -90,7 +124,10 @@ const actions = {
 					commit('USER_INFO', res.data);
 					uni.setStorageSync('userInfo', res.data);
 				}else{
-					commit('LOGIN_TIP', true);
+					// 有 token 时资料失败不强制再弹授权，避免「授权完又弹窗、列表不刷」
+					if (!uni.getStorageSync('token')) {
+						commit('LOGIN_TIP', true);
+					}
 				}
 				resolve(res)
 			}).catch(e => {
@@ -99,26 +136,47 @@ const actions = {
 		})
 	},// 获取用户余额
 	getUserBalance({
-		commit
+		commit,
+		state
 	}) {
 		return new Promise((resolve, reject) => {
-			/* phone: state.userInfo.phoneNumber */
-			api('user.balance2',{placeId: state.storeInfo.v8PlaceId,V8Url: state.storeInfo.v8Url,WechatId: state.userInfo.wechatId,PublicOpenID:state.userInfo.publicOpenId}).then(res => {
-				if(res.flag){
+			const storeInfo = state.storeInfo || {};
+			const userInfo = state.userInfo || {};
+			// 无门店 / 未登录时不打接口，也不清空本地余额缓存（真机重编译后避免「像未授权」）
+			if (!uni.getStorageSync('token')) {
+				resolve({ flag: false, message: 'no token' });
+				return;
+			}
+			if (!storeInfo.v8PlaceId || !storeInfo.v8Url) {
+				const cached = uni.getStorageSync('storeInfo');
+				if (cached && cached.v8PlaceId && cached.v8Url) {
+					commit('STORE_INFO', cached);
+				} else {
+					resolve({ flag: false, message: 'no store' });
+					return;
+				}
+			}
+			const latestStore = state.storeInfo || {};
+			api('user.balance2', {
+				placeId: latestStore.v8PlaceId,
+				V8Url: latestStore.v8Url,
+				WechatId: userInfo.wechatId,
+				PublicOpenID: userInfo.publicOpenId
+			}).then(res => {
+				if (res.flag) {
 					const balInfo = res.data?.[0] || {};
 					commit('BAL_INFO', balInfo);
 					uni.setStorageSync('balInfo', balInfo);
-				}else{
+				} else {
 					commit('BAL_INFO', {});
 					uni.setStorageSync('balInfo', {});
 				}
-				resolve(res)
+				resolve(res);
 			}).catch(e => {
-				commit('BAL_INFO', {});
-				uni.setStorageSync('balInfo', {});
-				reject(e)
-			})
-		})
+				// 网络失败保留缓存余额，避免整页像未登录
+				reject(e);
+			});
+		});
 	},
 	// 订单信息
 	getOrderNum({
@@ -217,7 +275,7 @@ const mutations = {
 	[OUT_LOGIN](state, data) {
 		uni.removeStorageSync('token');
 		uni.removeStorageSync('userInfo');
-		uni.removeStorageSync('storeInfo');
+		// 门店/影院选择与登录无关，登出时保留，避免电影页授权后丢 cinemalinkId
 		uni.removeStorageSync('cartNum');
 		store.commit('USER_INFO', {});
 		store.commit('CART_LIST', []);

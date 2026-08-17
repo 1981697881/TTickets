@@ -210,12 +210,14 @@ import popupLayer from '@/components/popup-layer/popup-layer';
 import goods from '@/csJson/goods.js';
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex';
 import { extractArray } from '@/common/utils/api-data';
+import { createLoginRefreshMixin } from '@/common/mixins/login-refresh.js';
 
 export default {
 	components: {
 		modal,
 		popupLayer
 	},
+	mixins: [createLoginRefreshMixin('onLoginRefresh', { refreshOnShow: false })],
 	data() {
 		return {
 			goods: [], //所有商品
@@ -295,6 +297,9 @@ export default {
 	},
 	methods: {
 		...mapActions(['getUserBalance','getUserDetails']),
+		onLoginRefresh() {
+			return this.init();
+		},
 		// 初始化
 		async init() {
 			//页面初始化
@@ -302,7 +307,16 @@ export default {
 			const me = this;
 			this.goods = [];
 			try {
-				if (!me.storeInfo || !me.storeInfo.v8PlaceId || !me.storeInfo.v8Url) return;
+				if (!me.storeInfo || !me.storeInfo.v8PlaceId || !me.storeInfo.v8Url) {
+					const cached = uni.getStorageSync('storeInfo');
+					if (cached && cached.v8PlaceId && cached.v8Url) {
+						this.$store.commit('STORE_INFO', cached);
+					}
+				}
+				if (!me.storeInfo || !me.storeInfo.v8PlaceId || !me.storeInfo.v8Url) {
+					uni.showToast({ icon: 'none', title: '请先选择影院门店' });
+					return;
+				}
 				await this.getUserBalance().catch(() => null);
 				const res = await me.$api('goods.lists', {
 					custId: me.balInfo && me.balInfo.custId,

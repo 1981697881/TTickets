@@ -1115,13 +1115,11 @@ export default {
 
 <style lang="scss">
 @import '@/static/style/user-center.scss';
-* {
-	padding: 0;
-	margin: 0;
-}
 
 page {
 	overflow: hidden;
+	padding: 0;
+	margin: 0;
 }
 
 .kefu_container {

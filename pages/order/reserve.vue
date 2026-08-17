@@ -49,14 +49,14 @@
 			<radio-group @change="selPay" class="reserve-card reserve-pay-card">
 				<label class="reserve-pay-row">
 					<view class="reserve-pay-copy">
-						<image class="reserve-pay-icon" src="/static/imgs/pay/wei.png" mode="aspectFit"></image>
+						<image class="reserve-pay-icon" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/wx_pay.png" mode="aspectFit"></image>
 						<text class="reserve-pay-name">微信支付</text>
 					</view>
 					<radio value="wechat" :class="{ checked: payType === 'wechat' }" class="reserve-radio orange" :checked="payType === 'wechat'"></radio>
 				</label>
 				<label class="reserve-pay-row">
 					<view class="reserve-pay-copy">
-						<image class="reserve-pay-icon" src="/static/imgs/user/wallet.png" mode="aspectFit"></image>
+						<image class="reserve-pay-icon" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/wallet_pay.png" mode="aspectFit"></image>
 						<view class="reserve-pay-text">
 							<text class="reserve-pay-name">余额支付</text>
 							<text class="reserve-balance">余额 ¥{{ balanceMoney }}{{ balanceInsufficient ? '，余额不足' : '' }}</text>
@@ -431,9 +431,12 @@ export default {
 		/* this.$isPreviewApi = true */
 		// 支付取消 / 接口失败返回后允许再次点击
 		if (this.orderReady) this.isSubOrder = false;
+		if (uni.getStorageSync('token')) {
+			this.getUserBalance().catch(() => null);
+		}
 	},
 	methods: {
-		...mapActions(['getUserDetails']),
+		...mapActions(['getUserDetails', 'getUserBalance']),
 		formatMoney(value) {
 			const amount = Number(value);
 			if (!Number.isFinite(amount)) return '0.00';

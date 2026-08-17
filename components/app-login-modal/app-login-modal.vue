@@ -92,8 +92,8 @@ export default {
 				const token = await wechat.wxMiniProgramLogin(profile);
 				this.$store.commit('FORCE_OAUTH', false);
 				this.$store.commit('LOGIN_TIP', false);
-				uni.setStorageSync('fromLogin', this.$Route);
-				this.setTokenAndBack(token);
+				// 当前页授权：不写 fromLogin，避免 replaceAll 打断；由 login-success 刷新数据
+				await this.setTokenAndBack(token);
 			} catch (error) {
 				this.$tools.toast('未完成授权，请重试');
 			}
