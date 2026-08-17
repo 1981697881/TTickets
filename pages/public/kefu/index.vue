@@ -1114,6 +1114,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/static/style/user-center.scss';
 * {
 	padding: 0;
 	margin: 0;

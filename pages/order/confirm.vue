@@ -93,11 +93,11 @@
 		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>
 		<!-- 配送方式弹窗 -->
-		<app-modal v-model="showExpressType" :modalType="'bottom-modal'">
-			<block slot="modalContent">
+		<app-modal v-model="showExpressType" modalType="bottom-modal">
+			<template #modalContent>
 				<!-- 配送方式 -->
-				<view class="express-type page_box">
-					<view class="express-type__head head-box">
+				<view class="express-type">
+					<view class="express-type__head">
 						<view
 							class="express-type__head-nav"
 							v-for="(nav, index) in expressType"
@@ -109,7 +109,7 @@
 							<view :class="expressClass" v-show="expressTypeCur === nav.value"></view>
 						</view>
 					</view>
-					<view class="express-type__content content_box">
+					<view class="express-type__content">
 						<view class="empty-address" v-if="!addressId && expressTypeCur !== 'selfetch' && expressTypeCur !== 'autosend'" @tap="jump('/pages/user/address/list', { from: 'order' })">
 							请选择收货地址
 							<text class="cuIcon-right"></text>
@@ -231,26 +231,26 @@
 							</view>
 						</view>
 					</view>
-					<view class="express-type__bottom x-bc" v-if="expressTypeCur !== 'selfetch'">
+					<view class="express-type__bottom" v-if="expressTypeCur !== 'selfetch'">
 						<button class="cu-btn cancel-btn" @tap="hideExpressType">取消</button>
 						<button class="cu-btn save-btn" @tap="saveExpressType">确定</button>
 					</view>
-					<view class="express-type__bottom x-bc" v-if="expressTypeCur == 'selfetch' &&  lat">
+					<view class="express-type__bottom" v-if="expressTypeCur == 'selfetch' &&  lat">
 						<button class="cu-btn cancel-btn" @tap="hideExpressType">取消</button>
 						<button class="cu-btn save-btn" @tap="saveExpressType">确定</button>
 					</view>
 				</view>
-			</block>
+			</template>
 		</app-modal>
 		<!-- 配送时间弹窗 -->
-		<app-modal v-model="showCheckTime" :modalType="'bottom-modal'">
-			<block slot="modalContent">
-				<view class="checkTime-box page_box">
+		<app-modal v-model="showCheckTime" modalType="bottom-modal">
+			<template #modalContent>
+				<view class="checkTime-box">
 					<view class="checkTime-head">
 						选择{{ checkType }}时间
 						<text class="cuIcon-roundclosefill" @tap="showCheckTime = false"></text>
 					</view>
-					<view class="checkTime-content content_box">
+					<view class="checkTime-content">
 						<view class="checkTime-content__left">
 							<view
 								class="left-item x-c"
@@ -275,9 +275,9 @@
 							</view>
 						</scroll-view>
 					</view>
-					<view class=" checkTime-foot x-c"><button class="cu-btn save-btn" @tap="showCheckTime = false">保存并使用</button></view>
+					<view class="checkTime-foot x-c"><button class="cu-btn save-btn" @tap="showCheckTime = false">保存并使用</button></view>
 				</view>
-			</block>
+			</template>
 		</app-modal>
 	</view>
 </template>
@@ -1299,27 +1299,36 @@ export default {
 	}
 	.express-type__bottom {
 		flex-shrink: 0;
-		height: 90rpx;
-		padding: 0 30rpx;
-		.cancel-btn {
-			width: 335rpx;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 20rpx;
+		box-sizing: border-box;
+		width: 100%;
+		min-height: 110rpx;
+		padding: 16rpx 30rpx calc(16rpx + constant(safe-area-inset-bottom));
+		padding: 16rpx 30rpx calc(16rpx + env(safe-area-inset-bottom));
+		background: #fff;
+		.cancel-btn,
+		.save-btn {
+			flex: 1;
+			width: auto;
+			min-width: 0;
 			height: 74rpx;
-			background: rgba(238, 238, 238, 1);
+			margin: 0;
+			padding: 0;
 			border-radius: 37rpx;
 			font-size: 28rpx;
-			font-family: PingFang SC;
 			font-weight: 400;
+			line-height: 74rpx;
+		}
+		.cancel-btn {
+			background: #eeeeee;
 			color: rgba(51, 51, 51, 1);
 		}
 		.save-btn {
-			width: 335rpx;
-			height: 74rpx;
-			background: linear-gradient(90deg, rgba(233, 180, 97, 1), rgba(238, 204, 137, 1));
-			border-radius: 37rpx;
-			font-size: 28rpx;
-			font-family: PingFang SC;
-			font-weight: 400;
-			color: rgba(255, 255, 255, 1);
+			background: var(--tt-primary, #a9b238);
+			color: #fff;
 		}
 	}
 }

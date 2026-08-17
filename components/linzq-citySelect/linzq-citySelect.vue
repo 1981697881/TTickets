@@ -1,7 +1,7 @@
 <template>
 	<view class="wrapper" :style="'top:' + statusBarHeight + 'px'">
 		<view class="header">
-			<view class="back_div"><image class="back_img" @click="back_city()" src="../../static/back_img.png" mode=""></image></view>
+			<view class="back_div"><image class="back_img" @click="back_city()" src="/static/imgs/common/back_img.png" mode=""></image></view>
 			<input class="input" @input="onInput" placeholder="中文/拼音/首字母" v-model="searchValue" />
 		</view>
 		<scroll-view class="calendar-list" scroll-y="true" :scroll-into-view="scrollIntoId">
@@ -12,7 +12,7 @@
 					<view class="dingwei_city">
 						<view class="dingwei_city_one" @click="back_city()">{{ city.cityName }}</view>
 						<view class="dingweis_div" @click="getWarpweft">
-							<image class="dingweis" src="../../static/dingweis.png" mode=""></image>
+							<image class="dingweis" src="/static/imgs/common/dingweis.png" mode=""></image>
 							<text>{{ po_tips }}</text>
 						</view>
 					</view>

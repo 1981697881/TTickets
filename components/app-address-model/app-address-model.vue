@@ -19,7 +19,7 @@
 <script>
 import Wechat from '@/common/wechat/wechat';
 import { mapMutations, mapActions, mapState } from 'vuex';
-import { extractArray, isApiSuccess } from '@/common/utils/api-data';
+import { extractArray } from '@/common/utils/api-data';
 export default {
 	components: {},
 	data() {
@@ -72,8 +72,9 @@ export default {
 			const that = this;
 			const loadStores = location => {
 				that.$api('storesForm', location || {}).then(reso => {
-					const list = extractArray(reso && reso.data);
-					if (!isApiSuccess(reso) && !list.length) return;
+					// 0.5.5：必须 flag，data 为门店数组
+					if (!reso || !reso.flag) return;
+					const list = Array.isArray(reso.data) ? reso.data : extractArray(reso.data);
 					if (list.length === 1) {
 						that.$store.commit('STORE_INFO', list[0]);
 						that.$emit('init');
@@ -178,16 +179,15 @@ export default {
 	bottom: 0;
 	left: 0;
 	width: 100%;
-	height: 100vh;
-	height: 100dvh;
+	height: 100%;
 	overflow-x: hidden;
 	overflow-y: auto;
 	-webkit-overflow-scrolling: touch;
 	z-index: 10900;
+	padding-bottom: calc(32rpx + constant(safe-area-inset-bottom));
 	padding-bottom: calc(32rpx + env(safe-area-inset-bottom));
 	box-sizing: border-box;
 	background: var(--tt-bg);
-	/* background: linear-gradient(180deg, rgba(239, 196, 128, 1) 0%, rgba(248, 220, 165, 1) 25%, rgba(255, 255, 255, 1) 98%); */
 }
 /* #endif */
 </style>

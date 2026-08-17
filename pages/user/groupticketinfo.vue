@@ -69,6 +69,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/static/style/user-center.scss';
 .page_box {
 	background:linear-gradient(90deg, rgba(123, 120, 97, 1), rgba(238, 204, 137, 1), rgba(208, 174, 137, 1));
 }

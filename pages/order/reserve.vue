@@ -1,6 +1,10 @@
 <template>
 	<view class="page_box reserve-page">
 		<view v-if="orderReady" class="reserve-content">
+			<view v-if="sessionDayAlert.show" class="session-day-alert" :class="{ 'is-expired': sessionDayAlert.dayOffset < 0 }">
+				<text class="session-day-alert__tag">{{ sessionDayAlert.title }}</text>
+				<text class="session-day-alert__text">{{ sessionDayAlert.detail }}</text>
+			</view>
 			<!-- 电影票信息使用页面专用结构，避免通用商品卡片固定宽度造成溢出。 -->
 			<view class="reserve-card reserve-movie-card">
 				<view class="reserve-movie-main">
@@ -13,7 +17,7 @@
 								<text>{{ countdownText }}</text>
 							</view>
 						</view>
-						<text class="reserve-session">{{ showDateText }}</text>
+						<text class="reserve-session" :class="{ 'is-non-today': sessionDayAlert.show }">{{ showDateText }}</text>
 						<view class="reserve-meta-row">
 							<text v-if="versionText" class="reserve-version">{{ versionText }}</text>
 							<text class="reserve-hall">{{ hallName }}</text>
@@ -45,7 +49,7 @@
 			<radio-group @change="selPay" class="reserve-card reserve-pay-card">
 				<label class="reserve-pay-row">
 					<view class="reserve-pay-copy">
-						<image class="reserve-pay-icon" src="/static/image/wei.png" mode="aspectFit"></image>
+						<image class="reserve-pay-icon" src="/static/imgs/pay/wei.png" mode="aspectFit"></image>
 						<text class="reserve-pay-name">微信支付</text>
 					</view>
 					<radio value="wechat" :class="{ checked: payType === 'wechat' }" class="reserve-radio orange" :checked="payType === 'wechat'"></radio>
@@ -108,17 +112,17 @@
 		</view>
 		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>
-		<app-modal v-model="showExpressType" :modalType="'bottom-modal'">
-			<block slot="modalContent">
-				<!-- 选择优惠券 -->
-				<view class="express-type coupon-sheet page_box">
-					<view class="express-type__head head-box">
+		<app-modal v-model="showExpressType" modalType="bottom-modal">
+			<template #modalContent>
+				<!-- 选择优惠券：勿用 page_box，否则 min-height:100% + space-between 会把确定挤出可视区 -->
+				<view class="express-type coupon-sheet">
+					<view class="express-type__head">
 						<view class="express-type__head-nav" v-for="(nav, index) in expressType" :key="nav.id" @tap="changeExpressType(nav.value)">
 							<text class="head-nav__title" :class="{ 'head-nav__title--active': expressTypeCur === nav.value }">{{ nav.title }}</text>
 							<view :class="expressClass" v-show="expressTypeCur === nav.value"></view>
 						</view>
 					</view>
-					<view class="express-type__content content_box">
+					<view class="express-type__content">
 						<fz-group-card
 							ref="groupCard"
 							:checkArray="couponArray"
@@ -130,12 +134,12 @@
 						></fz-group-card>
 						<fz-coupon-card ref="couponCard" @changeCoupon="changeCoupon" :pickerData="pickerData.couponList" v-if="expressTypeCur == 'selfetch'"></fz-coupon-card>
 					</view>
-					<view class="express-type__bottom x-bc">
+					<view class="express-type__bottom">
 						<button class="cu-btn cancel-btn" @tap="hideExpressType">取消</button>
 						<button class="cu-btn save-btn" @tap="saveExpressType">确定</button>
 					</view>
 				</view>
-			</block>
+			</template>
 		</app-modal>
 	</view>
 </template>
@@ -145,6 +149,7 @@ import fzGroupCard from './children/fz-group-card.vue';
 import fzCouponCard from './children/fz-coupon-card.vue';
 import AppPay from '@/common/app-pay';
 import { mapActions, mapState } from 'vuex';
+import { formatSessionDisplay, getNonTodaySessionAlert, isSessionStarted, parseShowDatetime } from '@/common/utils/session-date';
 export default {
 	components: {
 		fzGroupCard,
@@ -269,7 +274,10 @@ export default {
 				: 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/zanwu.jpg';
 		},
 		showDateText() {
-			return String(this.scheduleInfo.showDatetime || '场次时间待确认').replace('T', ' ');
+			return formatSessionDisplay(this.scheduleInfo.showDatetime) || '场次时间待确认';
+		},
+		sessionDayAlert() {
+			return getNonTodaySessionAlert(this.scheduleInfo.showDatetime);
 		},
 		versionText() {
 			return [this.scheduleInfo.language, this.scheduleInfo.dimensional].filter(Boolean).join(' ');
@@ -414,12 +422,15 @@ export default {
 			this.$tools.toast('订单信息不完整，请重新选择座位');
 			return;
 		}
+		this.getGoodsList();
 		this.getGroupCoupons();
 		this.getCoupons();
 		this.startOrderTimer();
 	},
 	onShow() {
 		/* this.$isPreviewApi = true */
+		// 支付取消 / 接口失败返回后允许再次点击
+		if (this.orderReady) this.isSubOrder = false;
 	},
 	methods: {
 		...mapActions(['getUserDetails']),
@@ -427,6 +438,30 @@ export default {
 			const amount = Number(value);
 			if (!Number.isFinite(amount)) return '0.00';
 			return amount % 1 === 0 ? String(amount) : amount.toFixed(2);
+		},
+		// 0.5.5：选座确认页拉取可加购套餐
+		getGoodsList() {
+			const me = this;
+			if (!me.storeInfo || !me.storeInfo.v8PlaceId || !me.storeInfo.v8Url) return;
+			me.$api('goods.lists', {
+				custId: me.balInfo && me.balInfo.custId,
+				placeId: me.storeInfo.v8PlaceId,
+				V8Url: me.storeInfo.v8Url
+			}).then(res => {
+				if (res && res.flag) {
+					me.cart = Array.isArray(res.data?.Data) ? res.data.Data : [];
+				}
+			}).catch(() => undefined);
+		},
+		radioChange(evt) {
+			for (let i = 0; i < this.cart.length; i++) {
+				if (String(this.cart[i].PackageId) === String(evt.detail.value)) {
+					this.current = evt.detail.value;
+					this.goodsTitle = `${this.cart[i].PackageName}(${this.cart[i].PackageAmount})元`;
+					this.goodsPrice = this.cart[i].PackageAmount;
+					break;
+				}
+			}
 		},
 		startOrderTimer() {
 			this.clearOrderTimer();
@@ -465,10 +500,7 @@ export default {
 			return fallback;
 		},
 		parseLocalDate(value) {
-			const match = String(value || '').match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})(?:[ T](\d{1,2}):(\d{1,2})(?::(\d{1,2}))?)?/);
-			if (!match) return null;
-			const date = new Date(Number(match[1]), Number(match[2]) - 1, Number(match[3]), Number(match[4] || 0), Number(match[5] || 0), Number(match[6] || 0));
-			return Number.isNaN(date.getTime()) ? null : date;
+			return parseShowDatetime(value);
 		},
 		resetCouponCard(type = this.expressTypeCur) {
 			this.$nextTick(() => {
@@ -499,81 +531,84 @@ export default {
 		},
 		combuy() {
 			let that = this;
-			const showDate = this.parseLocalDate(that.scheduleInfo.showDatetime);
-			if (!showDate) {
+			if (that.isSubOrder || !that.orderReady) return;
+			if (!that.seatCount) {
+				this.$tools.toast('座位信息缺失，请返回重新选座');
+				return;
+			}
+			if (!parseShowDatetime(that.scheduleInfo.showDatetime)) {
 				this.$tools.toast('场次时间格式异常，请重新选择场次');
 				return;
 			}
-			if (new Date().getTime() < showDate.getTime()) {
-				if (that.ticketPaymoney == 0 && this.couponArray.length > 0) {
-					let ticketList = [];
-					that.seatList.forEach(item => {
-						let obj = {};
-						obj.seatId = item.seatId;
-						obj.ticketFee = item.ticketfee;
-						obj.ticketPrice = item.lowestprice;
-						ticketList.push(obj);
-					});
-					if (that.ticketPaymoney == 0) {
-						that.ifCdkeyPay = true;
-						if (that.phoneNumber) {
-							that.isSubOrder = true;
-							that.confirmOrder(ticketList);
-						} else {
-							uni.showToast({
-								icon: 'none',
-								title: '手机号码为必填项'
-							});
-						}
-					} else {
-						if (that.payType == 'wallet') {
-							that.blanBuy(ticketList);
-						} else {
-							that.confirmPay(ticketList);
-						}
-					}
-				} else {
-					that.ifCdkeyPay = false;
-					if (that.payType == 'wallet') {
-						let ticketList = [];
-						that.seatList.forEach((item, index) => {
-							let obj = {};
-							if (index + 1 > that.couponArray.length) {
-								obj.seatId = item.seatId;
-								obj.ticketFee = item.ticketfee;
-								obj.ticketPrice = item.settleprice;
-							} else {
-								obj.seatId = item.seatId;
-								obj.ticketFee = item.ticketfee;
-								obj.ticketPrice = item.lowestprice;
-							}
-							ticketList.push(obj);
-						});
-						that.blanBuy(ticketList);
-					} else {
-						let ticketList = [];
-						that.seatList.forEach((item, index) => {
-							let obj = {};
-							if (index + 1 > that.couponArray.length) {
-								obj.seatId = item.seatId;
-								obj.ticketFee = item.ticketfee;
-								obj.ticketPrice = item.standardprice;
-							} else {
-								obj.seatId = item.seatId;
-								obj.ticketFee = item.ticketfee;
-								obj.ticketPrice = item.lowestprice;
-							}
-							ticketList.push(obj);
-						});
-						that.confirmPay(ticketList);
-					}
-				}
-			} else {
-				that.isSubOrder = true;
+			if (isSessionStarted(that.scheduleInfo.showDatetime)) {
 				uni.showToast({
 					icon: 'none',
 					title: '电影已开场，无法再购票'
 				});
+				return;
+			}
+			if (that.ticketPaymoney == 0 && this.couponArray.length > 0) {
+				let ticketList = [];
+				that.seatList.forEach(item => {
+					let obj = {};
+					obj.seatId = item.seatId;
+					obj.ticketFee = item.ticketfee;
+					obj.ticketPrice = item.lowestprice;
+					ticketList.push(obj);
+				});
+				if (that.ticketPaymoney == 0) {
+					that.ifCdkeyPay = true;
+					if (that.phoneNumber) {
+						that.isSubOrder = true;
+						that.confirmOrder(ticketList);
+					} else {
+						uni.showToast({
+							icon: 'none',
+							title: '手机号码为必填项'
+						});
+					}
+				} else {
+					if (that.payType == 'wallet') {
+						that.blanBuy(ticketList);
+					} else {
+						that.confirmPay(ticketList);
+					}
+				}
+			} else {
+				that.ifCdkeyPay = false;
+				if (that.payType == 'wallet') {
+					let ticketList = [];
+					that.seatList.forEach((item, index) => {
+						let obj = {};
+						if (index + 1 > that.couponArray.length) {
+							obj.seatId = item.seatId;
+							obj.ticketFee = item.ticketfee;
+							obj.ticketPrice = item.settleprice;
+						} else {
+							obj.seatId = item.seatId;
+							obj.ticketFee = item.ticketfee;
+							obj.ticketPrice = item.lowestprice;
+						}
+						ticketList.push(obj);
+					});
+					that.blanBuy(ticketList);
+				} else {
+					let ticketList = [];
+					that.seatList.forEach((item, index) => {
+						let obj = {};
+						if (index + 1 > that.couponArray.length) {
+							obj.seatId = item.seatId;
+							obj.ticketFee = item.ticketfee;
+							obj.ticketPrice = item.standardprice;
+						} else {
+							obj.seatId = item.seatId;
+							obj.ticketFee = item.ticketfee;
+							obj.ticketPrice = item.lowestprice;
+						}
+						ticketList.push(obj);
+					});
+					that.confirmPay(ticketList);
+				}
 			}
 		},
 		selPay(e) {
@@ -619,26 +654,31 @@ export default {
 		// 发起支付
 		confirmPay(confirmParam) {
 			let that = this;
-			if (that.ticketPaymoney > 0) {
-				if (that.phoneNumber) {
-					let params = {
-						ticketId: that.perGoodsList.ticketId,
-						ticketPaymoney: that.ticketPaymoney
-					};
-					let pay = new AppPay(that.payType, that.perGoodsList, null, params, 1, confirmParam, that.couponArray, that.couponId);
-					that.isSubOrder = true;
-					/* that.confirmOrder() */
-				} else {
-					uni.showToast({
-						icon: 'none',
-						title: '手机号码为必填项'
-					});
-				}
-			} else {
+			if (that.isSubOrder) return;
+			if (!(that.ticketPaymoney > 0)) {
 				uni.showToast({
 					icon: 'none',
 					title: '金额不能为零'
 				});
+				return;
+			}
+			if (!that.phoneNumber) {
+				uni.showToast({
+					icon: 'none',
+					title: '手机号码为必填项'
+				});
+				return;
+			}
+			that.isSubOrder = true;
+			let params = {
+				ticketId: that.perGoodsList.ticketId,
+				ticketPaymoney: that.ticketPaymoney
+			};
+			try {
+				new AppPay(that.payType, that.perGoodsList, null, params, 1, confirmParam, that.couponArray, that.couponId);
+			} catch (error) {
+				that.isSubOrder = false;
+				uni.showToast({ icon: 'none', title: '发起支付失败，请重试' });
 			}
 		},
 		jump(path, parmas) {
@@ -702,7 +742,6 @@ export default {
 		//确认订单
 		confirmOrder(array) {
 			let that = this;
-			let ticketList = [];
 			that.isSubOrder = true;
 			uni.$off('escLoack');
 			this.$api('cinema.confirmOrder', {
@@ -718,21 +757,22 @@ export default {
 				if (res.flag) {
 					that.$isPreviewApi = false;
 					uni.hideLoading();
-					/* uni.showToast({
-						icon: 'none',
-						title: res.msg
-					}) */
-					that.jump('/pages/index/wallet', res.data);
+					that.jump('/pages/order/ticket', res.data);
 				} else {
+					that.isSubOrder = false;
+					uni.hideLoading();
 					uni.showModal({
 						title: '提示',
-						content: res.msg
+						content: res.msg || '确认订单失败'
 					});
 				}
+			}).catch(() => {
+				that.isSubOrder = false;
+				uni.hideLoading();
+				uni.showToast({ icon: 'none', title: '确认订单失败，请重试' });
 			});
 		}, //余额购买
 		blanBuy(confirmParam) {
-			let ticketList = [];
 			let that = this;
 			uni.showLoading({ title: '出票中~~为了避免购票失败，请勿退出！' });
 			if (that.phoneNumber) {
@@ -751,13 +791,21 @@ export default {
 					if (res.flag) {
 						that.confirmOrder(confirmParam);
 					} else {
+						that.isSubOrder = false;
+						uni.hideLoading();
 						uni.showToast({
 							icon: 'none',
-							title: res.msg
+							title: res.msg || '扣款失败'
 						});
 					}
+				}).catch(() => {
+					that.isSubOrder = false;
+					uni.hideLoading();
+					uni.showToast({ icon: 'none', title: '扣款失败，请重试' });
 				});
 			} else {
+				that.isSubOrder = false;
+				uni.hideLoading();
 				uni.showToast({
 					icon: 'none',
 					title: '手机号码为必填项'
@@ -1143,6 +1191,7 @@ export default {
 
 .foot_box {
 	min-height: 112rpx;
+	padding: 10rpx 24rpx calc(10rpx + constant(safe-area-inset-bottom));
 	padding: 10rpx 24rpx calc(10rpx + env(safe-area-inset-bottom));
 	justify-content: flex-end;
 	background-color: #fff;
@@ -1177,15 +1226,16 @@ export default {
 // 弹窗之配送方式
 // 配送方式
 .express-type {
-	width: 750rpx;
+	width: 100%;
+	max-width: 750rpx;
 	background-color: #fff;
-	border-radius: 20rpx 20rpx 0 0;
+	border-radius: 30rpx 30rpx 0 0;
 	height: 760rpx;
-	height: min(760rpx, calc(100vh - 100rpx));
-	height: min(760rpx, calc(100dvh - 100rpx));
+	max-height: 100%;
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
+	box-sizing: border-box;
 	.express-type__head {
 		flex-shrink: 0;
 		width: 100%;
@@ -1345,27 +1395,36 @@ export default {
 	}
 	.express-type__bottom {
 		flex-shrink: 0;
-		height: 90rpx;
-		padding: 0 30rpx;
-		.cancel-btn {
-			width: 335rpx;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 20rpx;
+		box-sizing: border-box;
+		width: 100%;
+		min-height: 110rpx;
+		padding: 16rpx 30rpx calc(16rpx + constant(safe-area-inset-bottom));
+		padding: 16rpx 30rpx calc(16rpx + env(safe-area-inset-bottom));
+		background: #fff;
+		.cancel-btn,
+		.save-btn {
+			flex: 1;
+			width: auto;
+			min-width: 0;
 			height: 74rpx;
-			background: #eef0e8;
+			margin: 0;
+			padding: 0;
 			border-radius: 37rpx;
 			font-size: 28rpx;
-			font-family: PingFang SC;
 			font-weight: 400;
+			line-height: 74rpx;
+		}
+		.cancel-btn {
+			background: #eef0e8;
 			color: rgba(51, 51, 51, 1);
 		}
 		.save-btn {
-			width: 335rpx;
-			height: 74rpx;
-			background: var(--tt-primary);
-			border-radius: 37rpx;
-			font-size: 28rpx;
-			font-family: PingFang SC;
-			font-weight: 400;
-			color: rgba(255, 255, 255, 1);
+			background: var(--tt-primary, #a9b238);
+			color: #fff;
 		}
 	}
 }
@@ -1444,15 +1503,16 @@ export default {
 	}
 }
 .express-type {
-	width: 750rpx;
+	width: 100%;
+	max-width: 750rpx;
 	background-color: #fff;
-	border-radius: 20rpx 20rpx 0 0;
+	border-radius: 30rpx 30rpx 0 0;
 	height: 760rpx;
-	height: min(760rpx, calc(100vh - 100rpx));
-	height: min(760rpx, calc(100dvh - 100rpx));
+	max-height: 100%;
 	display: flex;
 	flex-direction: column;
 	overflow: hidden;
+	box-sizing: border-box;
 	.express-type__head {
 		flex-shrink: 0;
 		width: 100%;
@@ -1612,27 +1672,36 @@ export default {
 	}
 	.express-type__bottom {
 		flex-shrink: 0;
-		height: 90rpx;
-		padding: 0 30rpx;
-		.cancel-btn {
-			width: 335rpx;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
+		gap: 20rpx;
+		box-sizing: border-box;
+		width: 100%;
+		min-height: 110rpx;
+		padding: 16rpx 30rpx calc(16rpx + constant(safe-area-inset-bottom));
+		padding: 16rpx 30rpx calc(16rpx + env(safe-area-inset-bottom));
+		background: #fff;
+		.cancel-btn,
+		.save-btn {
+			flex: 1;
+			width: auto;
+			min-width: 0;
 			height: 74rpx;
-			background: #eef0e8;
+			margin: 0;
+			padding: 0;
 			border-radius: 37rpx;
 			font-size: 28rpx;
-			font-family: PingFang SC;
 			font-weight: 400;
+			line-height: 74rpx;
+		}
+		.cancel-btn {
+			background: #eef0e8;
 			color: rgba(51, 51, 51, 1);
 		}
 		.save-btn {
-			width: 335rpx;
-			height: 74rpx;
-			background: var(--tt-primary);
-			border-radius: 37rpx;
-			font-size: 28rpx;
-			font-family: PingFang SC;
-			font-weight: 400;
-			color: rgba(255, 255, 255, 1);
+			background: var(--tt-primary, #a9b238);
+			color: #fff;
 		}
 	}
 }
@@ -1700,6 +1769,51 @@ export default {
 	padding: 24rpx 24rpx 32rpx;
 	box-sizing: border-box;
 	-webkit-overflow-scrolling: touch;
+}
+
+.session-day-alert {
+	display: flex;
+	align-items: flex-start;
+	gap: 14rpx;
+	margin-bottom: 20rpx;
+	padding: 18rpx 20rpx;
+	box-sizing: border-box;
+	border-radius: 16rpx;
+	background: #fff6e8;
+	border: 1rpx solid #f0b35a;
+}
+
+.session-day-alert.is-expired {
+	background: #fff1f0;
+	border-color: #f0a0a0;
+}
+
+.session-day-alert__tag {
+	flex: 0 0 auto;
+	padding: 4rpx 12rpx;
+	border-radius: 999rpx;
+	background: #c45c12;
+	color: #fff;
+	font-size: 20rpx;
+	line-height: 28rpx;
+	font-weight: 700;
+}
+
+.session-day-alert.is-expired .session-day-alert__tag {
+	background: var(--tt-danger, #d84a4a);
+}
+
+.session-day-alert__text {
+	min-width: 0;
+	flex: 1;
+	font-size: 24rpx;
+	line-height: 34rpx;
+	color: #8a4b12;
+	font-weight: 600;
+}
+
+.session-day-alert.is-expired .session-day-alert__text {
+	color: #a33b3b;
 }
 
 .reserve-card {
@@ -1790,6 +1904,11 @@ export default {
 	font-size: 24rpx;
 	line-height: 34rpx;
 	color: var(--tt-text-secondary, #60665a);
+}
+
+.reserve-session.is-non-today {
+	color: #c45c12;
+	font-weight: 700;
 }
 
 .reserve-meta-row {
@@ -2034,6 +2153,7 @@ export default {
 	display: flex;
 	align-items: center;
 	gap: 18rpx;
+	padding: 12rpx 24rpx calc(12rpx + constant(safe-area-inset-bottom));
 	padding: 12rpx 24rpx calc(12rpx + env(safe-area-inset-bottom));
 	box-sizing: border-box;
 	background: rgba(255, 255, 255, 0.98);

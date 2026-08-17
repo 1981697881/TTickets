@@ -155,6 +155,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/static/style/user-center.scss';
 .container {
 	position: relative;
 	width: 100vw;

@@ -17,6 +17,8 @@
 </template>
 
 <script>
+import { getSystemInfoSyncSafe } from '@/common/runtime/system-info';
+
 export default {
 	name: 'appSkeleton',
 	data() {
@@ -55,9 +57,9 @@ export default {
 		}
 	},
 	created() {
-		const res = uni.getSystemInfoSync();
-		this.skeletonWidth = res.windowWidth + 'px';
-		this.skeletonHeight = res.windowHeight + 'px';
+		const res = getSystemInfoSyncSafe();
+		this.skeletonWidth = (res.windowWidth || 375) + 'px';
+		this.skeletonHeight = (res.windowHeight || 800) + 'px';
 	},
 	mounted() {
 		setTimeout(() => {

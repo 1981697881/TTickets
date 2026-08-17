@@ -47,10 +47,16 @@ export default {
 			return [this.detail.language, this.detail.dimensional].filter(Boolean).join(' ') || '版本待定';
 		},
 		memberPrice() {
-			return this.formatPrice(this.detail.settleprice);
+			return this.formatPrice(
+				this.detail.settleprice ?? this.detail.lowestprice ?? this.detail.standardprice
+			);
 		},
 		standardPrice() {
-			return this.formatPrice(this.detail.standardprice, '');
+			const member = this.detail.settleprice ?? this.detail.lowestprice;
+			const standard = this.detail.standardprice;
+			if (standard === undefined || standard === null || standard === '') return '';
+			if (member !== undefined && member !== null && String(member) === String(standard)) return '';
+			return this.formatPrice(standard, '');
 		}
 	},
 	methods: {
@@ -167,7 +173,7 @@ export default {
 	padding: 0;
 	border: 0;
 	border-radius: 30rpx;
-	background: #e85d74;
+	background: var(--tt-primary, #a9b238);
 	color: #fff;
 	font-size: 24rpx;
 	font-weight: 650;

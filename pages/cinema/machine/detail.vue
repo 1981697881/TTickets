@@ -181,14 +181,16 @@ export default {
 	line-height: 1.9;
 	color: var(--tt-text-secondary);
 
-	:deep(img) {
+	/* 小程序不支持标签选择器，对齐 uni-parser 的 class */
+	:deep(._img),
+	:deep(._image) {
 		max-width: 100%;
 		height: auto;
 		display: block;
 		border-radius: 18rpx;
 	}
 
-	:deep(p) {
+	:deep(._p) {
 		margin: 0 0 18rpx;
 		line-height: 1.9;
 	}

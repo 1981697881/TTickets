@@ -162,6 +162,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/static/style/user-center.scss';
 .head_box {
 	height: 70rpx;
 	padding: 0 30rpx;

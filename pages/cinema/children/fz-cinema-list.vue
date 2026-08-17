@@ -44,6 +44,7 @@ import shFilter from './sh-filter.vue';
 import shDate from './sh-date.vue';
 import moreGoodList from '@/csJson/moreGoodList.json';
 import tools from '@/common/utils/tools';
+import { getSystemInfoSafe } from '@/common/runtime/system-info';
 export default {
 	components: {
 		shFilter,
@@ -87,12 +88,10 @@ export default {
 		},
 		getScrHeight() {
 			let me = this;
-			uni.getSystemInfo({
+			getSystemInfoSafe({
 				success: function(res) {
-					// res - 各种参数
 					let info = uni.createSelectorQuery().in(me).select('.head-box');
 					info.boundingClientRect(function(data) {
-						//data - 各种参数
 						me.headHeight = res.windowHeight - data.height - 3 - 35;
 					}).exec();
 				}

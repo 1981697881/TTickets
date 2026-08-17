@@ -128,6 +128,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/static/style/user-center.scss';
 .user-list {
 	background: #fff;
 	height: 100rpx;

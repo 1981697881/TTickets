@@ -160,7 +160,7 @@
 				"list": [{
 						"name": "我的订单",
 						"image": "/static/imgs/user/menu/order-v2.png",
-						"path": "/pages/index/wallet",
+						"path": "/pages/order/ticket",
 						"path_name": "优惠券",
 						"path_type": 1
 					},{

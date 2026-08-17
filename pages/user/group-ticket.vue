@@ -132,6 +132,7 @@ export default {
 </script>
 
 <style scoped lang="scss">
+@import '@/static/style/user-center.scss';
 .tab-box {
 	overflow: hidden;
 	width: 100%;

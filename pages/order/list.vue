@@ -147,7 +147,7 @@ export default {
 			try {
 				const res = await this.$api('order.index', { type: this.orderType, page: this.currentPage });
 				if (token !== this.requestToken) return;
-				if (res.code === 1 || res.flag) {
+				if (res.code === 1) {
 					const page = normalizePage(res.data, this.currentPage);
 					this.orderList = mergeUnique(this.orderList, page.items, 'id', this.currentPage === 1);
 					this.lastPage = page.lastPage;

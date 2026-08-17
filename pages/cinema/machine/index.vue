@@ -62,10 +62,13 @@ export default {
 			this.isLoading = true;
 			this.loadStatus = 'loading';
 			try {
-				const res = await this.$api('cinema.playList', { page: this.listParams.page });
-				if (res?.flag || res?.code === 1) {
+				// 0.5.5：playList 不传 page；追加列表，读数组 last_page
+				const res = await this.$api('cinema.playList');
+				if (res && res.flag) {
 					const page = normalizePage(res.data, this.listParams.page);
-					this.goodsList = mergeUnique(this.goodsList, page.items, 'playId', this.listParams.page === 1);
+					this.goodsList = this.listParams.page === 1
+						? page.items
+						: mergeUnique(this.goodsList, page.items, 'playId', false);
 					this.lastPage = page.lastPage;
 					this.loadStatus = this.listParams.page < page.lastPage ? '' : 'over';
 				}

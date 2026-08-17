@@ -145,6 +145,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/static/style/user-center.scss';
 .page_box {
 	background: #fff;
 }

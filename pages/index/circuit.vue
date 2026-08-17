@@ -11,7 +11,7 @@
 					</view>
 
 					<view class="hero-card">
-						<image class="cinema-hero" src="/static/imgs/cinema/cinema-hero.jpg" mode="aspectFill"></image>
+						<image class="cinema-hero" src="/static/imgs/cinema/cinema-hero.jpg" mode="aspectFill" lazy-load></image>
 						<view class="hero-copy">
 							<text class="hero-title">光影之间</text>
 							<text class="hero-title hero-title-second">遇见美好</text>
@@ -54,8 +54,8 @@ import fzUnmovieList from './components/fz-unmovie-list.vue';
 import appEmpty from '@/components/app-empty/app-empty.vue';
 import { mapState } from 'vuex';
 import tools from '@/common/utils/tools';
-import { normalizePage, mergeUnique } from '@/common/utils/pagination';
-import { extractArray, isApiSuccess, unwrapPayload } from '@/common/utils/api-data';
+import { normalizePage } from '@/common/utils/pagination';
+import { extractArray } from '@/common/utils/api-data';
 
 export default {
 	components: {
@@ -116,7 +116,14 @@ export default {
 			this.listParams.page = 1;
 			this.goodsList = [];
 			this.lastPage = 1;
-			await this.getCinemaList();
+			const cachedLinkId = this.listParams.cinemalinkId || this.getStoredCinemaLinkId();
+			if (cachedLinkId) {
+				this.listParams.cinemalinkId = cachedLinkId;
+				// 有缓存影院时：影片列表与影院信息并行，减少首屏等待
+				await Promise.all([this.getCinemaList({ loadMovies: false }), this.getMoviesList()]);
+				return;
+			}
+			await this.getCinemaList({ loadMovies: true });
 		},
 		loadMore() {
 			if (!this.isLoading && this.listParams.page < this.lastPage) {
@@ -124,26 +131,29 @@ export default {
 				this.getMoviesList();
 			}
 		},
-		async getCinemaList() {
+		async getCinemaList({ loadMovies = true } = {}) {
 			const requestedCinemaLinkId = this.listParams.cinemalinkId || this.getStoredCinemaLinkId();
 			try {
 				const res = await this.$api('cinema.locationList', {
 					cinemalinkId: requestedCinemaLinkId,
 					filmId: this.listParams.filmId
 				});
-				const list = extractArray(res && res.data);
-				if (isApiSuccess(res) || list.length) this.cinemaList = list;
-				if (list.length) {
-					const cinema = list[0];
-					this.cinemaName = cinema.cinemaName || '';
-					this.cinemaAddress = cinema.cinemaAddress || '';
-					this.listParams.cinemalinkId = cinema.cinemalinkId || cinema.cinemaLinkId || requestedCinemaLinkId;
+				// 0.5.5：res.flag + res.data 数组
+				if (res && res.flag) {
+					const list = Array.isArray(res.data) ? res.data : extractArray(res.data);
+					this.cinemaList = list;
+					if (list.length) {
+						const cinema = list[0];
+						this.cinemaName = cinema.cinemaName || '';
+						this.cinemaAddress = cinema.cinemaAddress || '';
+						this.listParams.cinemalinkId = cinema.cinemalinkId || cinema.cinemaLinkId || requestedCinemaLinkId;
+					}
 				}
 			} catch (error) {
 				console.warn('[cinema] failed to load cinema information', error);
 			}
 
-			if (this.listParams.cinemalinkId) {
+			if (loadMovies && this.listParams.cinemalinkId) {
 				await this.getMoviesList();
 			}
 		},
@@ -152,14 +162,13 @@ export default {
 			this.isLoading = true;
 			this.loadStatus = 'loading';
 			try {
+				// 0.5.5 不传 page；整表覆盖，并读取数组上的 last_page
 				const res = await this.$api('cinema.locationMovies', {
-					cinemalinkId: this.listParams.cinemalinkId,
-					page: this.listParams.page
+					cinemalinkId: this.listParams.cinemalinkId
 				});
-				const payload = unwrapPayload(res && res.data);
-				const page = normalizePage(payload, this.listParams.page);
-				if (isApiSuccess(res) || page.items.length) {
-					this.goodsList = mergeUnique(this.goodsList, page.items, 'filmId', this.listParams.page === 1);
+				if (res && res.flag) {
+					const page = normalizePage(res.data, this.listParams.page);
+					this.goodsList = page.items;
 					this.lastPage = page.lastPage;
 					this.loadStatus = this.listParams.page < page.lastPage ? '' : 'over';
 				}
@@ -296,6 +305,7 @@ export default {
 }
 
 .list-load {
+	padding-bottom: calc(18rpx + constant(safe-area-inset-bottom));
 	padding-bottom: calc(18rpx + env(safe-area-inset-bottom));
 }
 

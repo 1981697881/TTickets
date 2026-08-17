@@ -102,6 +102,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/static/style/user-center.scss';
 .form-box {
 	background: #fff;
 	.form-item {

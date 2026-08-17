@@ -1,5 +1,5 @@
 <template>
-	<view class="modal-content content_box y-f">
+	<view class="group-card-list">
 		<!-- <label class="radio-item x-bc" @tap="selCoupon(0)" v-if="pickerData.length>0">
 			<text class="coupon-title">不使用抵用券</text>
 			<radio class="orange coupon-radio" :class="{ checked: radioId === 0 }" :checked="radioId === 0"></radio>
@@ -160,7 +160,7 @@ export default {
 </script>
 
 <style lang="scss">
-.modal-content {
+.group-card-list {
 	padding: 15rpx;
 	.check-box {
 		width: 100%;

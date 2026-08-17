@@ -99,6 +99,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/static/style/user-center.scss';
 .scroll-box {
 	flex: 1;
 	height: 100%;

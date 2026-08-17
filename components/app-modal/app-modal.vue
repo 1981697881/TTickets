@@ -3,10 +3,12 @@
     :model-value="showModal"
     :type="isBottom ? 'bottom' : 'center'"
     :mask-closable="maskClosable"
-    plain
+    :plain="plain"
+    :max-width="maxWidth"
     @update:modelValue="updateVisible"
     @close="onClose"
   >
+    <!-- Vue3：具名插槽；兼容旧写法 slot="modalContent" -->
     <slot name="modalContent"></slot>
     <slot></slot>
   </app-safe-popup>
@@ -23,7 +25,10 @@ export default {
     modelValue: { type: Boolean, default: undefined },
     value: { type: Boolean, default: undefined },
     modalType: { type: String, default: '' },
-    maskClosable: { type: Boolean, default: true }
+    maskClosable: { type: Boolean, default: true },
+    /** 底部弹层默认不透明，避免内容高度/页脚错位 */
+    plain: { type: Boolean, default: false },
+    maxWidth: { type: String, default: '640rpx' }
   },
   emits: ['update:modelValue', 'input', 'close'],
   computed: {
@@ -31,7 +36,7 @@ export default {
       return this.modelValue === undefined ? Boolean(this.value) : Boolean(this.modelValue);
     },
     isBottom() {
-      return this.modalType.includes('bottom');
+      return String(this.modalType || '').includes('bottom');
     }
   },
   methods: {

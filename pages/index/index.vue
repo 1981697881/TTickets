@@ -38,7 +38,7 @@
 			<!-- #ifdef APP-PLUS -->
 			<view class="modal-wrap">
 				<app-modal v-model="showPrivacy">
-					<block slot="modalContent">
+					<template #modalContent>
 						<view class="service-contract-wrap">
 							<image class="service-head-img" src="/static/imgs/modal/servece_head.png" mode="widthFix"></image>
 							<view class="service-title">用户隐私协议概况</view>
@@ -50,7 +50,7 @@
 							<view class="service-tip ">如您同意此条款，请点击“同意”并开始使用我们的产品和服务，我们将尽全力保护您的个人信息安全。</view>
 							<view class="btn-box x-c"><button class="cu-btn agree-btn" @tap="Agree">知道了</button></view>
 						</view>
-					</block>
+					</template>
 				</app-modal>
 			</view>
 			<!-- #endif -->
@@ -243,6 +243,7 @@ export default {
 	color: var(--tt-text);
 }
 .activity-safe-space {
+	height: calc(34rpx + constant(safe-area-inset-bottom));
 	height: calc(34rpx + env(safe-area-inset-bottom));
 }
 

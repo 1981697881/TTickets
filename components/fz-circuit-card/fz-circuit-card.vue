@@ -18,9 +18,11 @@
 				<view class="t_distance">1.0km</view>
 			</view>
 			<view class="flex flex-wrap">
-				<view class="padding-xs" v-for="(item, tagindex) in cinemaKeysWord" :key="tagindex" v-if="item.name != 'white'">
-					<view class="cu-tag radius" :class="'line-' + item.name">{{ item.title }}</view>
-				</view>
+				<template v-for="(item, tagindex) in cinemaKeysWord" :key="tagindex">
+					<view class="padding-xs" v-if="item && item.name && item.name !== 'white'">
+						<view class="cu-tag radius" :class="'line-' + item.name">{{ item.title }}</view>
+					</view>
+				</template>
 			</view>
 		</view>
 		<view class="swiper-box x-f" v-if="tabId=='ended'">
@@ -29,7 +31,7 @@
 					<view class="min-goods" @tap="jump('/pages/cinema/movie/list', { scheduleId: goods.scheduleId,schedulekey:goods.schedulekey,language: goods.language,dimensional: goods.dimensional,filmName:goods.filmName,showDatetime: goods.showDatetime})">
 						<view class="price-box">
 							<view class="y-f text-black">
-								<text class="text-bold seckill-current">{{goods.showDatetime.substring(11,16)}}</text>
+								<text class="text-bold seckill-current">{{ formatShowTime(goods.showDatetime) }}</text>
 								<text class="seckill-lau text-grey">{{goods.language}} {{goods.dimensional}}</text>
 								<text class="original text-red">￥{{ goods.standardprice }}</text>
 							</view>
@@ -43,6 +45,8 @@
 </template>
 
 <script>
+import { DEFAULT_COLOR_LIST } from '@/common/runtime/platform.js';
+
 export default {
 	name: 'fzCircuitCard',
 	components: {},
@@ -50,7 +54,7 @@ export default {
 		return {
 			goodsList: [],
 			swiperCurrent: 0,
-			ColorList: this.ColorList,
+			info: {},
 			cinemaKeysWord: [],
 			tagPath: {
 				groupon: '/static/imgs/groupon_tag.png',
@@ -58,7 +62,6 @@ export default {
 			}
 		};
 	},
-	
 	props: {
 		isTag: {
 			type: [Boolean, String],
@@ -74,41 +77,61 @@ export default {
 			default: null
 		}
 	},
-	mounted() {
-		console.log(this.detail)
-		this.info = { ...this.detail}
-		delete this.info.marshallinDetail
-		delete this.info.schedules
-		delete this.info.cinemaContact
-		delete this.info.status
-		delete this.info.cinemaKeysWord
-		delete this.info.cinemaMessage
-		delete this.info.cinemaPhone
-		delete this.info.cinemaTel
-		delete this.info.createDatetime
-		delete this.info.editDatetime
-		delete this.info.scheduleVOS
-		this.info.filmId = this.filmId
-		if(this.info.keysWord){
-			let keyword = this.info.keysWord
-			keyword.forEach((item,index)=>{
-				let obj = {
-					name:this.ColorList[index].name,
-					title:item
-				}
-				this.cinemaKeysWord.push(obj)
-			})
-		}else{
-			this.info.keysWord = []
+	watch: {
+		detail: {
+			immediate: true,
+			handler(value) {
+				this.buildCardData(value);
+			}
 		}
-		console.log(this.info)
 	},
-	computed: {},
 	methods: {
+		getColorList() {
+			const list = (this.ColorList && this.ColorList.length ? this.ColorList : DEFAULT_COLOR_LIST) || [];
+			return Array.isArray(list) && list.length ? list : DEFAULT_COLOR_LIST;
+		},
+		buildCardData(detail) {
+			if (!detail || typeof detail !== 'object') {
+				this.info = {};
+				this.cinemaKeysWord = [];
+				return;
+			}
+			const info = { ...detail };
+			delete info.marshallinDetail;
+			delete info.schedules;
+			delete info.cinemaContact;
+			delete info.status;
+			delete info.cinemaKeysWord;
+			delete info.cinemaMessage;
+			delete info.cinemaPhone;
+			delete info.cinemaTel;
+			delete info.createDatetime;
+			delete info.editDatetime;
+			delete info.scheduleVOS;
+			info.filmId = this.filmId;
+
+			const colorList = this.getColorList();
+			const keywords = Array.isArray(info.keysWord) ? info.keysWord : [];
+			this.cinemaKeysWord = keywords
+				.map((title, index) => {
+					const color = colorList[index % colorList.length];
+					if (!color || !color.name) return null;
+					return {
+						name: color.name,
+						title
+					};
+				})
+				.filter(Boolean);
+			info.keysWord = keywords;
+			this.info = info;
+		},
+		formatShowTime(value) {
+			const text = String(value || '');
+			return text.length >= 16 ? text.substring(11, 16) : '--:--';
+		},
 		swiperChange(e) {
 			this.swiperCurrent = e.detail.current;
 		},
-		// 路由跳转
 		jump(path, parmas) {
 			this.$Router.push({
 				path: path,

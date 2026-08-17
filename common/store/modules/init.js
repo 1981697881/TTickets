@@ -80,40 +80,45 @@ const actions = {
 			}) */
 		})
 	},
-	// 模板信息
+	// 模板信息：先用本地/缓存秒开，再静默拉海报与菜单
 	getTemplate({
 		commit
 	}, options = {}) {
-		var params = {};
-		return new Promise((resolve, reject) => {
-			//请求预览商城模板
-			if (options.query && options.query.shop_id) {
-				params.shop_id = options.query.shop_id;
-			}
+		return new Promise((resolve) => {
 			if (options.query && options.query.custom_id) {
 				Router.replace({
-					path: '/pages/index/view',
+					path: '/pages/public/custom-view',
 					query: {
 						id: options.query.custom_id,
 					}
 				});
 			}
+
 			const res = JSON.parse(JSON.stringify(template));
 			const cached = uni.getStorageSync('templateData');
 			if (cached && Array.isArray(cached.home)) {
 				const cachedBanner = cached.home[1]?.content?.list;
 				const cachedSpread = cached.home[4]?.content?.list;
+				const cachedMenu = cached.home[2]?.content?.list;
 				if (Array.isArray(cachedBanner) && cachedBanner.length) res.data.home[1].content.list = cachedBanner;
+				if (Array.isArray(cachedMenu) && cachedMenu.length) res.data.home[2].content.list = cachedMenu;
 				if (Array.isArray(cachedSpread) && cachedSpread.length) res.data.home[4].content.list = cachedSpread;
 			}
+
+			uni.setStorageSync('templateData', res.data);
+			commit('TEMPLATE_DATA', res.data);
+			if (res.code == 0) commit('hasTemplate', false);
+			// 首屏不阻塞网络；后台刷新后再次 commit
+			resolve(res);
 
 			Promise.all([
 				api('posterList').catch(() => null),
 				api('menuList').catch(() => null)
 			]).then(([posterResponse, menuResponse]) => {
+				const next = JSON.parse(JSON.stringify(res.data));
 				const posterGroups = posterResponse && posterResponse.data && typeof posterResponse.data === 'object' ? posterResponse.data : {};
 				if (Array.isArray(posterGroups.A)) {
-					res.data.home[1].content.list = posterGroups.A.map(item => ({
+					next.home[1].content.list = posterGroups.A.map(item => ({
 						name: item.posterName,
 						bgcolor: '#2B4055',
 						image: /^https?:\/\//.test(item.posterPhoto || '') ? item.posterPhoto : 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/' + item.posterPhoto,
@@ -122,10 +127,10 @@ const actions = {
 						path_type: 1
 					}));
 				}
-				if (Array.isArray(posterGroups.B)) res.data.home[4].content.list = posterGroups.B;
+				if (Array.isArray(posterGroups.B)) next.home[4].content.list = posterGroups.B;
 
 				if (menuResponse && Array.isArray(menuResponse.data)) {
-					res.data.home[2].content.list = menuResponse.data.map(item => ({
+					next.home[2].content.list = menuResponse.data.map(item => ({
 						name: item.menuName,
 						image: item.menuPhoto,
 						path: item.menuUrl,
@@ -134,21 +139,9 @@ const actions = {
 					}));
 				}
 
-				uni.setStorageSync('templateData', res.data);
-				commit('TEMPLATE_DATA', res.data);
-				if (res.code == 0) commit('hasTemplate', false);
-				resolve(res);
-			}).catch(reject)
-			/* api('template', params).then(res => {
-				uni.setStorageSync('templateData', res.data);
-				commit('TEMPLATE_DATA', res.data);
-				if(res.code == 0){
-					commit('hasTemplate', false);
-				}
-				resolve(res)
-			}).catch(e => {
-				reject(e)
-			}) */
+				uni.setStorageSync('templateData', next);
+				commit('TEMPLATE_DATA', next);
+			}).catch(() => {});
 		})
 	},
 }

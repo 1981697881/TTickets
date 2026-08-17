@@ -7,54 +7,40 @@
 					<text v-if="head.hallName" class="summary-hall">{{ head.hallName }}</text>
 				</view>
 				<view class="summary-meta">
-					<text class="summary-session">{{ sessionDisplayText }}</text>
-					<text v-if="head.language || head.dimensional" class="summary-version">{{ head.language }} {{ head.dimensional }}</text>
+					<text class="summary-session" :class="{ 'is-non-today': sessionDayAlert.show }">{{ sessionDisplayText }}</text>
+					<text v-if="head.language || head.dimensional" class="summary-version">{{ versionText }}</text>
 				</view>
 			</view>
 
-			<view class="seat-legend">
-				<view class="legend-item"><image class="legend-seat-image" src="/static/unselected.png" mode="aspectFit"></image><text>可选</text></view>
-				<view class="legend-item"><image class="legend-seat-image" src="/static/selected.png" mode="aspectFit"></image><text>已选</text></view>
-				<view class="legend-item"><image class="legend-seat-image is-sold" src="/static/bought.png" mode="aspectFit"></image><text>已售</text></view>
-				<view class="legend-item"><image class="legend-seat-image is-maintenance" src="/static/lockwei.png" mode="aspectFit"></image><text>维修</text></view>
+			<view v-if="sessionDayAlert.show" class="session-day-alert" :class="{ 'is-expired': sessionDayAlert.dayOffset < 0 }">
+				<text class="session-day-alert__tag">{{ sessionDayAlert.title }}</text>
+				<text class="session-day-alert__text">{{ sessionDayAlert.detail }}</text>
 			</view>
 
-			<movable-area class="seat-map">
-				<movable-view
-					:style="{ width: boxWidth + 'px', height: seatContentHeight + 'px' }"
-					:inertia="true"
-					:scale="true"
+			<view class="seat-legend">
+				<view class="legend-item"><image class="legend-seat-image" :src="seatIcons.unselected" mode="aspectFit"></image><text>可选</text></view>
+				<view class="legend-item"><image class="legend-seat-image" :src="seatIcons.selected" mode="aspectFit"></image><text>已选</text></view>
+				<view class="legend-item"><image class="legend-seat-image is-sold" :src="seatIcons.bought" mode="aspectFit"></image><text>已售</text></view>
+				<view class="legend-item"><image class="legend-seat-image is-maintenance" :src="seatIcons.lockwei" mode="aspectFit"></image><text>维修</text></view>
+			</view>
+
+			<view class="seat-map-slot" :style="seatMapAreaStyle">
+				<fz-seat-map
+					:seat-array="seatArray"
+					:m-arr="mArr"
+					:seat-icons="seatIcons"
+					:seat-row="seatRow"
+					:seat-col="seatCol"
+					:seat-size="seatSize"
+					:seat-row-gap="seatRowGap"
+					:box-width="boxWidth"
+					:screen-head-height="screenHeadHeight"
 					:scale-min="scaleMin"
-					:scale-max="2"
-					direction="all"
-					@change="onMove"
-					@scale="onScale"
-				>
-					<view class="screen-wrap">
-						<view class="screen-arc"></view>
-						<text class="screen-label">银幕中央</text>
-					</view>
-					<view class="seat-center-line" :style="{ height: Math.max(0, seatRow * (seatSize + 10)) + 'px' }"></view>
-					<view v-if="seatArray.length" class="seat-rows">
-						<view v-for="(item, index) in seatArray" :key="index" class="seat-row" :style="{ width: boxWidth + 'px', height: seatSize + 'px' }">
-							<text class="row-number">{{ mArr[index] }}</text>
-							<view
-								v-for="(seat, col) in item"
-								:key="col"
-								class="seat-cell"
-								:style="{ width: seatSize + 'px', height: seatSize + 'px' }"
-								@tap="handleChooseSeat(index, col, seat)"
-							>
-								<image v-if="seat && seat.type === 0" class="seat-image" src="/static/unselected.png" mode="aspectFit"></image>
-								<image v-else-if="seat && seat.type === 1" class="seat-image" src="/static/selected.png" mode="aspectFit"></image>
-								<image v-else-if="seat && seat.type === 2" class="seat-image is-sold" src="/static/bought.png" mode="aspectFit"></image>
-								<image v-else-if="seat && seat.type === 3" class="seat-image is-maintenance" src="/static/lockwei.png" mode="aspectFit"></image>
-							</view>
-						</view>
-					</view>
-					<view v-else class="seat-empty">暂无可选座位</view>
-				</movable-view>
-			</movable-area>
+					:best-zone-visible="bestZoneVisible"
+					:best-zone-box-style="bestZoneBoxStyle"
+					@choose="onSeatChoose"
+				/>
+			</view>
 
 			<view class="seat-bottom-bar">
 				<view class="seat-actions">
@@ -71,17 +57,19 @@
 					</view>
 					<view class="selected-row" v-else>
 						<text class="action-label">已选 {{ SelectNum }} 座</text>
-						<scroll-view class="selected-scroll" scroll-x :show-scrollbar="false">
-							<view class="selected-chip" v-for="(optItem, optindex) in optArr" :key="optItem.sid || optindex" @tap="removeSelectedSeat(optItem)">
-								<text>{{ optItem.rowNum }}排{{ optItem.columnNum }}座</text>
-								<text class="chip-close">×</text>
+						<scroll-view class="selected-scroll" scroll-x :show-scrollbar="false" :enable-flex="true">
+							<view class="selected-chip-track">
+								<view class="selected-chip" v-for="(optItem, optindex) in optArr" :key="optItem.sid || optindex" @tap="removeSelectedSeat(optItem)">
+									<text>{{ optItem.rowNum }}排{{ optItem.columnNum }}座</text>
+									<text class="chip-close">×</text>
+								</view>
 							</view>
 						</scroll-view>
 					</view>
 					<view class="submit-row">
 						<view v-if="SelectNum > 0" class="price-summary">
-							<text class="total-price">¥{{ totalPrice }}</text>
-							<text class="price-tip">含服务费</text>
+							<text class="total-price">¥{{ displayTotalPrice }}</text>
+							<text class="price-tip">{{ SelectNum }}张 · 含服务费</text>
 						</view>
 						<button
 							:disabled="isSubOrder || SelectNum === 0"
@@ -95,7 +83,6 @@
 				</view>
 			</view>
 		</view>
-		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>
 		<view class="cu-load load-modal" v-if="loadModal">
 			<view class="cuIcon-emojifill text-orange"></view>
@@ -103,112 +90,138 @@
 		</view>
 	</view>
 </template>
-<script>
-/*
- *特别声明：
- * 该页面的逻辑及思路来自作者[houzisbw](https://github.com/houzisbw)的vue选座项目github地址[点击](https://github.com/houzisbw/MeiTuanCinemaSmartChoose)。
- * 本人只针对uni-app做了样式及逻辑适配。
- * 感谢原作者[houzisbw](https://github.com/houzisbw), 如有侵权, 请举报
- *
- */
-import { mapMutations, mapActions, mapState } from 'vuex';
-export default {
+<script lang="ts">
+import { defineComponent } from 'vue';
+import { mapActions, mapState } from 'vuex';
+import { getSafeAreaInsets, getSystemInfoSafe } from '@/common/runtime/system-info';
+import {
+	formatSessionDisplay,
+	getNonTodaySessionAlert,
+	isSessionStarted
+} from '@/common/utils/session-date';
+import FzSeatMap from './children/fz-seat-map.vue';
+
+type SeatCell = {
+	type: number;
+	sid: string;
+	money?: number | string;
+	rowNum?: string | number;
+	columnNum?: string | number;
+};
+
+type SeatHead = {
+	filmName?: string | null;
+	language?: string | null;
+	dimensional?: string | null;
+	hallType?: string | null;
+	hallName?: string | null;
+	showDatetime?: string | null;
+	scheduleId?: string | number | null;
+	schedulekey?: string | number | null;
+	sessionsStarttime?: string | null;
+	filmId?: string | number | null;
+	[key: string]: unknown;
+};
+
+export default defineComponent({
+	name: 'CinemaSeatSelectPage',
+	components: {
+		FzSeatMap
+	},
 	data() {
 		return {
+			// 用运行时路径，避免模板字面量被 Vite 编成 /assets/*.hash（dev 常缺文件）
+			seatIcons: {
+				unselected: '/static/imgs/seat/unselected.png',
+				selected: '/static/imgs/seat/selected.png',
+				bought: '/static/imgs/seat/bought.png',
+				lockwei: '/static/imgs/seat/lockwei.png'
+			},
 			loadModal: false,
 			isSubOrder: false,
-			filmId: '',
-			//缩略图是否显示
-			topthumbnail: 0, // 单位rem
-			leftthumbnail: 0, // 单位rem
-			thumbnailShow: true,
-			scaleMin: 1, //h5端为解决1无法缩小问题，设为0.95
-			boxWidth: 400, //屏幕宽度px
-			space: ' ', //空格
-			seatArray: [], //影院座位的二维数组,-1为非座位，0为未购座位，1为已选座位(绿色),2为已购座位(红色),一维行，二维列
-			seatRow: 0, //影院座位行数
-			seatCol: 0, //影院座位列数
-			seatSize: 0, //座位尺寸
-			SelectNum: 0, //选择座位数
+			filmId: '' as string | number,
+			scaleMin: 1,
+			boxWidth: 400,
+			screenHeadHeight: 86,
+			seatRowGap: 10,
+			seatArray: [] as SeatCell[][],
+			seatRow: 0,
+			seatCol: 0,
+			seatSize: 0,
+			SelectNum: 0,
+			safeBottom: 0,
 			listParams: {
-				scheduleId: null,
-				schedulekey: null
+				scheduleId: null as string | number | null,
+				schedulekey: null as string | number | null,
+				scheduleKey: null as string | number | null,
+				hallId: null as string | number | null,
+				sectionId: null as string | number | null
 			},
 			head: {
 				filmName: null,
 				language: null,
 				dimensional: null,
 				hallType: null,
+				hallName: null,
 				showDatetime: null,
 				scheduleId: null,
 				schedulekey: null,
 				sessionsStarttime: null
-			},
-			totalPrice: 0, //总价
-			moveX: 0, //水平移动偏移量
-			scale: 1, //放大倍数
-			minRow: 0, //从第几行开始排座位
-			minCol: 0, //从第几列开始排座位
-			showTis: true, //显示选座提示
-			seatList: [], //接口获取的原始位置
-			mArr: [], //排数提示
-			optArr: [], //选中的座位数组。
-			isWXAPP: false,
-			isEsc: true
+			} as SeatHead,
+			totalPrice: 0,
+			minRow: 0,
+			minCol: 0,
+			seatList: [] as any[],
+			mArr: [] as Array<string | number>,
+			optArr: [] as SeatCell[],
+			isEsc: true,
+			bestZoneBoxStyle: { display: 'none' } as Record<string, string>
 		};
 	},
 	computed: {
 		...mapState({
-			storeInfo: state => state.user.storeInfo,
+			storeInfo: (state: any) => state.user.storeInfo
 		}),
-		aPrice() {
-			return this.SelectNum * 36;
+		versionText(): string {
+			return [this.head.language, this.head.dimensional].filter(Boolean).join(' ');
 		},
-		rpxNum() {
-			return this.boxWidth / 750;
+		displayTotalPrice(): string {
+			const amount = Number(this.totalPrice);
+			if (!Number.isFinite(amount)) return '0';
+			return amount % 1 === 0 ? String(amount) : amount.toFixed(2);
 		},
-		pxNum() {
-			return 750 / this.boxWidth;
+		seatMapBottom(): string {
+			const base = this.SelectNum > 0 ? 300 : 260;
+			const safe = Math.max(0, this.safeBottom);
+			return `calc(${base}rpx + ${safe}px)`;
 		},
-		seatContentHeight() {
-			return Math.max(360, 86 + this.seatRow * (this.seatSize + 10) + 50);
+		seatMapAreaStyle(): Record<string, string> {
+			return {
+				bottom: this.seatMapBottom,
+				top: this.sessionDayAlert.show ? '276rpx' : '192rpx'
+			};
 		},
-		sessionDisplayText() {
-			const raw = this.head.showDatetime || this.head.sessionsStarttime || '';
-			if (!raw) return '场次时间加载中';
-			const match = String(raw).match(/^(\d{4})[-\/](\d{1,2})[-\/](\d{1,2})(?:[ T](\d{1,2}):(\d{1,2}))?/);
-			if (!match) {
-				const timeMatch = String(raw).match(/(\d{1,2}):(\d{2})/);
-				return timeMatch ? `${timeMatch[1].padStart(2, '0')}:${timeMatch[2]}场` : String(raw);
-			}
-			const year = Number(match[1]);
-			const month = Number(match[2]);
-			const day = Number(match[3]);
-			const hour = String(match[4] || '0').padStart(2, '0');
-			const minute = String(match[5] || '00').padStart(2, '0');
-			const target = new Date(year, month - 1, day);
-			const now = new Date();
-			const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-			const dayOffset = Math.round((target.getTime() - today.getTime()) / 86400000);
-			const weekText = ['周日', '周一', '周二', '周三', '周四', '周五', '周六'][target.getDay()];
-			const dateText = `${String(month).padStart(2, '0')}月${String(day).padStart(2, '0')}日`;
-			if (dayOffset === 0) return `今天 · ${hour}:${minute}场`;
-			if (dayOffset === 1) return `明天 ${dateText} ${weekText} · ${hour}:${minute}场`;
-			if (dayOffset === 2) return `后天 ${dateText} ${weekText} · ${hour}:${minute}场`;
-			return `${dateText} ${weekText} · ${hour}:${minute}场`;
+		bestZoneVisible(): boolean {
+			return this.seatRow > 3 && this.seatCol > 4 && this.seatSize > 0 && this.bestZoneBoxStyle.display !== 'none';
+		},
+		sessionRawTime(): string {
+			return String(this.head.showDatetime || this.head.sessionsStarttime || '');
+		},
+		sessionDisplayText(): string {
+			return formatSessionDisplay(this.sessionRawTime);
+		},
+		sessionDayAlert(): { show: boolean; dayOffset: number | null; title: string; detail: string } {
+			return getNonTodaySessionAlert(this.sessionRawTime);
 		}
 	},
 	onShow() {
-		let that = this;
-
+		const that = this;
 		uni.showLoading({ title: '加载中' });
-		uni.$once('escLoack', function(data) {
+		uni.$once('escLoack', (data: Record<string, unknown>) => {
 			that.isEsc = false;
 			that.isSubOrder = false;
-			that.$api('cinema.escSeats', data).then(res => {
-				if (res.flag) {
-					that.initData();
-				}
+			(that as any).$api('cinema.escSeats', data).then((res: any) => {
+				if (res.flag) that.initData();
 			});
 		});
 		if (that.isEsc) {
@@ -220,15 +233,11 @@ export default {
 		}
 	},
 	onUnload() {
-		let that = this;
-		let params = {
-			filmId: that.filmId
-		};
-		uni.$emit('escUpload', params);
+		uni.$emit('escUpload', { filmId: this.filmId });
 	},
-	onLoad(options) {
+	onLoad(options: Record<string, any>) {
 		this.isSubOrder = false;
-		const routeQuery = this.$Route && this.$Route.query ? this.$Route.query : {};
+		const routeQuery = (this as any).$Route?.query || {};
 		const query = this.decodeRouteQuery({ ...routeQuery, ...(options || {}) });
 		this.head = { ...this.head, ...query };
 		this.filmId = query.filmId || '';
@@ -237,24 +246,28 @@ export default {
 		this.listParams.schedulekey = query.schedulekey;
 		this.listParams.scheduleKey = query.schedulekey;
 		this.listParams.sectionId = query.sectionId;
-		//获取宽度
-		uni.getSystemInfo({
+		const insets = getSafeAreaInsets();
+		this.safeBottom = insets.bottom || 0;
+		getSystemInfoSafe({
 			success: e => {
 				this.boxWidth = e.windowWidth || e.screenWidth || 375;
+				this.safeBottom = getSafeAreaInsets().bottom || this.safeBottom;
 				if (this.seatCol > 0) {
-					const naturalSize = parseInt(this.boxWidth / (this.seatCol + 1), 10);
+					const naturalSize = parseInt(String(this.boxWidth / (this.seatCol + 1)), 10);
 					this.seatSize = Math.max(20, Math.min(34, naturalSize));
 				}
-				//#ifdef H5
+				// #ifdef H5
 				this.scaleMin = 0.95;
-				//#endif
+				// #endif
 			}
 		});
-		/* this.initData(); */
 	},
 	methods: {
 		...mapActions(['getUserBalance']),
-		decodeRouteValue(value) {
+		onSeatChoose(payload: { row: number; col: number; seat: SeatCell }) {
+			this.handleChooseSeat(payload.row, payload.col, payload.seat);
+		},
+		decodeRouteValue(value: unknown) {
 			if (typeof value !== 'string') return value;
 			let result = value;
 			for (let count = 0; count < 3; count += 1) {
@@ -268,42 +281,20 @@ export default {
 			}
 			return result;
 		},
-		decodeRouteQuery(query) {
-			return Object.keys(query || {}).reduce((result, key) => {
+		decodeRouteQuery(query: Record<string, any>) {
+			return Object.keys(query || {}).reduce((result: Record<string, any>, key) => {
 				result[key] = this.decodeRouteValue(query[key]);
 				return result;
 			}, {});
 		},
-		// 根据影厅的大小缩放比例(需要把影厅全部显示出来)
-		seatScale: function() {
-			let seatScaleX = 1;
-			let seatScaleY = 1;
-			seatScaleX = this.seatAreaWidthRem / this.seatBoxWidth;
-			seatScaleY = this.seatAreaHeightRem / this.seatBoxHeight;
-			return seatScaleX < seatScaleY ? seatScaleX : seatScaleY;
-		},
-		thumbnailBackgroud: function(seatItem) {
-			if (seatItem.type === 1) {
-				return 'green';
-			} else if (seatItem.type === 2) {
-				return 'red';
-			} else if (seatItem.type === 0) {
-				return 'white';
-			}
-		},
-		initData: function() {
-			let that = this;
-			//假数据说明：sid座位编号，rowNum-行号，columnNum-纵号，y-Y坐标，x-X坐标，status-状态
-			let row = 0;
-			let col = 0;
-			/* that.$api('cinema.SchedulesSoldSeats', this.listParams).then(reso => {
-				if (reso.flag) { */
-			that.$api('cinema.seatsLists', this.listParams).then(res => {
+		initData() {
+			const that = this;
+			(that as any).$api('cinema.seatsLists', this.listParams).then((res: any) => {
 				if (res.flag) {
 					that.SelectNum = 0;
 					that.totalPrice = 0;
 					that.optArr = [];
-					let arr = res.data && Array.isArray(res.data.scheduleSeats) ? res.data.scheduleSeats : [];
+					const arr = res.data && Array.isArray(res.data.scheduleSeats) ? res.data.scheduleSeats : [];
 					if (!arr.length) {
 						that.seatList = [];
 						that.seatArray = [];
@@ -312,13 +303,15 @@ export default {
 						uni.hideLoading();
 						return;
 					}
-					let minCol = parseInt(arr[0].x);
-					let minRow = parseInt(arr[0].y);
-					for (let i of arr) {
-						minRow = parseInt(i.y) < minRow ? parseInt(i.y) : minRow;
-						minCol = parseInt(i.x) < minCol ? parseInt(i.x) : minCol;
-						row = parseInt(i.y) > row ? parseInt(i.y) : row;
-						col = parseInt(i.x) > col ? parseInt(i.x) : col;
+					let row = 0;
+					let col = 0;
+					let minCol = parseInt(arr[0].x, 10);
+					let minRow = parseInt(arr[0].y, 10);
+					for (const item of arr) {
+						minRow = parseInt(item.y, 10) < minRow ? parseInt(item.y, 10) : minRow;
+						minCol = parseInt(item.x, 10) < minCol ? parseInt(item.x, 10) : minCol;
+						row = parseInt(item.y, 10) > row ? parseInt(item.y, 10) : row;
+						col = parseInt(item.x, 10) > col ? parseInt(item.x, 10) : col;
 					}
 					that.isEsc = true;
 					that.seatList = arr;
@@ -328,35 +321,20 @@ export default {
 					that.minCol = minCol - 1;
 					that.initSeatArray();
 					uni.hideLoading();
-					/* if (that.head.dimensional == '3D' || that.head.dimensional == '4D') {
-						that.$tools.toast('请自备3D眼镜或影院前台购买','none',{duration: 2500});
-					} */
-					//判断影厅和影片类型
-					if ((res.data.tipSwitch == '0' && res.data.dimensional=='3D') || (res.data.tipSwitch4d == '0' && res.data.dimensional=='4D')) {
-						that.$tools.toast(res.data.tipMessage,'none',{duration: 2500});
+					if ((res.data.tipSwitch == '0' && res.data.dimensional == '3D') || (res.data.tipSwitch4d == '0' && res.data.dimensional == '4D')) {
+						(that as any).$tools.toast(res.data.tipMessage, 'none', { duration: 2500 });
 					}
 				} else {
 					uni.hideLoading();
-					uni.showToast({
-						icon: 'none',
-						title: res.msg
-					});
+					uni.showToast({ icon: 'none', title: res.msg });
 				}
 			}).catch(() => {
 				uni.hideLoading();
 				that.seatArray = [];
 			});
-			/* } else {
-					uni.showToast({
-						icon: 'none',
-						title: reso.msg
-					});
-				} 
-			});*/
 		},
-		//初始座位数组
-		initSeatArray: function() {
-			let seatArray = Array(this.seatRow)
+		initSeatArray() {
+			const seatArray = Array(this.seatRow)
 				.fill(0)
 				.map(() =>
 					Array(this.seatCol).fill(0).map(() => ({
@@ -367,24 +345,19 @@ export default {
 					}))
 				);
 			this.seatArray = seatArray;
-			const naturalSize = parseInt((this.boxWidth || 375) / (this.seatCol + 1), 10);
+			const naturalSize = parseInt(String((this.boxWidth || 375) / (this.seatCol + 1)), 10);
 			this.seatSize = Math.max(20, Math.min(34, naturalSize));
 			this.initNonSeatPlace();
 		},
-		//初始化是座位的地方
-		initNonSeatPlace: function() {
-			let seat = this.seatList.slice();
-			let arr = this.seatArray.slice();
-			for (let num in seat) {
-				let status = 3; //-1为非座位，0为未购座位，1为已选座位(绿色),2为已购座位(红色)
-				if (seat[num].status === '') {
-					status = 0;
-				} else if (seat[num].status === '-1') {
-					status = -1;
-				} else if (seat[num].status === 'locked' || seat[num].status === 'selled') {
-					status = 2;
-				}
-				arr[parseInt(seat[num].y) - this.minRow][parseInt(seat[num].x) - this.minCol] = {
+		initNonSeatPlace() {
+			const seat = this.seatList.slice();
+			const arr = this.seatArray;
+			for (const num in seat) {
+				let status = 3;
+				if (seat[num].status === '') status = 0;
+				else if (seat[num].status === '-1') status = -1;
+				else if (seat[num].status === 'locked' || seat[num].status === 'selled') status = 2;
+				arr[parseInt(seat[num].y, 10) - this.minRow][parseInt(seat[num].x, 10) - this.minCol] = {
 					type: status,
 					sid: seat[num].seatId,
 					money: seat[num].standardprice,
@@ -392,143 +365,143 @@ export default {
 					columnNum: seat[num].columnId
 				};
 			}
-			this.seatArray = arr.slice();
-			let mArr = [];
-			for (let i in arr) {
-				let m = '';
-				for (let n of arr[i]) {
-					if (n.sid) {
-						m = n.rowNum;
-					}
+			const mArr: Array<string | number> = [];
+			for (const row of arr) {
+				let m: string | number = '';
+				for (const n of row) {
+					if (n.sid) m = n.rowNum as string | number;
 				}
-				if (m) {
-					mArr.push(m);
-				} else {
-					mArr.push('');
-				}
+				mArr.push(m || '');
 			}
 			this.mArr = mArr;
+			this.updateBestZoneBox();
 		},
-		//放大缩小事件
-		onScale: function(e) {
-			this.showTis = false;
-			// this.moveX=-e.detail.x
-			let w = this.boxWidth * 0.5;
-			let s = 1 - e.detail.scale;
-			this.moveX = w * s;
-			this.scale = e.detail.scale;
-			if (s > 0 || s === 0) {
-				this.showTis = true;
+		updateBestZoneBox() {
+			if (!(this.seatRow > 3 && this.seatCol > 4 && this.seatSize > 0)) {
+				this.bestZoneBoxStyle = { display: 'none' };
+				return;
 			}
+
+			let minSeatCol = this.seatCol;
+			let maxSeatCol = -1;
+			for (const row of this.seatArray) {
+				row.forEach((seat, col) => {
+					if (seat && seat.sid) {
+						minSeatCol = Math.min(minSeatCol, col);
+						maxSeatCol = Math.max(maxSeatCol, col);
+					}
+				});
+			}
+			if (maxSeatCol < minSeatCol) {
+				this.bestZoneBoxStyle = { display: 'none' };
+				return;
+			}
+
+			// 淘票票式：中间偏前排 × 中间列（接口无最佳区字段，布局后只算一次）
+			const rowStart = Math.max(0, Math.floor(this.seatRow * 0.28));
+			const rowEnd = Math.min(this.seatRow - 1, Math.ceil(this.seatRow * 0.58) - 1);
+			const colSpan = maxSeatCol - minSeatCol + 1;
+			const colStart = minSeatCol + Math.floor(colSpan * 0.18);
+			const colEnd = minSeatCol + Math.ceil(colSpan * 0.82) - 1;
+
+			const cell = this.seatSize;
+			const gap = this.seatRowGap;
+			const screenH = this.screenHeadHeight;
+			const gridWidth = this.seatCol * cell;
+			const gridLeft = (this.boxWidth - gridWidth) / 2;
+			const top = screenH + rowStart * (cell + gap) - 4;
+			const height = Math.max(cell, (rowEnd - rowStart + 1) * (cell + gap) - gap + 8);
+			const left = gridLeft + colStart * cell - 4;
+			const width = Math.max(cell, (colEnd - colStart + 1) * cell + 8);
+
+			this.bestZoneBoxStyle = {
+				top: `${top}px`,
+				left: `${left}px`,
+				width: `${width}px`,
+				height: `${height}px`
+			};
 		},
-		// scale的倒数
-		scalereciprocal: function() {
-			return 1 / this.scale;
-		},
-		//移动事件
-		onMove: function(e) {
-			this.thumbnailShow = true;
-			this.showTis = false;
-			this.moveX = e.detail.x;
-		},
-		//重置座位
-		resetSeat: function() {
+		resetSeat() {
 			this.SelectNum = 0;
 			this.totalPrice = 0;
 			this.optArr = [];
-			//将所有已选座位的值变为0
-			let oldArray = this.seatArray.slice();
 			for (let i = 0; i < this.seatRow; i++) {
 				for (let j = 0; j < this.seatCol; j++) {
-					if (oldArray[i][j].type === 1) {
-						oldArray[i][j].type = 0;
-					}
+					if (this.seatArray[i][j].type === 1) this.seatArray[i][j].type = 0;
 				}
 			}
-			this.seatArray = oldArray;
 		},
-		//选定且购买座位
-		buySeat: function() {
-			let that = this;
-
-			if (this.SelectNum === 0) {
+		buySeat() {
+			const that = this;
+			if (that.isSubOrder || that.SelectNum === 0) return;
+			const seatIds = that.optArr.map(item => item.sid).filter(Boolean);
+			if (!seatIds.length || seatIds.length !== that.SelectNum) {
+				uni.showToast({ icon: 'none', title: '座位选择异常，请重新选座' });
+				return;
+			}
+			if (isSessionStarted(that.sessionRawTime)) {
+				uni.showToast({ icon: 'none', title: '电影已开场，无法再购票' });
+				return;
+			}
+			if (!that.listParams.scheduleId || !that.listParams.schedulekey) {
+				uni.showToast({ icon: 'none', title: '场次信息缺失，请返回重选' });
 				return;
 			}
 			that.isSubOrder = true;
-			let oldArray = [];
-			for (let i = 0; i < this.seatRow; i++) {
-				for (let j = 0; j < this.seatCol; j++) {
-					if (this.seatArray[i][j].type === 1) {
-						oldArray.push(this.seatArray[i][j].sid);
-					}
-				}
-			}
-			that.$api('cinema.lockSeats', {
+			that.loadModal = true;
+			(that as any).$api('cinema.lockSeats', {
 				openId: uni.getStorageSync('openid'),
-				seatIdList: oldArray,
+				seatIdList: seatIds,
 				scheduleId: this.listParams.scheduleId,
-				storeId: this.storeInfo.id,
+				storeId: (this as any).storeInfo.id,
 				scheduleKey: this.listParams.schedulekey,
 				openIdNotNull: 0
-			}).then(res => {
-				that.loadModal = true;
+			}).then((res: any) => {
 				if (res.flag) {
 					that.getUserBalance();
 					that.loadModal = false;
-					let result = { ...res.data };
-					if (result.filmPhoto == null) {
-						delete result.filmPhoto;
-					}
+					const result = { ...res.data };
+					if (result.filmPhoto == null) delete result.filmPhoto;
 					result.schedule = JSON.stringify(result.schedule);
 					result.seats = JSON.stringify(result.seats);
 					result.locationHall = JSON.stringify(result.locationHall);
 					that.jump('/pages/order/reserve', result);
 				} else {
-					uni.showToast({
-						icon: 'none',
-						title: res.msg
-					});
+					uni.showToast({ icon: 'none', title: res.msg || '锁座失败' });
 					that.loadModal = false;
 					that.isSubOrder = false;
 				}
+			}).catch(() => {
+				uni.showToast({ icon: 'none', title: '锁座失败，请重试' });
+				that.loadModal = false;
+				that.isSubOrder = false;
 			});
 		},
-		jump: function(path, parmas) {
-			this.$Router.push({
-				path: path,
-				query: parmas
-			});
+		jump(path: string, params: Record<string, unknown>) {
+			(this as any).$Router.push({ path, query: params });
 		},
-		//处理座位选择逻辑
-		handleChooseSeat: function(row, col, seat) {
+		handleChooseSeat(row: number, col: number, seat: SeatCell) {
 			if (!seat || !this.seatArray[row] || !this.seatArray[row][col]) return;
-			let seatValue = this.seatArray[row][col].type;
-			let newArray = this.seatArray;
-			//如果是已购座位，直接返回
-			if (seatValue === 2 || seatValue === -1) return;
-			//如果是已选座位点击后变未选
+			const cell = this.seatArray[row][col];
+			const seatValue = cell.type;
+			if (seatValue === 2 || seatValue === -1 || seatValue === 3) return;
 			if (seatValue === 1) {
-				newArray[row][col].type = 0;
+				cell.type = 0;
 				this.SelectNum--;
 				this.totalPrice = this.totalPrice - 1 * Number(seat.money);
-				this.getOptArr(newArray[row][col], 0);
+				this.getOptArr(cell, 0);
 			} else if (seatValue === 0) {
 				if (this.optArr.length <= 3) {
-					newArray[row][col].type = 1;
+					cell.type = 1;
 					this.SelectNum++;
 					this.totalPrice = this.totalPrice + 1 * Number(seat.money);
-					this.getOptArr(newArray[row][col], 1);
+					this.getOptArr(cell, 1);
 				} else {
-					uni.showToast({
-						icon: 'none',
-						title: '一次只可选择4个座位'
-					});
+					uni.showToast({ icon: 'none', title: '一次只可选择4个座位' });
 				}
 			}
-			//必须整体更新二维数组，Vue无法检测到数组某一项更新,必须slice复制一个数组才行
-			this.seatArray = newArray.slice();
 		},
-		removeSelectedSeat(item) {
+		removeSelectedSeat(item: SeatCell) {
 			for (let row = 0; row < this.seatArray.length; row++) {
 				const col = this.seatArray[row].findIndex(seat => seat.sid === item.sid);
 				if (col >= 0) {
@@ -537,156 +510,82 @@ export default {
 				}
 			}
 		},
-		//处理已选座位数组
-		getOptArr: function(item, type) {
-			let optArr = this.optArr;
+		getOptArr(item: SeatCell, type: number) {
 			if (type === 1) {
-				optArr.push(item);
-			} else if (type === 0) {
-				let arr = [];
-				optArr.forEach(v => {
-					if (v.sid !== item.sid) {
-						arr.push(v);
-					}
-				});
-				optArr = arr;
+				this.optArr.push(item);
+				return;
 			}
-			this.optArr = optArr.slice();
+			this.optArr = this.optArr.filter(v => v.sid !== item.sid);
 		},
-		//推荐选座,参数是推荐座位数目，
-		smartChoose: function(num) {
-			// 先重置
+		smartChoose(num: number) {
 			this.resetSeat();
-			//找到影院座位水平垂直中间位置的后一排
-			let rowStart = parseInt((this.seatRow - 1) / 2, 10) + 1;
-			//先从中间排往后排搜索
-			let backResult = this.searchSeatByDirection(rowStart, this.seatRow - 1, num);
+			const rowStart = parseInt(String((this.seatRow - 1) / 2), 10) + 1;
+			const backResult = this.searchSeatByDirection(rowStart, this.seatRow - 1, num);
 			if (backResult.length > 0) {
 				this.chooseSeat(backResult);
 				this.SelectNum += num;
 				return;
 			}
-			//再从中间排往前排搜索
-			let forwardResult = this.searchSeatByDirection(rowStart - 1, 0, num);
+			const forwardResult = this.searchSeatByDirection(rowStart - 1, 0, num);
 			if (forwardResult.length > 0) {
 				this.chooseSeat(forwardResult);
 				this.SelectNum += num;
 				return;
 			}
-			//提示用户无合法位置可选
 			uni.showToast({ icon: 'none', title: '暂无连续的推荐座位' });
 		},
-
-		//搜索函数,参数:fromRow起始行，toRow终止行,num推荐座位数
-		searchSeatByDirection: function(fromRow, toRow, num) {
-			/*
-			 * 推荐座位规则
-			 * (1)初始状态从座位行数的一半处的后一排的中间开始向左右分别搜索，取离中间最近的，如果满足条件，
-			 *    记录下该结果离座位中轴线的距离，后排搜索完成后取距离最小的那个结果座位最终结果，优先向后排进行搜索，
-			 *    后排都没有才往前排搜，前排逻辑同上
-			 *
-			 * (2)只考虑并排且连续的座位，不能不在一排或者一排中间有分隔
-			 *
-			 * */
-
-			/*
-			 * 保存当前方向搜索结果的数组,元素是对象,result是结果数组，offset代表与中轴线的偏移距离
-			 * {
-			 *   result:Array([x,y])
-			 *   offset:Number
-			 * }
-			 *
-			 */
-			let currentDirectionSearchResult = [];
-
-			let largeRow = fromRow > toRow ? fromRow : toRow,
-				smallRow = fromRow > toRow ? toRow : fromRow;
-
+		searchSeatByDirection(fromRow: number, toRow: number, num: number) {
+			const currentDirectionSearchResult: Array<{ result: number[][]; offset: number }> = [];
+			const largeRow = fromRow > toRow ? fromRow : toRow;
+			const smallRow = fromRow > toRow ? toRow : fromRow;
 			for (let i = smallRow; i <= largeRow; i++) {
-				//每一排的搜索,找出该排里中轴线最近的一组座位
-				let tempRowResult = [],
-					minDistanceToMidLine = Infinity;
+				let tempRowResult: number[][] = [];
+				let minDistanceToMidLine = Infinity;
 				for (let j = 0; j <= this.seatCol - num; j++) {
-					//如果有合法位置
 					if (this.checkRowSeatContinusAndEmpty(i, j, j + num - 1)) {
-						//计算该组位置距离中轴线的距离:该组位置的中间位置到中轴线的距离
-						let resultMidPos = parseInt(j + num / 2, 10);
-						let distance = Math.abs(parseInt(this.seatCol / 2) - resultMidPos);
-						//如果距离较短则更新
+						const resultMidPos = parseInt(String(j + num / 2), 10);
+						const distance = Math.abs(parseInt(String(this.seatCol / 2), 10) - resultMidPos);
 						if (distance < minDistanceToMidLine) {
 							minDistanceToMidLine = distance;
-							//该行的最终结果
 							tempRowResult = this.generateRowResult(i, j, j + num - 1);
 						}
 					}
 				}
-				//保存该行的最终结果
-				currentDirectionSearchResult.push({
-					result: tempRowResult,
-					offset: minDistanceToMidLine
-				});
+				currentDirectionSearchResult.push({ result: tempRowResult, offset: minDistanceToMidLine });
 			}
-
-			//处理后排的搜索结果:找到距离中轴线最短的一个
-			//注意这里的逻辑需要区分前后排，对于后排是从前往后，前排则是从后往前找
-			let isBackDir = fromRow < toRow;
-			let finalReuslt = [],
-				minDistanceToMid = Infinity;
-			if (isBackDir) {
-				//后排情况,从前往后
-				currentDirectionSearchResult.forEach(item => {
-					if (item.offset < minDistanceToMid) {
-						finalReuslt = item.result;
-						minDistanceToMid = item.offset;
-					}
-				});
-			} else {
-				//前排情况，从后往前找
-				currentDirectionSearchResult.reverse().forEach(item => {
-					if (item.offset < minDistanceToMid) {
-						finalReuslt = item.result;
-						minDistanceToMid = item.offset;
-					}
-				});
-			}
-			//直接返回结果
-			return finalReuslt;
-		},
-		/*辅助函数，判断每一行座位从i列到j列是否全部空余且连续
-		 *
-		 */
-		checkRowSeatContinusAndEmpty: function(rowNum, startPos, endPos) {
-			let isValid = true;
-			for (let i = startPos; i <= endPos; i++) {
-				if (this.seatArray[rowNum][i].type !== 0) {
-					isValid = false;
-					break;
+			const isBackDir = fromRow < toRow;
+			let finalResult: number[][] = [];
+			let minDistanceToMid = Infinity;
+			const list = isBackDir ? currentDirectionSearchResult : currentDirectionSearchResult.slice().reverse();
+			list.forEach(item => {
+				if (item.offset < minDistanceToMid) {
+					finalResult = item.result;
+					minDistanceToMid = item.offset;
 				}
-			}
-			return isValid;
+			});
+			return finalResult;
 		},
-		//辅助函数：返回每一行的某个合理位置的座位数组
-		generateRowResult: function(row, startPos, endPos) {
-			let result = [];
+		checkRowSeatContinusAndEmpty(rowNum: number, startPos: number, endPos: number) {
 			for (let i = startPos; i <= endPos; i++) {
-				result.push([row, i]);
+				if (!this.seatArray[rowNum] || this.seatArray[rowNum][i].type !== 0) return false;
 			}
+			return true;
+		},
+		generateRowResult(row: number, startPos: number, endPos: number) {
+			const result: number[][] = [];
+			for (let i = startPos; i <= endPos; i++) result.push([row, i]);
 			return result;
 		},
-		//辅助函数:智能推荐的选座操作
-		chooseSeat: function(result) {
-			let opt = this.optArr;
-			let oldArray = this.seatArray.slice();
+		chooseSeat(result: number[][]) {
 			for (let i = 0; i < result.length; i++) {
-				//选定座位
-				oldArray[result[i][0]][result[i][1]].type = 1;
-				this.totalPrice = this.totalPrice + 1 * Number(oldArray[result[i][0]][result[i][1]].money);
-				this.optArr.push(oldArray[result[i][0]][result[i][1]]);
+				const cell = this.seatArray[result[i][0]][result[i][1]];
+				cell.type = 1;
+				this.totalPrice = this.totalPrice + 1 * Number(cell.money);
+				this.optArr.push(cell);
 			}
-			this.seatArray = oldArray;
 		}
 	}
-};
+});
 </script>
 
 <style lang="scss" scoped>
@@ -770,6 +669,62 @@ export default {
 	white-space: nowrap;
 }
 
+.summary-session.is-non-today {
+	color: #c45c12;
+	font-weight: 700;
+}
+
+.session-day-alert {
+	position: fixed;
+	top: 192rpx;
+	left: 24rpx;
+	right: 24rpx;
+	z-index: 20;
+	display: flex;
+	align-items: flex-start;
+	gap: 14rpx;
+	padding: 16rpx 20rpx;
+	box-sizing: border-box;
+	border-radius: 16rpx;
+	background: #fff6e8;
+	border: 1rpx solid #f0b35a;
+	box-shadow: 0 8rpx 20rpx rgba(196, 92, 18, 0.12);
+}
+
+.session-day-alert.is-expired {
+	background: #fff1f0;
+	border-color: #f0a0a0;
+	box-shadow: 0 8rpx 20rpx rgba(216, 74, 74, 0.12);
+}
+
+.session-day-alert__tag {
+	flex: 0 0 auto;
+	padding: 4rpx 12rpx;
+	border-radius: 999rpx;
+	background: #c45c12;
+	color: #fff;
+	font-size: 20rpx;
+	line-height: 28rpx;
+	font-weight: 700;
+}
+
+.session-day-alert.is-expired .session-day-alert__tag {
+	background: var(--tt-danger);
+}
+
+.session-day-alert__text {
+	min-width: 0;
+	flex: 1;
+	font-size: 24rpx;
+	line-height: 34rpx;
+	color: #8a4b12;
+	font-weight: 600;
+}
+
+.session-day-alert.is-expired .session-day-alert__text {
+	color: #a33b3b;
+}
+
 .seat-legend {
 	position: fixed;
 	top: 120rpx;
@@ -803,114 +758,13 @@ export default {
 	display: block;
 }
 
-.seat-map {
+.seat-map-slot {
 	position: fixed;
-	top: 192rpx;
 	left: 0;
 	right: 0;
-	bottom: calc(272rpx + env(safe-area-inset-bottom));
+	z-index: 10;
 	width: 100%;
-	height: auto;
-	background:
-		radial-gradient(circle at 50% 0, rgba(255, 255, 255, 0.96) 0, rgba(248, 249, 250, 0.88) 42%, #f1f2f4 100%);
-}
-
-.screen-wrap {
-	height: 86px;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	box-sizing: border-box;
-	padding-top: 20rpx;
-}
-
-.screen-arc {
-	width: 430rpx;
-	height: 36rpx;
-	border-top: 6rpx solid #d8dce2;
-	border-radius: 50% 50% 0 0;
-	background: linear-gradient(180deg, rgba(213, 217, 224, 0.34), rgba(247, 248, 250, 0));
-	box-shadow: 0 -5rpx 14rpx rgba(92, 101, 116, 0.08);
-}
-
-.screen-label {
-	margin-top: 8rpx;
-	font-size: 20rpx;
-	line-height: 30rpx;
-	letter-spacing: 3rpx;
-	color: #9aa0aa;
-}
-
-.seat-center-line {
-	position: absolute;
-	top: 86px;
-	left: 50%;
-	z-index: 0;
-	width: 0;
-	border-left: 1px dashed rgba(164, 169, 178, 0.45);
-	transform: translateX(-50%);
-}
-
-.seat-rows {
-	position: relative;
-	z-index: 1;
-}
-
-.seat-row {
-	position: relative;
-	display: flex;
-	justify-content: center;
-	align-items: center;
-	margin-bottom: 10px;
-}
-
-.row-number {
-	position: absolute;
-	left: 13rpx;
-	top: 50%;
-	min-width: 30rpx;
-	height: 30rpx;
-	padding: 0 5rpx;
-	box-sizing: border-box;
-	border-radius: 15rpx;
-	background: rgba(81, 87, 98, 0.64);
-	text-align: center;
-	font-size: 18rpx;
-	line-height: 30rpx;
-	color: #fff;
-	transform: translateY(-50%);
-}
-
-.seat-cell {
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	box-sizing: border-box;
-}
-
-.seat-image {
-	width: 88%;
-	height: 88%;
-	display: block;
-}
-
-.seat-image.is-sold,
-.legend-seat-image.is-sold {
-	filter: grayscale(1);
-	opacity: 0.44;
-}
-
-.seat-image.is-maintenance,
-.legend-seat-image.is-maintenance {
-	filter: grayscale(0.85);
-	opacity: 0.66;
-}
-
-.seat-empty {
-	padding-top: 90rpx;
-	text-align: center;
-	font-size: 25rpx;
-	color: #9aa0aa;
+	background: #f1f2f4;
 }
 
 .seat-bottom-bar {
@@ -927,7 +781,9 @@ export default {
 }
 
 .seat-actions {
+	padding: 22rpx 28rpx calc(22rpx + constant(safe-area-inset-bottom));
 	padding: 22rpx 28rpx calc(22rpx + env(safe-area-inset-bottom));
+	box-sizing: border-box;
 }
 
 .recommend-row,
@@ -936,6 +792,7 @@ export default {
 	display: flex;
 	align-items: center;
 	margin-bottom: 18rpx;
+	overflow: hidden;
 }
 
 .action-label {
@@ -962,15 +819,26 @@ export default {
 }
 
 .selected-scroll {
+	height: 54rpx;
 	min-width: 0;
 	flex: 1;
-	width: 1px;
+	width: 0;
+	overflow: hidden;
+}
+
+.selected-chip-track {
+	display: inline-flex;
+	flex-direction: row;
+	flex-wrap: nowrap;
+	align-items: center;
+	height: 54rpx;
 	white-space: nowrap;
 }
 
 .selected-chip {
 	height: 54rpx;
 	display: inline-flex;
+	flex: 0 0 auto;
 	align-items: center;
 	margin-right: 12rpx;
 	padding: 0 14rpx;
@@ -980,6 +848,7 @@ export default {
 	background: var(--tt-primary-soft, #f6f7df);
 	font-size: 22rpx;
 	color: var(--tt-primary-strong, #77800f);
+	white-space: nowrap;
 }
 
 .chip-close {

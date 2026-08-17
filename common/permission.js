@@ -235,7 +235,17 @@ function gotoAppPermissionSetting() {
 
 const permission = {
     get isIOS(){
-        return typeof isIOS === 'boolean' ? isIOS : (isIOS = uni.getSystemInfoSync().platform === 'ios')
+        if (typeof isIOS === 'boolean') return isIOS;
+        try {
+            const { getSystemInfoSyncSafe } = require('@/common/runtime/system-info.js');
+            const info = getSystemInfoSyncSafe();
+            const platform = String(info.platform || '').toLowerCase();
+            const system = String(info.system || '').toLowerCase();
+            isIOS = platform === 'ios' || system.includes('ios');
+        } catch (e) {
+            isIOS = typeof uni !== 'undefined' && uni.getSystemInfoSync && uni.getSystemInfoSync().platform === 'ios';
+        }
+        return isIOS;
     },
     requestIOS: requestIOS,
     requestAndroid: requestAndroid,

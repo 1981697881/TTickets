@@ -55,7 +55,7 @@
 <script>
 import fzCircuitMeal from '@/components/fz-circuit-card/fz-circuit-meal.vue';
 import { mapActions, mapState } from 'vuex';
-import { normalizePage, mergeUnique } from '@/common/utils/pagination';
+import { normalizePage } from '@/common/utils/pagination';
 
 const IMAGE_BASE_URL = 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/';
 
@@ -111,9 +111,11 @@ export default {
 		},
 		async getMachinePreview() {
 			try {
-				const res = await this.$api('cinema.playList', { page: 1 });
-				const page = normalizePage(res?.data, 1);
-				this.machinePreview = page.items[0] || {};
+				const res = await this.$api('cinema.playList');
+				if (res && res.flag) {
+					const page = normalizePage(res.data, 1);
+					this.machinePreview = page.items[0] || {};
+				}
 			} catch (error) {
 				this.machinePreview = {};
 			}
@@ -123,13 +125,11 @@ export default {
 			this.isLoading = true;
 			this.loadStatus = 'loading';
 			try {
-				const res = await this.$api('goods.commodityList', {
-					goodsType: 1,
-					page: this.listParams.page
-				});
-				if (res?.flag || res?.code === 1) {
+				// 0.5.5：不传 page，整表覆盖，读数组 last_page
+				const res = await this.$api('goods.commodityList', { goodsType: 1 });
+				if (res && res.flag) {
 					const page = normalizePage(res.data, this.listParams.page);
-					this.goodsList = mergeUnique(this.goodsList, page.items, 'goodsId', this.listParams.page === 1);
+					this.goodsList = page.items;
 					this.lastPage = page.lastPage;
 					this.loadStatus = this.listParams.page < page.lastPage ? '' : 'over';
 				}
@@ -141,11 +141,16 @@ export default {
 			}
 		},
 		openPayment(goods) {
+			const price = Number(goods && goods.goodsPrice);
+			if (!goods || !goods.goodsId || !Number.isFinite(price) || price <= 0) {
+				uni.showToast({ icon: 'none', title: '商品信息异常' });
+				return;
+			}
 			this.jump('/pages/order/payment/chargeMoney', {
 				goodsDescribe: goods.goodsDescribe,
 				coinCount: goods.coinCount,
 				goodsName: goods.goodsName,
-				goodsPrice: goods.goodsPrice,
+				goodsPrice: price,
 				goodsId: goods.goodsId,
 				integral: goods.integral
 			});

@@ -64,6 +64,7 @@ import { mapMutations, mapActions, mapState } from 'vuex';
 import moreGoodList from '@/csJson/moreGoodList.json';
 import tools from '@/common/utils/tools';
 import { normalizePage, mergeUnique } from '@/common/utils/pagination';
+import { getSystemInfoSafe } from '@/common/runtime/system-info';
 let timer = null;
 export default {
 	components: {
@@ -125,12 +126,10 @@ export default {
 		},
 		getScrHeight() {
 			let me = this;
-			uni.getSystemInfo({
+			getSystemInfoSafe({
 				success: function(res) {
-					// res - 各种参数
 					let info = uni.createSelectorQuery().select('.head_box');
 					info.boundingClientRect(function(data) {
-						//data - 各种参数
 						me.headHeight = res.windowHeight - data.height - 3;
 					}).exec();
 				}
@@ -225,9 +224,12 @@ export default {
 			this.loadStatus = 'loading';
 			try {
 				const res = await this.$api('cinema.filmLists', { ...this.listParams });
-				if (res.flag || res.code === 1) {
+				// 0.5.5：flag + 数组 last_page
+				if (res && res.flag) {
 					const page = normalizePage(res.data, this.listParams.page);
-					this.goodsList = mergeUnique(this.goodsList, page.items, 'cinemaId', this.listParams.page === 1);
+					this.goodsList = this.listParams.page === 1
+						? page.items
+						: mergeUnique(this.goodsList, page.items, 'cinemaId', false);
 					this.lastPage = page.lastPage;
 					this.loadStatus = this.listParams.page < page.lastPage ? '' : 'over';
 				}

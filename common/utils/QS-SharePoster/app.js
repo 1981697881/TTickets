@@ -341,13 +341,13 @@ let _app = {
 								payTypeArray[i] = {
 									name: '微信支付',
 									value: providers[i],
-									img: '/static/image/wei.png'
+									img: '/static/imgs/pay/wei.png'
 								};
 							} else if (providers[i] == 'alipay') {
 								payTypeArray[i] = {
 									name: "支付宝支付",
 									value: providers[i],
-									img: '/static/image/ali.png'
+									img: '/static/imgs/pay/ali.png'
 								};
 							}
 						}

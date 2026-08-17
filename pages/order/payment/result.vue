@@ -60,7 +60,7 @@ export default {
 		// 查看订单
 		onOrder() {
 			this.$Router.replace({
-				path: '/pages/index/wallet',
+				path: '/pages/order/ticket',
 				query: { type: this.$Route.query.reType != 4?'ing':'nostart' }
 			});
 		},

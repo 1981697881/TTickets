@@ -21,3 +21,11 @@ const ENV_API_URL = {
 export const BASE_URL = ENV_BASE_URL[process.env.NODE_ENV || 'development']; //后台根域名
 export const API_URL = ENV_API_URL[process.env.NODE_ENV || 'development']; //后台接口域名
 export const HAS_LIVE = false; //后台是否开通直播权限,根据情况在manifest.json中，开启注释相应组件的引入。
+
+/**
+ * 业务图片 CDN（对应本地 static/imgs 目录内容）。
+ * 为空则继续使用本地 /static/imgs/...
+ * 当前线上：https://cfzx.gzfzdev.com/imgs/seat/xxx.png 等
+ * 注意: tabBar 图标必须留在包内 static/tabbar，不能走 CDN。
+ */
+export const STATIC_CDN = 'https://cfzx.gzfzdev.com/imgs';

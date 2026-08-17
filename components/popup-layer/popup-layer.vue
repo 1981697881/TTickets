@@ -66,7 +66,7 @@ export default {
 <style lang="scss" scoped>
 .popup-content {
   width: 100%;
-  max-height: calc(100vh - 180rpx);
+  max-height: 80%;
   overflow: auto;
   box-sizing: border-box;
   background: #fff;

@@ -91,37 +91,33 @@ export default class AppPay {
 
 
 	prepay() {
-		let that = this;
 		uni.showLoading({
 			title: '支付中',
 			mask: true
 		});
 		return new Promise((resolve, reject) => {
-			let that = this;
+			const that = this;
 
 			if (uni.getStorageSync('openid')) {
 				that.params.openId = uni.getStorageSync('openid');
 			}
-			console.log(that.params)
-			console.log(that.url)
 			api(that.url, that.params).then(res => {
 				if (res.flag) {
-					console.log(res)
 					if (res.data === 'no_openid') {
+						uni.hideLoading();
 						uni.showModal({
 							title: '微信支付',
 							content: '点击确定后请再次使用微信支付',
-							success: function(res) {
-								if (res.confirm) {
+							success: function(modalRes) {
+								if (modalRes.confirm) {
 									//静默获取openid
 									let wechat = new Wechat();
 									wechat.wxOfficialAccountBaseLogin();
-								} else if (res.cancel) {
-									console.log('用户点击取消');
 								}
+								reject(new Error('no_openid'));
 							},
-							fail: (err) => {
-								uni.hideLoading();
+							fail: () => {
+								reject(new Error('no_openid'));
 							}
 						});
 					} else {
@@ -131,11 +127,19 @@ export default class AppPay {
 				} else {
 					uni.hideLoading();
 					uni.showToast({
-						title: res.msg,
+						title: res.msg || '支付失败',
 						icon: 'none'
-					})
+					});
+					reject(res || new Error('prepay_failed'));
 				}
-			})
+			}).catch(err => {
+				uni.hideLoading();
+				uni.showToast({
+					title: '支付请求失败，请重试',
+					icon: 'none'
+				});
+				reject(err);
+			});
 		});
 	}
 
@@ -143,53 +147,64 @@ export default class AppPay {
 
 	async wxOfficialAccountPay() {
 		let that = this;
-		let result = await this.prepay();
-		wxsdk.wxpay(result.data, (res) => {
-			if (res.errMsg == "chooseWXPay:ok") {
-				Router.replace({
-					path: '/pages/order/payment/result',
-					query: {
-						orderSn: that.order.order_sn,
-						type: that.payment,
-						pay: 1
-					}
-				});
-			} else if (res.errMsg === 'chooseWXPay:cancel') {
-				//取消支付
+		try {
+			let result = await this.prepay();
+			wxsdk.wxpay(result.data, (res) => {
+				if (res.errMsg == "chooseWXPay:ok") {
+					Router.replace({
+						path: '/pages/order/payment/result',
+						query: {
+							orderSn: that.order.order_sn,
+							type: that.payment,
+							pay: 1
+						}
+					});
+				} else if (res.errMsg === 'chooseWXPay:cancel') {
+					//取消支付
 
-			} else {
-				Router.replace({
-					path: '/pages/order/payment/result',
-					query: {
-						orderSn: that.order.order_sn,
-						type: that.payment,
-						pay: 0
-					}
-				});
-			}
-		});
-
+				} else {
+					Router.replace({
+						path: '/pages/order/payment/result',
+						query: {
+							orderSn: that.order.order_sn,
+							type: that.payment,
+							pay: 0
+						}
+					});
+				}
+			});
+		} catch (e) {
+			// prepay 失败已 toast，页面 onShow 会复位按钮
+		}
 	}
 	//
 
 	async wechatWapPay() {
 		let that = this;
-		let result = await this.prepay();
-		if (result.code === 1) {
-			var url = result.data.pay_data.match(/url\=\'(\S*)\'/);
-			let reg = new RegExp('&amp;', 'g') //g代表全部
-			let newUrl = url[1].replace(reg, '&');
-			let domain = uni.getStorageSync('sysInfo').domain; //域名需要https
-			let params = encodeURIComponent(
-				`${domain}/pages/order/payment/result?orderSn=${that.order.order_sn}&type=${that.payment}&pay=1`
-				)
-			window.location.href = newUrl + '&redirect_url=' + params;
-		}
+		try {
+			let result = await this.prepay();
+			if (result.code === 1) {
+				var url = result.data.pay_data.match(/url\=\'(\S*)\'/);
+				let reg = new RegExp('&amp;', 'g') //g代表全部
+				let newUrl = url[1].replace(reg, '&');
+				let domain = uni.getStorageSync('sysInfo').domain; //域名需要https
+				let params = encodeURIComponent(
+					`${domain}/pages/order/payment/result?orderSn=${that.order.order_sn}&type=${that.payment}&pay=1`
+					)
+				window.location.href = newUrl + '&redirect_url=' + params;
+			}
+		} catch (e) {}
 	}
 
 	async wxMiniProgramPay() {
 		let that = this;
-		let result = await this.prepay();
+		let result;
+		try {
+			result = await this.prepay();
+		} catch (e) {
+			globalState.isPreviewApi = false;
+			return;
+		}
 		let payData = result.data;
 		globalState.isPreviewApi = true
 		uni.requestPayment({
@@ -376,23 +391,26 @@ export default class AppPay {
 
 	async walletPay() {
 		let that = this;
-		let result = await this.prepay();
-		if (result.code === 1) {
-			Router.replace({
-				path: '/pages/order/payment/result',
-				query: {
-					orderSn: that.order.order_sn,
-					type: that.payment,
-					pay: 1
-				}
-			});
-		}
+		try {
+			let result = await this.prepay();
+			if (result.code === 1) {
+				Router.replace({
+					path: '/pages/order/payment/result',
+					query: {
+						orderSn: that.order.order_sn,
+						type: that.payment,
+						pay: 1
+					}
+				});
+			}
+		} catch (e) {}
 	}
 
 	async copyPayLink() {
 		let that = this;
-		let result = await this.prepay();
-		if (result.code === 1) {
+		try {
+			let result = await this.prepay();
+			if (result.code === 1) {
 			//引入showModal 点击确认 复制链接；
 			uni.showModal({
 				title: '支付宝支付',
@@ -416,83 +434,88 @@ export default class AppPay {
 					}
 				}
 			})
-
-
-		}
+			}
+		} catch (e) {}
 	}
 
 	async goToPayLink() {
 		let that = this;
-		let result = await this.prepay();
-		if (result.code === 1) {
-			window.location = result.data.pay_data;
-		}
+		try {
+			let result = await this.prepay();
+			if (result.code === 1) {
+				window.location = result.data.pay_data;
+			}
+		} catch (e) {}
 	}
 
 	async aliPay() {
 		let that = this;
-		let result = await this.prepay();
-		if (result.code === 1) {
-			uni.requestPayment({
-				provider: 'alipay',
-				orderInfo: result.data.pay_data, //支付宝订单数据
-				success: function(res) {
-					Router.replace({
-						path: '/pages/order/payment/result',
-						query: {
-							orderSn: that.order.order_sn,
-							type: that.payment,
-							pay: 1
-						}
-					});
-				},
-				fail: function(err) {
-					if (err.errMsg !== "requestPayment:fail cancel") {
+		try {
+			let result = await this.prepay();
+			if (result.code === 1) {
+				uni.requestPayment({
+					provider: 'alipay',
+					orderInfo: result.data.pay_data, //支付宝订单数据
+					success: function(res) {
 						Router.replace({
 							path: '/pages/order/payment/result',
 							query: {
 								orderSn: that.order.order_sn,
 								type: that.payment,
-								pay: 0
+								pay: 1
 							}
 						});
+					},
+					fail: function(err) {
+						if (err.errMsg !== "requestPayment:fail cancel") {
+							Router.replace({
+								path: '/pages/order/payment/result',
+								query: {
+									orderSn: that.order.order_sn,
+									type: that.payment,
+									pay: 0
+								}
+							});
+						}
 					}
-				}
-			});
-		}
+				});
+			}
+		} catch (e) {}
 	}
 
 	async wechatPay() {
 		let that = this;
-		let result = await this.prepay();
-		if (result.code === 1) {
-			uni.requestPayment({
-				provider: 'wxpay',
-				orderInfo: JSON.parse(result.data.pay_data), //微信订单数据(官方说是string。实测为object)
-				success: function(res) {
-					Router.replace({
-						path: '/pages/order/payment/result',
-						query: {
-							orderSn: that.order.order_sn,
-							type: that.payment,
-							pay: 1
-						}
-					});
-				},
-				fail: function(err) {
-					if (err.errMsg !== "requestPayment:fail cancel") {
+		try {
+			let result = await this.prepay();
+			if (result.code === 1) {
+				uni.requestPayment({
+					provider: 'wxpay',
+					orderInfo: JSON.parse(result.data.pay_data), //微信订单数据(官方说是string。实测为object)
+					success: function(res) {
 						Router.replace({
 							path: '/pages/order/payment/result',
 							query: {
 								orderSn: that.order.order_sn,
 								type: that.payment,
-								pay: 0
+								pay: 1
 							}
 						});
+					},
+					fail: function(err) {
+						if (err.errMsg !== "requestPayment:fail cancel") {
+							Router.replace({
+								path: '/pages/order/payment/result',
+								query: {
+									orderSn: that.order.order_sn,
+									type: that.payment,
+									pay: 0
+								}
+							});
+						}
 					}
-				}
-			});
-		}
+				});
+			}
+		} catch (e) {}
 	}
 
 }

@@ -36,7 +36,7 @@
 									<view class="items">
 										<!-- 商品 begin  "-->
 										<view class="good" v-for="(good, key) in goods" :key="key">
-											<image @tap="jump('/pages/menu/detail', { PackageId: good.PackageId })" :src="good.ImagePath|| 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/zanwu.jpg'" class="image"></image>
+											<image @tap="jump('/pages/goods/menu-detail', { PackageId: good.PackageId })" :src="good.ImagePath|| 'https://cfzx.gzfzdev.com/movie/uploadFiles/image/zanwu.jpg'" class="image"></image>
 											<view class="right">
 												<text class="name">{{good.PackageName}}</text>
 												<text class="tips">{{good.Note}}</text>
@@ -189,7 +189,7 @@
 			</popup-layer> -->
 			<!-- 购物车详情popup -->
 		</view>
-		<view class="loading" v-else><image class="loading-image" src="/static/loading.gif"></image></view>
+		<view class="loading" v-else><image class="loading-image" src="/static/imgs/common/loading.gif"></image></view>
 		<view class="foot_box"></view>
 		<!-- 自定义底部导航 -->
 		<!-- <app-tabbar></app-tabbar> -->
@@ -209,7 +209,7 @@ import modal from '@/components/modal/modal';
 import popupLayer from '@/components/popup-layer/popup-layer';
 import goods from '@/csJson/goods.js';
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex';
-import { extractArray, isApiSuccess } from '@/common/utils/api-data';
+import { extractArray } from '@/common/utils/api-data';
 
 export default {
 	components: {
@@ -309,8 +309,12 @@ export default {
 					placeId: me.storeInfo.v8PlaceId,
 					V8Url: me.storeInfo.v8Url
 				});
-				const list = extractArray(res && res.data);
-				if (isApiSuccess(res) || list.length) this.goods = list;
+				// 0.5.5：flag + res.data.Data
+				if (res && res.flag) {
+					this.goods = Array.isArray(res.data?.Data)
+						? res.data.Data
+						: extractArray(res.data);
+				}
 				this.cart = uni.getStorageSync('cart') || [];
 			} finally {
 				this.loading = false;
@@ -477,7 +481,7 @@ export default {
 			uni.showLoading({ title: '加载中' });
 			/* uni.setStorageSync('cart', JSON.parse(JSON.stringify(this.cart))) */
 			this.$Router.push({
-				path: '/pages/menu/pay', 
+				path: '/pages/goods/menu-pay', 
 				query: {
 					pay: JSON.stringify([{
 					packageId: good.PackageId,

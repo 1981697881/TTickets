@@ -17,6 +17,8 @@
     "build:app": "cross-env UNI_INPUT_DIR=./ uni build -p app",
     "check:vue3": "node scripts/check-vue3-compat.mjs",
     "check:release": "node scripts/check-release-readiness.mjs",
+    "typecheck": "vue-tsc --noEmit",
+    "assets:cdn-list": "node scripts/list-cdn-assets.mjs",
     "verify:mp": "npm run check:vue3 && npm run build:mp-weixin && npm run check:release",
     "verify": "npm run check:vue3 && npm run build:h5 && npm run build:mp-weixin && npm run check:release"
   },
@@ -38,10 +40,13 @@
     "@dcloudio/types": "^3.4.8",
     "@dcloudio/uni-cli-shared": "3.0.0-5000720260410001",
     "@dcloudio/vite-plugin-uni": "3.0.0-5000720260410001",
+    "@types/node": "26.2.0",
     "@vue/runtime-core": "^3.4.21",
     "cross-env": "^7.0.3",
     "jsonc-parser": "^3.3.1",
     "sass": "1.77.8",
-    "vite": "5.2.8"
+    "typescript": "5.6.3",
+    "vite": "5.2.8",
+    "vue-tsc": "2.1.10"
   }
 }

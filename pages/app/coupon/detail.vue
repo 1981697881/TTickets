@@ -155,6 +155,7 @@
 </script>
 
 <style lang="scss">
+@import '@/static/style/user-center.scss';
 .page_box {
 	background: linear-gradient(180deg, rgba(240, 199, 133, 1), rgba(246, 214, 157, 1));
 }

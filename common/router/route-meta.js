@@ -12,12 +12,6 @@ export default {
     "title": "电影",
     "group": "电影"
   },
-  "/pages/index/wallet": {
-    "auth": false,
-    "async": true,
-    "title": "票夹",
-    "group": "订单"
-  },
   "/pages/index/user": {
     "auth": false,
     "async": true,
@@ -30,29 +24,11 @@ export default {
     "title": "小食和商品",
     "group": "卖品"
   },
-  "/pages/menu/detail": {
-    "auth": false,
-    "async": true,
-    "title": "商品详情",
-    "group": "卖品"
-  },
-  "/pages/menu/pay": {
-    "auth": true,
-    "async": true,
-    "title": "小食和商品",
-    "group": "卖品"
-  },
   "/pages/index/videoGame": {
     "auth": false,
     "async": true,
     "title": "电玩充值",
     "group": "电玩"
-  },
-  "/pages/index/view": {
-    "auth": false,
-    "async": true,
-    "title": "自定义页面",
-    "group": "自定义页面"
   },
   "/pages/activity/groupon/list": {
     "auth": false,
@@ -174,6 +150,18 @@ export default {
     "title": "商品详情",
     "group": "商城"
   },
+  "/pages/goods/menu-detail": {
+    "auth": false,
+    "async": true,
+    "title": "商品详情",
+    "group": "卖品"
+  },
+  "/pages/goods/menu-pay": {
+    "auth": true,
+    "async": true,
+    "title": "小食和商品",
+    "group": "卖品"
+  },
   "/pages/wallet/index": {
     "auth": true,
     "async": true
@@ -187,6 +175,12 @@ export default {
     "async": true,
     "title": "定位",
     "group": "位置信息"
+  },
+  "/pages/order/ticket": {
+    "auth": false,
+    "async": true,
+    "title": "票夹",
+    "group": "订单"
   },
   "/pages/order/confirm": {
     "auth": true,
@@ -253,6 +247,12 @@ export default {
   "/pages/order/payment/result": {
     "auth": true,
     "async": false
+  },
+  "/pages/public/custom-view": {
+    "auth": false,
+    "async": true,
+    "title": "自定义页面",
+    "group": "自定义页面"
   },
   "/pages/public/kefu/index": {
     "auth": true,

@@ -3,9 +3,30 @@ import uni from '@dcloudio/vite-plugin-uni';
 import fs from 'node:fs';
 import path from 'node:path';
 
-const sourceExtensions = /\.(?:vue|js|ts|json|scss|css)$/i;
-const staticAssetPattern = /(?:(?:@\/|\/|\.\.\/|\.\/)+)?static\/[A-Za-z0-9_./@+-]+\.(?:png|jpe?g|gif|webp|svg|ttf|woff2?)/gi;
+const sourceExtensions = /\.(?:vue|js|ts|json|scss|css|wxml|wxss)$/i;
+const staticAssetPattern =
+  /(?:(?:@\/|\/|\.\.\/|\.\/)+)?static\/[A-Za-z0-9_./@+-]+\.(?:png|jpe?g|gif|webp|svg|ttf|woff2?)/gi;
 const ignoredDirectories = new Set(['node_modules', 'dist', 'unpackage', '.tmp', '.git']);
+const hashedAssetPattern =
+  /\/assets\/([A-Za-z0-9_.@+-]+\.(?:png|jpe?g|gif|webp|svg|ttf|woff2?))/g;
+
+/** 必须留在主包：tabBar / 样式字体等 */
+const LOCAL_STATIC_PREFIXES = ['static/tabbar/', 'static/colorui/', 'static/font/', 'static/style/'];
+
+function readStaticCdn(inputDir) {
+  const envPath = path.join(inputDir, 'env.js');
+  if (!fs.existsSync(envPath)) return '';
+  const code = fs.readFileSync(envPath, 'utf8');
+  const match = code.match(/export\s+const\s+STATIC_CDN\s*=\s*['"]([^'"]*)['"]/);
+  return String(match?.[1] || '')
+    .trim()
+    .replace(/\/+$/, '');
+}
+
+function isLocalOnlyStatic(assetPath) {
+  const normalized = assetPath.replace(/^\/+/, '');
+  return LOCAL_STATIC_PREFIXES.some((prefix) => normalized.startsWith(prefix));
+}
 
 function collectReferencedStaticAssets(inputDir) {
   const assets = new Set();
@@ -19,7 +40,9 @@ function collectReferencedStaticAssets(inputDir) {
       } else if (sourceExtensions.test(entry.name)) {
         const source = fs.readFileSync(file, 'utf8');
         for (const match of source.matchAll(staticAssetPattern)) {
-          assets.add(match[0].replace(/^(?:@\/|\/|\.\.\/|\.\/)+/, ''));
+          assets.add(
+            match[0].replace(/^(?:@\/|\/|\.\.\/|\.\/)+/, '').replace(/\/{2,}/g, '/')
+          );
         }
       }
     }
@@ -27,6 +50,163 @@ function collectReferencedStaticAssets(inputDir) {
 
   visit(inputDir);
   return assets;
+}
+
+function collectStaticFileMap(staticDir) {
+  /** @type {Map<string, string[]>} */
+  const map = new Map();
+
+  function visit(directory, urlBase) {
+    if (!fs.existsSync(directory)) return;
+    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+      const fullPath = path.join(directory, entry.name);
+      if (entry.isDirectory()) {
+        visit(fullPath, `${urlBase}/${entry.name}`);
+        continue;
+      }
+      const url = `${urlBase}/${entry.name}`.replace(/\/{2,}/g, '/');
+      const list = map.get(entry.name) || [];
+      list.push(url);
+      map.set(entry.name, list);
+    }
+  }
+
+  visit(staticDir, '/static');
+  return map;
+}
+
+function stripViteHash(fileName) {
+  let match = fileName.match(/^(.+)\.([a-f0-9]{8})\.([^.]+)$/i);
+  if (match) return `${match[1]}.${match[3]}`;
+  match = fileName.match(/^(.+)-([A-Za-z0-9_-]{8})\.([^.]+)$/);
+  if (match) return `${match[1]}.${match[3]}`;
+  return fileName;
+}
+
+function resolveStaticUrl(fileName, staticMap) {
+  const originalName = stripViteHash(fileName);
+  const candidates = staticMap.get(originalName) || [];
+  if (!candidates.length) return null;
+  return candidates.sort((a, b) => a.length - b.length)[0];
+}
+
+function isMpOutput(outputDir) {
+  const platform = process.env.UNI_PLATFORM || '';
+  return platform.startsWith('mp') || /[\\/]mp-[^\\/]+$/i.test(outputDir);
+}
+
+function copyReferencedStaticAssets(inputDir, outputDir, options = {}) {
+  const cdn = options.cdn || '';
+  for (const asset of collectReferencedStaticAssets(inputDir)) {
+    // 启用 CDN 后：业务图（主要是 imgs）不再打进主包
+    if (cdn && !isLocalOnlyStatic(asset)) continue;
+
+    const source = path.resolve(inputDir, asset);
+    const destination = path.resolve(outputDir, asset);
+    const relativeSource = path.relative(inputDir, source);
+    const relativeDestination = path.relative(outputDir, destination);
+
+    if (
+      relativeSource.startsWith('..') ||
+      path.isAbsolute(relativeSource) ||
+      relativeDestination.startsWith('..') ||
+      path.isAbsolute(relativeDestination)
+    ) {
+      throw new Error(`Invalid static asset path: ${asset}`);
+    }
+    if (!fs.existsSync(source)) {
+      throw new Error(`Missing static asset: ${asset}`);
+    }
+
+    fs.mkdirSync(path.dirname(destination), { recursive: true });
+    fs.copyFileSync(source, destination);
+  }
+}
+
+function toCdnAssetUrl(localUrl, cdn) {
+  const relative = String(localUrl || '')
+    .replace(/\\/g, '/')
+    .replace(/^\/?static\/imgs\//, '')
+    .replace(/^\/?imgs\//, '')
+    .replace(/^\/?static\//, '')
+    .replace(/^\/+/, '');
+  return `${String(cdn).replace(/\/+$/, '')}/${relative}`;
+}
+
+function rewriteOutputToCdn(outputDir, cdn) {
+  if (!cdn) return;
+
+  const textExt = /\.(?:js|json|wxml|wxss|css|html|vue)$/i;
+  const cdnBase = String(cdn).replace(/\/+$/, '');
+
+  function visit(directory) {
+    for (const entry of fs.readdirSync(directory, { withFileTypes: true })) {
+      const fullPath = path.join(directory, entry.name);
+      if (entry.isDirectory()) {
+        visit(fullPath);
+        continue;
+      }
+      if (!textExt.test(entry.name)) continue;
+      let code = fs.readFileSync(fullPath, 'utf8');
+      // /static/imgs/xxx -> https://cdn/imgs/xxx （CDN 根即 imgs 目录）
+      const next = code
+        .replace(/(["'`])\/static\/imgs\/([^"'`]+)\1/g, `$1${cdnBase}/$2$1`)
+        .replace(/(["'`])static\/imgs\/([^"'`]+)\1/g, `$1${cdnBase}/$2$1`);
+      if (next !== code) fs.writeFileSync(fullPath, next);
+    }
+  }
+
+  visit(outputDir);
+}
+
+function removePackagedImgs(outputDir, cdn) {
+  if (!cdn) return;
+  const imgsDir = path.join(outputDir, 'static', 'imgs');
+  if (fs.existsSync(imgsDir)) {
+    fs.rmSync(imgsDir, { recursive: true, force: true });
+  }
+}
+
+function patchMpAssetsJs(inputDir, outputDir, cdn) {
+  const assetsJsPath = path.join(outputDir, 'common', 'assets.js');
+  if (!fs.existsSync(assetsJsPath)) return false;
+
+  const staticMap = collectStaticFileMap(path.join(inputDir, 'static'));
+  let code = fs.readFileSync(assetsJsPath, 'utf8');
+  const hashedNames = new Set();
+
+  code = code.replace(hashedAssetPattern, (full, fileName) => {
+    hashedNames.add(fileName);
+    const localUrl = resolveStaticUrl(fileName, staticMap);
+    if (!localUrl) return full;
+    if (cdn && !isLocalOnlyStatic(localUrl.replace(/^\//, ''))) {
+      return toCdnAssetUrl(localUrl, cdn);
+    }
+    return localUrl;
+  });
+
+  if (cdn) {
+    const cdnBase = String(cdn).replace(/\/+$/, '');
+    code = code
+      .replace(/(["'`])\/static\/imgs\/([^"'`]+)\1/g, `$1${cdnBase}/$2$1`)
+      .replace(/(["'`])static\/imgs\/([^"'`]+)\1/g, `$1${cdnBase}/$2$1`);
+  }
+
+  fs.writeFileSync(assetsJsPath, code);
+
+  if (!cdn) {
+    for (const fileName of hashedNames) {
+      const localUrl = resolveStaticUrl(fileName, staticMap);
+      if (!localUrl) continue;
+      const source = path.join(inputDir, localUrl.replace(/^\//, ''));
+      const destination = path.join(outputDir, 'assets', fileName);
+      if (!fs.existsSync(source)) continue;
+      fs.mkdirSync(path.dirname(destination), { recursive: true });
+      fs.copyFileSync(source, destination);
+    }
+  }
+
+  return true;
 }
 
 function copyStaticAssets() {
@@ -41,33 +221,106 @@ function copyStaticAssets() {
     writeBundle() {
       const inputDir = path.resolve(process.env.UNI_INPUT_DIR || config.root);
       const outputDir = path.resolve(process.env.UNI_OUTPUT_DIR || config.build.outDir);
-      for (const asset of collectReferencedStaticAssets(inputDir)) {
-        const source = path.resolve(inputDir, asset);
-        const destination = path.resolve(outputDir, asset);
-        const relativeSource = path.relative(inputDir, source);
-        const relativeDestination = path.relative(outputDir, destination);
+      const cdn = readStaticCdn(inputDir);
+      copyReferencedStaticAssets(inputDir, outputDir, { cdn });
+      rewriteOutputToCdn(outputDir, cdn);
+      removePackagedImgs(outputDir, cdn);
+    }
+  };
+}
 
-        if (
-          relativeSource.startsWith('..') ||
-          path.isAbsolute(relativeSource) ||
-          relativeDestination.startsWith('..') ||
-          path.isAbsolute(relativeDestination)
-        ) {
-          throw new Error(`Invalid static asset path: ${asset}`);
-        }
-        if (!fs.existsSync(source)) {
-          throw new Error(`Missing static asset: ${asset}`);
-        }
+/**
+ * 1) 把 common/assets.js 里的 /assets/*.hash 指回 /static（或 CDN）
+ * 2) 未开 CDN 时把原图拷到 assets/ 兜底
+ */
+function fixMpHashedAssets() {
+  let config;
+  let watching = false;
+  /** @type {fs.FSWatcher | null} */
+  let watcher = null;
+  let patchTimer = null;
 
-        fs.mkdirSync(path.dirname(destination), { recursive: true });
-        fs.copyFileSync(source, destination);
-      }
+  function dirs() {
+    const inputDir = path.resolve(process.env.UNI_INPUT_DIR || config.root);
+    const outputDir = path.resolve(process.env.UNI_OUTPUT_DIR || config.build.outDir);
+    return { inputDir, outputDir };
+  }
+
+  function patch() {
+    const { inputDir, outputDir } = dirs();
+    if (!isMpOutput(outputDir)) return;
+    const cdn = readStaticCdn(inputDir);
+    copyReferencedStaticAssets(inputDir, outputDir, { cdn });
+    patchMpAssetsJs(inputDir, outputDir, cdn);
+    rewriteOutputToCdn(outputDir, cdn);
+    removePackagedImgs(outputDir, cdn);
+  }
+
+  function schedulePatch() {
+    if (patchTimer) clearTimeout(patchTimer);
+    patchTimer = setTimeout(() => {
+      patchTimer = null;
+      patch();
+    }, 50);
+  }
+
+  function ensureWatch() {
+    if (watching || !config?.build?.watch) return;
+    const { outputDir } = dirs();
+    if (!isMpOutput(outputDir)) return;
+    watching = true;
+
+    const commonDir = path.join(outputDir, 'common');
+    fs.mkdirSync(commonDir, { recursive: true });
+
+    try {
+      watcher?.close();
+      watcher = fs.watch(commonDir, { persistent: false }, (_event, filename) => {
+        if (!filename || filename === 'assets.js' || String(filename).endsWith('assets.js')) {
+          schedulePatch();
+        }
+      });
+    } catch {
+      // ignore
+    }
+
+    [0, 100, 300, 800].forEach((ms) => setTimeout(patch, ms));
+  }
+
+  return {
+    name: 'ttickets:fix-mp-hashed-assets',
+    enforce: 'post',
+    apply: 'build',
+    configResolved(resolvedConfig) {
+      config = resolvedConfig;
+    },
+    writeBundle() {
+      patch();
+      ensureWatch();
+    },
+    closeBundle() {
+      patch();
+      ensureWatch();
+      [0, 120, 400].forEach((ms) => setTimeout(patch, ms));
     }
   };
 }
 
 export default defineConfig({
-  plugins: [uni(), copyStaticAssets()],
+  plugins: [
+    uni({
+      vueOptions: {
+        template: {
+          transformAssetUrls: {
+            includeAbsolute: false,
+            tags: {}
+          }
+        }
+      }
+    }),
+    copyStaticAssets(),
+    fixMpHashedAssets()
+  ],
   css: {
     preprocessorOptions: {
       scss: {

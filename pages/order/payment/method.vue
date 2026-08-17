@@ -49,6 +49,7 @@
 <script>
 import AppPay from '@/common/app-pay';
 import { mapMutations, mapActions, mapState } from 'vuex';
+import { isIOSPlatform } from '@/common/runtime/system-info';
 
 let timer;
 export default {
@@ -79,7 +80,7 @@ export default {
 			uni.setStorageSync('openid', options.openid);
 		}
 		// #ifdef H5
-		if (uni.getStorageSync('platform') === 'wxOfficialAccount' && uni.getSystemInfoSync().platform === 'ios' && !uni.getStorageSync('payReload')) {
+		if (uni.getStorageSync('platform') === 'wxOfficialAccount' && isIOSPlatform() && !uni.getStorageSync('payReload')) {
 			//检测到IOS支付路径问题
 			uni.setStorageSync('payReload', true);
 			window.location.reload();

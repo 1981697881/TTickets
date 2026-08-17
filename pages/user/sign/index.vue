@@ -66,7 +66,7 @@
 		</view>
 		<view class="foot_box"></view>
 		<app-modal v-model="showSign">
-			<block slot="modalContent">
+			<template #modalContent>
 				<view class="sign-modal-box">
 					<view class="modal-head y-f">
 						<image class="modal-bg" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/sign_modal_bg.jpg" mode=""></image>
@@ -83,7 +83,7 @@
 					</view>
 					<view class="modal-bottom"><button class="cu-btn confirem-btn" @tap="onConfirem">确认</button></view>
 				</view>
-			</block>
+			</template>
 		</app-modal>
 		<!-- 自定义底部导航 -->
 		<app-tabbar></app-tabbar>
@@ -244,6 +244,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/static/style/user-center.scss';
 /* 补签 */
 .resign-box {
 	background: #fff;

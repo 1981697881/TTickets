@@ -2,7 +2,10 @@
 import { mapMutations, mapActions, mapState } from 'vuex';
 import Wechat from './common/wechat/wechat';
 import store from '@/common/store';
-import api from '@/common/request/index'
+import api from '@/common/request/index';
+import { DEFAULT_COLOR_LIST } from '@/common/runtime/platform';
+import { getSystemInfoSafe } from '@/common/runtime/system-info';
+
 export default {
 	methods: {
 		//应用初始化,获取模板,获取页面路由,获取用户信息,保存用户Token并返回初始进入页面
@@ -12,7 +15,7 @@ export default {
 			let that = this;
 			let platform = '';
 			return new Promise((resolve, reject) => {
-				uni.getSystemInfo({
+				getSystemInfoSafe({
 					success: function(e) {
 						that.StatusBar = e.statusBarHeight;
 						// #ifdef H5
@@ -42,7 +45,8 @@ export default {
 						// #endif
 						uni.setStorageSync('platform', platform);
 						resolve(platform);
-					}
+					},
+					fail: reject
 				});
 			});
 		},
@@ -78,82 +82,8 @@ export default {
 		}
 	},
 	onLaunch: async function(options) {
-		this.ColorList = [{
-				title: '嫣红',
-				name: 'red',
-				color: '#e54d42'
-			},
-			{
-				title: '桔橙',
-				name: 'orange',
-				color: '#f37b1d'
-			},
-			{
-				title: '明黄',
-				name: 'yellow',
-				color: '#fbbd08'
-			},
-			{
-				title: '橄榄',
-				name: 'olive',
-				color: '#8dc63f'
-			},
-			{
-				title: '森绿',
-				name: 'green',
-				color: '#39b54a'
-			},
-			{
-				title: '天青',
-				name: 'cyan',
-				color: '#1cbbb4'
-			},
-			{
-				title: '海蓝',
-				name: 'blue',
-				color: '#0081ff'
-			},
-			{
-				title: '姹紫',
-				name: 'purple',
-				color: '#6739b6'
-			},
-			{
-				title: '木槿',
-				name: 'mauve',
-				color: '#9c26b0'
-			},
-			{
-				title: '桃粉',
-				name: 'pink',
-				color: '#e03997'
-			},
-			{
-				title: '棕褐',
-				name: 'brown',
-				color: '#a5673f'
-			},
-			{
-				title: '玄灰',
-				name: 'grey',
-				color: '#8799a3'
-			},
-			{
-				title: '草灰',
-				name: 'gray',
-				color: '#aaaaaa'
-			},
-			{
-				title: '墨黑',
-				name: 'black',
-				color: '#333333'
-			},
-			{
-				title: '雅白',
-				name: 'white',
-				color: '#ffffff'
-			},
-		]
+		// 色板已在 platform 默认注入；此处再写一次保证与旧逻辑一致
+		this.ColorList = DEFAULT_COLOR_LIST.slice();
 		//获取坐标
 		if (options?.query?.mode === 'save') {
 			//截图模式
@@ -169,10 +99,13 @@ export default {
 		await this.setAppInfo();
 		/* let local = await this.getAppLocal();
 		await this.getLocation(local); */
-		await this.getTemplate(options);
-		let init = await this.getAppInit(options);
-		await this.autoLogin(init.data);
-		await this.getRoutes();
+		// 模板缓存秒开 + init 并行；登录/路由不挡首屏
+		const [, init] = await Promise.all([
+			this.getTemplate(options),
+			this.getAppInit(options)
+		]);
+		this.autoLogin(init.data);
+		this.getRoutes();
 	},
 	onShow: function() {
 		this.$store.commit('CART_NUM');
@@ -197,8 +130,8 @@ export default {
 @import 'static/colorui/icon.css';
 @import 'uview-plus/index.scss';
 @import 'static/style/design-system.scss';
-@import 'static/style/user-center.scss';
 @import 'static/style/overlay-system.scss';
+// user-center.scss 仅用户分包页使用，已下沉到各 user-subpage，避免进主包 app.wxss
 // 其他scss集成在uni.scss,(变量,class,minix)
 
 uni-radio:not([disabled]) .uni-radio-input:hover,

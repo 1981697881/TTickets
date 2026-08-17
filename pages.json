@@ -53,22 +53,6 @@
 				"group": "电影"
 			}
 		},
-		{
-			"path": "pages/index/wallet",
-			"name": "wallet",
-			"style": {
-				"navigationBarTitleText": "我的订单",
-				"navigationBarTextStyle": "black",
-				"navigationBarBackgroundColor": "#ffffff",
-				"backgroundColor": "#f5f6f2"
-			},
-			"meta": {
-				"auth": false,
-				"async": true,
-				"title": "票夹",
-				"group": "订单"
-			}
-		},
 		/* {
 			"path": "pages/index/cart",
 			"name": "cart",
@@ -110,32 +94,6 @@
 				"group": "卖品"
 			}
 		}, {
-			"path": "pages/menu/detail",
-			"name": "shoppingMallDetail",
-			"style": {
-				"navigationBarTitleText": "商品明细",
-				"navigationStyle": "custom",
-				"enablePullDownRefresh": true
-			},
-			"meta": {
-				"auth": false,
-				"async": true,
-				"title": "商品详情",
-				"group": "卖品"
-			}
-		},{
-			"path": "pages/menu/pay",
-			"name": "menu",
-			"style": {
-				"navigationBarTitleText": "支付"
-			},
-			"meta": {
-				"auth": true,
-				"async": true,
-				"title": "小食和商品",
-				"group": "卖品"
-			}
-		}, {
 			"path": "pages/index/videoGame",
 			"name": "videoGame",
 			"style": {
@@ -146,21 +104,6 @@
 				"async": true,
 				"title": "电玩充值",
 				"group": "电玩"
-			}
-		}, 
-		{
-			"path": "pages/index/view",
-			"name": "view",
-			"style": {
-				"navigationBarTitleText": "",
-				"navigationStyle": "custom"
-
-			},
-			"meta": {
-				"auth": false,
-				"async": true,
-				"title": "自定义页面",
-				"group": "自定义页面"
 			}
 		}
 
@@ -461,6 +404,34 @@
 						"title": "商品详情",
 						"group": "商城"
 					}
+				},
+				{
+					"path": "menu-detail",
+					"name": "shoppingMallDetail",
+					"style": {
+						"navigationBarTitleText": "商品明细",
+						"navigationStyle": "custom",
+						"enablePullDownRefresh": true
+					},
+					"meta": {
+						"auth": false,
+						"async": true,
+						"title": "商品详情",
+						"group": "卖品"
+					}
+				},
+				{
+					"path": "menu-pay",
+					"name": "menuPay",
+					"style": {
+						"navigationBarTitleText": "支付"
+					},
+					"meta": {
+						"auth": true,
+						"async": true,
+						"title": "小食和商品",
+						"group": "卖品"
+					}
 				}
 				// 商品goods------end
 
@@ -520,6 +491,22 @@
 			"root": "pages/order",
 			"pages": [
 				// 订单order------start
+				{
+					"path": "ticket",
+					"name": "ticket",
+					"style": {
+						"navigationBarTitleText": "我的订单",
+						"navigationBarTextStyle": "black",
+						"navigationBarBackgroundColor": "#ffffff",
+						"backgroundColor": "#f5f6f2"
+					},
+					"meta": {
+						"auth": false,
+						"async": true,
+						"title": "票夹",
+						"group": "订单"
+					}
+				},
 				{
 					"path": "confirm",
 					"style": {
@@ -714,7 +701,20 @@
 			"root": "pages/public",
 			"pages": [
 				// 公共public ------ start
-
+				{
+					"path": "custom-view",
+					"name": "view",
+					"style": {
+						"navigationBarTitleText": "",
+						"navigationStyle": "custom"
+					},
+					"meta": {
+						"auth": false,
+						"async": true,
+						"title": "自定义页面",
+						"group": "自定义页面"
+					}
+				},
 				{
 					"path": "kefu/index",
 					"name": "kefu",
@@ -1030,24 +1030,27 @@
 			]
 		}
 	],
-	// 分包预加载规则
-	// "preloadRule": {
-	// 	"pages/index/index": {
-	// 		"network": "all",
-	// 		"packages": ["__APP__"]
-	// 	}
-	// },
+	"preloadRule": {
+		"pages/index/circuit": {
+			"network": "wifi",
+			"packages": ["pages/cinema"]
+		},
+		"pages/menu/menu": {
+			"network": "wifi",
+			"packages": ["pages/goods"]
+		},
+		"pages/index/user": {
+			"network": "wifi",
+			"packages": ["pages/order", "pages/user"]
+		}
+	},
 	// 默认导航栏样式
 	"globalStyle": {
 		"navigationBarTextStyle": "black",
 		"navigationBarTitleText": "",
 		"navigationBarBackgroundColor": "#fff",
 		"backgroundColor": "#fff",
-		"navigationStyle": "default", //默认是default，即带有原生导航栏。custom,取消导航栏。
-		"SplitLineStyles": {
-			"color": "#ccc",
-			"height": "1px"
-		}
+		"navigationStyle": "default"
 	},
 	"tabBar": {
 		"color": "#999",

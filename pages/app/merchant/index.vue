@@ -106,7 +106,7 @@
 		></uni-calendar> -->
 		<!-- 输码弹窗 -->
 		<app-modal v-model="showInputModal">
-			<block slot="modalContent">
+			<template #modalContent>
 				<view class="modal-box">
 					<view class="modal-head">
 						<image class="modal-head-img" src="/static/imgs/modal/store_check.png" mode=""></image>
@@ -115,7 +115,7 @@
 					<input class="inp" type="number" v-model="qrcode" placeholder="在此输入核销码" placeholder-class="pl-inp" />
 					<button class="cu-btn post-btn" @tap="onConfirm">核销</button>
 				</view>
-			</block>
+			</template>
 		</app-modal>
 	</view>
 </template>

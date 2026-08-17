@@ -65,13 +65,13 @@
 		</view>
 		<!-- 二维码弹窗 -->
 		<app-modal v-model="showQrcode">
-			<block slot="modalContent">
+			<template #modalContent>
 				<view class="qr-code-modal">
 					<image class="qr-code-img" :src="qrcodepath" mode=""></image>
 					<view class="qr-code-text">核销码：{{ qrcode }}</view>
 					<button class="cu-btn hide-qrcode" @tap="hideModal">关闭</button>
 				</view>
-			</block>
+			</template>
 		</app-modal>
 		<!-- 二维码绘制 -->
 		<view class="hideCanvasView">

@@ -123,6 +123,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/static/style/user-center.scss';
 .content {
 	position: relative;
 	width: 100%;

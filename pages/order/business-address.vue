@@ -69,6 +69,7 @@
 </template>
 
 <script>
+import { getSystemInfoSafe } from '@/common/runtime/system-info';
 export default {
 	data() {
 		return {
@@ -176,7 +177,7 @@ export default {
 		// 设置地图，卡片高度。
 		editHeight() {
 			let that = this;
-			uni.getSystemInfo({
+			getSystemInfoSafe({
 				success: res => {
 					let view = uni
 						.createSelectorQuery()
@@ -189,7 +190,6 @@ export default {
 						},
 						data => {
 							that.mapHeight = res.screenHeight - data.height;
-							console.log('card-height', data.height);
 						}
 					).exec();
 				}

@@ -22,6 +22,7 @@ import shFilter from './sh-filter.vue';
 import shDate from './sh-date.vue';
 import moreGoodList from '@/csJson/moreGoodList.json';
 import { mapMutations, mapActions, mapState } from 'vuex';
+import { getSystemInfoSafe } from '@/common/runtime/system-info';
 export default {
 	components: {
 		shFilter,
@@ -63,12 +64,10 @@ export default {
 		},
 		getScrHeight() {
 			let me = this;
-			uni.getSystemInfo({
+			getSystemInfoSafe({
 				success: function(res) {
-					// res - 各种参数
 					let info = uni.createSelectorQuery().select('.head_box');
 					info.boundingClientRect(function(data) {
-						//data - 各种参数
 						me.hHeight = res.windowHeight - data.height - 3 - 35;
 					}).exec();
 				}

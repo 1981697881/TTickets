@@ -15,10 +15,17 @@
 	</scroll-view>
 </template>
 
-<script>
+<script lang="ts">
+import { defineComponent } from 'vue';
 import tools from '@/common/utils/tools';
 
-export default {
+type DateItem = {
+	day: string;
+	week: string;
+	date: string;
+};
+
+export default defineComponent({
 	name: 'ShDate',
 	props: {
 		movieDates: {
@@ -29,12 +36,12 @@ export default {
 	data() {
 		return {
 			tabCurrent: 0,
-			detail: [],
+			detail: [] as DateItem[],
 			scrollLeft: 0
 		};
 	},
 	methods: {
-		selectDate(index) {
+		selectDate(index: number) {
 			if (!this.detail[index]) return;
 			this.tabCurrent = index;
 			this.scrollLeft = Math.max(0, (index - 1) * 74);
@@ -43,10 +50,10 @@ export default {
 		getDateList() {
 			this.tabCurrent = 0;
 			this.scrollLeft = 0;
-			const available = new Set(this.movieDates || []);
-			const dates = [];
+			const available = new Set((this.movieDates || []) as string[]);
+			const dates: DateItem[] = [];
 			for (let index = 0; index < 15; index += 1) {
-				const item = tools.getDayList('', index);
+				const item = tools.getDayList('', index) as DateItem;
 				if (!available.has(item.day)) continue;
 				if (index === 0) item.week = '今天';
 				if (index === 1) item.week = '明天';
@@ -56,7 +63,7 @@ export default {
 			this.detail = dates;
 		}
 	}
-};
+});
 </script>
 
 <style scoped lang="scss">

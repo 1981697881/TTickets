@@ -151,6 +151,7 @@ export default {
 }
 
 .detail-content {
+	padding: 28rpx 30rpx calc(154rpx + constant(safe-area-inset-bottom));
 	padding: 28rpx 30rpx calc(154rpx + env(safe-area-inset-bottom));
 	background: #fff;
 }
@@ -259,6 +260,7 @@ export default {
 	align-items: center;
 	gap: 26rpx;
 	min-height: 112rpx;
+	padding: 16rpx 30rpx calc(16rpx + constant(safe-area-inset-bottom));
 	padding: 16rpx 30rpx calc(16rpx + env(safe-area-inset-bottom));
 	box-sizing: content-box;
 	background: #fff;

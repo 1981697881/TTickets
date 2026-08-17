@@ -17,13 +17,13 @@
 	<!-- #ifdef MP-WEIXIN  -->
 	<app-safe-popup :model-value="forceOauth || showLogin" :mask-closable="false" max-width="680rpx" aria-label="微信授权登录">
 		<view class="force-login-wrap">
-		<view class="force-login__content y-f">
-			<view class="user-avatar x-c"><text class="cuIcon-profile"></text></view>
-			<view class="login-notice">为了提供更优质的服务，需要获取您的头像昵称</view>
-			<button class="cu-btn author-btn" @tap="getuserinfo">授权并查看</button>
-			<button class="cu-btn close-btn" @tap="closeAuth">暂不授权</button>
+			<view class="force-login__content">
+				<view class="user-avatar"><text class="cuIcon-profile"></text></view>
+				<view class="login-notice">为了提供更优质的服务，需要获取您的头像昵称</view>
+				<button class="cu-btn author-btn" @tap="getuserinfo">授权并查看</button>
+				<button class="cu-btn close-btn" @tap="closeAuth">暂不授权</button>
+			</view>
 		</view>
-	</view>
 	</app-safe-popup>
 	<!-- #endif  -->
 </template>
@@ -172,61 +172,67 @@ export default {
 // 小程序登录提醒
 /* #ifdef MP-WEIXIN */
 .force-login-wrap {
-	position: relative;
 	width: 100%;
-	min-height: 720rpx;
-	overflow: hidden;
+	box-sizing: border-box;
+	padding: 56rpx 28rpx 40rpx;
 	border-radius: var(--tt-radius-lg);
 	background: linear-gradient(180deg, var(--tt-primary-soft) 0%, #fff 42%);
-	.force-login__content {
-		position: absolute;
-		left: 50%;
-		top: 50%;
-		transform: translate(-50%, -50%);
-		.user-avatar {
-			width: 160rpx;
-			height: 160rpx;
-			border-radius: 50%;
-			overflow: hidden;
-			margin-bottom: 40rpx;
-			background: var(--tt-primary-soft);
-			color: var(--tt-primary-strong);
-			font-size: 72rpx;
-		}
-		.login-notice {
-			font-size: 28rpx;
-			font-family: PingFang SC;
-			font-weight: 400;
-			color: rgba(200, 150, 61, 1);
-			line-height: 44rpx;
-			width: 400rpx;
-			text-align: center;
-			margin-bottom: 80rpx;
-		}
-		.author-btn {
-			width: 630rpx;
-			height: 80rpx;
-			background: linear-gradient(90deg, rgba(233, 180, 97, 1), rgba(238, 204, 137, 1));
-			box-shadow: 0px 7rpx 6rpx 0px rgba(229, 138, 0, 0.22);
-			border-radius: 40rpx;
-			font-size: 30rpx;
-			font-family: PingFang SC;
-			font-weight: 500;
-			color: rgba(255, 255, 255, 1);
-		}
-		.close-btn {
-			width: 630rpx;
-			height: 80rpx;
-			margin-top: 30rpx;
-			border-radius: 40rpx;
-			border: 2rpx solid rgba(233, 180, 97, 1);
-			background: none;
-			font-size: 30rpx;
-			font-family: PingFang SC;
-			font-weight: 500;
-			color: rgba(233, 180, 97, 1);
-		}
-	}
+}
+
+.force-login__content {
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	width: 100%;
+}
+
+.user-avatar {
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	width: 160rpx;
+	height: 160rpx;
+	margin-bottom: 40rpx;
+	overflow: hidden;
+	border-radius: 50%;
+	background: var(--tt-primary-soft);
+	color: var(--tt-primary-strong);
+	font-size: 72rpx;
+}
+
+.login-notice {
+	width: 400rpx;
+	margin-bottom: 64rpx;
+	font-size: 28rpx;
+	font-weight: 400;
+	line-height: 44rpx;
+	text-align: center;
+	color: rgba(200, 150, 61, 1);
+}
+
+.author-btn {
+	width: 100%;
+	max-width: 560rpx;
+	height: 80rpx;
+	background: linear-gradient(90deg, rgba(233, 180, 97, 1), rgba(238, 204, 137, 1));
+	box-shadow: 0px 7rpx 6rpx 0px rgba(229, 138, 0, 0.22);
+	border-radius: 40rpx;
+	font-size: 30rpx;
+	font-weight: 500;
+	color: #fff;
+}
+
+.close-btn {
+	width: 100%;
+	max-width: 560rpx;
+	height: 80rpx;
+	margin-top: 24rpx;
+	border-radius: 40rpx;
+	border: 2rpx solid rgba(233, 180, 97, 1);
+	background: none;
+	font-size: 30rpx;
+	font-weight: 500;
+	color: rgba(233, 180, 97, 1);
 }
 /* #endif */
 </style>

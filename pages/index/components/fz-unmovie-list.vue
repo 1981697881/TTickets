@@ -2,7 +2,7 @@
 	<view class="movie-row" @tap="jump('/pages/cinema/detail/index', { filmId: detail.filmId })">
 		<view class="poster-box">
 			<slot name="tag"></slot>
-			<image class="poster" :src="detail.filmPhoto" mode="aspectFill"></image>
+			<image class="poster" :src="detail.filmPhoto" mode="aspectFill" lazy-load></image>
 		</view>
 
 		<view class="movie-content">

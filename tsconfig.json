@@ -1,0 +1,40 @@
+{
+  "compilerOptions": {
+    "target": "ESNext",
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "strict": false,
+    "jsx": "preserve",
+    "importHelpers": true,
+    "experimentalDecorators": true,
+    "allowJs": true,
+    "checkJs": false,
+    "sourceMap": true,
+    "baseUrl": ".",
+    "paths": {
+      "@/*": ["./*"]
+    },
+    "lib": ["ESNext", "DOM"],
+    "types": ["@dcloudio/types", "node"],
+    "resolveJsonModule": true,
+    "esModuleInterop": true,
+    "skipLibCheck": true,
+    "forceConsistentCasingInFileNames": true
+  },
+  "include": [
+    "env.d.ts",
+    "*.ts",
+    "*.vue",
+    "common/**/*.ts",
+    "common/**/*.js",
+    "common/**/*.vue",
+    "components/**/*.vue",
+    "components/**/*.ts",
+    "pages/**/*.vue",
+    "pages/**/*.ts",
+    "env.js",
+    "main.js",
+    "vite.config.js"
+  ],
+  "exclude": ["node_modules", "dist", "unpackage", ".tmp"]
+}

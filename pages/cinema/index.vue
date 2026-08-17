@@ -16,65 +16,83 @@
 			</view>
 		</app-safe-popup>
 
-		<scroll-view class="schedule-scroll" scroll-y enable-back-to-top @scrolltolower="loadMore">
-			<view class="schedule-head">
-				<view class="venue-bar">
-					<view class="venue-copy">
-						<text class="venue-name">{{ cinemaName || storeInfo.storeName || '影院信息加载中' }}</text>
-						<text class="venue-address one-t">{{ cinemaAddress || storeInfo.storeAddress || '正在获取影院地址' }}</text>
-					</view>
-					<view class="service-action" @tap="showModal">
-						<text class="cuIcon-service service-icon"></text>
-						<text>影院客服</text>
+		<view class="head_box">
+			<view class="ci-header">
+				<view class="header-info">
+					<view class="cinema-title">{{ cinemaName || storeInfo.storeName || '影院信息加载中' }}</view>
+					<view class="info-local">
+						<view class="local-adr text-cut">{{ cinemaAddress || storeInfo.storeAddress || '正在获取影院地址' }}</view>
 					</view>
 				</view>
-
-				<view v-if="swiperList.length" class="movie-picker">
-					<scroll-view class="poster-scroll" scroll-x scroll-with-animation :scroll-into-view="activePosterId" :show-scrollbar="false">
-						<view class="poster-list">
-							<view
-								v-for="(movie, index) in swiperList"
-								:id="`poster-${movie.filmId || index}`"
-								:key="movie.filmId || index"
-								class="poster-item"
-								:class="{ active: index === activeItem }"
-								@tap="selectMovie(index)"
-							>
-								<image class="poster-image" :src="getMoviePoster(movie, index)" mode="aspectFill" lazy-load @error="markPosterFailed(movie, index)"></image>
-								<text class="poster-name one-t">{{ movie.filmName || '影片' }}</text>
-							</view>
-						</view>
-					</scroll-view>
-
-					<view class="movie-summary" @tap="openMovieDetail">
-						<view class="movie-summary-copy">
-							<text class="movie-name">{{ cardInfo.filmName }}</text>
-							<text class="movie-meta one-t">{{ movieMeta }}</text>
-						</view>
-						<text class="cuIcon-right summary-arrow"></text>
-					</view>
-
-					<sh-date ref="shDate" :movieDates="movieDates" @subClickFtn="selectDate"></sh-date>
+				<view class="locate-logo" @tap="showModal">
+					<text class="cuIcon-service locate-icon"></text>
+					<view>影院客服</view>
 				</view>
 			</view>
 
-			<view class="session-section">
-				<view class="section-heading">
-					<view class="section-mark"></view>
-					<text class="section-title">场次</text>
+			<view class="backgroud" :style="backdropStyle"></view>
+
+			<swiper
+				v-if="swiperList.length"
+				class="card-swiper"
+				:current="activeItem"
+				previous-margin="210rpx"
+				next-margin="210rpx"
+				:circular="false"
+				:duration="300"
+				@change="onCardSwiper"
+			>
+				<swiper-item
+					v-for="(item, cindex) in swiperList"
+					:key="item.filmId || cindex"
+					:class="{ cur: cardCur === cindex }"
+					@tap.stop="onClickSwiper(cindex)"
+				>
+					<view class="swiper-item">
+						<view class="tag text-white" v-if="item.dimensional">{{ item.dimensional }}</view>
+						<image
+							class="swi-image"
+							:src="getMoviePoster(item, cindex)"
+							mode="aspectFill"
+							lazy-load
+							@error="markPosterFailed(item, cindex)"
+						></image>
+					</view>
+				</swiper-item>
+			</swiper>
+
+			<view class="movie-info" @tap="openMovieDetail">
+				<view class="info-name">{{ cardInfo.filmName || '影片信息' }}</view>
+				<view class="info-detail">
+					{{ movieMeta }}
+					<text class="cuIcon-right"></text>
 				</view>
-				<view class="session-list">
-					<fz-circuit-card
+			</view>
+
+			<sh-date ref="shDate" :movieDates="movieDates" @subClickFtn="selectDate"></sh-date>
+		</view>
+
+		<scroll-view
+			class="scroll-box"
+			:style="{ height: headHeight + 'px' }"
+			scroll-y
+			enable-back-to-top
+			scroll-with-animation
+			@scrolltolower="loadMore"
+		>
+			<view class="content-box">
+				<view class="goods-list">
+					<fz-circuit-minicard
 						v-for="session in goodsList"
 						:key="session.scheduleId || session.id"
 						:detail="session"
 						:isTag="true"
-					></fz-circuit-card>
+					></fz-circuit-minicard>
 				</view>
 				<app-empty v-if="!goodsList.length && !isLoading" :isFixed="false" :emptyData="emptyData"></app-empty>
 				<view v-if="goodsList.length" class="cu-load text-gray" :class="loadStatus"></view>
+				<app-load v-model="isLoading"></app-load>
 			</view>
-			<app-load v-model="isLoading"></app-load>
 		</scroll-view>
 
 		<app-login-modal></app-login-modal>
@@ -82,38 +100,62 @@
 	</view>
 </template>
 
-<script>
-import shDate from './children/sh-date.vue';
-import fzCircuitCard from '@/components/fz-circuit-card/fz-circuit-minicard.vue';
-import appEmpty from '@/components/app-empty/app-empty.vue';
+<script lang="ts">
+import { defineComponent } from 'vue';
 import { mapState } from 'vuex';
-import { normalizePage, mergeUnique } from '@/common/utils/pagination';
+import shDate from './children/sh-date.vue';
+import FzCircuitMinicard from '@/components/fz-circuit-card/fz-circuit-minicard.vue';
+import appEmpty from '@/components/app-empty/app-empty.vue';
+import { normalizePage, mergeUnique, createRequestGate } from '@/common/utils/pagination';
+import { getSystemInfoSafe } from '@/common/runtime/system-info';
 
-export default {
+type MovieItem = {
+	filmId?: string | number;
+	filmName?: string;
+	filmPhoto?: string;
+	filmLong?: string | number;
+	filmSortid?: string;
+	filmDirector?: string;
+	dimensional?: string;
+	movieDates?: string[];
+	[key: string]: unknown;
+};
+
+type ScheduleItem = {
+	scheduleId?: string | number;
+	id?: string | number;
+	[key: string]: unknown;
+};
+
+export default defineComponent({
+	name: 'CinemaSchedulePage',
 	components: {
 		shDate,
-		fzCircuitCard,
+		FzCircuitMinicard,
 		appEmpty
 	},
 	data() {
 		return {
-			cardInfo: {},
+			cardInfo: {} as MovieItem,
+			img: '',
+			cardCur: 0,
 			activeItem: 0,
 			cinemaName: '',
 			cinemaAddress: '',
-			cinemaList: [],
-			modalName: null,
-			swiperList: [],
-			movieDates: [],
+			cinemaList: [] as Record<string, unknown>[],
+			modalName: null as string | null,
+			swiperList: [] as MovieItem[],
+			movieDates: [] as string[],
 			emptyData: {
 				img: '/static/imgs/empty/empty_goods.png',
 				tip: '当前日期没有可观影场次，选择其他日期试试~'
 			},
-			goodsList: [],
+			headHeight: 0,
+			goodsList: [] as ScheduleItem[],
 			listParams: {
-				filmId: null,
-				cinemaId: null,
-				cinemalinkId: null,
+				filmId: null as string | number | null,
+				cinemaId: null as string | number | null,
+				cinemalinkId: null as string | number | null,
 				keywords: '',
 				showDatetime: '',
 				page: 1
@@ -121,32 +163,39 @@ export default {
 			isLoading: false,
 			loadStatus: '',
 			lastPage: 1,
-			failedPosters: {}
+			failedPosters: {} as Record<string, boolean>,
+			requestGate: createRequestGate()
 		};
 	},
 	computed: {
 		...mapState({
-			storeInfo: state => state.user.storeInfo || {}
+			storeInfo: (state: any) => state.user.storeInfo || {}
 		}),
-		servicePhones() {
-			return Array.isArray(this.storeInfo.customerServicePhoneList)
-				? this.storeInfo.customerServicePhoneList.filter(Boolean)
-				: [];
+		servicePhones(): string[] {
+			const list = (this as any).storeInfo?.customerServicePhoneList;
+			return Array.isArray(list) ? list.filter(Boolean) : [];
 		},
-		movieMeta() {
+		movieMeta(): string {
+			const info = this.cardInfo || {};
 			return [
-				this.cardInfo.filmLong ? `${this.cardInfo.filmLong}分钟` : '',
-				this.cardInfo.filmSortid,
-				this.cardInfo.filmDirector ? `导演：${this.cardInfo.filmDirector}` : ''
+				info.filmLong ? `${info.filmLong}分钟` : '',
+				info.filmSortid,
+				info.filmDirector ? `导演：${info.filmDirector}` : ''
 			].filter(Boolean).join(' | ');
 		},
-		activePosterId() {
-			const movie = this.swiperList[this.activeItem];
-			return movie ? `poster-${movie.filmId || this.activeItem}` : '';
+		backdropStyle(): string {
+			if (!this.img) return '';
+			return `background-image:url(${this.img})`;
 		}
 	},
-	onLoad(options) {
-		const routeQuery = this.$Route && this.$Route.query ? this.$Route.query : {};
+	beforeUnmount() {
+		this.requestGate.invalidate();
+	},
+	mounted() {
+		this.getScrHeight();
+	},
+	onLoad(options: Record<string, any>) {
+		const routeQuery = (this as any).$Route?.query || {};
 		const query = options && Object.keys(options).length ? options : routeQuery;
 		this.listParams.filmId = query.filmId || null;
 		this.listParams.cinemaId = query.cinemaId || null;
@@ -155,7 +204,7 @@ export default {
 		this.getCinemaList();
 	},
 	onShow() {
-		uni.$once('escUpload', data => {
+		uni.$once('escUpload', (data: { filmId?: string | number }) => {
 			if (!data || !data.filmId) return;
 			const index = this.swiperList.findIndex(item => String(item.filmId) === String(data.filmId));
 			if (index >= 0) this.selectMovie(index);
@@ -163,7 +212,16 @@ export default {
 	},
 	methods: {
 		getStoredCinemaLinkId() {
-			return this.storeInfo.cinemalinkId || this.storeInfo.cinemaLinkId || null;
+			const store = (this as any).storeInfo || {};
+			return store.cinemalinkId || store.cinemaLinkId || null;
+		},
+		getScrHeight() {
+			getSystemInfoSafe({
+				success: res => {
+					// 头部约占用视口上半；与 0.5.5 sticky head + 下方滚动区一致
+					this.headHeight = Math.max(280, (res.windowHeight || 667) - 360);
+				}
+			});
 		},
 		showModal() {
 			this.modalName = 'RadioModal';
@@ -171,37 +229,60 @@ export default {
 		hideModal() {
 			this.modalName = null;
 		},
-		callPhone(phone) {
+		callPhone(phone: string) {
 			if (!phone) return;
 			uni.makePhoneCall({ phoneNumber: String(phone) });
 		},
 		openMovieDetail() {
 			if (!this.cardInfo.filmId) return;
-			this.$Router.push({ path: '/pages/cinema/detail/index', query: { filmId: this.cardInfo.filmId } });
+			(this as any).$Router.push({
+				path: '/pages/cinema/detail/index',
+				query: { filmId: this.cardInfo.filmId }
+			});
 		},
-		selectDate(value) {
+		selectDate(value: { day: string }) {
 			this.listParams.showDatetime = value.day;
 			this.resetSessions();
 			this.getGoodsList();
 		},
-		selectMovie(index, shouldLoad = true) {
+		onCardSwiper(e: { detail: { current: number } }) {
+			const index = e?.detail?.current ?? 0;
+			this.cardCur = index;
+			this.activeItem = index;
+			this.selectMovie(index);
+		},
+		onClickSwiper(index: number) {
+			if (index === this.activeItem) {
+				this.openMovieDetail();
+				return;
+			}
+			this.cardCur = index;
+			this.activeItem = index;
+			this.selectMovie(index);
+		},
+		selectMovie(index: number, shouldLoad = true) {
 			const movie = this.swiperList[index];
 			if (!movie) return;
 			this.activeItem = index;
+			this.cardCur = index;
 			this.cardInfo = movie;
+			this.img = this.getMoviePoster(movie, index);
 			this.movieDates = Array.isArray(movie.movieDates) ? movie.movieDates : [];
-			this.listParams.filmId = movie.filmId;
+			this.listParams.filmId = movie.filmId ?? null;
 			this.listParams.showDatetime = this.movieDates[0] || '';
 			this.resetSessions();
-			this.$nextTick(() => this.$refs.shDate && this.$refs.shDate.getDateList());
+			this.$nextTick(() => {
+				const dateRef = this.$refs.shDate as { getDateList?: () => void } | undefined;
+				dateRef?.getDateList?.();
+			});
 			if (shouldLoad) this.getGoodsList();
 		},
-		getMoviePoster(movie, index) {
-			const key = String((movie && movie.filmId) || index);
+		getMoviePoster(movie: MovieItem, index: number) {
+			const key = String(movie?.filmId ?? index);
 			const origin = 'https://cfzx.gzfzdev.com';
 			const fallback = `${origin}/movie/uploadFiles/image/zanwu.jpg`;
 			if (this.failedPosters[key]) return fallback;
-			const source = movie && movie.filmPhoto ? String(movie.filmPhoto) : '';
+			const source = movie?.filmPhoto ? String(movie.filmPhoto) : '';
 			if (!source) return fallback;
 			if (/^https?:\/\//.test(source) || source.startsWith('data:') || source.startsWith('/static/')) return source;
 			if (source.startsWith('//')) return `https:${source}`;
@@ -209,12 +290,14 @@ export default {
 			if (source.includes('/')) return `${origin}/${source}`;
 			return `${origin}/movie/uploadFiles/image/${source}`;
 		},
-		markPosterFailed(movie, index) {
-			const key = String((movie && movie.filmId) || index);
+		markPosterFailed(movie: MovieItem, index: number) {
+			const key = String(movie?.filmId ?? index);
 			if (this.failedPosters[key]) return;
 			this.failedPosters = { ...this.failedPosters, [key]: true };
 		},
 		resetSessions() {
+			this.requestGate.invalidate();
+			this.isLoading = false;
 			this.listParams.page = 1;
 			this.goodsList = [];
 			this.lastPage = 1;
@@ -229,11 +312,11 @@ export default {
 		async getCinemaList() {
 			const requestedId = this.listParams.cinemalinkId || this.getStoredCinemaLinkId();
 			try {
-				const res = await this.$api('cinema.locationList', {
+				const res = await (this as any).$api('cinema.locationList', {
 					cinemalinkId: requestedId,
 					filmId: this.listParams.filmId
 				});
-				const list = res && (res.flag || res.code === 1) && Array.isArray(res.data) ? res.data : [];
+				const list = res && res.flag && Array.isArray(res.data) ? res.data : [];
 				this.cinemaList = list;
 				const cinema = list[0] || {};
 				this.cinemaName = cinema.cinemaName || '';
@@ -247,8 +330,10 @@ export default {
 		async getMoviesList() {
 			if (!this.listParams.cinemalinkId) return;
 			try {
-				const res = await this.$api('cinema.locationMovies', { cinemalinkId: this.listParams.cinemalinkId });
-				if (!res || (!res.flag && res.code !== 1)) return;
+				const res = await (this as any).$api('cinema.locationMovies', {
+					cinemalinkId: this.listParams.cinemalinkId
+				});
+				if (!res || !res.flag) return;
 				this.swiperList = Array.isArray(res.data) ? res.data : normalizePage(res.data, 1).items;
 				if (!this.swiperList.length) return;
 				const requested = this.listParams.filmId;
@@ -262,78 +347,198 @@ export default {
 			}
 		},
 		async getGoodsList() {
-			if (this.isLoading || !this.listParams.filmId || !this.listParams.cinemalinkId) return;
+			if (!this.listParams.filmId || !this.listParams.cinemalinkId) return;
+			const token = this.requestGate.begin();
+			if (!token) return;
 			this.isLoading = true;
 			this.loadStatus = 'loading';
+			const requestedPage = this.listParams.page;
+			const requestedFilmId = this.listParams.filmId;
+			const requestedDate = this.listParams.showDatetime;
 			try {
-				const res = await this.$api('cinema.locationSchedules', { ...this.listParams });
-				if (res && (res.flag || res.code === 1)) {
-					const page = normalizePage(res.data, this.listParams.page);
-					this.goodsList = mergeUnique(this.goodsList, page.items, 'scheduleId', this.listParams.page === 1);
+				const res = await (this as any).$api('cinema.locationSchedules', { ...this.listParams });
+				if (!this.requestGate.isLatest(token)) return;
+				if (
+					requestedFilmId !== this.listParams.filmId ||
+					requestedDate !== this.listParams.showDatetime ||
+					requestedPage !== this.listParams.page
+				) {
+					return;
+				}
+				if (res && res.flag) {
+					const page = normalizePage(res.data, requestedPage);
+					this.goodsList = requestedPage === 1
+						? page.items
+						: mergeUnique(this.goodsList, page.items, 'scheduleId', false);
 					this.lastPage = page.lastPage;
-					this.loadStatus = this.listParams.page < page.lastPage ? '' : 'over';
+					this.loadStatus = requestedPage < page.lastPage ? '' : 'over';
 				}
 			} catch (error) {
-				this.loadStatus = '';
-				console.warn('[cinema] failed to load schedules', error);
+				if (this.requestGate.isLatest(token)) {
+					this.loadStatus = '';
+					console.warn('[cinema] failed to load schedules', error);
+				}
 			} finally {
-				this.isLoading = false;
+				this.requestGate.end(token);
+				if (this.requestGate.isLatest(token)) this.isLoading = false;
 			}
 		}
 	}
-};
+});
 </script>
 
 <style lang="scss">
 .schedule-page {
-	height: 100vh;
+	min-height: 100vh;
 	background: #fff;
 }
 
-.schedule-scroll {
-	height: 100%;
-}
-
-.schedule-head {
-	position: relative;
+.head_box {
+	position: sticky;
+	top: 0;
+	z-index: 998;
 	overflow: hidden;
+	background: linear-gradient(#060210, #fff 20%);
+}
+
+.ci-header {
+	display: flex;
+	background: #fff;
+	border-radius: 10rpx;
+}
+
+.header-info {
+	width: 600rpx;
+	padding: 20rpx;
+}
+
+.cinema-title {
+	font-size: 36rpx;
+	font-weight: 700;
+	line-height: 50rpx;
+	color: #1d2129;
+}
+
+.info-local {
+	display: flex;
+	padding: 8rpx 0;
+}
+
+.local-adr {
+	width: 430rpx;
+	font-size: 24rpx;
+	line-height: 34rpx;
+	color: #333;
+}
+
+.locate-logo {
+	width: 150rpx;
+	padding-top: 16rpx;
+	border-radius: 0 10rpx 0 0;
+	background: var(--tt-primary, #a9b238);
+	color: #fff;
+	text-align: center;
+	font-size: 22rpx;
+}
+
+.locate-icon {
+	display: block;
+	margin: 0 auto 6rpx;
+	font-size: 44rpx;
+}
+
+.backgroud {
+	position: absolute;
+	top: 160rpx;
+	left: 0;
+	width: 750rpx;
+	height: 280rpx;
+	background-repeat: no-repeat;
+	background-position: 50% 50%;
+	background-size: 200% 200%;
+	filter: blur(40rpx);
+	pointer-events: none;
+}
+
+.card-swiper {
+	height: 280upx !important;
+}
+
+.card-swiper swiper-item,
+.card-swiper uni-swiper-item {
+	width: 200upx !important;
+	padding: 15rpx 0 30rpx !important;
+	box-sizing: border-box;
+}
+
+.card-swiper .swiper-item {
+	position: relative;
+	width: 100%;
+	height: 100%;
+	overflow: hidden;
+	border-radius: 10rpx;
+	transform: scale(0.9);
+	transition: transform 0.2s ease;
+}
+
+.card-swiper .cur .swiper-item {
+	transform: none;
+}
+
+.swi-image {
+	width: 100%;
+	height: 100%;
+	display: block;
+	border: 1px solid #acacac;
+	border-radius: 10rpx;
+}
+
+.tag {
+	position: absolute;
+	left: 10rpx;
+	top: 10rpx;
+	z-index: 22;
+	width: 100rpx;
+	height: 40rpx;
+	padding: 0 10rpx;
+	line-height: 40rpx;
+	border-radius: 0 18rpx 18rpx 0;
+	background: linear-gradient(132deg, #1c1c1c, #363636, #ecbe60);
+	transform: scale(0.8);
+	font-size: 20rpx;
+	color: #fff;
+}
+
+.movie-info {
+	width: 100%;
+	height: 100rpx;
+	text-align: center;
+}
+
+.info-name {
+	font-size: 36rpx;
+	font-weight: 700;
+	line-height: 60rpx;
+	color: #1d2129;
+}
+
+.info-detail {
+	font-size: 24rpx;
+	line-height: 34rpx;
+	color: #888;
+}
+
+.scroll-box {
+	width: 100%;
 	background: #fff;
 }
 
-.service-action {
-	flex: 0 0 auto;
-	display: flex;
-	align-items: center;
-	gap: 7rpx;
-	font-size: 23rpx;
-	font-weight: 600;
-	color: var(--tt-primary-strong);
+.content-box {
+	padding: 0 24rpx calc(24rpx + constant(safe-area-inset-bottom));
+	padding: 0 24rpx calc(24rpx + env(safe-area-inset-bottom));
 }
 
-.service-icon {
-	font-size: 29rpx;
-}
-
-.movie-name {
-	font-size: 34rpx;
-	font-weight: 740;
-	line-height: 48rpx;
-	color: var(--tt-text);
-}
-
-.movie-meta {
-	max-width: 620rpx;
-	font-size: 21rpx;
-	line-height: 32rpx;
-	color: var(--tt-text-muted);
-}
-
-.summary-arrow {
-	font-size: 30rpx;
-	color: var(--tt-text-muted);
-}
-
-.session-list {
+.goods-list {
 	width: 100%;
 }
 
@@ -346,7 +551,7 @@ export default {
 	padding-bottom: 24rpx;
 	font-size: 34rpx;
 	font-weight: 720;
-	color: var(--tt-text);
+	color: #1d2129;
 }
 
 .phone-row {
@@ -354,156 +559,20 @@ export default {
 	align-items: center;
 	justify-content: space-between;
 	min-height: 92rpx;
-	border-top: 1rpx solid var(--tt-border);
+	border-top: 1rpx solid #eee;
 	font-size: 26rpx;
-	color: var(--tt-text-secondary);
+	color: #555;
 }
 
 .phone-number {
 	font-weight: 650;
-	color: var(--tt-primary-strong);
+	color: #8b4513;
 }
 
 .phone-empty {
 	padding: 30rpx 0;
 	text-align: center;
 	font-size: 25rpx;
-	color: var(--tt-text-muted);
-}
-
-/* 采用早期稳定的横向海报选择结构，避免 swiper 边距导致当前影片移出可视区。 */
-.venue-bar {
-	display: flex;
-	align-items: center;
-	gap: 24rpx;
-	padding: 26rpx 30rpx 22rpx;
-	background: #fff;
-}
-
-.venue-copy {
-	min-width: 0;
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-}
-
-.venue-name {
-	font-size: 31rpx;
-	font-weight: 720;
-	line-height: 44rpx;
-	color: var(--tt-text);
-}
-
-.venue-address {
-	margin-top: 5rpx;
-	font-size: 21rpx;
-	line-height: 32rpx;
-	color: var(--tt-text-muted);
-}
-
-.movie-picker {
-	background: #fff;
-}
-
-.poster-scroll {
-	width: 100%;
-	white-space: nowrap;
-}
-
-.poster-list {
-	display: inline-flex;
-	align-items: flex-start;
-	gap: 20rpx;
-	padding: 16rpx 30rpx 20rpx;
-}
-
-.poster-item {
-	width: 136rpx;
-	display: inline-flex;
-	flex-direction: column;
-	align-items: center;
-}
-
-.poster-image {
-	width: 132rpx;
-	height: 184rpx;
-	display: block;
-	box-sizing: border-box;
-	border: 4rpx solid transparent;
-	border-radius: 14rpx;
-	background: var(--tt-bg);
-}
-
-.poster-item.active .poster-image {
-	border-color: var(--tt-primary);
-}
-
-.poster-name {
-	width: 100%;
-	margin-top: 10rpx;
-	font-size: 21rpx;
-	line-height: 32rpx;
-	text-align: center;
-	color: var(--tt-text-secondary);
-}
-
-.poster-item.active .poster-name {
-	font-weight: 650;
-	color: var(--tt-primary-strong);
-}
-
-.movie-summary {
-	display: flex;
-	align-items: center;
-	gap: 20rpx;
-	padding: 18rpx 30rpx 24rpx;
-	background: #fff;
-}
-
-.movie-summary-copy {
-	min-width: 0;
-	flex: 1;
-	display: flex;
-	flex-direction: column;
-}
-
-.movie-summary .movie-name {
-	font-size: 34rpx;
-	font-weight: 740;
-	line-height: 48rpx;
-	color: var(--tt-text);
-}
-
-.movie-summary .movie-meta {
-	margin-top: 5rpx;
-	font-size: 21rpx;
-	line-height: 32rpx;
-	color: var(--tt-text-muted);
-}
-
-.session-section {
-	padding: 0 30rpx calc(30rpx + env(safe-area-inset-bottom));
-	background: #fff;
-}
-
-.section-heading {
-	display: flex;
-	align-items: center;
-	gap: 13rpx;
-	padding: 28rpx 0 8rpx;
-}
-
-.section-mark {
-	width: 7rpx;
-	height: 32rpx;
-	border-radius: 6rpx;
-	background: var(--tt-primary);
-}
-
-.section-title {
-	font-size: 32rpx;
-	font-weight: 720;
-	line-height: 44rpx;
-	color: var(--tt-text);
+	color: #999;
 }
 </style>

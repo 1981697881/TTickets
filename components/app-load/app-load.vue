@@ -1,7 +1,7 @@
 <template>
 	<view class="cu-load load-modal" v-if="loadModal">
 		<!-- <view class="cuIcon-emojifill text-orange"></view> -->
-		<image class="load-img" src="/static/imgs//logo/logo.gif" mode="aspectFit"></image>
+		<image class="load-img" :src="logoSrc" mode="aspectFit"></image>
 		<view class="locad-text">加载中...</view>
 	</view>
 </template>
@@ -10,7 +10,9 @@
 export default {
 	components: {},
 	data() {
-		return {};
+		return {
+			logoSrc: '/static/imgs/logo/logo.gif'
+		};
 	},
 	props: {
 		modelValue: { default: undefined },

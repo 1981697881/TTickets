@@ -23,7 +23,7 @@
 					<label v-if="payment.includes('wechat')" class="pay-item">
 						<view class="pay-info">
 							<view class="pay-icon wechat-icon">
-								<image src="/static/image/wei.png" mode="aspectFit"></image>
+								<image src="/static/imgs/pay/wei.png" mode="aspectFit"></image>
 							</view>
 							<text class="pay-name">微信支付</text>
 						</view>
@@ -54,6 +54,7 @@
 <script>
 import AppPay from '@/common/app-pay';
 import { mapMutations, mapActions, mapState } from 'vuex';
+import { isIOSPlatform } from '@/common/runtime/system-info';
 let timer;
 export default {
 	components: {},
@@ -84,12 +85,17 @@ export default {
 		timer = null;
 		this.options = options;
 		if (this.$Route.query) {
-			this.total_fee = this.$Route.query.goodsPrice;
+			const price = Number(this.$Route.query.goodsPrice);
+			this.total_fee = Number.isFinite(price) && price > 0 ? String(price) : '';
 			this.orderText = this.$Route.query.goodsName + '(' + this.$Route.query.goodsDescribe + ')';
 			this.params = this.$Route.query;
+			if (!this.total_fee || !this.$Route.query.goodsId) {
+				uni.showToast({ icon: 'none', title: '商品参数异常' });
+				this.isPast = false;
+			}
 		}
 		// #ifdef H5
-		if (uni.getStorageSync('platform') === 'wxOfficialAccount' && uni.getSystemInfoSync().platform === 'ios' && !uni.getStorageSync('payReload')) {
+		if (uni.getStorageSync('platform') === 'wxOfficialAccount' && isIOSPlatform() && !uni.getStorageSync('payReload')) {
 			//检测到IOS支付路径问题
 			uni.setStorageSync('payReload', true);
 			window.location.reload();
@@ -102,10 +108,10 @@ export default {
 	onShow() {
 		clearInterval(timer);
 		timer = null;
+		this.isSubOrder = false;
 		this.countDown();
 	},
 	onHide() {
-		this.isSubOrder = true;
 		timer = null;
 		clearInterval(timer);
 	},
@@ -114,21 +120,29 @@ export default {
 			let that = this;
 			if (that.balInfo.custId) {
 				uni.showLoading({ title: '加载中' });
-				let parArray = [];
-				//测试订单
+				const price = Number(that.total_fee || that.$Route.query.goodsPrice);
+				if (!Number.isFinite(price) || price <= 0 || !that.$Route.query.goodsId) {
+					that.isSubOrder = false;
+					uni.hideLoading();
+					uni.showToast({ icon: 'none', title: '商品参数异常' });
+					return;
+				}
 				let params = {
-					coinPaymoney: that.$Route.query.goodsPrice,
+					coinPaymoney: price,
 					storeId: that.storeInfo.id,
 					goodsId: that.$Route.query.goodsId
 				};
-				/* uni.showToast({
-					icon: 'none',
-					title: '此功能尚未开放....敬请期待'
-				}); */
 				that.isSubOrder = true;
-				let pay = new AppPay(that.payType, val, 'goods.payCoinMoney', params, 2);
+				try {
+					new AppPay(that.payType, val, 'goods.payCoinMoney', params, 2);
+				} catch (e) {
+					that.isSubOrder = false;
+					uni.showToast({ icon: 'none', title: '支付发起失败，请重试' });
+				}
 				uni.hideLoading();
 			} else {
+				that.isSubOrder = false;
+				uni.hideLoading();
 				uni.showToast({
 					icon: 'none',
 					title: '新用戶暂还没开放充值，敬请期待'
@@ -215,45 +229,67 @@ export default {
 				if (res.flag) {
 					that.currency();
 				} else {
+					that.isSubOrder = false;
 					uni.showToast({
 						icon: 'none',
 						title: res.msg
 					});
 				}
+			}).catch(() => {
+				that.isSubOrder = false;
+				uni.showToast({ icon: 'none', title: '扣款失败，请重试' });
 			});
 		},
 		// 发起支付
 		confirmPay() {
 			let that = this;
+			if (that.isSubOrder || !that.isPast) return;
+			const price = Number(that.total_fee || that.$Route.query.goodsPrice);
+			if (!Number.isFinite(price) || price <= 0) {
+				uni.showToast({ icon: 'none', title: '支付金额异常' });
+				return;
+			}
+			if (!that.$Route.query.goodsId) {
+				uni.showToast({ icon: 'none', title: '商品信息缺失' });
+				return;
+			}
 			uni.showLoading({ title: '购买中~~！' });
 			if (that.userInfo.phoneNumber) {
 				if (that.payType == 'wallet') {
-					let countPrce = Number(that.$Route.query.goodsPrice);
-					if (Number(countPrce) <= Number(that.balInfo.Money)) {
+					if (price <= Number(that.balInfo.Money)) {
+						that.isSubOrder = true;
 						//生成订单
-						this.$api('goods.addCoinOrder', { storeId: that.storeInfo.id,coinPaymoney: that.$Route.query.goodsPrice, goodsId: that.$Route.query.goodsId, openId: uni.getStorageSync('openid') }).then(
+						this.$api('goods.addCoinOrder', { storeId: that.storeInfo.id,coinPaymoney: price, goodsId: that.$Route.query.goodsId, openId: uni.getStorageSync('openid') }).then(
 							res => {
 								if (res.flag) {
-									that.isSubOrder = true;
 									that.blanBuy(res.data);
 								} else {
+									that.isSubOrder = false;
+									uni.hideLoading();
 									uni.showToast({
 										icon: 'none',
 										title: res.msg
 									});
 								}
 							}
-						);
+						).catch(() => {
+							that.isSubOrder = false;
+							uni.hideLoading();
+							uni.showToast({ icon: 'none', title: '下单失败，请重试' });
+						});
 					} else {
+						uni.hideLoading();
 						uni.showToast({
 							icon: 'none',
 							title: '余额不足以支付本次费用，请选择其他支付方式'
 						});
 					}
 				} else {
+					that.isSubOrder = true;
 					that.payMeal(that.params);
 				}
 			} else {
+				uni.hideLoading();
 				uni.showToast({
 					icon: 'none',
 					title: '手机号码为必填项'
@@ -447,7 +483,8 @@ export default {
 }
 
 .payment-footer {
-	padding: 18rpx 28rpx calc(18rpx + var(--tt-safe-bottom));
+	padding: 18rpx 28rpx calc(18rpx + constant(safe-area-inset-bottom));
+	padding: 18rpx 28rpx calc(18rpx + env(safe-area-inset-bottom));
 	background: rgba(255, 255, 255, 0.97);
 	border-top: 1rpx solid var(--tt-border);
 }

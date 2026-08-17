@@ -62,7 +62,7 @@
 		</view>
 		<view class="foot_box"></view>
 		<app-modal v-model="showModal">
-			<block slot="modalContent">
+			<template #modalContent>
 				<view class="modal-box">
 					<view class="modal-head">
 						<image class="modal-head-img" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/modal_bg.png" mode=""></image>
@@ -71,7 +71,7 @@
 					<input class="inp" type="number" @input="onInput" v-model="money" placeholder="在此输入提现金额" placeholder-class="pl-inp" />
 					<button class="cu-btn post-btn" @tap="postMoney">提现</button>
 				</view>
-			</block>
+			</template>
 		</app-modal>
 		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>
@@ -187,6 +187,7 @@ export default {
 </script>
 
 <style lang="scss">
+@import '@/static/style/user-center.scss';
 // 提现弹窗
 .modal-box {
 	background: #fff;

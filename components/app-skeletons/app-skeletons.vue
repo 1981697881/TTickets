@@ -1,7 +1,7 @@
 <template>
 	<view class="skeletons_box">
 		<image class="img" :src="skeletonsDot[type]" mode="widthFix"></image>
-		<image class="loading" src="/static/imgs/logo/logo.gif" mode=""></image>
+		<image class="loading" :src="logoSrc" mode=""></image>
 	</view>
 </template>
 
@@ -11,6 +11,7 @@ export default {
 	components: {},
 	data() {
 		return {
+			logoSrc: '/static/imgs/logo/logo.gif',
 			skeletonsDot: {
 				index: '/static/imgs/skeleton_screen/index.jpg',
 				detail: '/static/imgs/skeleton_screen/detail.jpg',

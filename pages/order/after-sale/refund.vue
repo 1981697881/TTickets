@@ -55,7 +55,7 @@
 			<button class="cu-btn sub-btn" @tap="postAftersale">提交</button>
 		</view>
 		<app-modal v-model="showModal" :modalType="'bottom-modal'">
-			<block slot="modalContent">
+			<template #modalContent>
 				<view class="modal-box page_box">
 					<view class="modal-head head_box x-c">{{ modalDetail.title }}</view>
 					<view class="modal-content content_box">
@@ -68,7 +68,7 @@
 					</view>
 					<view class="modal-foot foot_box x-c"><button class="cu-btn close-btn" @tap="onClose">确定</button></view>
 				</view>
-			</block>
+			</template>
 		</app-modal>
 	</view>
 </template>
