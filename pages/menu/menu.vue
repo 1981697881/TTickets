@@ -25,7 +25,18 @@
 						</view>
 					</scroll-view> -->
 					<!-- goods list begin -->
-					<scroll-view class="goods" scroll-with-animation scroll-y :scroll-top="cateScrollTop" @scroll="handleGoodsScroll">
+					<scroll-view
+						class="goods"
+						scroll-with-animation
+						scroll-y
+						:scroll-top="cateScrollTop"
+						refresher-enabled
+						refresher-default-style="black"
+						refresher-background="#ffffff"
+						:refresher-triggered="refresherTriggered"
+						@refresherrefresh="onPullRefresh"
+						@scroll="handleGoodsScroll"
+					>
 						<view class="wrapper">
 							<!-- <swiper class="ads" id="ads" autoplay :interval="3000" indicator-dots>
 								<swiper-item v-for="(item, index) in ads" :key="index"><image :src="item.image"></image></swiper-item>
@@ -243,13 +254,18 @@ export default {
 			payType: 'wechat',
 			orderType: 'dinein',
 			address: '123',
-			store: '1'
+			store: '1',
+			refresherTriggered: false,
+			_refreshing: false
 		};
 	},
 	async onShow() {
 		if (!ensureLoggedIn()) return;
 		await this.getUserDetails().catch(() => null);
 		await this.init();
+	},
+	onPullDownRefresh() {
+		this.onPullRefresh();
 	},
 	/* async onLoad() {
 		await this.init();
@@ -302,12 +318,27 @@ export default {
 		onLoginRefresh() {
 			return this.init();
 		},
+		async onPullRefresh() {
+			if (this._refreshing) return;
+			this._refreshing = true;
+			this.refresherTriggered = true;
+			try {
+				await this.init({ silent: this.goods.length > 0 });
+			} finally {
+				setTimeout(() => {
+					this.refresherTriggered = false;
+					this._refreshing = false;
+					uni.stopPullDownRefresh();
+				}, 200);
+			}
+		},
 		// 初始化
-		async init() {
+		async init(options = {}) {
 			//页面初始化
-			this.loading = true;
+			const silent = Boolean(options.silent);
+			if (!silent) this.loading = true;
 			const me = this;
-			this.goods = [];
+			if (!silent) this.goods = [];
 			try {
 				if (!me.storeInfo || !me.storeInfo.v8PlaceId || !me.storeInfo.v8Url) {
 					const cached = uni.getStorageSync('storeInfo');

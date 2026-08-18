@@ -11,8 +11,8 @@
 		</view>
 
 		<view class="price-column">
-			<text class="member-price"><text class="currency">¥</text>{{ memberPrice }}</text>
-			<text v-if="standardPrice" class="standard-price">标准价 ¥{{ standardPrice }}</text>
+			<text class="member-price">会员{{ memberPrice }}元</text>
+			<text v-if="standardPrice" class="standard-price">¥{{ standardPrice }}</text>
 		</view>
 
 		<button class="buy-button" @tap.stop="openSeats">购票</button>
@@ -47,16 +47,10 @@ export default {
 			return [this.detail.language, this.detail.dimensional].filter(Boolean).join(' ') || '版本待定';
 		},
 		memberPrice() {
-			return this.formatPrice(
-				this.detail.settleprice ?? this.detail.lowestprice ?? this.detail.standardprice
-			);
+			return this.formatPrice(this.detail.settleprice ?? this.detail.lowestprice);
 		},
 		standardPrice() {
-			const member = this.detail.settleprice ?? this.detail.lowestprice;
-			const standard = this.detail.standardprice;
-			if (standard === undefined || standard === null || standard === '') return '';
-			if (member !== undefined && member !== null && String(member) === String(standard)) return '';
-			return this.formatPrice(standard, '');
+			return this.formatPrice(this.detail.standardprice, '');
 		}
 	},
 	methods: {
@@ -142,24 +136,21 @@ export default {
 }
 
 .price-column {
-	flex: 0 0 118rpx;
+	flex: 0 0 150rpx;
 	align-items: flex-end;
 }
 
 .member-price {
-	font-size: 31rpx;
+	font-size: 28rpx;
 	font-weight: 720;
 	line-height: 42rpx;
-	color: var(--tt-danger);
-}
-
-.currency {
-	margin-right: 2rpx;
-	font-size: 22rpx;
+	color: #e1212b;
+	white-space: nowrap;
 }
 
 .standard-price {
 	white-space: nowrap;
+	color: #8ba038;
 }
 
 .buy-button {
@@ -194,7 +185,7 @@ export default {
 	}
 
 	.price-column {
-		flex-basis: 104rpx;
+		flex-basis: 132rpx;
 	}
 
 	.buy-button {

@@ -223,11 +223,11 @@
 					"path_name": "电影",
 					"path_type": 1
 				}, {
-					"name": "卖品",
-					"image": "/static/tabbar/shop.png",
-					"activeImage": "/static/tabbar/shop-active.png",
-					"path": "/pages/menu/menu",
-					"path_name": "商品-OTO购买",
+					"name": "充值",
+					"image": "/static/tabbar/game.png",
+					"activeImage": "/static/tabbar/game-active.png",
+					"path": "/pages/index/videoGame",
+					"path_name": "充值",
 					"path_type": 1
 				}, {
 					"name": "活动",
@@ -237,11 +237,11 @@
 					"path_name": "主页-活动",
 					"path_type": 1
 				}, {
-					"name": "电玩",
-					"image": "/static/tabbar/game.png",
-					"activeImage": "/static/tabbar/game-active.png",
-					"path": "/pages/index/videoGame",
-					"path_name": "电玩-充值",
+					"name": "卖品",
+					"image": "/static/tabbar/shop.png",
+					"activeImage": "/static/tabbar/shop-active.png",
+					"path": "/pages/menu/menu",
+					"path_name": "商品-OTO购买",
 					"path_type": 1
 				}, {
 					"name": "我的",

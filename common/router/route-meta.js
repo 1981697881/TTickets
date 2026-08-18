@@ -27,8 +27,8 @@ export default {
   "/pages/index/videoGame": {
     "auth": false,
     "async": true,
-    "title": "电玩充值",
-    "group": "电玩"
+    "title": "充值",
+    "group": "充值"
   },
   "/pages/activity/groupon/list": {
     "auth": false,

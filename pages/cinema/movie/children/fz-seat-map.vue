@@ -49,10 +49,6 @@
 					:style="{ top: screenHeadHeight + 'px', height: Math.max(0, gridHeight) + 'px', left: contentWidth / 2 + 'px' }"
 				></view>
 
-				<view v-if="bestZoneVisible" class="best-zone-box" :style="bestZoneBoxStyle">
-					<text class="best-zone-tip">最佳观影区</text>
-				</view>
-
 				<view
 					v-if="seatArray.length"
 					class="seat-rows"
@@ -164,11 +160,6 @@ export default defineComponent({
 		areaStyle: {
 			type: Object as PropType<Record<string, string>>,
 			default: () => ({})
-		},
-		bestZoneVisible: { type: Boolean, default: false },
-		bestZoneBoxStyle: {
-			type: Object as PropType<Record<string, string>>,
-			default: () => ({ display: 'none' })
 		}
 	},
 	data() {
@@ -751,34 +742,6 @@ export default defineComponent({
 	letter-spacing: 4rpx;
 	color: var(--tt-primary-strong, #8f981e);
 	font-weight: 600;
-}
-
-.best-zone-box {
-	position: absolute;
-	z-index: 1;
-	box-sizing: border-box;
-	border: 2rpx dashed rgba(232, 140, 140, 0.55);
-	border-radius: 8rpx;
-	background: transparent;
-	pointer-events: none;
-}
-
-/* 文案放在框内顶部，避免压住框外上一排座位 */
-.best-zone-tip {
-	position: absolute;
-	top: 6rpx;
-	left: 50%;
-	transform: translateX(-50%);
-	z-index: 0;
-	padding: 0 10rpx;
-	font-size: 18rpx;
-	line-height: 24rpx;
-	letter-spacing: 2rpx;
-	color: rgba(214, 128, 128, 0.95);
-	white-space: nowrap;
-	background: rgba(241, 242, 244, 0.92);
-	border-radius: 6rpx;
-	pointer-events: none;
 }
 
 .seat-center-line {

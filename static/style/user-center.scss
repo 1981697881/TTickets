@@ -623,6 +623,26 @@
 	border-radius: 24rpx;
 }
 
+.user-subpage.user-qr-page .qr-wrap {
+	position: relative;
+	width: 400rpx;
+	height: 400rpx;
+}
+
+.user-subpage.user-qr-page .qr-center-logo {
+	position: absolute;
+	left: 50%;
+	top: 50%;
+	width: 96rpx;
+	height: 96rpx;
+	padding: 8rpx;
+	box-sizing: border-box;
+	border-radius: 16rpx;
+	background: #fff;
+	transform: translate(-50%, -50%);
+	z-index: 2;
+}
+
 .user-subpage.user-qr-page .qr-safe-tip {
 	margin-top: 30rpx;
 	color: var(--tt-text-secondary);

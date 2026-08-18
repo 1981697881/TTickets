@@ -1,7 +1,17 @@
 <template>
 	<view class="page-box">
 		<view class="content-box">
-			<scroll-view class="scroll-box" scroll-y enable-back-to-top @scrolltolower="loadMore">
+			<scroll-view
+				class="scroll-box"
+				scroll-y
+				enable-back-to-top
+				refresher-enabled
+				refresher-default-style="black"
+				refresher-background="#fff"
+				:refresher-triggered="refresherTriggered"
+				@refresherrefresh="onPullRefresh"
+				@scrolltolower="loadMore"
+			>
 				<view class="head-box">
 					<view class="cinema-summary">
 						<view class="summary-copy">
@@ -85,7 +95,9 @@ export default {
 			},
 			isLoading: false,
 			loadStatus: '',
-			lastPage: 1
+			lastPage: 1,
+			refresherTriggered: false,
+			_refreshing: false
 		};
 	},
 	computed: {
@@ -110,6 +122,9 @@ export default {
 		this.searchVal = this.listParams.keywords;
 		this.init();
 	},
+	onPullDownRefresh() {
+		this.onPullRefresh();
+	},
 	methods: {
 		getStoredCinemaLinkId() {
 			let store = this.storeInfo || {};
@@ -133,10 +148,24 @@ export default {
 			}
 			return this.init();
 		},
-		async init() {
+		async onPullRefresh() {
+			if (this._refreshing) return;
+			this._refreshing = true;
+			this.refresherTriggered = true;
+			try {
+				await this.init({ keepList: true });
+			} finally {
+				setTimeout(() => {
+					this.refresherTriggered = false;
+					this._refreshing = false;
+					uni.stopPullDownRefresh();
+				}, 200);
+			}
+		},
+		async init(options = {}) {
 			this.listParams.page = 1;
-			this.goodsList = [];
 			this.lastPage = 1;
+			if (!options.keepList) this.goodsList = [];
 			const cachedLinkId = this.listParams.cinemalinkId || this.getStoredCinemaLinkId();
 			if (cachedLinkId) {
 				this.listParams.cinemalinkId = cachedLinkId;

@@ -3,9 +3,9 @@ import { ensureLoggedIn } from '@/common/utils/auth.js';
 
 const TAB_ROUTES = new Set([
   '/pages/index/circuit',
-  '/pages/menu/menu',
-  '/pages/index/index',
   '/pages/index/videoGame',
+  '/pages/index/index',
+  '/pages/menu/menu',
   '/pages/index/user'
 ]);
 

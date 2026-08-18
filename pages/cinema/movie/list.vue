@@ -3,12 +3,20 @@
 		<view class="seat-canvas">
 			<view class="seat-summary">
 				<view class="summary-title-row">
-					<text class="summary-film">{{ head.filmName || '影片信息' }}</text>
-					<text v-if="head.hallName" class="summary-hall">{{ head.hallName }}</text>
+					<view class="summary-film">
+						<text class="summary-film-text">{{ head.filmName || '影片信息' }}</text>
+					</view>
+					<view v-if="head.hallName" class="summary-hall">
+						<text class="summary-hall-text">{{ head.hallName }}</text>
+					</view>
+				</view>
+				<view v-if="cinemaDisplayName" class="summary-cinema">
+					<text class="summary-cinema-text">{{ cinemaDisplayName }}</text>
 				</view>
 				<view class="summary-meta">
-					<text class="summary-session" :class="{ 'is-non-today': sessionDayAlert.show }">{{ sessionDisplayText }}</text>
-					<text v-if="head.language || head.dimensional" class="summary-version">{{ versionText }}</text>
+					<text v-if="sessionDateText" class="summary-date" :class="{ 'is-non-today': sessionDayAlert.show }">{{ sessionDateText }}</text>
+					<text class="summary-time">{{ sessionTimeText }}</text>
+					<text v-if="versionText" class="summary-version">{{ versionText }}</text>
 				</view>
 			</view>
 
@@ -38,8 +46,6 @@
 					:scale-min="scaleMin"
 					:selected-count="SelectNum"
 					:selected-sids="selectedSeatSids"
-					:best-zone-visible="bestZoneVisible"
-					:best-zone-box-style="bestZoneBoxStyle"
 					@choose="onSeatChoose"
 				/>
 			</view>
@@ -99,7 +105,8 @@ import { getSafeAreaInsets, getSystemInfoSafe } from '@/common/runtime/system-in
 import {
 	formatSessionDisplay,
 	getNonTodaySessionAlert,
-	isSessionStarted
+	isSessionStarted,
+	parseShowDatetime
 } from '@/common/utils/session-date';
 import FzSeatMap from './children/fz-seat-map.vue';
 import { createLoginRefreshMixin } from '@/common/mixins/login-refresh.js';
@@ -179,8 +186,7 @@ export default defineComponent({
 			seatList: [] as any[],
 			mArr: [] as Array<string | number>,
 			optArr: [] as SeatCell[],
-			isEsc: true,
-			bestZoneBoxStyle: { display: 'none' } as Record<string, string>
+			isEsc: true
 		};
 	},
 	computed: {
@@ -203,11 +209,12 @@ export default defineComponent({
 		seatMapAreaStyle(): Record<string, string> {
 			return {
 				bottom: this.seatMapBottom,
-				top: this.sessionDayAlert.show ? '276rpx' : '192rpx'
+				top: this.sessionDayAlert.show ? '340rpx' : '256rpx'
 			};
 		},
-		bestZoneVisible(): boolean {
-			return this.seatRow > 3 && this.seatCol > 4 && this.seatSize > 0 && this.bestZoneBoxStyle.display !== 'none';
+		cinemaDisplayName(): string {
+			const store = (this as any).storeInfo || {};
+			return store.storeName || store.cinemaName || '';
 		},
 		selectedSeatSids(): string[] {
 			return (this.optArr || []).map(item => String(item.sid || '')).filter(Boolean);
@@ -217,6 +224,20 @@ export default defineComponent({
 		},
 		sessionDisplayText(): string {
 			return formatSessionDisplay(this.sessionRawTime);
+		},
+		sessionDateText(): string {
+			const show = parseShowDatetime(this.sessionRawTime);
+			if (!show) return '';
+			const month = String(show.getMonth() + 1).padStart(2, '0');
+			const day = String(show.getDate()).padStart(2, '0');
+			return `${show.getFullYear()}-${month}-${day}`;
+		},
+		sessionTimeText(): string {
+			const show = parseShowDatetime(this.sessionRawTime);
+			if (!show) return this.sessionDisplayText;
+			const hour = String(show.getHours()).padStart(2, '0');
+			const minute = String(show.getMinutes()).padStart(2, '0');
+			return `${hour}:${minute}`;
 		},
 		sessionDayAlert(): { show: boolean; dayOffset: number | null; title: string; detail: string } {
 			return getNonTodaySessionAlert(this.sessionRawTime);
@@ -264,7 +285,6 @@ export default defineComponent({
 					const usable = Math.max(200, this.boxWidth - 28);
 					const naturalSize = Math.floor(usable / this.seatCol);
 					this.seatSize = Math.max(16, Math.min(34, naturalSize));
-					this.updateBestZoneBox();
 				}
 				// #ifdef H5
 				this.scaleMin = 0.95;
@@ -389,82 +409,6 @@ export default defineComponent({
 				mArr.push(m || '');
 			}
 			this.mArr = mArr;
-			this.updateBestZoneBox();
-		},
-		updateBestZoneBox() {
-			if (!(this.seatRow > 3 && this.seatCol > 4 && this.seatSize > 0)) {
-				this.bestZoneBoxStyle = { display: 'none' };
-				return;
-			}
-
-			// 以真实有座格子为边界（忽略矩阵左右/前后空白垫格）
-			let minSeatRow = this.seatRow;
-			let maxSeatRow = -1;
-			let minSeatCol = this.seatCol;
-			let maxSeatCol = -1;
-			for (let r = 0; r < this.seatArray.length; r++) {
-				const row = this.seatArray[r];
-				if (!row) continue;
-				row.forEach((seat, col) => {
-					if (seat && seat.sid) {
-						minSeatRow = Math.min(minSeatRow, r);
-						maxSeatRow = Math.max(maxSeatRow, r);
-						minSeatCol = Math.min(minSeatCol, col);
-						maxSeatCol = Math.max(maxSeatCol, col);
-					}
-				});
-			}
-			if (maxSeatRow < minSeatRow || maxSeatCol < minSeatCol) {
-				this.bestZoneBoxStyle = { display: 'none' };
-				return;
-			}
-
-			/**
-			 * 淘票票 / 猫眼常见做法（接口通常无区域字段，前端几何估算）：
-			 * - 纵向：银幕方向「中间偏前」——落在有座进深约 22%～52%（避开最前几排与后区）
-			 * - 横向：居中约 60% 座区（左右各裁约 20%）
-			 * - 与「推荐选座」独立：框只做视觉引导，不改选座算法
-			 */
-			const rowSpan = maxSeatRow - minSeatRow + 1;
-			const colSpan = maxSeatCol - minSeatCol + 1;
-			let rowStart = minSeatRow + Math.floor(rowSpan * 0.22);
-			let rowEnd = minSeatRow + Math.ceil(rowSpan * 0.52) - 1;
-			let colStart = minSeatCol + Math.floor(colSpan * 0.2);
-			let colEnd = minSeatCol + Math.ceil(colSpan * 0.8) - 1;
-
-			// 至少覆盖 2 排 × 4 座，避免小厅框过碎
-			if (rowEnd - rowStart < 1) {
-				rowEnd = Math.min(maxSeatRow, rowStart + 1);
-			}
-			if (colEnd - colStart < 3) {
-				const mid = Math.floor((minSeatCol + maxSeatCol) / 2);
-				colStart = Math.max(minSeatCol, mid - 2);
-				colEnd = Math.min(maxSeatCol, colStart + 3);
-			}
-			rowStart = Math.max(minSeatRow, Math.min(rowStart, maxSeatRow));
-			rowEnd = Math.max(rowStart, Math.min(rowEnd, maxSeatRow));
-			colStart = Math.max(minSeatCol, Math.min(colStart, maxSeatCol));
-			colEnd = Math.max(colStart, Math.min(colEnd, maxSeatCol));
-
-			const cell = this.seatSize;
-			const gap = this.seatRowGap;
-			const screenH = this.screenHeadHeight;
-			const gridWidth = this.seatCol * cell;
-			const contentWidth = Math.max(this.boxWidth, gridWidth + 24);
-			const gridLeft = (contentWidth - gridWidth) / 2;
-			// 框顶预留文案带，避免「最佳观影区」压到上一排座位
-			const tipBand = 16;
-			const top = screenH + rowStart * (cell + gap) - tipBand;
-			const height = Math.max(cell, (rowEnd - rowStart + 1) * (cell + gap) - gap + 4) + tipBand;
-			const left = gridLeft + colStart * cell - 2;
-			const width = Math.max(cell, (colEnd - colStart + 1) * cell + 4);
-
-			this.bestZoneBoxStyle = {
-				top: `${top}px`,
-				left: `${left}px`,
-				width: `${width}px`,
-				height: `${height}px`
-			};
 		},
 		resetSeat() {
 			this.SelectNum = 0;
@@ -654,11 +598,12 @@ export default defineComponent({
 	left: 0;
 	right: 0;
 	z-index: 20;
-	height: 120rpx;
+	min-height: 184rpx;
+	height: auto;
 	display: flex;
 	flex-direction: column;
 	justify-content: center;
-	padding: 14rpx 28rpx;
+	padding: 16rpx 28rpx 14rpx;
 	box-sizing: border-box;
 	background: rgba(255, 255, 255, 0.98);
 	border-bottom: 0;
@@ -670,63 +615,97 @@ export default defineComponent({
 	display: flex;
 	align-items: center;
 	min-width: 0;
+	width: 100%;
 }
 
 .summary-film {
+	flex: 1;
 	min-width: 0;
-	max-width: 470rpx;
+	overflow: hidden;
+}
+
+.summary-film-text {
+	display: block;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	font-size: 31rpx;
+	font-size: 40rpx;
 	font-weight: 700;
-	line-height: 44rpx;
+	line-height: 52rpx;
 	color: #1d2129;
 }
 
 .summary-hall {
 	flex: 0 1 auto;
-	max-width: 240rpx;
+	max-width: 220rpx;
 	margin-left: 12rpx;
-	padding: 3rpx 12rpx;
+	padding: 4rpx 12rpx;
 	overflow: hidden;
 	border-radius: 8rpx;
 	background: #f1f2f4;
+}
+
+.summary-hall-text {
+	display: block;
+	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	font-size: 21rpx;
-	line-height: 30rpx;
+	font-size: 22rpx;
+	line-height: 32rpx;
 	color: #69707d;
 }
 
-.summary-meta {
+.summary-cinema {
+	width: 100%;
 	margin-top: 4rpx;
-	font-size: 23rpx;
-	line-height: 32rpx;
-	color: #7a808c;
+	overflow: hidden;
 }
 
-.summary-version {
-	flex: 0 0 auto;
-	margin-left: 16rpx;
+.summary-cinema-text {
+	display: block;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	white-space: nowrap;
+	font-size: 26rpx;
+	line-height: 36rpx;
 	color: #4d5562;
 }
 
-.summary-session {
+.summary-meta {
+	margin-top: 6rpx;
+	font-size: 24rpx;
+	line-height: 34rpx;
+	color: #7a808c;
+}
+
+.summary-date {
+	flex: 0 0 auto;
+	margin-right: 12rpx;
+	color: #e1212b;
+	font-weight: 700;
+}
+
+.summary-date.is-non-today {
+	color: #c45c12;
+}
+
+.summary-time {
+	flex: 0 1 auto;
 	min-width: 0;
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
 }
 
-.summary-session.is-non-today {
-	color: #c45c12;
-	font-weight: 700;
+.summary-version {
+	flex: 0 0 auto;
+	margin-left: 14rpx;
+	color: #4d5562;
 }
 
 .session-day-alert {
 	position: fixed;
-	top: 192rpx;
+	top: 256rpx;
 	left: 24rpx;
 	right: 24rpx;
 	z-index: 20;
@@ -777,7 +756,7 @@ export default defineComponent({
 
 .seat-legend {
 	position: fixed;
-	top: 120rpx;
+	top: 184rpx;
 	left: 0;
 	right: 0;
 	z-index: 19;

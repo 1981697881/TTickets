@@ -10,8 +10,8 @@ const ignoredDirectories = new Set(['node_modules', 'dist', 'unpackage', '.tmp',
 const hashedAssetPattern =
   /\/assets\/([A-Za-z0-9_.@+-]+\.(?:png|jpe?g|gif|webp|svg|ttf|woff2?))/g;
 
-/** 必须留在主包：tabBar / 样式字体等 */
-const LOCAL_STATIC_PREFIXES = ['static/tabbar/', 'static/colorui/', 'static/font/', 'static/style/'];
+/** 必须留在主包：tabBar / 样式字体 / 二维码中心 logo（canvas 不能画 CDN 图） */
+const LOCAL_STATIC_PREFIXES = ['static/tabbar/', 'static/colorui/', 'static/font/', 'static/style/', 'static/qrcode/'];
 
 function readStaticCdn(inputDir) {
   const envPath = path.join(inputDir, 'env.js');

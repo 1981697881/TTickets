@@ -1,7 +1,18 @@
 <template>
 	<view class="page_box arcade-page">
 		<view class="content_box">
-			<scroll-view class="scroll-box" scroll-y enable-back-to-top scroll-with-animation @scrolltolower="loadMore">
+			<scroll-view
+				class="scroll-box"
+				scroll-y
+				enable-back-to-top
+				scroll-with-animation
+				refresher-enabled
+				refresher-default-style="black"
+				refresher-background="#fff"
+				:refresher-triggered="refresherTriggered"
+				@refresherrefresh="onPullRefresh"
+				@scrolltolower="loadMore"
+			>
 				<view class="arcade-content">
 					<view class="machine-entry" @tap="jump('/pages/cinema/machine/index')">
 						<view class="machine-copy">
@@ -74,7 +85,9 @@ export default {
 			loadStatus: '',
 			lastPage: 1,
 			goodsList: [],
-			machinePreview: {}
+			machinePreview: {},
+			refresherTriggered: false,
+			_refreshing: false
 		};
 	},
 	computed: {
@@ -90,6 +103,9 @@ export default {
 	mounted() {
 		this.init();
 	},
+	onPullDownRefresh() {
+		this.onPullRefresh();
+	},
 	methods: {
 		...mapActions(['getUserBalance']),
 		shouldRefreshOnShow() {
@@ -98,10 +114,24 @@ export default {
 		onLoginRefresh() {
 			return this.init();
 		},
-		async init() {
+		async onPullRefresh() {
+			if (this._refreshing) return;
+			this._refreshing = true;
+			this.refresherTriggered = true;
+			try {
+				await this.init({ keepList: true });
+			} finally {
+				setTimeout(() => {
+					this.refresherTriggered = false;
+					this._refreshing = false;
+					uni.stopPullDownRefresh();
+				}, 200);
+			}
+		},
+		async init(options = {}) {
 			this.listParams.page = 1;
 			this.lastPage = 1;
-			this.goodsList = [];
+			if (!options.keepList) this.goodsList = [];
 			await Promise.all([
 				this.getGoodsList(),
 				this.getMachinePreview(),

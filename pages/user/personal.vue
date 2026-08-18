@@ -6,20 +6,21 @@
 				<view class="qr-title">会员付款码</view>
 				<view class="qr-subtitle">向工作人员出示二维码即可识别会员账户</view>
 				<view class="share-list-box">
-					<tki-qrcode
-						ref="userCode"
-						:cid="cid"
-						class="img"
-						:val="scanId"
-						:size="size"
-						:unit="unit"
-						:icon="icon"
-						:iconSize="iconsize"
-						:lv="lv"
-						:onval="onval"
-						:loadMake="loadMake"
-						@result="qrR"
-					/>
+					<view class="qr-wrap">
+						<tki-qrcode
+							ref="userCode"
+							:cid="cid"
+							class="img"
+							:val="scanId"
+							:size="size"
+							:unit="unit"
+							:lv="lv"
+							:onval="onval"
+							:loadMake="loadMake"
+							@result="qrR"
+						/>
+						<image v-if="scanId" class="qr-center-logo" :src="icon" mode="aspectFill"></image>
+					</view>
 				</view>
 				<view class="qr-safe-tip"><text class="cuIcon-safe"></text> 请勿将付款码截图发送给他人</view>
 			</view>
@@ -42,7 +43,7 @@ export default {
 			val: '', // 要生成的二维码值
 			size: 400, // 二维码大小
 			unit: 'upx', // 单位
-			icon: '/static/imgs/logo/basicprofile.png', // 二维码图标
+			icon: '/static/qrcode/logo.png', // 二维码中心 logo，必须留在主包
 			iconsize: 40, // 二维码图标大小
 			lv: 3, // 二维码容错级别 ， 一般不用设置，默认就行
 			onval: true, // val值变化时自动重新生成二维码

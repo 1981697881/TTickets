@@ -62,12 +62,7 @@
 				</swiper-item>
 			</swiper>
 
-			<view v-else class="movie-loading-placeholder">
-				<image class="movie-loading-image" src="https://cfzx.gzfzdev.com/imgs/logo/logo.gif" mode="aspectFit"></image>
-				<text>{{ isPageLoading ? '影片加载中...' : '暂无可售影片' }}</text>
-			</view>
-
-			<view v-if="swiperList.length" class="movie-info" @tap="openMovieDetail">
+			<view class="movie-info" @tap="openMovieDetail">
 				<view class="info-name">{{ cardInfo.filmName || '影片信息' }}</view>
 				<view class="info-detail">
 					{{ movieMeta }}
@@ -75,8 +70,7 @@
 				</view>
 			</view>
 
-			<sh-date v-if="swiperList.length" ref="shDate" :movieDates="movieDates" @subClickFtn="selectDate"></sh-date>
-			<view v-else class="date-loading-placeholder"></view>
+			<sh-date ref="shDate" :movieDates="movieDates" @subClickFtn="selectDate"></sh-date>
 		</view>
 
 		<scroll-view
@@ -85,6 +79,11 @@
 			scroll-y
 			enable-back-to-top
 			scroll-with-animation
+			refresher-enabled
+			refresher-default-style="black"
+			refresher-background="#fff"
+			:refresher-triggered="refresherTriggered"
+			@refresherrefresh="onPullRefresh"
 			@scrolltolower="loadMore"
 		>
 			<view class="content-box">
@@ -96,12 +95,9 @@
 						:isTag="true"
 					></fz-circuit-minicard>
 				</view>
-				<app-empty v-if="!goodsList.length && !isLoading && !isPageLoading" :isFixed="false" :emptyData="emptyData"></app-empty>
+				<app-empty v-if="!goodsList.length && !isLoading" :isFixed="false" :emptyData="emptyData"></app-empty>
 				<view v-if="goodsList.length" class="cu-load text-gray" :class="loadStatus"></view>
-				<view v-if="isLoading && !goodsList.length" class="schedule-loading">
-					<image class="schedule-loading-image" src="https://cfzx.gzfzdev.com/imgs/common/loading.gif" mode="aspectFit"></image>
-					<text>场次加载中...</text>
-				</view>
+				<app-load :model-value="isLoading && !isSilentRefreshing"></app-load>
 			</view>
 		</scroll-view>
 
@@ -173,10 +169,12 @@ export default defineComponent({
 				page: 1
 			},
 			isLoading: false,
-			isPageLoading: true,
+			isSilentRefreshing: false,
 			loadStatus: '',
 			lastPage: 1,
 			failedPosters: {} as Record<string, boolean>,
+			refresherTriggered: false,
+			_refreshing: false,
 			pageVisible: false,
 			pendingScheduleRefresh: false,
 			scheduleRefreshTimer: 0 as number | ReturnType<typeof setTimeout>,
@@ -233,6 +231,9 @@ export default defineComponent({
 		this.pageVisible = true;
 		if (this.pendingScheduleRefresh) this.scheduleRefreshAfterTransition();
 	},
+	onPullDownRefresh() {
+		this.onPullRefresh();
+	},
 	onHide() {
 		this.pageVisible = false;
 	},
@@ -251,6 +252,21 @@ export default defineComponent({
 				this.listParams.cinemalinkId = this.getStoredCinemaLinkId();
 			}
 			return this.getCinemaList();
+		},
+		async onPullRefresh() {
+			if (this._refreshing) return;
+			this._refreshing = true;
+			this.refresherTriggered = true;
+			this.listParams.page = 1;
+			try {
+				await this.getCinemaList();
+			} finally {
+				setTimeout(() => {
+					this.refresherTriggered = false;
+					this._refreshing = false;
+					uni.stopPullDownRefresh();
+				}, 200);
+			}
 		},
 		getScrHeight() {
 			getSystemInfoSafe({
@@ -343,6 +359,7 @@ export default defineComponent({
 		resetSessions() {
 			this.requestGate.invalidate();
 			this.isLoading = false;
+			this.isSilentRefreshing = false;
 			this.listParams.page = 1;
 			this.goodsList = [];
 			this.lastPage = 1;
@@ -373,7 +390,6 @@ export default defineComponent({
 			}
 		},
 		async getCinemaList() {
-			this.isPageLoading = true;
 			const requestedId = this.listParams.cinemalinkId || this.getStoredCinemaLinkId();
 			try {
 				const res = await (this as any).$api('cinema.locationList', {
@@ -389,11 +405,7 @@ export default defineComponent({
 			} catch (error) {
 				console.warn('[cinema] failed to load unique cinema', error);
 			}
-			try {
-				await this.getMoviesList();
-			} finally {
-				this.isPageLoading = false;
-			}
+			await this.getMoviesList();
 		},
 		async getMoviesList() {
 			if (!this.listParams.cinemalinkId) return;
@@ -419,6 +431,7 @@ export default defineComponent({
 			const token = this.requestGate.begin();
 			if (!token) return;
 			this.isLoading = true;
+			this.isSilentRefreshing = Boolean(options.silent);
 			if (!options.silent) this.loadStatus = 'loading';
 			const requestedPage = this.listParams.page;
 			const requestedFilmId = this.listParams.filmId;
@@ -448,7 +461,10 @@ export default defineComponent({
 				}
 			} finally {
 				this.requestGate.end(token);
-				if (this.requestGate.isLatest(token)) this.isLoading = false;
+				if (this.requestGate.isLatest(token)) {
+					this.isLoading = false;
+					this.isSilentRefreshing = false;
+				}
 			}
 		}
 	}
@@ -523,9 +539,8 @@ export default defineComponent({
 	height: 280rpx;
 	background-repeat: no-repeat;
 	background-position: 50% 50%;
-	background-size: cover;
-	opacity: 0.28;
-	transform: scale(1.08);
+	background-size: 200% 200%;
+	filter: blur(40rpx);
 	pointer-events: none;
 }
 
@@ -535,16 +550,16 @@ export default defineComponent({
 
 .card-swiper swiper-item,
 .card-swiper uni-swiper-item {
+	width: 200upx !important;
 	padding: 15rpx 0 30rpx !important;
 	box-sizing: border-box;
 }
 
 .card-swiper .swiper-item {
 	position: relative;
-	width: 200rpx;
+	width: 100%;
 	height: 100%;
 	overflow: hidden;
-	margin: 0 auto;
 	border-radius: 10rpx;
 	transform: scale(0.9);
 	transition: transform 0.2s ease;
@@ -560,31 +575,6 @@ export default defineComponent({
 	display: block;
 	border: 1px solid #acacac;
 	border-radius: 10rpx;
-}
-
-.movie-loading-placeholder {
-	height: 280rpx;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	gap: 10rpx;
-	box-sizing: border-box;
-	font-size: 23rpx;
-	color: var(--tt-text-muted);
-}
-
-.movie-loading-image {
-	width: 84rpx;
-	height: 84rpx;
-}
-
-.date-loading-placeholder {
-	height: 126rpx;
-	box-sizing: border-box;
-	border-top: 1rpx solid var(--tt-border);
-	border-bottom: 1rpx solid var(--tt-border);
-	background: #fff;
 }
 
 .tag {
@@ -634,22 +624,6 @@ export default defineComponent({
 
 .goods-list {
 	width: 100%;
-}
-
-.schedule-loading {
-	min-height: 220rpx;
-	display: flex;
-	flex-direction: column;
-	align-items: center;
-	justify-content: center;
-	gap: 12rpx;
-	font-size: 23rpx;
-	color: var(--tt-text-muted);
-}
-
-.schedule-loading-image {
-	width: 64rpx;
-	height: 64rpx;
 }
 
 .phone-dialog {

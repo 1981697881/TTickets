@@ -44,7 +44,9 @@
 			"style": {
 				"navigationBarTitleText": "电影",
 				"navigationBarBackgroundColor": "#FFFFFF",
-				"navigationBarTextStyle": "black"
+				"navigationBarTextStyle": "black",
+				"enablePullDownRefresh": true,
+				"backgroundTextStyle": "dark"
 			},
 			"meta": {
 				"auth": false,
@@ -85,7 +87,9 @@
 			"path": "pages/menu/menu",
 			"name": "shoppingMall",
 			"style": {
-				"navigationBarTitleText": "商城"
+				"navigationBarTitleText": "商城",
+				"enablePullDownRefresh": true,
+				"backgroundTextStyle": "dark"
 			},
 			"meta": {
 				"auth": false,
@@ -97,13 +101,15 @@
 			"path": "pages/index/videoGame",
 			"name": "videoGame",
 			"style": {
-				"navigationBarTitleText": "电玩"
+				"navigationBarTitleText": "充值",
+				"enablePullDownRefresh": true,
+				"backgroundTextStyle": "dark"
 			},
 			"meta": {
 				"auth": false,
 				"async": true,
-				"title": "电玩充值",
-				"group": "电玩"
+				"title": "充值",
+				"group": "充值"
 			}
 		}
 
@@ -282,7 +288,9 @@
 					"style": {
 						"navigationBarTitleText": "选择场次",
 						"navigationBarBackgroundColor": "#FFFFFF",
-						"navigationBarTextStyle": "black"
+						"navigationBarTextStyle": "black",
+						"enablePullDownRefresh": true,
+						"backgroundTextStyle": "dark"
 					},
 					"meta": {
 						"auth": false,
@@ -1067,20 +1075,20 @@
 			"selectedIconPath": "static/tabbar/movie-active.png",
 			"text": "电影"
 		}, {
-			"pagePath": "pages/menu/menu",
-			"iconPath": "static/tabbar/shop.png",
-			"selectedIconPath": "static/tabbar/shop-active.png",
-			"text": "卖品"
+			"pagePath": "pages/index/videoGame",
+			"iconPath": "static/tabbar/game.png",
+			"selectedIconPath": "static/tabbar/game-active.png",
+			"text": "充值"
 		}, {
 			"pagePath": "pages/index/index",
 			"iconPath": "static/tabbar/activity.png",
 			"selectedIconPath": "static/tabbar/activity-active.png",
 			"text": "活动"
 		}, {
-			"pagePath": "pages/index/videoGame",
-			"iconPath": "static/tabbar/game.png",
-			"selectedIconPath": "static/tabbar/game-active.png",
-			"text": "电玩"
+			"pagePath": "pages/menu/menu",
+			"iconPath": "static/tabbar/shop.png",
+			"selectedIconPath": "static/tabbar/shop-active.png",
+			"text": "卖品"
 		}, {
 			"pagePath": "pages/index/user",
 			"iconPath": "static/tabbar/user.png",
