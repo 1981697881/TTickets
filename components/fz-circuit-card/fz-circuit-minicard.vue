@@ -12,7 +12,7 @@
 
 		<view class="price-column">
 			<text class="member-price">会员{{ memberPrice }}元</text>
-			<text v-if="standardPrice" class="standard-price">¥{{ standardPrice }}</text>
+			<text class="standard-price">￥{{ standardPrice }}</text>
 		</view>
 
 		<button class="buy-button" @tap.stop="openSeats">购票</button>
@@ -47,13 +47,25 @@ export default {
 			return [this.detail.language, this.detail.dimensional].filter(Boolean).join(' ') || '版本待定';
 		},
 		memberPrice() {
-			return this.formatPrice(this.detail.settleprice ?? this.detail.lowestprice);
+			return this.formatPrice(this.pickPrice('settleprice', 'settlePrice', 'lowestprice', 'lowestPrice'));
 		},
 		standardPrice() {
-			return this.formatPrice(this.detail.standardprice, '');
+			const member = this.pickPrice('settleprice', 'settlePrice');
+			const standard = this.pickPrice('standardprice', 'standardPrice', 'originalprice', 'originalPrice');
+			if (standard !== '') return this.formatPrice(standard, '--');
+			const lowest = this.pickPrice('lowestprice', 'lowestPrice');
+			if (lowest !== '' && String(lowest) !== String(member)) return this.formatPrice(lowest, '--');
+			return this.formatPrice(standard || lowest, '--');
 		}
 	},
 	methods: {
+		pickPrice(...keys) {
+			for (const key of keys) {
+				const value = this.detail && this.detail[key];
+				if (value !== undefined && value !== null && value !== '') return value;
+			}
+			return '';
+		},
 		formatPrice(value, fallback = '--') {
 			if (value === undefined || value === null || value === '') return fallback;
 			return String(value).replace(/\.00$/, '');
@@ -97,11 +109,19 @@ export default {
 }
 
 .time-column,
-.hall-column,
-.price-column {
+.hall-column {
 	display: flex;
 	min-width: 0;
 	flex-direction: column;
+}
+
+.price-column {
+	display: flex;
+	flex-direction: column;
+	flex: 0 0 auto;
+	min-width: 176rpx;
+	align-items: flex-end;
+	overflow: visible;
 }
 
 .time-column {
@@ -116,8 +136,7 @@ export default {
 }
 
 .end-time,
-.hall,
-.standard-price {
+.hall {
 	margin-top: 7rpx;
 	font-size: 21rpx;
 	line-height: 30rpx;
@@ -135,11 +154,6 @@ export default {
 	color: var(--tt-text);
 }
 
-.price-column {
-	flex: 0 0 150rpx;
-	align-items: flex-end;
-}
-
 .member-price {
 	font-size: 28rpx;
 	font-weight: 720;
@@ -149,8 +163,11 @@ export default {
 }
 
 .standard-price {
-	white-space: nowrap;
+	margin-top: 6rpx;
+	font-size: 22rpx;
+	line-height: 32rpx;
 	color: #8ba038;
+	white-space: nowrap;
 }
 
 .buy-button {
@@ -185,7 +202,7 @@ export default {
 	}
 
 	.price-column {
-		flex-basis: 132rpx;
+		min-width: 160rpx;
 	}
 
 	.buy-button {

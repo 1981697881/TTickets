@@ -3,7 +3,7 @@ import { ensureLoggedIn } from '@/common/utils/auth.js';
 
 const TAB_ROUTES = new Set([
   '/pages/index/circuit',
-  '/pages/index/videoGame',
+  '/pages/index/recharge',
   '/pages/index/index',
   '/pages/menu/menu',
   '/pages/index/user'

@@ -98,18 +98,30 @@
 				"group": "卖品"
 			}
 		}, {
+			"path": "pages/index/recharge",
+			"name": "recharge",
+			"style": {
+				"navigationBarTitleText": "充值"
+			},
+			"meta": {
+				"auth": true,
+				"async": true,
+				"title": "充值",
+				"group": "用户"
+			}
+		}, {
 			"path": "pages/index/videoGame",
 			"name": "videoGame",
 			"style": {
-				"navigationBarTitleText": "充值",
+				"navigationBarTitleText": "游戏币",
 				"enablePullDownRefresh": true,
 				"backgroundTextStyle": "dark"
 			},
 			"meta": {
 				"auth": false,
 				"async": true,
-				"title": "充值",
-				"group": "充值"
+				"title": "游戏币",
+				"group": "游戏币"
 			}
 		}
 
@@ -1075,7 +1087,7 @@
 			"selectedIconPath": "static/tabbar/movie-active.png",
 			"text": "电影"
 		}, {
-			"pagePath": "pages/index/videoGame",
+			"pagePath": "pages/index/recharge",
 			"iconPath": "static/tabbar/game.png",
 			"selectedIconPath": "static/tabbar/game-active.png",
 			"text": "充值"

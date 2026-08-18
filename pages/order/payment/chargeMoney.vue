@@ -200,7 +200,7 @@ export default {
 						mask: true,
 						success: function() {
 							setTimeout(function(){
-								uni.switchTab({
+								uni.redirectTo({
 									url: '/pages/index/videoGame',
 								})
 							}, 2000);

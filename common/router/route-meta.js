@@ -24,11 +24,17 @@ export default {
     "title": "小食和商品",
     "group": "卖品"
   },
+  "/pages/index/recharge": {
+    "auth": true,
+    "async": true,
+    "title": "充值",
+    "group": "用户"
+  },
   "/pages/index/videoGame": {
     "auth": false,
     "async": true,
-    "title": "充值",
-    "group": "充值"
+    "title": "游戏币",
+    "group": "游戏币"
   },
   "/pages/activity/groupon/list": {
     "auth": false,

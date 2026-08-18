@@ -42,10 +42,10 @@
 				</view>
 				<text class="cuIcon-right"></text>
 			</view>
-			<view class="wallet-menu__item" @tap="jump('/pages/user/wallet/recharge')">
+			<view class="wallet-menu__item" @tap="jump('/pages/index/videoGame')">
 				<view class="wallet-menu__left">
 					<text class="cuicon cuIcon-recharge"></text>
-					<text>充值</text>
+					<text>游戏币</text>
 				</view>
 				<text class="cuIcon-right"></text>
 			</view>

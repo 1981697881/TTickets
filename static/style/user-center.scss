@@ -313,7 +313,17 @@
 
 /* 充值 */
 .user-subpage.user-recharge-page {
-	padding: 24rpx 24rpx calc(32rpx + var(--tt-safe-bottom));
+	height: auto !important;
+	min-height: 100%;
+	display: block;
+	overflow: visible;
+	padding: 24rpx 24rpx calc(32rpx + var(--tt-safe-bottom) + 100rpx);
+}
+
+.user-subpage.user-recharge-page .content_box {
+	flex: none;
+	height: auto;
+	overflow: visible;
 }
 
 .user-subpage.user-recharge-page .head_box {
@@ -354,6 +364,19 @@
 	box-sizing: border-box;
 	padding: 20rpx 28rpx !important;
 	border-bottom: 1rpx solid var(--tt-border) !important;
+	align-items: flex-start !important;
+}
+
+.user-subpage.user-recharge-page .pay-item .x-f {
+	flex: 1;
+	min-width: 0;
+	padding-right: 16rpx;
+}
+
+.user-subpage.user-recharge-page .pay-item .text-sm {
+	white-space: normal;
+	word-break: break-all;
+	line-height: 1.45;
 }
 
 .user-subpage.user-recharge-page .pay-item:last-child {

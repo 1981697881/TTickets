@@ -209,7 +209,7 @@ export default defineComponent({
 		seatMapAreaStyle(): Record<string, string> {
 			return {
 				bottom: this.seatMapBottom,
-				top: this.sessionDayAlert.show ? '340rpx' : '256rpx'
+				top: this.sessionDayAlert.show ? '376rpx' : '292rpx'
 			};
 		},
 		cinemaDisplayName(): string {
@@ -598,7 +598,7 @@ export default defineComponent({
 	left: 0;
 	right: 0;
 	z-index: 20;
-	min-height: 184rpx;
+	min-height: 220rpx;
 	height: auto;
 	display: flex;
 	flex-direction: column;
@@ -629,17 +629,17 @@ export default defineComponent({
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	font-size: 40rpx;
+	font-size: 48rpx;
 	font-weight: 700;
-	line-height: 52rpx;
+	line-height: 62rpx;
 	color: #1d2129;
 }
 
 .summary-hall {
 	flex: 0 1 auto;
-	max-width: 220rpx;
+	max-width: 200rpx;
 	margin-left: 12rpx;
-	padding: 4rpx 12rpx;
+	padding: 6rpx 14rpx;
 	overflow: hidden;
 	border-radius: 8rpx;
 	background: #f1f2f4;
@@ -650,8 +650,8 @@ export default defineComponent({
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	font-size: 22rpx;
-	line-height: 32rpx;
+	font-size: 26rpx;
+	line-height: 36rpx;
 	color: #69707d;
 }
 
@@ -666,15 +666,15 @@ export default defineComponent({
 	overflow: hidden;
 	text-overflow: ellipsis;
 	white-space: nowrap;
-	font-size: 26rpx;
-	line-height: 36rpx;
+	font-size: 32rpx;
+	line-height: 44rpx;
 	color: #4d5562;
 }
 
 .summary-meta {
 	margin-top: 6rpx;
-	font-size: 24rpx;
-	line-height: 34rpx;
+	font-size: 28rpx;
+	line-height: 40rpx;
 	color: #7a808c;
 }
 
@@ -705,7 +705,7 @@ export default defineComponent({
 
 .session-day-alert {
 	position: fixed;
-	top: 256rpx;
+	top: 292rpx;
 	left: 24rpx;
 	right: 24rpx;
 	z-index: 20;
@@ -756,7 +756,7 @@ export default defineComponent({
 
 .seat-legend {
 	position: fixed;
-	top: 184rpx;
+	top: 220rpx;
 	left: 0;
 	right: 0;
 	z-index: 19;
