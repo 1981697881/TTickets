@@ -189,7 +189,7 @@
 			</popup-layer> -->
 			<!-- 购物车详情popup -->
 		</view>
-		<view class="loading" v-else><image class="loading-image" src="/static/imgs/common/loading.gif"></image></view>
+		<view class="loading" v-else><image class="loading-image" src="https://cfzx.gzfzdev.com/imgs/common/loading.gif"></image></view>
 		<view class="foot_box"></view>
 		<!-- 自定义底部导航 -->
 		<!-- <app-tabbar></app-tabbar> -->
@@ -211,6 +211,7 @@ import goods from '@/csJson/goods.js';
 import { mapState, mapMutations, mapActions, mapGetters } from 'vuex';
 import { extractArray } from '@/common/utils/api-data';
 import { createLoginRefreshMixin } from '@/common/mixins/login-refresh.js';
+import { ensureLoggedIn } from '@/common/utils/auth.js';
 
 export default {
 	components: {
@@ -246,6 +247,7 @@ export default {
 		};
 	},
 	async onShow() {
+		if (!ensureLoggedIn()) return;
 		await this.getUserDetails().catch(() => null);
 		await this.init();
 	},
@@ -492,6 +494,7 @@ export default {
 			}
 		},
 		toPay(good) {
+			if (!ensureLoggedIn()) return;
 			uni.showLoading({ title: '加载中' });
 			/* uni.setStorageSync('cart', JSON.parse(JSON.stringify(this.cart))) */
 			this.$Router.push({

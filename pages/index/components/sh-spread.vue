@@ -1,6 +1,6 @@
 <template>
 	<view class="activity-card" v-if="activity" @tap="routerTo(activity.posterUrl)">
-		<image class="spread-image" :src="activityImage" mode="aspectFill" lazy-load></image>
+		<image class="spread-image" :src="activityImage" mode="widthFix" lazy-load></image>
 		<view class="activity-card__body">
 			<view class="activity-card__copy">
 				<text class="activity-card__title one-t">{{ activity.posterName }}</text>
@@ -53,7 +53,8 @@ export default {
 .spread-image {
 	display: block;
 	width: 100%;
-	height: 330rpx;
+	height: auto;
+	vertical-align: top;
 	background: var(--tt-primary-soft);
 }
 .activity-card__body {

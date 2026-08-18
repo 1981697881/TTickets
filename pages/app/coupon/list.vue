@@ -3,12 +3,13 @@
 		<view class="head_box">
 			<view class="coupon-nav x-f">
 				<view class="nav-item y-f" v-for="nav in couponsState" :key="nav.id" @tap="onNav(nav.id)">
-					<view class="item-title">{{ nav.title }}</view>
+					<view class="item-title" :class="{ 'is-active': stateCurrent === nav.id }">{{ nav.title }}</view>
 					<text class="nav-line" :class="{ 'line-active': stateCurrent === nav.id }"></text>
 				</view>
 			</view>
 		</view>
 		<view class="content_box">
+			<view v-if="!couponList.length" class="coupon-empty">暂无优惠券</view>
 			<view class="coupon-list" v-for="(c, index) in couponList" :key="index" @tap="toCouponDetail(c)">
 				<app-coupon :state="stateCurrent" :couponData="c" @getCouponList="getCouponIssueList"></app-coupon>
 			</view>
@@ -146,36 +147,71 @@ export default {
 
 <style lang="scss">
 @import '@/static/style/user-center.scss';
-.page_box {
-	background: #fff;
+
+.user-coupon-page {
+	background: var(--tt-bg);
 }
+
+.user-coupon-page .head_box {
+	position: sticky;
+	top: 0;
+	z-index: 8;
+	background: rgba(255, 255, 255, 0.97);
+	border-bottom: 1rpx solid var(--tt-border);
+}
+
 .coupon-nav {
-	background: #fff;
-	height: 100rpx;
-
-	.nav-item {
-		flex: 1;
-
-		.item-title {
-			font-size: 30rpx;
-			font-family: PingFang SC;
-			font-weight: 400;
-			color: rgba(51, 51, 51, 1);
-			line-height: 76rpx;
-		}
-
-		.nav-line {
-			width: 120rpx;
-			height: 4rpx;
-			background: #fff;
-		}
-
-		.line-active {
-			background: rgba(230, 184, 115, 1);
-		}
-	}
+	height: 88rpx;
+	background: transparent;
+	padding: 0 8rpx;
+	box-sizing: border-box;
 }
+
+.coupon-nav .nav-item {
+	flex: 1;
+	min-width: 0;
+}
+
+.coupon-nav .item-title {
+	max-width: 100%;
+	overflow: hidden;
+	font-size: 24rpx;
+	font-weight: 500;
+	line-height: 64rpx;
+	color: var(--tt-text-secondary);
+	text-align: center;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.coupon-nav .nav-item .nav-line {
+	width: 36rpx;
+	height: 6rpx;
+	border-radius: 999rpx;
+	background: transparent;
+}
+
+.coupon-nav .nav-item .line-active {
+	background: var(--tt-primary);
+}
+
+.coupon-nav .item-title.is-active {
+	color: var(--tt-primary-strong);
+	font-weight: 700;
+}
+
+.user-coupon-page .content_box {
+	padding: 20rpx 24rpx calc(40rpx + var(--tt-safe-bottom));
+}
+
 .coupon-list {
-	margin: 30rpx 20rpx;
+	margin: 0 0 18rpx;
+}
+
+.coupon-empty {
+	padding: 120rpx 24rpx;
+	font-size: 26rpx;
+	color: var(--tt-text-muted);
+	text-align: center;
 }
 </style>

@@ -150,11 +150,14 @@ import fzCouponCard from './children/fz-coupon-card.vue';
 import AppPay from '@/common/app-pay';
 import { mapActions, mapState } from 'vuex';
 import { formatSessionDisplay, getNonTodaySessionAlert, isSessionStarted, parseShowDatetime } from '@/common/utils/session-date';
+import { createLoginRefreshMixin } from '@/common/mixins/login-refresh.js';
+import { ensureLoggedIn } from '@/common/utils/auth.js';
 export default {
 	components: {
 		fzGroupCard,
 		fzCouponCard
 	},
+	mixins: [createLoginRefreshMixin('onLoginRefresh')],
 	data() {
 		return {
 			orderTimer: null,
@@ -431,12 +434,15 @@ export default {
 		/* this.$isPreviewApi = true */
 		// 支付取消 / 接口失败返回后允许再次点击
 		if (this.orderReady) this.isSubOrder = false;
-		if (uni.getStorageSync('token')) {
-			this.getUserBalance().catch(() => null);
-		}
+		if (!ensureLoggedIn()) return;
+		this.getUserBalance().catch(() => null);
 	},
 	methods: {
 		...mapActions(['getUserDetails', 'getUserBalance']),
+		onLoginRefresh() {
+			if (!this.orderReady) return;
+			return this.getUserBalance().catch(() => null);
+		},
 		formatMoney(value) {
 			const amount = Number(value);
 			if (!Number.isFinite(amount)) return '0.00';
@@ -535,6 +541,7 @@ export default {
 		combuy() {
 			let that = this;
 			if (that.isSubOrder || !that.orderReady) return;
+			if (!ensureLoggedIn()) return;
 			if (!that.seatCount) {
 				this.$tools.toast('座位信息缺失，请返回重新选座');
 				return;

@@ -307,63 +307,8 @@
 }
 
 /* 钱包首页 */
-.user-subpage.user-wallet-page .head_box {
-	width: 100% !important;
-	height: 510rpx !important;
-	background: linear-gradient(145deg, #303523 0%, #8f981e 100%) !important;
-	border-bottom: 0;
-}
-
-.user-subpage.user-wallet-page .card-box {
-	width: calc(100% - 48rpx) !important;
-	height: 310rpx !important;
-	top: 150rpx !important;
-	padding: 30rpx !important;
-	box-sizing: border-box;
-	background: rgba(255, 255, 255, 0.12) !important;
-	border: 1rpx solid rgba(255, 255, 255, 0.2);
-	border-radius: var(--tt-radius-lg) !important;
-	box-shadow: 0 18rpx 42rpx rgba(20, 24, 10, 0.22) !important;
-	backdrop-filter: blur(12rpx);
-}
-
-.user-subpage.user-wallet-page .card-box .title,
-.user-subpage.user-wallet-page .card-box .money-num,
-.user-subpage.user-wallet-page .card-box .text-olive,
-.user-subpage.user-wallet-page .card-box .add,
-.user-subpage.user-wallet-page .card-box .text-red {
-	color: #fff !important;
-}
-
-.user-subpage.user-wallet-page .card-box .money-num {
-	font-size: 64rpx !important;
-	line-height: 1.2 !important;
-}
-
-.user-subpage.user-wallet-page .card-box .add {
-	width: 100% !important;
-	color: rgba(255, 255, 255, 0.72) !important;
-	line-height: 1.5 !important;
-}
-
-.user-subpage.user-wallet-page .content_box {
-	padding: 24rpx 24rpx calc(120rpx + var(--tt-safe-bottom));
-}
-
-.user-subpage.user-wallet-page .resale-list {
-	height: 104rpx !important;
-	margin-bottom: 14rpx;
-	padding: 0 28rpx !important;
-	background: var(--tt-surface) !important;
-	border: 1rpx solid var(--tt-border) !important;
-	border-radius: var(--tt-radius-md);
-	box-shadow: var(--tt-shadow);
-	color: var(--tt-text) !important;
-}
-
-.user-subpage.user-wallet-page .resale-list .cuicon {
-	margin-right: 22rpx !important;
-	color: var(--tt-primary-strong) !important;
+.user-subpage.user-wallet-page {
+	background: var(--tt-bg) !important;
 }
 
 /* 充值 */
@@ -704,18 +649,23 @@
 }
 
 .user-subpage.user-coupon-page .coupon-nav {
-	height: 92rpx !important;
+	height: 88rpx !important;
 	background: transparent !important;
 }
 
 .user-subpage.user-coupon-page .nav-item .item-title {
 	color: var(--tt-text-secondary) !important;
-	font-size: 27rpx !important;
-	line-height: 70rpx !important;
+	font-size: 24rpx !important;
+	line-height: 64rpx !important;
+}
+
+.user-subpage.user-coupon-page .nav-item .item-title.is-active {
+	color: var(--tt-primary-strong) !important;
+	font-weight: 700 !important;
 }
 
 .user-subpage.user-coupon-page .nav-item .nav-line {
-	width: 40rpx !important;
+	width: 36rpx !important;
 	height: 6rpx !important;
 	border-radius: 999rpx;
 	background: transparent !important;
@@ -726,7 +676,7 @@
 }
 
 .user-subpage.user-coupon-page .content_box {
-	padding: 20rpx 24rpx calc(120rpx + var(--tt-safe-bottom));
+	padding: 20rpx 24rpx calc(40rpx + var(--tt-safe-bottom));
 }
 
 .user-subpage.user-coupon-page .coupon-list {
@@ -734,7 +684,7 @@
 }
 
 .user-subpage.user-coupon-detail-page {
-	background: linear-gradient(180deg, var(--tt-primary-soft) 0, var(--tt-bg) 440rpx) !important;
+	background: var(--tt-bg) !important;
 }
 
 .user-subpage.user-coupon-detail-page .head_box {
@@ -742,36 +692,8 @@
 	border-bottom: 0;
 }
 
-.user-subpage.user-coupon-detail-page .coupon-box {
-	margin: 90rpx 24rpx 0 !important;
-	overflow: hidden;
-	border: 1rpx solid var(--tt-border);
-	border-radius: var(--tt-radius-lg) !important;
-	box-shadow: var(--tt-shadow);
-}
-
-.user-subpage.user-coupon-detail-page .coupon-box .top,
-.user-subpage.user-coupon-detail-page .coupon-box .bottom {
-	background-image: none !important;
-}
-
-.user-subpage.user-coupon-detail-page .coupon-box .top {
-	border-color: var(--tt-border) !important;
-}
-
-.user-subpage.user-coupon-detail-page .coupon-box .title {
-	color: var(--tt-text) !important;
-	font-size: 36rpx !important;
-}
-
-.user-subpage.user-coupon-detail-page .coupon-box .tip,
-.user-subpage.user-coupon-detail-page .coupon-box .time,
-.user-subpage.user-coupon-detail-page .notice-detail {
-	color: var(--tt-text-secondary) !important;
-}
-
 .user-subpage.user-coupon-detail-page .coupon-goods {
-	margin: 20rpx 24rpx !important;
+	margin-top: 20rpx !important;
 	border: 1rpx solid var(--tt-border);
 	border-radius: var(--tt-radius-md) !important;
 	box-shadow: var(--tt-shadow);

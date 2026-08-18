@@ -1,44 +1,47 @@
 import Request from './request'
 import apiList from './appApi'
-import store from '@/common/store/index.js'
+import { hasAuthToken, isAuthDeniedPayload, promptLogin } from '@/common/utils/auth.js'
 
 export default function api(url, data = {}) {
 	const request = new Request();
 	let api = getApiObj(url);
 	request.interceptor.request((config, cancel) => { /* 请求之前拦截器 */
 		if (api.auth) {
-			let token = uni.getStorageSync('token');
-			if (!token) {
-				store.commit('LOGIN_TIP', true)
-				store.commit('OUT_LOGIN');
-				throw('暂未登录,已阻止此次API请求~');
+			if (!hasAuthToken()) {
+				promptLogin();
+				cancel('暂未登录,已阻止此次API请求~');
+				return config;
 			}
 		}
-		if (uni.getStorageSync('token')) {
+		if (hasAuthToken()) {
 			config.header.authorization = uni.getStorageSync('token');
 		}
 		return config
 	});
 
 	request.interceptor.response((response) => { /* 请求之后拦截器 */
-		if (response.data.code === 0) { // 服务端返回的状态码不等于200，则reject()
+		const data = response.data || {};
+		if (data.code === 0) {
 			uni.showToast({
-				title: response.data.msg || '请求出错,稍后重试',
+				title: data.msg || '请求出错,稍后重试',
 				icon: 'none',
 				duration: 1000,
 				mask: true
 			});
 		}
 
-		if (response.data.code === 401) { // 服务端返回的状态码不等于200，则reject()
+		// HTTP 401，或业务码 20010「未登录或权限不足」
+		if (data.code === 401 || isAuthDeniedPayload(data)) {
 			uni.removeStorageSync('token');
-			store.commit('LOGIN_TIP', true)
+			promptLogin();
 		}
-		// if (response.config.custom.verification) { // 演示自定义参数的作用
-		//   return response.data
-		// }
 		return response
-	}, (response) => { // 预留可以日志上报
+	}, (response) => {
+		const data = (response && response.data) || {};
+		if (data.code === 401 || isAuthDeniedPayload(data)) {
+			uni.removeStorageSync('token');
+			promptLogin();
+		}
 		return response
 	})
 

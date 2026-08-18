@@ -113,12 +113,15 @@ import { mapState, mapMutations, mapActions, mapGetters } from 'vuex';
 import fzCouponCard from './menu-children/fz-coupon-card.vue';
 import AppPay from '@/common/app-pay';
 import modal from '@/components/modal/modal';
+import { createLoginRefreshMixin } from '@/common/mixins/login-refresh.js';
+import { ensureLoggedIn } from '@/common/utils/auth.js';
 let orders = [];
 export default {
 	components: {
 		modal,
 		fzCouponCard
 	},
+	mixins: [createLoginRefreshMixin('onLoginRefresh')],
 	data() {
 		return {
 			cart: [],
@@ -163,11 +166,16 @@ export default {
 			}, 500);
 			return;
 		}
+		if (!ensureLoggedIn()) return;
 		this.getCoupons();
-		await this.getUserBalance();
+		await this.getUserBalance().catch(() => null);
 	},
 	methods: {
 		...mapActions(['getUserBalance','getUserDetails']),
+		onLoginRefresh() {
+			this.getCoupons();
+			return this.getUserBalance().catch(() => null);
+		},
 		handlePropertyAdd(item) {
 			item.goodsCount += 1;
 		},
@@ -197,6 +205,7 @@ export default {
 		combuy(){
 			let that = this
 			if (that.isSubOrder) return;
+			if (!ensureLoggedIn()) return;
 			if (!Array.isArray(that.cart) || !that.cart.length) {
 				uni.showToast({ icon: 'none', title: '购物车为空' });
 				return;

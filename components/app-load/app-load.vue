@@ -11,7 +11,7 @@ export default {
 	components: {},
 	data() {
 		return {
-			logoSrc: '/static/imgs/logo/logo.gif'
+			logoSrc: 'https://cfzx.gzfzdev.com/imgs/logo/logo.gif'
 		};
 	},
 	props: {

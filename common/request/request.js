@@ -123,7 +123,7 @@ export default class Request {
 		// #endif
 		// uni.showToast({
 		// 	icon: "loading",
-		// 	image: "/static/imgs//logo/logo.gif"
+		// 	image: "https://cfzx.gzfzdev.com/imgs/logo/logo.gif"
 		// })
 		return new Promise((resolve, reject) => {
 			let next = true

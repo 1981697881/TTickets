@@ -41,6 +41,7 @@
 				:circular="false"
 				:duration="300"
 				@change="onCardSwiper"
+				@animationfinish="onCardSwiperSettled"
 			>
 				<swiper-item
 					v-for="(item, cindex) in swiperList"
@@ -61,7 +62,12 @@
 				</swiper-item>
 			</swiper>
 
-			<view class="movie-info" @tap="openMovieDetail">
+			<view v-else class="movie-loading-placeholder">
+				<image class="movie-loading-image" src="https://cfzx.gzfzdev.com/imgs/logo/logo.gif" mode="aspectFit"></image>
+				<text>{{ isPageLoading ? '影片加载中...' : '暂无可售影片' }}</text>
+			</view>
+
+			<view v-if="swiperList.length" class="movie-info" @tap="openMovieDetail">
 				<view class="info-name">{{ cardInfo.filmName || '影片信息' }}</view>
 				<view class="info-detail">
 					{{ movieMeta }}
@@ -69,7 +75,8 @@
 				</view>
 			</view>
 
-			<sh-date ref="shDate" :movieDates="movieDates" @subClickFtn="selectDate"></sh-date>
+			<sh-date v-if="swiperList.length" ref="shDate" :movieDates="movieDates" @subClickFtn="selectDate"></sh-date>
+			<view v-else class="date-loading-placeholder"></view>
 		</view>
 
 		<scroll-view
@@ -89,9 +96,12 @@
 						:isTag="true"
 					></fz-circuit-minicard>
 				</view>
-				<app-empty v-if="!goodsList.length && !isLoading" :isFixed="false" :emptyData="emptyData"></app-empty>
+				<app-empty v-if="!goodsList.length && !isLoading && !isPageLoading" :isFixed="false" :emptyData="emptyData"></app-empty>
 				<view v-if="goodsList.length" class="cu-load text-gray" :class="loadStatus"></view>
-				<app-load v-model="isLoading"></app-load>
+				<view v-if="isLoading && !goodsList.length" class="schedule-loading">
+					<image class="schedule-loading-image" src="https://cfzx.gzfzdev.com/imgs/common/loading.gif" mode="aspectFit"></image>
+					<text>场次加载中...</text>
+				</view>
 			</view>
 		</scroll-view>
 
@@ -163,9 +173,14 @@ export default defineComponent({
 				page: 1
 			},
 			isLoading: false,
+			isPageLoading: true,
 			loadStatus: '',
 			lastPage: 1,
 			failedPosters: {} as Record<string, boolean>,
+			pageVisible: false,
+			pendingScheduleRefresh: false,
+			scheduleRefreshTimer: 0 as number | ReturnType<typeof setTimeout>,
+			seatExitEventBound: false,
 			requestGate: createRequestGate()
 		};
 	},
@@ -192,9 +207,18 @@ export default defineComponent({
 	},
 	beforeUnmount() {
 		this.requestGate.invalidate();
+		if (this.scheduleRefreshTimer) clearTimeout(this.scheduleRefreshTimer as number);
+		if (this.seatExitEventBound) {
+			uni.$off('escUpload', this.onSeatPageExit);
+			this.seatExitEventBound = false;
+		}
 	},
 	mounted() {
 		this.getScrHeight();
+		if (!this.seatExitEventBound) {
+			uni.$on('escUpload', this.onSeatPageExit);
+			this.seatExitEventBound = true;
+		}
 	},
 	onLoad(options: Record<string, any>) {
 		const routeQuery = (this as any).$Route?.query || {};
@@ -206,11 +230,11 @@ export default defineComponent({
 		this.getCinemaList();
 	},
 	onShow() {
-		uni.$once('escUpload', (data: { filmId?: string | number }) => {
-			if (!data || !data.filmId) return;
-			const index = this.swiperList.findIndex(item => String(item.filmId) === String(data.filmId));
-			if (index >= 0) this.selectMovie(index);
-		});
+		this.pageVisible = true;
+		if (this.pendingScheduleRefresh) this.scheduleRefreshAfterTransition();
+	},
+	onHide() {
+		this.pageVisible = false;
 	},
 	methods: {
 		getStoredCinemaLinkId() {
@@ -260,18 +284,26 @@ export default defineComponent({
 		},
 		onCardSwiper(e: { detail: { current: number } }) {
 			const index = e?.detail?.current ?? 0;
+			if (!this.swiperList[index]) return;
 			this.cardCur = index;
 			this.activeItem = index;
+		},
+		onCardSwiperSettled(e: { detail: { current: number } }) {
+			const index = e?.detail?.current ?? this.cardCur;
+			const movie = this.swiperList[index];
+			if (!movie) return;
+			this.cardCur = index;
+			this.activeItem = index;
+			if (String(this.cardInfo?.filmId ?? '') === String(movie.filmId ?? '')) return;
 			this.selectMovie(index);
 		},
 		onClickSwiper(index: number) {
-			if (index === this.activeItem) {
+			if (index === this.cardCur) {
 				this.openMovieDetail();
 				return;
 			}
-			this.cardCur = index;
+			// 只驱动 swiper；数据切换统一等 animationfinish，避免 change/current 互相回写导致横跳。
 			this.activeItem = index;
-			this.selectMovie(index);
 		},
 		selectMovie(index: number, shouldLoad = true) {
 			const movie = this.swiperList[index];
@@ -316,6 +348,24 @@ export default defineComponent({
 			this.lastPage = 1;
 			this.loadStatus = '';
 		},
+		onSeatPageExit(data: { filmId?: string | number }) {
+			if (!data?.filmId || String(data.filmId) !== String(this.listParams.filmId ?? '')) return;
+			// 子页卸载发生在返回动画中，只记刷新意图，不在隐藏页立刻清空/重绘。
+			this.pendingScheduleRefresh = true;
+			if (this.pageVisible) this.scheduleRefreshAfterTransition();
+		},
+		scheduleRefreshAfterTransition() {
+			if (this.scheduleRefreshTimer) clearTimeout(this.scheduleRefreshTimer as number);
+			this.scheduleRefreshTimer = setTimeout(() => {
+				this.scheduleRefreshTimer = 0;
+				if (!this.pageVisible || !this.pendingScheduleRefresh) return;
+				this.pendingScheduleRefresh = false;
+				this.requestGate.invalidate();
+				this.listParams.page = 1;
+				// 保留现有场次到新数据返回，回退时不再白屏闪烁。
+				this.getGoodsList({ silent: true });
+			}, 180);
+		},
 		loadMore() {
 			if (!this.isLoading && this.listParams.page < this.lastPage) {
 				this.listParams.page += 1;
@@ -323,6 +373,7 @@ export default defineComponent({
 			}
 		},
 		async getCinemaList() {
+			this.isPageLoading = true;
 			const requestedId = this.listParams.cinemalinkId || this.getStoredCinemaLinkId();
 			try {
 				const res = await (this as any).$api('cinema.locationList', {
@@ -338,7 +389,11 @@ export default defineComponent({
 			} catch (error) {
 				console.warn('[cinema] failed to load unique cinema', error);
 			}
-			await this.getMoviesList();
+			try {
+				await this.getMoviesList();
+			} finally {
+				this.isPageLoading = false;
+			}
 		},
 		async getMoviesList() {
 			if (!this.listParams.cinemalinkId) return;
@@ -359,12 +414,12 @@ export default defineComponent({
 				console.warn('[cinema] failed to load cinema movies', error);
 			}
 		},
-		async getGoodsList() {
+		async getGoodsList(options: { silent?: boolean } = {}) {
 			if (!this.listParams.filmId || !this.listParams.cinemalinkId) return;
 			const token = this.requestGate.begin();
 			if (!token) return;
 			this.isLoading = true;
-			this.loadStatus = 'loading';
+			if (!options.silent) this.loadStatus = 'loading';
 			const requestedPage = this.listParams.page;
 			const requestedFilmId = this.listParams.filmId;
 			const requestedDate = this.listParams.showDatetime;
@@ -468,8 +523,9 @@ export default defineComponent({
 	height: 280rpx;
 	background-repeat: no-repeat;
 	background-position: 50% 50%;
-	background-size: 200% 200%;
-	filter: blur(40rpx);
+	background-size: cover;
+	opacity: 0.28;
+	transform: scale(1.08);
 	pointer-events: none;
 }
 
@@ -479,16 +535,16 @@ export default defineComponent({
 
 .card-swiper swiper-item,
 .card-swiper uni-swiper-item {
-	width: 200upx !important;
 	padding: 15rpx 0 30rpx !important;
 	box-sizing: border-box;
 }
 
 .card-swiper .swiper-item {
 	position: relative;
-	width: 100%;
+	width: 200rpx;
 	height: 100%;
 	overflow: hidden;
+	margin: 0 auto;
 	border-radius: 10rpx;
 	transform: scale(0.9);
 	transition: transform 0.2s ease;
@@ -504,6 +560,31 @@ export default defineComponent({
 	display: block;
 	border: 1px solid #acacac;
 	border-radius: 10rpx;
+}
+
+.movie-loading-placeholder {
+	height: 280rpx;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 10rpx;
+	box-sizing: border-box;
+	font-size: 23rpx;
+	color: var(--tt-text-muted);
+}
+
+.movie-loading-image {
+	width: 84rpx;
+	height: 84rpx;
+}
+
+.date-loading-placeholder {
+	height: 126rpx;
+	box-sizing: border-box;
+	border-top: 1rpx solid var(--tt-border);
+	border-bottom: 1rpx solid var(--tt-border);
+	background: #fff;
 }
 
 .tag {
@@ -553,6 +634,22 @@ export default defineComponent({
 
 .goods-list {
 	width: 100%;
+}
+
+.schedule-loading {
+	min-height: 220rpx;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	gap: 12rpx;
+	font-size: 23rpx;
+	color: var(--tt-text-muted);
+}
+
+.schedule-loading-image {
+	width: 64rpx;
+	height: 64rpx;
 }
 
 .phone-dialog {

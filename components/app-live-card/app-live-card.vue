@@ -7,7 +7,6 @@
 				<text class="status-text">{{ liveStatus[detail.live_status].title }}</text>
 			</view>
 			<view class="item-title" :style="{ width: wh + 'rpx' }">{{ detail.name }}</view>
-			<!-- <image v-if="detail.live_status == 101" class="like-img" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/zan.gif" mode=""></image> -->
 		</view>
 		<view class="live-bottom" :style="{ width: wh + 'rpx' }">
 			<view class="live-info">

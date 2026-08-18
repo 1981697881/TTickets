@@ -1,5 +1,5 @@
-import store from '@/common/store';
 import routeMeta from '@/common/router/route-meta';
+import { ensureLoggedIn } from '@/common/utils/auth.js';
 
 const TAB_ROUTES = new Set([
   '/pages/index/circuit',
@@ -56,9 +56,7 @@ function createUrl(path, query = {}) {
 function canNavigate(path) {
   const meta = routeMeta[path];
   if (!meta?.auth) return true;
-  const hasUser = Boolean(uni.getStorageSync('userInfo'));
-  if (!hasUser) store.commit('LOGIN_TIP', true);
-  return hasUser;
+  return ensureLoggedIn();
 }
 
 function parseSearch(search) {

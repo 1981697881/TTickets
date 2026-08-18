@@ -1,21 +1,29 @@
 <template>
 	<view class="fz-seat-map-root">
-		<!-- scale-area：双指缩放可在整个座位视口识别，不限于按住座位格 -->
-		<movable-area class="seat-map" :scale-area="true" :style="areaStyle">
+		<!-- scale-area：双指缩放可在整个座位视口识别；x/y/scale 仅松手/跳转时回写，手势中回写会在真机上来回跳 -->
+		<movable-area
+			class="seat-map"
+			:scale-area="true"
+			:style="areaStyle"
+			@touchend="onMapTouchEnd"
+			@touchcancel="onMapTouchEnd"
+		>
 			<movable-view
 				class="seat-movable"
 				:style="{ width: contentWidth + 'px', height: contentHeight + 'px', background: 'transparent' }"
-				:x="moveX"
-				:y="moveY"
-				:scale-value="scale"
+				:x="ctrlX"
+				:y="ctrlY"
+				:scale-value="ctrlScale"
 				:animation="false"
-				:inertia="true"
+				:inertia="false"
 				:scale="true"
 				:scale-min="effectiveScaleMin"
 				:scale-max="3"
 				direction="all"
 				@change="onMove"
 				@scale="onScale"
+				@touchend="onMapTouchEnd"
+				@touchcancel="onMapTouchEnd"
 			>
 				<view class="screen-wrap" :style="{ height: screenHeadHeight + 'px', width: contentWidth + 'px' }">
 					<view class="screen-glow"></view>
@@ -124,35 +132,6 @@ type ThumbDot = {
 const CULL_SEAT_THRESHOLD = 120;
 const CULL_BUFFER = 2;
 
-/** 小程序逻辑层无 window.requestAnimationFrame，用 setTimeout 兜底 */
-function scheduleFrame(fn: () => void): number {
-	const raf =
-		typeof requestAnimationFrame === 'function'
-			? requestAnimationFrame
-			: (typeof globalThis !== 'undefined' &&
-					typeof (globalThis as any).requestAnimationFrame === 'function' &&
-					(globalThis as any).requestAnimationFrame) ||
-			  null;
-	if (raf) return raf(fn) as number;
-	return setTimeout(fn, 16) as unknown as number;
-}
-
-function cancelFrame(id: number) {
-	if (!id) return;
-	const caf =
-		typeof cancelAnimationFrame === 'function'
-			? cancelAnimationFrame
-			: (typeof globalThis !== 'undefined' &&
-					typeof (globalThis as any).cancelAnimationFrame === 'function' &&
-					(globalThis as any).cancelAnimationFrame) ||
-			  null;
-	if (caf) {
-		caf(id);
-		return;
-	}
-	clearTimeout(id);
-}
-
 export default defineComponent({
 	name: 'FzSeatMap',
 	emits: ['choose'],
@@ -194,17 +173,20 @@ export default defineComponent({
 	},
 	data() {
 		return {
-			moveX: 0,
-			moveY: 0,
-			scale: 1,
+			ctrlX: 0,
+			ctrlY: 0,
+			ctrlScale: 1,
+			viewX: 0,
+			viewY: 0,
+			viewScale: 1,
 			viewportWidth: 375,
 			viewportHeight: 420,
 			thumbnailShow: false,
 			thumbnailHideTimer: 0 as number | ReturnType<typeof setTimeout>,
-			_moveRaf: 0 as number,
-			_pendingMove: null as { x: number; y: number } | null,
 			_thumbRect: null as { left: number; top: number; width: number; height: number } | null,
 			_thumbDriving: false,
+			_gesturing: false,
+			_view: { x: 0, y: 0, scale: 1 },
 			seatEpoch: 0
 		};
 	},
@@ -255,7 +237,7 @@ export default defineComponent({
 		needsPan(): boolean {
 			const vw = this.viewportWidth || this.boxWidth;
 			const vh = this.viewportHeight || 0;
-			return this.contentWidth > vw + 2 || this.contentHeight > vh + 2 || this.scale > 1.02;
+			return this.contentWidth > vw + 2 || this.contentHeight > vh + 2 || this.viewScale > 1.02;
 		},
 		effectiveScaleMin(): number {
 			const vw = this.viewportWidth || this.boxWidth;
@@ -270,7 +252,7 @@ export default defineComponent({
 			return Math.max(0, this.seatRow * this.seatCol);
 		},
 		useViewportCull(): boolean {
-			return this.seatCount > CULL_SEAT_THRESHOLD || this.scale > 1.05;
+			return this.seatCount > CULL_SEAT_THRESHOLD || this.viewScale > 1.05;
 		},
 		visibleRange(): { rowStart: number; rowEnd: number; colStart: number; colEnd: number } {
 			const lastRow = Math.max(0, this.seatRow - 1);
@@ -278,9 +260,9 @@ export default defineComponent({
 			if (!this.useViewportCull || !(this.seatSize > 0)) {
 				return { rowStart: 0, rowEnd: lastRow, colStart: 0, colEnd: lastCol };
 			}
-			const scale = Math.max(this.scale, 0.01);
-			const left = -this.moveX / scale;
-			const top = -this.moveY / scale;
+			const scale = Math.max(this.viewScale, 0.01);
+			const left = -this.viewX / scale;
+			const top = -this.viewY / scale;
 			const right = left + this.viewportWidth / scale;
 			const bottom = top + this.viewportHeight / scale;
 			const cellH = this.seatSize + this.seatRowGap;
@@ -361,10 +343,10 @@ export default defineComponent({
 			return dots;
 		},
 		thumbViewportStyle(): Record<string, string> {
-			void this.moveX;
-			void this.moveY;
-			void this.scale;
-			const scale = Math.max(this.scale, 0.01);
+			void this.viewX;
+			void this.viewY;
+			void this.viewScale;
+			const scale = Math.max(this.viewScale, 0.01);
 			const vw = this.viewportWidth || this.boxWidth;
 			const vh = this.viewportHeight || 1;
 			const gw = Math.max(this.gridWidth, 1);
@@ -372,8 +354,8 @@ export default defineComponent({
 			const gridLeft = this.gridOffsetX;
 			const gridTop = this.screenHeadHeight;
 
-			const visLeft = -this.moveX / scale;
-			const visTop = -this.moveY / scale;
+			const visLeft = -this.viewX / scale;
+			const visTop = -this.viewY / scale;
 			const visRight = visLeft + vw / scale;
 			const visBottom = visTop + vh / scale;
 
@@ -395,7 +377,7 @@ export default defineComponent({
 		},
 		thumbnailVisible(): boolean {
 			if (!this.seatArray.length) return false;
-			return this.thumbnailShow || this.selectedCount > 0 || this.needsPan || this.scale > 1.02;
+			return this.thumbnailShow || this.selectedCount > 0 || this.needsPan || this.viewScale > 1.02;
 		}
 	},
 	watch: {
@@ -442,10 +424,7 @@ export default defineComponent({
 		},
 		clearGestureTimers() {
 			if (this.thumbnailHideTimer) clearTimeout(this.thumbnailHideTimer as number);
-			if (this._moveRaf) cancelFrame(this._moveRaf);
 			this.thumbnailHideTimer = 0;
-			this._moveRaf = 0;
-			this._pendingMove = null;
 		},
 		thumbClass(seat: SeatCell) {
 			if (!seat || seat.type === -1) return 'is-empty';
@@ -476,7 +455,7 @@ export default defineComponent({
 				this.thumbnailShow = false;
 			}, 1800);
 		},
-		clampMove(x: number, y: number, scale = this.scale) {
+		clampMove(x: number, y: number, scale = this.viewScale) {
 			const vw = this.viewportWidth || this.boxWidth;
 			const vh = this.viewportHeight || 1;
 			const minX = Math.min(0, vw - this.contentWidth * scale);
@@ -486,25 +465,51 @@ export default defineComponent({
 				y: Math.min(0, Math.max(minY, y))
 			};
 		},
+		applyCtrl(x: number, y: number, scale = this.viewScale) {
+			this._view = { x, y, scale };
+			this.viewX = x;
+			this.viewY = y;
+			this.viewScale = scale;
+			this.ctrlX = x + 0.01;
+			this.ctrlY = y + 0.01;
+			this.ctrlScale = scale;
+			this.$nextTick(() => {
+				this.ctrlX = x;
+				this.ctrlY = y;
+			});
+		},
+		finishGesture() {
+			if (this._thumbDriving) return;
+			this._gesturing = false;
+			const scale = this._view.scale > 0 ? this._view.scale : this.viewScale;
+			const next = this.clampMove(this._view.x, this._view.y, scale);
+			this._view = { x: next.x, y: next.y, scale };
+			this.viewX = next.x;
+			this.viewY = next.y;
+			this.viewScale = scale;
+			this.ctrlX = next.x;
+			this.ctrlY = next.y;
+			this.ctrlScale = scale;
+			this.thumbnailShow = true;
+			this.scheduleThumbnailHide();
+		},
+		onMapTouchEnd(e: any) {
+			if (e && e.touches && e.touches.length) return;
+			if (!this._gesturing) return;
+			this.finishGesture();
+		},
 		jumpToThumbPoint(clientX: number, clientY: number) {
 			const apply = (rect: { left: number; top: number; width: number; height: number }) => {
 				if (!rect.width || !rect.height) return;
 				const rx = Math.min(1, Math.max(0, (clientX - rect.left) / rect.width));
 				const ry = Math.min(1, Math.max(0, (clientY - rect.top) / rect.height));
-				const scale = Math.max(this.scale, 0.01);
+				const scale = Math.max(this.viewScale, 0.01);
 				const vw = this.viewportWidth || this.boxWidth;
 				const vh = this.viewportHeight || 1;
-				// 缩略图点对应座位网格坐标，主图滚到该点居中
 				const targetX = this.gridOffsetX + rx * this.gridWidth;
 				const targetY = this.screenHeadHeight + ry * this.gridHeight;
 				const next = this.clampMove(vw / 2 - targetX * scale, vh / 2 - targetY * scale, scale);
-				// 微信 movable-view：连续同值赋值可能不生效，先微偏移再设目标
-				this.moveX = next.x + 0.01;
-				this.moveY = next.y + 0.01;
-				this.$nextTick(() => {
-					this.moveX = next.x;
-					this.moveY = next.y;
-				});
+				this.applyCtrl(next.x, next.y, scale);
 				this.thumbnailShow = true;
 			};
 			if (this._thumbRect && this._thumbRect.width) {
@@ -563,37 +568,23 @@ export default defineComponent({
 			const detail = e.detail || ({} as { scale: number; x?: number; y?: number });
 			const nextScale = Number(detail.scale);
 			if (!(nextScale > 0)) return;
-			// 必须同步回写 scale-value，否则 Vue 仍绑旧值会把双指缩放打回 1
-			this.scale = nextScale;
-			this.thumbnailShow = true;
-			this.scheduleThumbnailHide();
-			// 缩放过程中不要强行改 x/y（会与原生手势打架）；位置交给 @change
+			this._gesturing = true;
+			this._view.scale = nextScale;
+			if (typeof detail.x === 'number') this._view.x = detail.x;
+			if (typeof detail.y === 'number') this._view.y = detail.y;
 		},
 		onMove(e: { detail: { x: number; y: number; source?: string } }) {
 			if (this._thumbDriving) return;
 			const source = e.detail && e.detail.source;
-			// 忽略 setData 回写；缩放时 source 可能为空，仍需同步坐标
-			if (source === 'out-of-bounds' || source === 'touch-out-of-bounds') {
-				return;
-			}
-			if (source && source !== 'touch' && source !== 'friction' && source !== '') {
-				return;
-			}
-			this.thumbnailShow = true;
-			this.scheduleThumbnailHide();
+			// 空 source 是 setData 回写，写回去会和手势互抢
+			if (!source || source === 'out-of-bounds' || source === 'touch-out-of-bounds') return;
+			if (source !== 'touch' && source !== 'friction') return;
 			const x = e.detail.x;
 			const y = e.detail.y;
 			if (typeof x !== 'number' || typeof y !== 'number') return;
-			this._pendingMove = { x, y };
-			if (this._moveRaf) return;
-			this._moveRaf = scheduleFrame(() => {
-				this._moveRaf = 0;
-				const detail = this._pendingMove;
-				this._pendingMove = null;
-				if (!detail) return;
-				this.moveX = detail.x;
-				this.moveY = detail.y;
-			});
+			this._gesturing = true;
+			this._view.x = x;
+			this._view.y = y;
 		}
 	}
 });

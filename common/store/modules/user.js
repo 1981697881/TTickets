@@ -4,6 +4,7 @@ import store from '@/common/store'
 import router from '@/common/router.js'
 import tools from '@/common/utils/tools'
 import { normalizeAuthToken } from '@/common/mixins/login-refresh.js'
+import { isAuthDeniedPayload, promptLogin } from '@/common/utils/auth.js'
 
 import {
 	USER_INFO,
@@ -124,9 +125,8 @@ const actions = {
 					commit('USER_INFO', res.data);
 					uni.setStorageSync('userInfo', res.data);
 				}else{
-					// 有 token 时资料失败不强制再弹授权，避免「授权完又弹窗、列表不刷」
-					if (!uni.getStorageSync('token')) {
-						commit('LOGIN_TIP', true);
+					if (isAuthDeniedPayload(res) || !uni.getStorageSync('token')) {
+						promptLogin();
 					}
 				}
 				resolve(res)

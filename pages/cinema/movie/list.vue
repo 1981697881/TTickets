@@ -103,6 +103,7 @@ import {
 } from '@/common/utils/session-date';
 import FzSeatMap from './children/fz-seat-map.vue';
 import { createLoginRefreshMixin } from '@/common/mixins/login-refresh.js';
+import { ensureLoggedIn, hasAuthToken } from '@/common/utils/auth.js';
 
 type SeatCell = {
 	type: number;
@@ -478,6 +479,7 @@ export default defineComponent({
 		buySeat() {
 			const that = this;
 			if (that.isSubOrder || that.SelectNum === 0) return;
+			if (!ensureLoggedIn()) return;
 			const seatIds = that.optArr.map(item => item.sid).filter(Boolean);
 			if (!seatIds.length || seatIds.length !== that.SelectNum) {
 				uni.showToast({ icon: 'none', title: '座位选择异常，请重新选座' });
@@ -516,9 +518,13 @@ export default defineComponent({
 					that.isSubOrder = false;
 				}
 			}).catch(() => {
-				uni.showToast({ icon: 'none', title: '锁座失败，请重试' });
 				that.loadModal = false;
 				that.isSubOrder = false;
+				if (!hasAuthToken()) {
+					ensureLoggedIn();
+					return;
+				}
+				uni.showToast({ icon: 'none', title: '锁座失败，请重试' });
 			});
 		},
 		jump(path: string, params: Record<string, unknown>) {

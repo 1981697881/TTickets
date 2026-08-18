@@ -11,7 +11,7 @@ export default {
 	components: {},
 	data() {
 		return {
-			logoSrc: '/static/imgs/logo/logo.gif',
+			logoSrc: 'https://cfzx.gzfzdev.com/imgs/logo/logo.gif',
 			skeletonsDot: {
 				index: '/static/imgs/skeleton_screen/index.jpg',
 				detail: '/static/imgs/skeleton_screen/detail.jpg',

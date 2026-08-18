@@ -1,90 +1,19 @@
 <template>
-	<view class="" v-if="couponData">
-		<!-- 未领取，已领取 -->
-		<view class="coupon-wrap" v-if="state === 4">
-			<view class="coupon-item x-bc">
-				<view class="coupon-left y-start ">
-					<view class="sum-box">
-						<text class="unit">￥</text>
-						<text class="sum">{{ couponData.couponPrice }}</text>
-						<text class="sub">{{ couponData.cname }}</text>
-					</view>
-					<view class="notice">满{{ couponData.useMinPrice }}元可用</view>
-					<view class="notice">领取日期：{{couponData.startDate}} 至 {{couponData.endDate}}</view>
-				</view>
-				<view class="coupon-right y-f">
-					<button class="cu-btn get-btn" v-if="couponData.getStatus ==0" @tap.stop="getCoupon">立即领取</button>
-					<button class="cu-btn get-btn bg-gray" v-else>已领取</button>
-					<view class="surplus-num">仅剩{{ couponData.remainCount }}张</view>
-				</view>
-			</view>
+	<view v-if="couponData" class="coupon-ticket" :class="{ 'is-expired': isExpired, 'is-used': isUsed }">
+		<view class="coupon-ticket__main">
+			<text class="coupon-ticket__title">{{ titleText }}</text>
+			<text v-if="ruleText" class="coupon-ticket__rule">{{ ruleText }}</text>
+			<text class="coupon-ticket__date">有效期 {{ dateText }}</text>
 		</view>
-		<view class="coupon-wrap" v-if="state === 0">
-			<view class="coupon-item x-bc">
-				<view class="coupon-left y-start ">
-					<view class="sum-box">
-						<text class="sub">{{ couponData.couponName }}</text>
-					</view>
-					<view class="notice" v-if="couponData.couponId==1">使用提醒：除普通厅外需补差价</view>
-					<view class="notice" v-if="couponData.couponId==2">使用提醒：全场影厅通用</view>
-					<view class="notice">有效期：{{couponData.startDate}} 至 {{couponData.endDate}}</view><!-- 2021-05-05 至 2022-05-05 -->
-				</view>
-				<view class="coupon-right y-f">
-					<button class="cu-btn get-btn" v-if="state === 0">查看详情</button>
-				</view>
-			</view>
-		</view>
-		<view class="coupon-wrap" v-if="state === 1">
-			<view class="coupon-item x-bc">
-				<view class="coupon-left y-start ">
-					<view class="sum-box">
-						<text class="unit">￥</text>
-						<text class="miso-font sum">{{ couponData.fullPrice }}</text>
-						<text class="sub">{{ couponData.couponName }}</text>
-					</view>
-					<view class="notice">满{{ couponData.fullPrice }}元可用</view>
-					<view class="notice">有效期：{{couponData.startDate}} 至 {{couponData.endDate}}</view>
-				</view>
-				<view class="coupon-right y-f">
-					<button class="cu-btn get-btn" v-if="state === 1">查看详情</button>
-				</view>
-			</view>
-		</view>
-		<view class="coupon-wrap" v-if="state === 2">
-			<view class="coupon-item x-bc">
-				<view class="coupon-left y-start ">
-					<view class="coupon-left y-start ">
-						<view class="sum-box">
-							<text class="miso-font sum">{{ couponData.fullPrice }}</text>
-							<text class="sub">{{ couponData.couponName }}</text>
-						</view>
-						<view class="notice" v-if="couponData.couponId==1">使用提醒：除普通厅外需补差价</view>
-						<view class="notice" v-else-if="couponData.couponId==2">使用提醒：全场影厅通用</view>
-						<view class="notice" v-else>满{{ couponData.fullPrice }}元可用</view>
-						<view class="notice">有效期：{{couponData.startDate}} 至 {{couponData.endDate}}</view><!-- 2021-05-05 至 2022-05-05 -->
-					</view>
-				</view>
-				<view class="coupon-right y-f">
-					<button class="cu-btn get-btn" v-if="state === 2">查看详情</button>
-				</view>
-			</view>
-		</view>
-		<!-- 失效 -->
-		<view class="close-wrap" v-if="state === 3">
-			<view class="coupon-item x-f">
-				<view class="coupon-left y-start ">
-					<view class="sum-box">
-						<text class="unit">￥</text>
-						<text class="miso-font sum">{{ couponData.fullPrice }}</text>
-						<text class="sub">{{ couponData.couponName }}</text>
-					</view>
-					<view class="notice">有效期：{{couponData.startDate}} 至 {{couponData.endDate}}</view>
-				</view>
-				<view class="coupon-right y-f">
-					<button class="cu-btn get-btn">已失效</button>
-					<view class="surplus-num"></view>
-				</view>
-			</view>
+		<view class="coupon-ticket__side">
+			<button
+				class="coupon-ticket__btn"
+				:disabled="isExpired || isClaimed"
+				@tap.stop="onAction"
+			>
+				{{ actionText }}
+			</button>
+			<text v-if="remainText" class="coupon-ticket__remain">{{ remainText }}</text>
 		</view>
 	</view>
 </template>
@@ -102,8 +31,65 @@ export default {
 		state: {}, //0:立即领取，1：去使用，2：查看详情，3：已失效。
 		couponData: {}
 	},
-	computed: {},
+	computed: {
+		isExpired() {
+			return Number(this.state) === 3;
+		},
+		isUsed() {
+			return Number(this.state) === 2;
+		},
+		isCenter() {
+			return Number(this.state) === 4;
+		},
+		isClaimed() {
+			return this.isCenter && Number(this.couponData.getStatus) !== 0;
+		},
+		titleText() {
+			const data = this.couponData || {};
+			return data.couponName || data.cname || data.couponPrice || '优惠券';
+		},
+		ruleText() {
+			const data = this.couponData || {};
+			if (this.isCenter) {
+				return data.useMinPrice != null ? `满${data.useMinPrice}元可用` : '';
+			}
+			if (Number(data.couponId) === 1) return '除普通厅外需补差价';
+			if (Number(data.couponId) === 2) return '全场影厅通用';
+			if (data.fullPrice != null) return `满${data.fullPrice}元可用`;
+			if (data.useMinPrice != null) return `满${data.useMinPrice}元可用`;
+			return '';
+		},
+		dateText() {
+			const data = this.couponData || {};
+			return `${this.shortDate(data.startDate)} 至 ${this.shortDate(data.endDate)}`;
+		},
+		remainText() {
+			if (!this.isCenter || this.couponData.remainCount == null) return '';
+			return `仅剩${this.couponData.remainCount}张`;
+		},
+		actionText() {
+			if (this.isExpired) return '已失效';
+			if (this.isUsed) return '已使用';
+			if (this.isCenter) return this.isClaimed ? '已领取' : '立即领取';
+			return '查看详情';
+		}
+	},
 	methods: {
+		shortDate(value) {
+			if (value === null || value === undefined || value === '') return '--';
+			const text = String(value).trim();
+			if (/^\d{4}[-/]\d{1,2}[-/]\d{1,2}/.test(text)) return text.slice(0, 10).replace(/\//g, '-');
+			const date = new Date(typeof value === 'number' ? value : text.replace(/-/g, '/'));
+			if (Number.isNaN(date.getTime())) return text.slice(0, 10);
+			const month = String(date.getMonth() + 1).padStart(2, '0');
+			const day = String(date.getDate()).padStart(2, '0');
+			return `${date.getFullYear()}-${month}-${day}`;
+		},
+		onAction() {
+			if (this.isCenter && !this.isClaimed) {
+				this.getCoupon();
+			}
+		},
 		getCoupon() {
 			let that = this;
 			let params = this.couponData
@@ -122,146 +108,111 @@ export default {
 </script>
 
 <style lang="scss">
-// 未领取，已领取
-.coupon-wrap {
-	background: url('https://cfzx.gzfzdev.com/movie/uploadFiles/image/coupon_bg1.png') no-repeat;
-	background-size: 100% 100%;
-	position: relative;
-	border-radius: 10rpx;
-	width: 710rpx;
-	.coupon-item {
-		width: 100%;
-		height: 168rpx;
-		border-radius: 10rpx;
-
-		.coupon-left {
-			height: 100%;
-			justify-content: center;
-			padding-left: 40rpx;
-
-			.unit {
-				font-size: 24rpx;
-				color: #4f3a1e;
-			}
-
-			.sum {
-				font-size: 55rpx;
-				font-weight: bold;
-				color: #4f3a1e;
-				line-height: 55rpx;
-				padding-right: 10rpx;
-			}
-
-			.sub {
-				font-size: 26rpx;
-				color: #4f3a1e;
-			}
-
-			.notice {
-				font-size: 22rpx;
-				color: #a8700d;
-				margin-top: 6rpx;
-				padding-right: 44rpx;
-			}
-		}
-
-		.coupon-right {
-			height: 100%;
-			width: 220rpx;
-			justify-content: center;
-			align-items: center;
-
-			.get-btn {
-				width: 142rpx;
-				height: 54rpx;
-				background: linear-gradient(90deg, rgba(45, 34, 17, 1), rgba(84, 62, 32, 1));
-				box-shadow: 0px 2rpx 5rpx 0px rgba(206, 158, 106, 0.46);
-				border-radius: 27rpx;
-				padding: 0;
-				font-size: 24rpx;
-				font-family: PingFang SC;
-				font-weight: 500;
-				color: rgba(239, 197, 130, 1);
-			}
-
-			.surplus-num {
-				font-size: 22rpx;
-				font-family: PingFang SC;
-				font-weight: 500;
-				color: rgba(168, 112, 13, 1);
-				margin-top: 14rpx;
-			}
-		}
-	}
+.coupon-ticket {
+	display: flex;
+	align-items: stretch;
+	min-height: 176rpx;
+	overflow: hidden;
+	background: var(--tt-surface);
+	border: 1rpx solid var(--tt-border);
+	border-radius: var(--tt-radius-md);
+	box-shadow: var(--tt-shadow);
 }
 
-// 失效
-.close-wrap {
+.coupon-ticket__main {
+	min-width: 0;
+	flex: 1;
+	display: flex;
+	flex-direction: column;
+	justify-content: center;
+	padding: 24rpx 8rpx 24rpx 28rpx;
+}
+
+.coupon-ticket__title {
+	font-size: 30rpx;
+	font-weight: 700;
+	line-height: 42rpx;
+	color: var(--tt-text);
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
+}
+
+.coupon-ticket__rule,
+.coupon-ticket__date {
+	margin-top: 8rpx;
+	font-size: 22rpx;
+	line-height: 32rpx;
+	color: var(--tt-text-secondary);
+}
+
+.coupon-ticket__date {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 2;
+	overflow: hidden;
+}
+
+.coupon-ticket__side {
 	position: relative;
-	border-radius: 10rpx;
-	background: url('https://cfzx.gzfzdev.com/movie/uploadFiles/image/coupon_bg2.png') no-repeat;
-	background-size: 100% 100%;
+	flex: 0 0 176rpx;
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	justify-content: center;
+	padding: 20rpx 16rpx;
+}
 
-	.coupon-item {
-		width: 100%;
-		height: 168rpx;
-		border-radius: 10rpx;
+.coupon-ticket__side::before {
+	content: '';
+	position: absolute;
+	left: 0;
+	top: 18rpx;
+	bottom: 18rpx;
+	border-left: 2rpx dashed var(--tt-border);
+}
 
-		.coupon-left {
-			height: 100%;
-			width: 480rpx;
-			justify-content: center;
-			padding-left: 40rpx;
+.coupon-ticket__btn {
+	width: 132rpx;
+	height: 52rpx;
+	min-height: 52rpx;
+	margin: 0;
+	padding: 0;
+	background: var(--tt-primary);
+	border-radius: 999rpx;
+	font-size: 22rpx;
+	font-weight: 600;
+	line-height: 52rpx;
+	color: #fff;
+}
 
-			.unit {
-				font-size: 24rpx;
-				color: #838383;
-			}
+.coupon-ticket__btn[disabled] {
+	background: #d9dbd1;
+	color: #fff;
+}
 
-			.sum {
-				font-size: 55rpx;
-				font-weight: bold;
-				color: #838383;
-				line-height: 55rpx;
-				padding-right: 10rpx;
-			}
+.coupon-ticket__remain {
+	margin-top: 10rpx;
+	font-size: 20rpx;
+	line-height: 28rpx;
+	color: var(--tt-primary-strong);
+}
 
-			.sub {
-				font-size: 26rpx;
-				color: #838383;
-			}
+.coupon-ticket.is-expired,
+.coupon-ticket.is-used {
+	background: #f3f4f0;
+}
 
-			.notice {
-				font-size: 22rpx;
-				color: #a6a6a6;
-			}
-		}
+.coupon-ticket.is-expired .coupon-ticket__title,
+.coupon-ticket.is-used .coupon-ticket__title,
+.coupon-ticket.is-expired .coupon-ticket__rule,
+.coupon-ticket.is-used .coupon-ticket__rule,
+.coupon-ticket.is-expired .coupon-ticket__date,
+.coupon-ticket.is-used .coupon-ticket__date {
+	color: var(--tt-text-muted);
+}
 
-		.coupon-right {
-			height: 100%;
-			flex: 1;
-			justify-content: center;
-
-			.get-btn {
-				width: 142rpx;
-				height: 54rpx;
-				border-radius: 27rpx;
-				background: #fff;
-				padding: 0;
-				font-size: 24rpx;
-				font-family: PingFang SC;
-				font-weight: 500;
-				color: #838383;
-			}
-
-			.surplus-num {
-				font-size: 22rpx;
-				font-family: PingFang SC;
-				font-weight: 500;
-				color: rgba(168, 112, 13, 1);
-				margin-top: 14rpx;
-			}
-		}
-	}
+.coupon-ticket.is-expired .coupon-ticket__remain {
+	color: var(--tt-text-muted);
 }
 </style>
