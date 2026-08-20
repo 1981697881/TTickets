@@ -20,7 +20,12 @@
 			<view class="force-login__content">
 				<view class="user-avatar"><text class="cuIcon-profile"></text></view>
 				<view class="login-notice">为了提供更优质的服务，需要获取您的头像昵称</view>
-				<button class="cu-btn author-btn" @tap="getuserinfo">授权并查看</button>
+				<button
+					id="login-agree-btn"
+					class="cu-btn author-btn"
+					open-type="agreePrivacyAuthorization"
+					@agreeprivacyauthorization="getuserinfo"
+				>授权并查看</button>
 				<button class="cu-btn close-btn" @tap="closeAuth">暂不授权</button>
 			</view>
 		</view>
@@ -31,7 +36,7 @@
 <script>
 import Wechat from '@/common/wechat/wechat';
 import { mapMutations, mapActions, mapState } from 'vuex';
-import { formatLoginError } from '@/common/utils/auth.js';
+import { handleLoginFailure } from '@/common/utils/auth.js';
 export default {
 	name: 'appLoginModal',
 	components: {},
@@ -93,7 +98,7 @@ export default {
 				this.$store.commit('LOGIN_TIP', false);
 				await this.setTokenAndBack(token);
 			} catch (error) {
-				this.$tools.toast(formatLoginError(error));
+				await handleLoginFailure(error, msg => this.$tools.toast(msg));
 			}
 		},
 		// 小程序，取消登录

@@ -188,12 +188,8 @@
         // 	"version": "1.2.0", // 注意填写该直播组件最新版本号，微信开发者工具调试时可获取最新版本号
         // 	"provider": "wx2b03c6e691cd7370" // 必须填该直播组件appid，该示例值即为直播组件appid
         // }
-        "permission" : {
-            "scope.userLocation" : {
-                "desc" : "计算附近商店"
-            }
-        },
-        "requiredPrivateInfos" : [ "getLocation" ]
+        "permission" : {},
+        "requiredPrivateInfos" : []
     },
     "h5" : {
         "title" : "",

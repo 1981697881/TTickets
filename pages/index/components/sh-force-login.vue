@@ -6,7 +6,12 @@
 			<open-data class="user-avatar" type="userAvatarUrl"></open-data>
 			<open-data class="user-name" type="userNickName"></open-data>
 			<view class="login-notice">为了提供更优质的服务，需要获取您的头像昵称</view>
-			<button class="cu-btn author-btn" @tap="getuserinfo">授权并查看</button>
+			<button
+				id="force-login-agree-btn"
+				class="cu-btn author-btn"
+				open-type="agreePrivacyAuthorization"
+				@agreeprivacyauthorization="getuserinfo"
+			>授权并查看</button>
 			<button class="cu-btn close-btn" @tap="closeAuth">暂不授权</button>
 		</view>
 	</view>
@@ -16,7 +21,7 @@
 import Wechat from '@/common/wechat/wechat';
 import store from '@/common/store';
 import { mapMutations, mapActions, mapState } from 'vuex';
-import { formatLoginError } from '@/common/utils/auth.js';
+import { handleLoginFailure } from '@/common/utils/auth.js';
 export default {
 	computed: {
 		...mapState({
@@ -42,7 +47,7 @@ export default {
 				store.commit('LOGIN_TIP', false);
 				await this.setTokenAndBack(token);
 			} catch (error) {
-				uni.showToast({ icon: 'none', title: formatLoginError(error) });
+				await handleLoginFailure(error);
 			}
 		},
 		closeAuth() {

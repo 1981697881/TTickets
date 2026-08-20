@@ -1,5 +1,6 @@
 import store from '@/common/store';
 import { normalizeAuthToken } from '@/common/mixins/login-refresh.js';
+import { isPrivacyDeniedError, promptPrivacyRetry } from '@/common/utils/privacy.js';
 
 let lastPromptAt = 0;
 
@@ -43,8 +44,25 @@ export function ensureLoggedIn() {
 
 export function formatLoginError(error) {
 	const msg = String((error && (error.message || error.errMsg)) || '');
+	if (isPrivacyDeniedError(error) || /privacy|隐私/i.test(msg)) {
+		return '请先同意隐私保护指引后再授权';
+	}
 	if (/getUserProfile|用户取消|auth deny|未获得|cancel/i.test(msg)) {
 		return '未完成授权，请重试';
 	}
 	return msg || '登录失败，请重试';
+}
+
+/** 登录失败时：隐私拒绝走引导弹窗，其它走 toast */
+export async function handleLoginFailure(error, toastFn) {
+	if (isPrivacyDeniedError(error)) {
+		await promptPrivacyRetry();
+		return;
+	}
+	const title = formatLoginError(error);
+	if (typeof toastFn === 'function') {
+		toastFn(title);
+	} else {
+		uni.showToast({ icon: 'none', title });
+	}
 }

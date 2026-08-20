@@ -195,17 +195,43 @@ export default class Wechat {
 		return data;
 	}
 
-	/** uni.login 后立刻调 getUserProfile，再换 session_key，避免手势失效和会话错位 */
+	/** 先隐私同意，再在同一用户操作链里取头像资料，最后换 session 登录 */
 	async loginWithUserProfile(getProfile) {
-		const code = await new Promise((resolve, reject) => {
+		const codePromise = new Promise((resolve, reject) => {
 			uni.login({
 				success: res => resolve(res.code),
 				fail: err => reject(new Error(err?.errMsg || '微信登录码获取失败'))
 			});
 		});
-		const profilePromise = getProfile();
+
+		const profile = await new Promise((resolve, reject) => {
+			const runProfile = () => {
+				Promise.resolve()
+					.then(() => getProfile())
+					.then(resolve)
+					.catch(err => reject(err instanceof Error ? err : new Error(err?.errMsg || '未获得微信用户授权')));
+			};
+
+			const requirePrivacy =
+				(typeof wx !== 'undefined' && wx.requirePrivacyAuthorize) ||
+				(typeof uni !== 'undefined' && uni.requirePrivacyAuthorize);
+
+			if (!requirePrivacy) {
+				runProfile();
+				return;
+			}
+
+			requirePrivacy.call(typeof wx !== 'undefined' && wx.requirePrivacyAuthorize ? wx : uni, {
+				success: runProfile,
+				fail: err => {
+					const msg = String(err?.errMsg || '');
+					reject(new Error(/cancel|deny|disagree|拒绝/i.test(msg) ? '请先同意隐私保护指引' : (msg || '请先同意隐私保护指引')));
+				}
+			});
+		});
+
+		const code = await codePromise;
 		await this._exchangeLoginCode(code);
-		const profile = await profilePromise;
 		return this.wxMiniProgramLogin(profile);
 	}
 

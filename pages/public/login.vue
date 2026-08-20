@@ -45,7 +45,7 @@
 				</button>
 				<!-- #endif -->
 				<!-- #ifdef MP-WEIXIN -->
-				<button class="cu-btn wx-logo-box y-f" @tap="getuserinfo">
+				<button class="cu-btn wx-logo-box y-f" open-type="agreePrivacyAuthorization" @agreeprivacyauthorization="getuserinfo">
 					<image class="auto-login" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/auto_login.png" mode=""></image>
 					<view class="">微信一键登录</view>
 				</button>
@@ -65,7 +65,7 @@
 import Wechat from '@/common/wechat/wechat';
 import { mapMutations, mapActions, mapState } from 'vuex';
 import store from '@/common/store';
-import { formatLoginError } from '@/common/utils/auth.js';
+import { handleLoginFailure } from '@/common/utils/auth.js';
 export default {
 	data() {
 		return {
@@ -110,7 +110,7 @@ export default {
 				store.commit('FORCE_OAUTH', false);
 				await this.setTokenAndBack(token);
 			} catch (error) {
-				this.$tools.toast(formatLoginError(error));
+				await handleLoginFailure(error, msg => this.$tools.toast(msg));
 			}
 		},
 		// #endif
