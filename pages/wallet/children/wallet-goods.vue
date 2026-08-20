@@ -69,7 +69,7 @@ export default {
 			cid:'goodcode',
 			ifShow: true,
 			val: '', // 要生成的二维码值
-			size: 200, // 二维码大小
+			size: 360, // 二维码大小
 			unit: 'upx', // 单位
 			icon: '', // 二维码图标
 			iconsize: 40, // 二维码图标大小
@@ -106,6 +106,14 @@ export default {
 		qrR(res) {
 			this.src = res
 		},
+		remakeCode() {
+			this.$nextTick(() => {
+				const qrcode = this.$refs.qrcode;
+				if (qrcode && (this.primary.TicketNo || this.scanId) && typeof qrcode._makeCode === 'function') {
+					qrcode._makeCode();
+				}
+			});
+		},
 		clearCode(){
 			this.$nextTick(() => {
 				const qrcode = this.$refs.qrcode;
@@ -121,6 +129,11 @@ export default {
 		scanId: {
 			type: String,
 			default: ''
+		}
+	},
+	watch: {
+		'primary.TicketNo'(n) {
+			if (n) this.remakeCode();
 		}
 	},
 };

@@ -49,6 +49,7 @@ const actions = {
 		// #endif
 		try {
 			await store.dispatch('getUserDetails');
+			await store.dispatch('getUserBalance').catch(() => undefined);
 		} catch (e) {
 			// 详情失败不阻断；页面仍可凭 token 继续
 		}
@@ -274,6 +275,8 @@ const mutations = {
 
 	[OUT_LOGIN](state, data) {
 		uni.removeStorageSync('token');
+		uni.removeStorageSync('session_key');
+		uni.removeStorageSync('openid');
 		uni.removeStorageSync('userInfo');
 		// 门店/影院选择与登录无关，登出时保留，避免电影页授权后丢 cinemalinkId
 		uni.removeStorageSync('cartNum');

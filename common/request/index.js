@@ -1,6 +1,6 @@
 import Request from './request'
 import apiList from './appApi'
-import { hasAuthToken, isAuthDeniedPayload, promptLogin } from '@/common/utils/auth.js'
+import { hasAuthToken, isAuthDeniedPayload, promptLogin, clearAuthSession } from '@/common/utils/auth.js'
 
 export default function api(url, data = {}) {
 	const request = new Request();
@@ -32,14 +32,14 @@ export default function api(url, data = {}) {
 
 		// HTTP 401，或业务码 20010「未登录或权限不足」
 		if (data.code === 401 || isAuthDeniedPayload(data)) {
-			uni.removeStorageSync('token');
+			clearAuthSession();
 			promptLogin();
 		}
 		return response
 	}, (response) => {
 		const data = (response && response.data) || {};
 		if (data.code === 401 || isAuthDeniedPayload(data)) {
-			uni.removeStorageSync('token');
+			clearAuthSession();
 			promptLogin();
 		}
 		return response

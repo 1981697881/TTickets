@@ -1,6 +1,6 @@
 <template>
 	<view class="page_box reserve-page">
-		<view v-if="orderReady" class="reserve-content">
+		<scroll-view v-if="orderReady" class="reserve-content" scroll-y :show-scrollbar="false" enable-flex>
 			<view v-if="sessionDayAlert.show" class="session-day-alert" :class="{ 'is-expired': sessionDayAlert.dayOffset < 0 }">
 				<text class="session-day-alert__tag">{{ sessionDayAlert.title }}</text>
 				<text class="session-day-alert__text">{{ sessionDayAlert.detail }}</text>
@@ -92,7 +92,7 @@
 					<view>4.会员订票优惠仅在使用余额购票时体现，微信支付则按正常票价支付</view>
 				</view>
 			</view>
-		</view>
+		</scroll-view>
 		<view v-else class="order-placeholder">
 			<text class="cuIcon-info order-placeholder-icon"></text>
 			<text>订单信息不完整，请返回重新选座</text>
@@ -122,7 +122,7 @@
 							<view :class="expressClass" v-show="expressTypeCur === nav.value"></view>
 						</view>
 					</view>
-					<view class="express-type__content">
+					<scroll-view class="express-type__content" scroll-y :show-scrollbar="true" enable-flex>
 						<fz-group-card
 							ref="groupCard"
 							:checkArray="couponArray"
@@ -133,7 +133,7 @@
 							v-if="expressTypeCur == 'express'"
 						></fz-group-card>
 						<fz-coupon-card ref="couponCard" @changeCoupon="changeCoupon" :pickerData="pickerData.couponList" v-if="expressTypeCur == 'selfetch'"></fz-coupon-card>
-					</view>
+					</scroll-view>
 					<view class="express-type__bottom">
 						<button class="cu-btn cancel-btn" @tap="hideExpressType">取消</button>
 						<button class="cu-btn save-btn" @tap="saveExpressType">确定</button>
@@ -1354,9 +1354,9 @@ export default {
 	}
 	.express-type__content {
 		flex: 1;
+		height: 0;
 		min-height: 0;
-		overflow-y: auto;
-		-webkit-overflow-scrolling: touch;
+		box-sizing: border-box;
 		.empty-address {
 			height: 120rpx;
 			padding: 0 25rpx;
@@ -1490,7 +1490,8 @@ export default {
 		.checkTime-content__right {
 			flex: 1;
 			height: 100%;
-			overflow-y: auto;
+			min-height: 0;
+			box-sizing: border-box;
 			.right-item {
 				font-size: 26rpx;
 				font-family: PingFang SC;
@@ -1631,9 +1632,9 @@ export default {
 	}
 	.express-type__content {
 		flex: 1;
+		height: 0;
 		min-height: 0;
-		overflow-y: auto;
-		-webkit-overflow-scrolling: touch;
+		box-sizing: border-box;
 		.empty-address {
 			height: 120rpx;
 			padding: 0 25rpx;
@@ -1774,11 +1775,10 @@ export default {
 .reserve-content {
 	min-height: 0;
 	flex: 1;
-	overflow-y: auto;
-	overflow-x: hidden;
+	height: 0;
+	overflow: hidden;
 	padding: 24rpx 24rpx 32rpx;
 	box-sizing: border-box;
-	-webkit-overflow-scrolling: touch;
 }
 
 .session-day-alert {

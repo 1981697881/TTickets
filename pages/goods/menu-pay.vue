@@ -95,9 +95,9 @@
 							<view class="head-nav__left--active"></view>
 						</view>
 					</view>
-					<view class="express-type__content">
+					<scroll-view class="express-type__content" scroll-y :show-scrollbar="true" enable-flex>
 						<fz-coupon-card ref="couponCard" @changeCoupon="changeCoupon" :pickerData="pickerData.couponList"></fz-coupon-card>
-					</view>
+					</scroll-view>
 					<view class="express-type__bottom">
 						<button class="cu-btn cancel-btn" @tap="hideExpressType">取消</button>
 						<button class="cu-btn save-btn" @tap="saveExpressType">确定</button>
@@ -557,9 +557,9 @@ export default {
 	}
 	.express-type__content {
 		flex: 1;
+		height: 0;
 		min-height: 0;
-		overflow-y: auto;
-		-webkit-overflow-scrolling: touch;
+		box-sizing: border-box;
 		.empty-address {
 			height: 120rpx;
 			padding: 0 25rpx;

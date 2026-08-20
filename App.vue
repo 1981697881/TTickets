@@ -93,6 +93,7 @@ export default {
 		// #ifdef MP-WEIXIN
 		if (options.scene !== 1154) {
 			var wechat = new Wechat();
+			wechat.resetSessionIfUpdated();
 			wechat.checkMiniProgramUpdate();
 		}
 		// #endif
@@ -124,6 +125,9 @@ export default {
 	},
 	onShow: function() {
 		this.$store.commit('CART_NUM');
+		// #ifdef MP-WEIXIN
+		new Wechat().checkMiniProgramUpdate();
+		// #endif
 	},
 	onHide: function() {
 		console.log('小程序关闭')

@@ -52,6 +52,7 @@
 		<view class="foot_box"></view>
 		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>
+		<app-address-model @init="onLoginRefresh"></app-address-model>
 	</view>
 </template>
 
@@ -59,10 +60,13 @@
 import AppPay from '@/common/app-pay';
 import { mapMutations, mapActions, mapState } from 'vuex';
 import { isIOSPlatform } from '@/common/runtime/system-info';
+import { createLoginRefreshMixin } from '@/common/mixins/login-refresh.js';
+import { ensureLoggedIn } from '@/common/utils/auth.js';
 
 let timer;
 export default {
 	components: {},
+	mixins: [createLoginRefreshMixin('onLoginRefresh')],
 	data() {
 		return {
 			setMeal:[],
@@ -94,6 +98,7 @@ export default {
 			this.orderDetail = this.$Route.query
 		}
 		this.getMealList();
+		this.refreshRecharge();
 		if (options.openid) {
 			//检测到回传openid
 			uni.setStorageSync('openid', options.openid);
@@ -109,12 +114,29 @@ export default {
 		uni.removeStorageSync('payReload');
 		// #endif
 	},
-	onShow() {},
+	onShow() {
+		if (!ensureLoggedIn()) return;
+		this.refreshRecharge();
+	},
 	onHide() {
 		clearInterval(timer);
 	},
 	methods: {
-		...mapActions(['getUserBalance']),
+		...mapActions(['getUserBalance', 'getUserDetails']),
+		shouldRefreshOnShow() {
+			return Boolean(uni.getStorageSync('token') && !(this.balInfo && this.balInfo.custId));
+		},
+		onLoginRefresh() {
+			return this.refreshRecharge();
+		},
+		async refreshRecharge() {
+			if (!uni.getStorageSync('token')) return;
+			try {
+				await this.getUserDetails().catch(() => null);
+				await this.getUserBalance().catch(() => null);
+			} catch (e) {}
+			this.getMealList();
+		},
 		checkMoney(e){
 			if(this.checkItem == e.target.dataset.target){
 				return

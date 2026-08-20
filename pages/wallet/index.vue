@@ -53,24 +53,23 @@ export default {
 		};
 	},
 	onShow() {
-		let that = this
-		console.log(this.$Route.query)
-		if(that.$Route.query){
-			that.confirmationId = that.$Route.query.confirmationId
-			that.getOrderDetail()
+		const query = this.$Route.query || {};
+		if (query.confirmationId) {
+			this.confirmationId = query.confirmationId;
+			this.getOrderDetail();
+			this.$nextTick(() => {
+				const info = this.$refs.walletInfo;
+				if (info && typeof info.remakeCode === 'function') info.remakeCode();
+			});
 		}
 	},
 	onHide() {
-		let that = this;
-		that.$nextTick(function(){
-			that.$refs.walletInfo.clearCode()
-		})
+		const info = this.$refs.walletInfo;
+		if (info && typeof info.clearCode === 'function') info.clearCode();
 	},
 	onUnload() {
-		let that = this;
-		that.$nextTick(function(){
-			that.$refs.walletInfo.clearCode()
-		})
+		const info = this.$refs.walletInfo;
+		if (info && typeof info.clearCode === 'function') info.clearCode();
 	},
 	onPullDownRefresh() {},
 	computed: {

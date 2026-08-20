@@ -22,7 +22,7 @@
 						</view>
 					</view>
 					<!-- 选择规格 -->
-					<view class="content_box">
+					<scroll-view class="content_box" scroll-y :show-scrollbar="true" enable-flex>
 						<view class="select-box y-start" v-for="(s, x) in skuList" :key="s.id">
 							<view class="type-title">{{ s.name }}</view>
 							<view class="tag-box x-f">
@@ -51,7 +51,7 @@
 								></uni-number-box>
 							</view>
 						</view>
-					</view>
+					</scroll-view>
 					<view class="btn-box foot_box x-bc" v-if="buyType === 'cart' || buyType === 'buy'"><button class="cu-btn  seckill-btn" @tap="confirm">确认</button></view>
 					<view class="btn-box foot_box x-bc" v-else>
 						<button class="cu-btn  cart-btn" @tap="confirmCart">加入购物车</button>
@@ -472,9 +472,9 @@ export default {
 
 	.content_box {
 		flex: 1;
+		height: 0;
 		min-height: 0;
-		overflow-y: auto;
-		-webkit-overflow-scrolling: touch;
+		box-sizing: border-box;
 	}
 
 	.select-box {

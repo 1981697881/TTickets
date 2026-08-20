@@ -2,7 +2,7 @@
 	<!-- #ifdef MP-WEIXIN  -->
 	<view class="force-login-wrap page_box" v-if="!hasStore && addressList.length">
 		<view class="head_box"></view>
-		<view class="content_box" :style="'margin-top:'+marginTop">
+		<scroll-view class="content_box" scroll-y :style="'margin-top:'+marginTop" :show-scrollbar="true">
 			<view class="address-list" v-for="(address,index) in addressList" :key="address.id" @tap="useAddress(address)">
 				<view class="top x-f">
 					<text class="name">{{ address.storeName }}</text>
@@ -11,15 +11,15 @@
 				<view class="detail">{{address.storeAddress}}</view>
 				<text class="cu-btn set-btn text-cut">{{address.distance}} km</text>
 			</view>
-		</view>
+		</scroll-view>
 	</view>
 	<!-- #endif  -->
 </template>
 
 <script>
-import Wechat from '@/common/wechat/wechat';
-import { mapMutations, mapActions, mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import { extractArray } from '@/common/utils/api-data';
+import { DEFAULT_STORE_LOCATION } from '@/common/utils/location.js';
 export default {
 	components: {},
 	data() {
@@ -40,6 +40,15 @@ export default {
 	},
 	created() {
 		if (!this.hasStore) this.getAddressList();
+	},
+	mounted() {
+		uni.$on('login-success', this.onLoginSuccess);
+	},
+	beforeUnmount() {
+		uni.$off('login-success', this.onLoginSuccess);
+	},
+	beforeDestroy() {
+		uni.$off('login-success', this.onLoginSuccess);
 	},
 	computed: {
 		...mapState({
@@ -64,37 +73,24 @@ export default {
 	},
 	methods: {
 		...mapActions(['setTokenAndBack']),
+		onLoginSuccess() {
+			if (!this.hasStore) this.getAddressList();
+		},
 		useAddress(val){
 			this.$store.commit('STORE_INFO', val);
 			this.$emit('init');
 		},
 		getAddressList() {
 			const that = this;
-			const loadStores = location => {
-				that.$api('storesForm', location || {}).then(reso => {
-					// 0.5.5：必须 flag，data 为门店数组
-					if (!reso || !reso.flag) return;
-					const list = Array.isArray(reso.data) ? reso.data : extractArray(reso.data);
-					if (list.length === 1) {
-						that.$store.commit('STORE_INFO', list[0]);
-						that.$emit('init');
-					}
-					that.addressList = list;
-				}).catch(() => undefined);
-			};
-			uni.getLocation({
-			  type: 'gcj02',
-			  success: function(res) {
-				loadStores({
-			      longitude: res.longitude,
-			      latitude: res.latitude,
-				});
-			  },
-			  fail() {
-				loadStores({});
-			  }
-			})
-			
+			that.$api('storesForm', { ...DEFAULT_STORE_LOCATION }).then(reso => {
+				if (!reso || !reso.flag) return;
+				const list = Array.isArray(reso.data) ? reso.data : extractArray(reso.data);
+				if (list.length === 1) {
+					that.$store.commit('STORE_INFO', list[0]);
+					that.$emit('init');
+				}
+				that.addressList = list;
+			}).catch(() => undefined);
 		}
 	}
 };
@@ -180,14 +176,18 @@ export default {
 	left: 0;
 	width: 100%;
 	height: 100%;
-	overflow-x: hidden;
-	overflow-y: auto;
-	-webkit-overflow-scrolling: touch;
+	overflow: hidden;
 	z-index: 10900;
 	padding-bottom: calc(32rpx + constant(safe-area-inset-bottom));
 	padding-bottom: calc(32rpx + env(safe-area-inset-bottom));
 	box-sizing: border-box;
 	background: var(--tt-bg);
+}
+.force-login-wrap .content_box {
+	flex: 1;
+	height: 0;
+	min-height: 0;
+	box-sizing: border-box;
 }
 /* #endif */
 </style>

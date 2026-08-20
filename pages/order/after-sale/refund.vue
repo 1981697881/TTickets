@@ -58,14 +58,14 @@
 			<template #modalContent>
 				<view class="modal-box page_box">
 					<view class="modal-head head_box x-c">{{ modalDetail.title }}</view>
-					<view class="modal-content content_box">
+					<scroll-view class="modal-content" scroll-y :show-scrollbar="true" enable-flex>
 						<view class="y-f">
 							<label class="sel-item x-bc" @tap="onRefundCause(item.val)" v-for="item in modalDetail.list" :key="item.id">
 								<text>{{ item.val }}</text>
 								<checkbox class="orange radio round sel-radio" :class="{ checked: refundCause == item.val }" :checked="refundCause == item.val"></checkbox>
 							</label>
 						</view>
-					</view>
+					</scroll-view>
 					<view class="modal-foot foot_box x-c"><button class="cu-btn close-btn" @tap="onClose">确定</button></view>
 				</view>
 			</template>
@@ -419,9 +419,9 @@ export default {
 
 	.modal-content {
 		flex: 1;
+		height: 0;
 		min-height: 0;
-		overflow-y: auto;
-		-webkit-overflow-scrolling: touch;
+		box-sizing: border-box;
 		font-size: 28rpx;
 
 		.sel-item {

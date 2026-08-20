@@ -6,7 +6,7 @@
 					<text class="head-title">选择抵用券</text>
 					<text class="cuIcon-roundclosefill" @tap="hideModal"></text>
 				</view>
-				<view class="modal-content content_box y-f">
+				<scroll-view class="modal-content" scroll-y :show-scrollbar="true" enable-flex>
 					<label class="radio-item x-bc" @tap="selCoupon(0)">
 						<text class="coupon-title">不使用抵用券券</text>
 						<radio class="orange coupon-radio" :class="{ checked: radioId === 0 }" :checked="radioId === 0"></radio>
@@ -15,7 +15,7 @@
 						<text class="coupon-title">{{ radio.couponName }}</text>
 						<checkbox class="orange coupon-radio" :class="{ checked: radioId === index + 1 }" :checked="radioId === index + 1"></checkbox>
 					</label>
-				</view>
+				</scroll-view>
 				<view class="modal-foot x-c"><button class="cu-btn serve-btn" @tap="saveCoupon">确定</button></view>
 			</view>
 	</app-safe-popup>
@@ -99,9 +99,9 @@ export default {
 
 	.modal-content {
 		flex: 1;
+		height: 0;
 		min-height: 0;
-		overflow-y: auto;
-		-webkit-overflow-scrolling: touch;
+		box-sizing: border-box;
 		.radio-item {
 			width: 100%;
 			padding: 10rpx 0;

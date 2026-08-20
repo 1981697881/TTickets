@@ -7,6 +7,13 @@ export function hasAuthToken() {
 	return Boolean(normalizeAuthToken(uni.getStorageSync('token')));
 }
 
+/** 清掉微信会话与登录态。门店缓存保留。 */
+export function clearAuthSession() {
+	uni.removeStorageSync('token');
+	uni.removeStorageSync('session_key');
+	uni.removeStorageSync('openid');
+}
+
 /** 后端业务码：未登录 / 登录失效 / 权限不足 */
 export function isAuthDeniedPayload(payload) {
 	if (!payload || typeof payload !== 'object') return false;
@@ -32,4 +39,12 @@ export function promptLogin() {
 export function ensureLoggedIn() {
 	if (hasAuthToken()) return true;
 	return promptLogin();
+}
+
+export function formatLoginError(error) {
+	const msg = String((error && (error.message || error.errMsg)) || '');
+	if (/getUserProfile|用户取消|auth deny|未获得|cancel/i.test(msg)) {
+		return '未完成授权，请重试';
+	}
+	return msg || '登录失败，请重试';
 }

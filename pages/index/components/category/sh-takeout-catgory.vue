@@ -90,7 +90,7 @@
 							<text>删除商品</text>
 						</view>
 					</view>
-					<view class="block cart-list">
+					<scroll-view class="block cart-list" scroll-y :show-scrollbar="true" enable-flex>
 						<checkbox-group class="block" v-if="cartList.length">
 							<view class="collect-list x-start" v-for="(g, index) in cartList" :key="index">
 								<view class="x-c" style="height: 200rpx;" @tap="onSel(index, g.checked)">
@@ -114,7 +114,7 @@
 								</app-mini-card>
 							</view>
 						</checkbox-group>
-					</view>
+					</scroll-view>
 				</view>
 			</view>
 		</view>
@@ -534,9 +534,9 @@ export default {
 	// 购物车列表
 	.block {
 		flex: 1;
+		height: 0;
 		min-height: 0;
-		overflow-y: auto;
-		-webkit-overflow-scrolling: touch;
+		box-sizing: border-box;
 	}
 
 	.collect-list {

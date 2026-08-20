@@ -10,7 +10,7 @@
 						<view class="shop-img-box"><image class="shop-img" :src="currentSkuPrice.image ? currentSkuPrice.image : goodsInfo.image" mode="aspectFill"></image></view>
 					</view>
 					<!-- 选择规格 -->
-					<view class="content_box flex-sub px20">
+					<scroll-view class="content_box flex-sub px20" scroll-y :show-scrollbar="true" enable-flex>
 						<view class="y-bc goods-box">
 							<view class="goods-title more-t">{{ goodsInfo.title }}</view>
 							<view class="sub-title" v-if="goodsInfo.subtitle">{{ goodsInfo.subtitle }}</view>
@@ -31,7 +31,7 @@
 								</button>
 							</view>
 						</view>
-					</view>
+					</scroll-view>
 					<view class="btn-box foot_box pa20">
 						<view class="buy-num-box x-bc">
 							<view class="price-box">
@@ -447,9 +447,9 @@ export default {
 	}
 	.content_box {
 		flex: 1;
+		height: 0;
 		min-height: 0;
-		overflow-y: auto;
-		-webkit-overflow-scrolling: touch;
+		box-sizing: border-box;
 	}
 	.goods-box {
 		width: 640rpx;

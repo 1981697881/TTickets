@@ -109,7 +109,7 @@ export default {
 			cid:'qrcode',
 			ifShow: true,
 			val: '', // 要生成的二维码值
-			size: 200, // 二维码大小
+			size: 360, // 二维码大小
 			unit: 'upx', // 单位
 			icon: '', // 二维码图标
 			iconsize: 40, // 二维码图标大小
@@ -138,12 +138,17 @@ export default {
 		qrR(res) {
 			this.src = res
 		},
+		remakeCode() {
+			this.$nextTick(() => {
+				const qr = this.$refs.qrcode;
+				if (qr && this.scanId && typeof qr._makeCode === 'function') qr._makeCode();
+			});
+		},
 		clearCode(){
-			let that = this
-			this.scanId = ''
-			that.$nextTick(function(){
-				that.$refs.qrcode._clearCode()
-			})
+			this.$nextTick(() => {
+				const qr = this.$refs.qrcode;
+				if (qr && typeof qr._clearCode === 'function') qr._clearCode();
+			});
 		}
 	},
 	props: {
@@ -156,9 +161,10 @@ export default {
 			default: ''
 		}
 	},
-	mounted(){
-		console.log(123)
-		console.log(this.scanId)
+	watch: {
+		scanId(n) {
+			if (n) this.remakeCode();
+		}
 	},
 };
 </script>

@@ -5,6 +5,56 @@ import {
 	API_URL
 } from '@/env'
 
+// #ifdef MP-WEIXIN
+const mpUpdateState = {
+	inited: false,
+	ready: false,
+	showing: false,
+	manager: null
+};
+
+function showMiniProgramUpdateModal() {
+	if (!mpUpdateState.ready || mpUpdateState.showing || !mpUpdateState.manager) return;
+	mpUpdateState.showing = true;
+	uni.showModal({
+		title: '更新提示',
+		content: '新版本已经准备好，是否重启应用？',
+		confirmText: '立即重启',
+		cancelText: '稍后',
+		success(res) {
+			mpUpdateState.showing = false;
+			if (res.confirm) {
+				mpUpdateState.manager.applyUpdate();
+			}
+		},
+		fail() {
+			mpUpdateState.showing = false;
+		}
+	});
+}
+
+function initMiniProgramUpdateManager() {
+	if (mpUpdateState.inited || !uni.canIUse('getUpdateManager')) return;
+	mpUpdateState.inited = true;
+	const updateManager = uni.getUpdateManager();
+	mpUpdateState.manager = updateManager;
+
+	// 监听必须立即注册；放在 onCheckForUpdate 里会偶发错过 onUpdateReady
+	updateManager.onUpdateReady(() => {
+		mpUpdateState.ready = true;
+		showMiniProgramUpdateModal();
+	});
+
+	updateManager.onUpdateFailed(() => {
+		uni.showModal({
+			title: '更新提示',
+			content: '新版本下载失败，请关闭小程序后重新打开；仍无法更新时可删除小程序再搜索进入。',
+			showCancel: false
+		});
+	});
+}
+// #endif
+
 export default class Wechat {
 	async login() {
 		let token = '';
@@ -83,27 +133,31 @@ export default class Wechat {
 	}
 
 	// #ifdef MP-WEIXIN
-	getWxMiniProgramSessionKey() {
+	async _exchangeLoginCode(code) {
+		const res = await api('user.getWxMiniProgramSessionKey', { code });
+		if (!res.flag || !res.data?.session_key) {
+			throw new Error(res.msg || '获取微信会话失败');
+		}
+		uni.setStorageSync('session_key', res.data.session_key);
+		if (res.data.openid) uni.setStorageSync('openid', res.data.openid);
+		return res.data.session_key;
+	}
+
+	getWxMiniProgramSessionKey(options = {}) {
 		return new Promise((resolve, reject) => {
 			const login = () => {
 				uni.login({
 					success: info => {
-						api('user.getWxMiniProgramSessionKey', { code: info.code })
-							.then(res => {
-								if (!res.flag || !res.data?.session_key) {
-									reject(new Error(res.msg || '获取微信会话失败'));
-									return;
-								}
-								uni.setStorageSync('session_key', res.data.session_key);
-								uni.setStorageSync('openid', res.data.openid);
-								uni.setStorageSync('token', res.data.token);
-								resolve(res.data.session_key);
-							})
-							.catch(reject);
+						this._exchangeLoginCode(info.code).then(resolve).catch(reject);
 					},
 					fail: reject
 				});
 			};
+
+			if (options.force) {
+				login();
+				return;
+			}
 
 			const sessionKey = uni.getStorageSync('session_key');
 			if (!sessionKey) {
@@ -120,7 +174,7 @@ export default class Wechat {
 
 	async wxMiniProgramLogin(e) {
 		if (e?.errMsg !== 'getUserProfile:ok') {
-			throw new Error('未获得微信用户授权');
+			throw new Error(e?.errMsg || '未获得微信用户授权');
 		}
 
 		const sessionKey = uni.getStorageSync('session_key') || await this.getWxMiniProgramSessionKey();
@@ -141,36 +195,46 @@ export default class Wechat {
 		return data;
 	}
 
-	// 小程序更新
+	/** uni.login 后立刻调 getUserProfile，再换 session_key，避免手势失效和会话错位 */
+	async loginWithUserProfile(getProfile) {
+		const code = await new Promise((resolve, reject) => {
+			uni.login({
+				success: res => resolve(res.code),
+				fail: err => reject(new Error(err?.errMsg || '微信登录码获取失败'))
+			});
+		});
+		const profilePromise = getProfile();
+		await this._exchangeLoginCode(code);
+		const profile = await profilePromise;
+		return this.wxMiniProgramLogin(profile);
+	}
+
+	/** 小程序更新后本地 session/token 会过期，checkSession 仍可能成功 */
+	resetSessionIfUpdated() {
+		let stamp = '';
+		try {
+			const mp = typeof wx !== 'undefined' && wx.getAccountInfoSync
+				? wx.getAccountInfoSync().miniProgram
+				: {};
+			stamp = `${mp.version || ''}|${mp.envVersion || ''}`;
+		} catch (e) {
+			stamp = '';
+		}
+		if (!stamp || stamp === '|') return;
+		const prev = uni.getStorageSync('mp_release_stamp');
+		if (prev && prev !== stamp) {
+			uni.removeStorageSync('token');
+			uni.removeStorageSync('session_key');
+			uni.removeStorageSync('openid');
+		}
+		uni.setStorageSync('mp_release_stamp', stamp);
+	}
+
+	// 小程序更新：启动注册监听；回前台时若已下载完成则再弹一次
 	checkMiniProgramUpdate() {
-		if (uni.canIUse('getUpdateManager')) {
-			const updateManager = uni.getUpdateManager()
-			updateManager.onCheckForUpdate(function(res) {
-				// 请求完新版本信息的回调
-				if (res.hasUpdate) {
-					updateManager.onUpdateReady(function() {
-						uni.showModal({
-							title: '更新提示',
-							content: '新版本已经准备好，是否重启应用？',
-							success: function(res) {
-								console.log('success====', res)
-								// res: {errMsg: "showModal: ok", cancel: false, confirm: true}
-								if (res.confirm) {
-									// 新的版本已经下载好，调用 applyUpdate 应用新版本并重启
-									updateManager.applyUpdate()
-								}
-							}
-						})
-					})
-					updateManager.onUpdateFailed(function() {
-						// 新的版本下载失败
-						uni.showModal({
-							title: '已经有新版本了哟~',
-							content: '新版本已经上线啦~，请您删除当前小程序，重新搜索打开哟~'
-						})
-					})
-				}
-			})
+		initMiniProgramUpdateManager();
+		if (mpUpdateState.ready) {
+			showMiniProgramUpdateModal();
 		}
 	}
 	// #endif

@@ -161,7 +161,7 @@
 							></text>
 						</view>
 					</view>
-					<view v-if="showTool" class="footer_div">
+					<scroll-view v-if="showTool" class="footer_div" scroll-y :show-scrollbar="false">
 						<!-- 表情 -->
 						<block v-if="showTool == 'smiley'" v-for="(item, index) in expressionData" :key="index">
 							<image :src="item.src" @tap="select_expression(item.title)"></image>
@@ -183,7 +183,7 @@
 							</view>
 						</view>
 						<!-- 更多end -->
-					</view>
+					</scroll-view>
 				</view>
 
 				<!-- 订单和商品选择 -->
@@ -1500,8 +1500,7 @@ page {
 	padding-top: 12rpx;
 	box-sizing: border-box;
 	height: 170px;
-	overflow-y: auto;
-	overflow-x: hidden;
+	overflow: hidden;
 }
 
 @keyframes show_footer_div {

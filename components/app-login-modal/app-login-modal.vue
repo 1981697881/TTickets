@@ -31,6 +31,7 @@
 <script>
 import Wechat from '@/common/wechat/wechat';
 import { mapMutations, mapActions, mapState } from 'vuex';
+import { formatLoginError } from '@/common/utils/auth.js';
 export default {
 	name: 'appLoginModal',
 	components: {},
@@ -80,22 +81,19 @@ export default {
 				uni.getUserProfile({
 					desc: '用于完善会员资料',
 					success: resolve,
-					fail: reject
+					fail: err => reject(new Error(err?.errMsg || '用户取消授权'))
 				});
 			});
 		},
-		// 小程序，获取用户信息登录
 		async getuserinfo(e) {
 			try {
 				const wechat = new Wechat();
-				const profile = await this.getUserProfile();
-				const token = await wechat.wxMiniProgramLogin(profile);
+				const token = await wechat.loginWithUserProfile(() => this.getUserProfile());
 				this.$store.commit('FORCE_OAUTH', false);
 				this.$store.commit('LOGIN_TIP', false);
-				// 当前页授权：不写 fromLogin，避免 replaceAll 打断；由 login-success 刷新数据
 				await this.setTokenAndBack(token);
 			} catch (error) {
-				this.$tools.toast('未完成授权，请重试');
+				this.$tools.toast(formatLoginError(error));
 			}
 		},
 		// 小程序，取消登录

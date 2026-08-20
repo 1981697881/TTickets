@@ -63,56 +63,48 @@ export default {
 	},
 	async onShow() {
 		clearInterval(timer);
-		timer = null
-		let that = this;
-		this.scanId = ''
-		await that.getScanCode();
+		timer = null;
+		this.scanId = '';
+		await this.getScanCode();
 	},
 	onHide() {
-		let that = this;
-		console.log('隐藏')
-		this.scanId = ''
 		clearInterval(timer);
-		timer = null
-		that.$nextTick(function(){
-			that.$refs.userCode._clearCode()
-		})
+		timer = null;
+		this.scanId = '';
+		this.clearCode();
 	},
 	onUnload() {
-		let that = this;
-		console.log('卸载')
-		this.scanId = ''
 		clearInterval(timer);
-		timer = null
-		that.$nextTick(function(){
-			that.$refs.userCode._clearCode()
-		})
+		timer = null;
+		this.scanId = '';
+		this.clearCode();
 	},
 	methods: {
-		// 倒计时
+		clearCode() {
+			this.$nextTick(() => {
+				const qr = this.$refs.userCode;
+				if (qr && typeof qr._clearCode === 'function') qr._clearCode();
+			});
+		},
 		countDown() {
-			let that = this;
-			let maxtime = that.timer;
-			console.log(maxtime)	
+			let maxtime = this.timer;
 			timer = setInterval(() => {
 				if (maxtime >= 0) {
 					--maxtime;
 				} else {
-					that.getScanCode()
+					this.getScanCode();
 				}
 			}, 1000);
 		},
 		getScanCode() {
-			let that = this;
-			that.$api('user.getCustPayQrCode', { 
-				placeId: that.storeInfo.v8PlaceId,				V8Url: that.storeInfo.v8Url, 
-				CustID: that.balInfo.custId,
-				}).then(res => {
+			return this.$api('user.getCustPayQrCode', {
+				placeId: this.storeInfo.v8PlaceId,
+				V8Url: this.storeInfo.v8Url,
+				CustID: this.balInfo.custId
+			}).then(res => {
 				if (res.flag) {
-					that.$set(that,'scanId',res.data.Data)
-					that.timer = Number(res.data.Data2) * 60;
-					/* that.countDown() */
-					
+					this.scanId = res.data.Data || '';
+					this.timer = Number(res.data.Data2) * 60;
 				}
 			});
 		},

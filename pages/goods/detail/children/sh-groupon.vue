@@ -31,7 +31,7 @@
 						<text class="head-title">正在拼团</text>
 						<text class="cuIcon-roundclosefill" @tap="hideModal"></text>
 					</view>
-					<view class="modal-content content_box y-f">
+					<scroll-view class="modal-content" scroll-y :show-scrollbar="true" enable-flex>
 						<view class="into-item x-bc" v-for="g in grouponTeamList" :key="g.id">
 							<view class="x-f">
 								<image class="into-img" :src="g.leader.user_avatar" mode="aspectFill"></image>
@@ -49,7 +49,7 @@
 								<button class="cu-btn join-btn" @tap="joinTeam('/pages/activity/groupon/detail', { id: g.id })">去参团</button>
 							</view>
 						</view>
-					</view>
+					</scroll-view>
 					<view class="modal-foot x-c">仅显示10个正在拼团的人</view>
 				</view>
 		</app-safe-popup>
@@ -155,9 +155,9 @@ export default {
 
 	.modal-content {
 		flex: 1;
+		height: 0;
 		min-height: 0;
-		overflow-y: auto;
-		-webkit-overflow-scrolling: touch;
+		box-sizing: border-box;
 		padding: 0 30rpx;
 	}
 	.modal-foot {

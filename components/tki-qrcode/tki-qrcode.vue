@@ -1,4 +1,4 @@
-<template xlang="wxml" minapp="mpvue">
+<template>
 	<view class="tki-qrcode">
 		<!-- #ifndef MP-ALIPAY -->
 		<canvas class="tki-qrcode-canvas" :canvas-id="cid" :style="{width:cpSize+'px',height:cpSize+'px'}" />
@@ -6,15 +6,15 @@
 		<!-- #ifdef MP-ALIPAY -->
 		<canvas :id="cid" :width="cpSize" :height="cpSize" class="tki-qrcode-canvas" />
 		<!-- #endif -->
-		<image v-show="show" :src="result" :style="{width:cpSize+'px',height:cpSize+'px'}" />
+		<image v-show="show && result" :src="result" :style="{width:cpSize+'px',height:cpSize+'px'}" />
 	</view>
 </template>
 
 <script>
-import QRCode from "./qrcode.js"
-let qrcode
+import QRCode from './qrcode.js';
+
 export default {
-	name: "tki-qrcode",
+	name: 'tki-qrcode',
 	props: {
 		cid: {
 			type: String,
@@ -62,11 +62,11 @@ export default {
 		},
 		onval: {
 			type: Boolean,
-			default: false
+			default: true
 		},
 		loadMake: {
 			type: Boolean,
-			default: false
+			default: true
 		},
 		usingComponents: {
 			type: Boolean,
@@ -74,140 +74,132 @@ export default {
 		},
 		showLoading: {
 			type: Boolean,
-			default: true
+			default: false
 		},
 		loadingText: {
 			type: String,
 			default: '二维码生成中'
-		},
+		}
 	},
 	data() {
 		return {
 			result: '',
-		}
-	},
-	methods: {
-		_makeCode() {
-			let that = this
-			if (!this._empty(this.val)) {
-				qrcode = new QRCode({
-					context: that, // 上下文环境
-					canvasId:that.cid, // canvas-id
-					usingComponents: that.usingComponents, // 是否是自定义组件
-					showLoading: that.showLoading, // 是否显示loading
-					loadingText: that.loadingText, // loading文字
-					text: that.val, // 生成内容
-					size: that.cpSize, // 二维码大小
-					background: that.background, // 背景色
-					foreground: that.foreground, // 前景色
-					pdground: that.pdground, // 定位角点颜色
-					correctLevel: that.lv, // 容错级别
-					image: that.icon, // 二维码图标
-					imageSize: that.iconSize,// 二维码图标大小
-					cbResult: function (res) { // 生成二维码的回调
-						that._result(res)
-					},
-				});
-			} else {
-				uni.showToast({
-					title: '二维码内容不能为空',
-					icon: 'none',
-					duration: 2000
-				});
-			}
-		},
-		_clearCode() {
-			this._result('')
-			qrcode.clear()
-		},
-		_saveCode() {
-			let that = this;
-			if (this.result != "") {
-				uni.saveImageToPhotosAlbum({
-					filePath: that.result,
-					success: function () {
-						uni.showToast({
-							title: '二维码保存成功',
-							icon: 'success',
-							duration: 2000
-						});
-					}
-				});
-			}
-		},
-		_result(res) {
-			this.result = res;
-			this.$emit('result', res)
-		},
-		_empty(v) {
-			let tp = typeof v,
-				rt = false;
-			if (tp == "number" && String(v) == "") {
-				rt = true
-			} else if (tp == "undefined") {
-				rt = true
-			} else if (tp == "object") {
-				if (JSON.stringify(v) == "{}" || JSON.stringify(v) == "[]" || v == null) rt = true
-			} else if (tp == "string") {
-				if (v == "" || v == "undefined" || v == "null" || v == "{}" || v == "[]") rt = true
-			} else if (tp == "function") {
-				rt = false
-			}
-			return rt
-		}
-	},
-	watch: {
-		/* size: function (n, o) {
-			if (n != o && !this._empty(n)) {
-				this.cSize = n
-				if (!this._empty(this.val)) {
-					setTimeout(() => {
-						this._makeCode()
-					}, 100);
-				}
-			}
-		},*/
-		val: function (n, o) {
-			if (this.onval) {
-				if (n != o && !this._empty(n)) {
-					setTimeout(() => {
-						this._makeCode()
-					}, 0);
-				}
-			}
-		} 
+			_qrInstance: null,
+			_makeTimer: null
+		};
 	},
 	computed: {
 		cpSize() {
-			if(this.unit == "upx"){
-				return uni.upx2px(this.size)
-			}else{
-				return this.size
+			if (this.unit === 'upx') {
+				return uni.upx2px(this.size);
 			}
+			return this.size;
 		}
 	},
-	mounted: function () {
-		/*console.log(this.val)
-		 if (this.loadMake) {
-			console.log(!this._empty(this.val))
-			if (!this._empty(this.val)) {
-				setTimeout(() => {
-					this._makeCode()
-				}, 100);
-			}
-		} */
+	watch: {
+		val(n, o) {
+			if (!this.onval) return;
+			if (n === o || this._empty(n)) return;
+			this._scheduleMake();
+		}
 	},
-}
+	mounted() {
+		if (this.loadMake && !this._empty(this.val)) {
+			this._scheduleMake(100);
+		}
+	},
+	beforeUnmount() {
+		this._clearTimer();
+		this._clearCode();
+	},
+	methods: {
+		_scheduleMake(delay = 0) {
+			this._clearTimer();
+			this._makeTimer = setTimeout(() => {
+				this._makeTimer = null;
+				this._makeCode();
+			}, delay);
+		},
+		_clearTimer() {
+			if (this._makeTimer) {
+				clearTimeout(this._makeTimer);
+				this._makeTimer = null;
+			}
+		},
+		_makeCode() {
+			if (this._empty(this.val)) return;
+			const that = this;
+			this._qrInstance = new QRCode({
+				context: that,
+				canvasId: that.cid,
+				usingComponents: that.usingComponents,
+				showLoading: that.showLoading,
+				loadingText: that.loadingText,
+				text: that.val,
+				size: that.cpSize,
+				background: that.background,
+				foreground: that.foreground,
+				pdground: that.pdground,
+				correctLevel: that.lv,
+				image: that.icon,
+				imageSize: that.iconSize,
+				cbResult(res) {
+					that._result(res);
+				}
+			});
+		},
+		_clearCode() {
+			this._clearTimer();
+			this._result('');
+			if (this._qrInstance && typeof this._qrInstance.clear === 'function') {
+				try {
+					this._qrInstance.clear();
+				} catch (e) {}
+			}
+			this._qrInstance = null;
+		},
+		_saveCode() {
+			if (!this.result) return;
+			uni.saveImageToPhotosAlbum({
+				filePath: this.result,
+				success() {
+					uni.showToast({
+						title: '二维码保存成功',
+						icon: 'success',
+						duration: 2000
+					});
+				}
+			});
+		},
+		_result(res) {
+			this.result = res;
+			this.$emit('result', res);
+		},
+		_empty(v) {
+			const tp = typeof v;
+			if (tp === 'number' && String(v) === '') return true;
+			if (tp === 'undefined') return true;
+			if (tp === 'object') {
+				return v == null || JSON.stringify(v) === '{}' || JSON.stringify(v) === '[]';
+			}
+			if (tp === 'string') {
+				return v === '' || v === 'undefined' || v === 'null' || v === '{}' || v === '[]';
+			}
+			return false;
+		}
+	}
+};
 </script>
+
 <style>
 .tki-qrcode {
-  text-align: center;
-  position: relative;
+	text-align: center;
+	position: relative;
 }
 .tki-qrcode-canvas {
-  position: fixed;
-  top: -99999upx;
-  left: -99999upx;
-  z-index: -99999;
+	position: fixed;
+	top: -99999upx;
+	left: -99999upx;
+	z-index: -99999;
 }
 </style>

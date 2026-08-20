@@ -20,7 +20,7 @@
 						<text class="head-title">服务保障</text>
 						<text class="cuIcon-roundclosefill" @tap="hideModal"></text>
 					</view>
-					<view class="modal-content content_box">
+					<scroll-view class="modal-content" scroll-y :show-scrollbar="true" enable-flex>
 						<view class="serve-list" v-for="serve in serveList" :key="serve.title">
 							<view class="title-box x-f">
 								<image class="title-tag" :src="serve.image" mode=""></image>
@@ -28,7 +28,7 @@
 							</view>
 							<view class="serve-detail">{{ serve.description }}</view>
 						</view>
-					</view>
+					</scroll-view>
 					<view class="modal-foot x-c"><button class="cu-btn serve-btn" @tap="hideModal">确定</button></view>
 				</view>
 		</app-safe-popup>
@@ -140,9 +140,9 @@ export default {
 
 	.modal-content {
 		flex: 1;
+		height: 0;
 		min-height: 0;
-		overflow-y: auto;
-		-webkit-overflow-scrolling: touch;
+		box-sizing: border-box;
 		.serve-list {
 			padding-bottom: 40rpx;
 

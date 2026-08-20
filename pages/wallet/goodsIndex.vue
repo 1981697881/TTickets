@@ -52,7 +52,12 @@ export default {
 			return;
 		}
 		this.OrderID = orderId;
-		this.getOrderDetail();
+		this.getOrderDetail().then(() => {
+			this.$nextTick(() => {
+				const info = this.$refs.walletInfo;
+				if (info && typeof info.remakeCode === 'function') info.remakeCode();
+			});
+		});
 	},
 	onHide() {
 		this.clearCode();

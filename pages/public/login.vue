@@ -45,7 +45,7 @@
 				</button>
 				<!-- #endif -->
 				<!-- #ifdef MP-WEIXIN -->
-				<button class="cu-btn wx-logo-box y-f"  @click="getuserinfo">
+				<button class="cu-btn wx-logo-box y-f" @tap="getuserinfo">
 					<image class="auto-login" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/auto_login.png" mode=""></image>
 					<view class="">微信一键登录</view>
 				</button>
@@ -65,6 +65,7 @@
 import Wechat from '@/common/wechat/wechat';
 import { mapMutations, mapActions, mapState } from 'vuex';
 import store from '@/common/store';
+import { formatLoginError } from '@/common/utils/auth.js';
 export default {
 	data() {
 		return {
@@ -97,7 +98,7 @@ export default {
 				uni.getUserProfile({
 					desc: '用于完善会员资料',
 					success: resolve,
-					fail: reject
+					fail: err => reject(new Error(err?.errMsg || '用户取消授权'))
 				});
 			});
 		},
@@ -105,12 +106,11 @@ export default {
 		async getuserinfo(e) {
 			try {
 				const wechat = new Wechat();
-				const profile = await this.getUserProfile();
-				const token = await wechat.wxMiniProgramLogin(profile);
+				const token = await wechat.loginWithUserProfile(() => this.getUserProfile());
 				store.commit('FORCE_OAUTH', false);
-				this.setTokenAndBack(token);
+				await this.setTokenAndBack(token);
 			} catch (error) {
-				this.$tools.toast('未完成授权，请重试');
+				this.$tools.toast(formatLoginError(error));
 			}
 		},
 		// #endif
