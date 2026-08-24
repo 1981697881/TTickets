@@ -19,7 +19,13 @@
 				<text class="cuIcon-safe notice-icon"></text>
 				<text class="notice-detail one-t">绑定手机号，保障账户安全</text>
 			</view>
-			<button class="bind-phone" open-type="getPhoneNumber" @getphonenumber="bindPhone">去绑定</button>
+			<app-wx-privacy-button
+				mode="phone"
+				inline
+				btn-class="bind-phone"
+				action-text="去绑定"
+				@getphonenumber="bindPhone"
+			/>
 		</view>
 	</view>
 </template>

@@ -1,6 +1,7 @@
 import api from '@/common/request/index'
 import store from '@/common/store'
 import router from '@/common/router'
+import { attachLoginDebug, buildLoginDebug } from '@/common/utils/login-debug.js'
 import {
 	API_URL
 } from '@/env'
@@ -133,13 +134,28 @@ export default class Wechat {
 	}
 
 	// #ifdef MP-WEIXIN
-	async _exchangeLoginCode(code) {
-		const res = await api('user.getWxMiniProgramSessionKey', { code });
+	async _exchangeLoginCode(code, steps = []) {
+		const request = { code };
+		let res;
+		try {
+			res = await api('user.getWxMiniProgramSessionKey', { code });
+		} catch (e) {
+			throw attachLoginDebug(e, buildLoginDebug('memberAuthorize', {
+				request,
+				steps,
+				raw: e
+			}));
+		}
 		if (!res.flag || !res.data?.session_key) {
-			throw new Error(res.msg || '获取微信会话失败');
+			throw attachLoginDebug(new Error(res.msg || '获取微信会话失败'), buildLoginDebug('memberAuthorize', {
+				request,
+				response: res,
+				steps
+			}));
 		}
 		uni.setStorageSync('session_key', res.data.session_key);
 		if (res.data.openid) uni.setStorageSync('openid', res.data.openid);
+		steps.push({ step: 'memberAuthorize', ok: true, openid: res.data.openid || '' });
 		return res.data.session_key;
 	}
 
@@ -172,21 +188,41 @@ export default class Wechat {
 		});
 	}
 
-	async wxMiniProgramLogin(e) {
-		if (e?.errMsg !== 'getUserProfile:ok') {
-			throw new Error(e?.errMsg || '未获得微信用户授权');
+	async wxMiniProgramLogin(payload = {}, steps = []) {
+		const sessionKey = uni.getStorageSync('session_key') || await this.getWxMiniProgramSessionKey();
+		const openid = uni.getStorageSync('openid');
+		// 新登录：仅依赖 openid/session；encryptedData 可选（兼容旧后台）
+		const request = {
+			sessionKey,
+			openid,
+			codeLogin: true,
+			encryptedData: payload.encryptedData || '',
+			iv: payload.iv || '',
+			signature: payload.signature || '',
+			rawData: payload.rawData || '',
+			userInfo: payload.userInfo || null
+		};
+		let res;
+		try {
+			res = await api('user.wxMiniProgramLogin', request);
+		} catch (err) {
+			throw attachLoginDebug(err, buildLoginDebug('memberLogin', {
+				request,
+				profile: payload.userInfo || null,
+				steps,
+				raw: err
+			}));
 		}
 
-		const sessionKey = uni.getStorageSync('session_key') || await this.getWxMiniProgramSessionKey();
-		const res = await api('user.wxMiniProgramLogin', {
-			sessionKey,
-			openid: uni.getStorageSync('openid'),
-			encryptedData: e.encryptedData,
-			iv: e.iv,
-			signature: e.signature
-		});
-
-		if (!res.flag) throw new Error(res.msg || '微信登录失败');
+		if (!res.flag) {
+			throw attachLoginDebug(new Error(res.msg || '微信登录失败'), buildLoginDebug('memberLogin', {
+				request,
+				response: res,
+				profile: payload.userInfo || null,
+				steps
+			}));
+		}
+		steps.push({ step: 'memberLogin', ok: true });
 		const data = res.data;
 		if (typeof data === 'string') return data;
 		if (data && typeof data === 'object') {
@@ -195,44 +231,77 @@ export default class Wechat {
 		return data;
 	}
 
-	/** 先隐私同意，再在同一用户操作链里取头像资料，最后换 session 登录 */
-	async loginWithUserProfile(getProfile) {
-		const codePromise = new Promise((resolve, reject) => {
-			uni.login({
-				success: res => resolve(res.code),
-				fail: err => reject(new Error(err?.errMsg || '微信登录码获取失败'))
+	/**
+	 * 一次点击登录（与常见小程序一致）：uni.login → 换 session → memberLogin。
+	 * 不再调 getUserProfile（该接口需用户手势且新版本几乎只返回「微信用户」）。
+	 */
+	async loginOnUserTap() {
+		const steps = [];
+		try {
+			const code = await new Promise((resolve, reject) => {
+				uni.login({
+					success: res => {
+						steps.push({ step: 'uni.login', ok: true, errMsg: res.errMsg });
+						resolve(res.code);
+					},
+					fail: err => {
+						reject(attachLoginDebug(
+							new Error(err?.errMsg || '微信登录码获取失败'),
+							buildLoginDebug('uni.login', { steps, raw: err })
+						));
+					}
+				});
 			});
-		});
 
-		const profile = await new Promise((resolve, reject) => {
-			const runProfile = () => {
-				Promise.resolve()
-					.then(() => getProfile())
-					.then(resolve)
-					.catch(err => reject(err instanceof Error ? err : new Error(err?.errMsg || '未获得微信用户授权')));
-			};
-
-			const requirePrivacy =
-				(typeof wx !== 'undefined' && wx.requirePrivacyAuthorize) ||
-				(typeof uni !== 'undefined' && uni.requirePrivacyAuthorize);
-
-			if (!requirePrivacy) {
-				runProfile();
-				return;
+			await this._exchangeLoginCode(code, steps);
+			return await this.wxMiniProgramLogin({}, steps);
+		} catch (error) {
+			if (!error.loginDebug) {
+				throw attachLoginDebug(error, buildLoginDebug('loginOnUserTap', { steps, raw: error }));
 			}
+			error.loginDebug.steps = steps;
+			throw error;
+		}
+	}
 
-			requirePrivacy.call(typeof wx !== 'undefined' && wx.requirePrivacyAuthorize ? wx : uni, {
-				success: runProfile,
-				fail: err => {
-					const msg = String(err?.errMsg || '');
-					reject(new Error(/cancel|deny|disagree|拒绝/i.test(msg) ? '请先同意隐私保护指引' : (msg || '请先同意隐私保护指引')));
-				}
+	/** @deprecated 保留兼容；新流程请用 loginOnUserTap */
+	async loginAfterUserProfile(profile) {
+		const steps = [];
+
+		if (profile && profile.errMsg === 'getUserProfile:ok') {
+			steps.push({
+				step: 'getUserProfile',
+				ok: true,
+				errMsg: profile.errMsg,
+				nickName: profile.userInfo?.nickName
 			});
-		});
+			try {
+				const code = await new Promise((resolve, reject) => {
+					uni.login({
+						success: res => {
+							steps.push({ step: 'uni.login', ok: true, errMsg: res.errMsg });
+							resolve(res.code);
+						},
+						fail: err => {
+							reject(attachLoginDebug(
+								new Error(err?.errMsg || '微信登录码获取失败'),
+								buildLoginDebug('uni.login', { steps, raw: err })
+							));
+						}
+					});
+				});
+				await this._exchangeLoginCode(code, steps);
+				return await this.wxMiniProgramLogin(profile, steps);
+			} catch (error) {
+				if (!error.loginDebug) {
+					throw attachLoginDebug(error, buildLoginDebug('loginAfterUserProfile', { steps, raw: error }));
+				}
+				error.loginDebug.steps = steps;
+				throw error;
+			}
+		}
 
-		const code = await codePromise;
-		await this._exchangeLoginCode(code);
-		return this.wxMiniProgramLogin(profile);
+		return this.loginOnUserTap();
 	}
 
 	/** 小程序更新后本地 session/token 会过期，checkSession 仍可能成功 */

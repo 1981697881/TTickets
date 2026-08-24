@@ -79,7 +79,13 @@
 				</view>
 				<view v-else class="reserve-row-value">
 					<text class="reserve-muted">未绑定手机号</text>
-					<button class="reserve-phone-button" open-type="getPhoneNumber" @getphonenumber="bindPhone">获取</button>
+					<app-wx-privacy-button
+						mode="phone"
+						inline
+						btn-class="reserve-phone-button"
+						action-text="获取"
+						@getphonenumber="bindPhone"
+					/>
 				</view>
 			</view>
 			<!-- 购票须知 -->

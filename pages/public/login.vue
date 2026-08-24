@@ -45,7 +45,7 @@
 				</button>
 				<!-- #endif -->
 				<!-- #ifdef MP-WEIXIN -->
-				<button class="cu-btn wx-logo-box y-f" open-type="agreePrivacyAuthorization" @agreeprivacyauthorization="getuserinfo">
+				<button class="cu-btn wx-logo-box y-f" :loading="wxLogging" :disabled="wxLogging" @tap="onAuthTap">
 					<image class="auto-login" src="https://cfzx.gzfzdev.com/movie/uploadFiles/image/auto_login.png" mode=""></image>
 					<view class="">微信一键登录</view>
 				</button>
@@ -58,6 +58,9 @@
 				<!-- #endif -->
 			</view>
 		</view>
+		<!-- #ifdef MP-WEIXIN -->
+		<app-login-debug-modal />
+		<!-- #endif -->
 	</view>
 </template>
 
@@ -77,7 +80,8 @@ export default {
 			loginWay: 0,
 			userPhone: '',
 			userPassword: '',
-			sysInfo: uni.getStorageSync('sysInfo')
+			sysInfo: uni.getStorageSync('sysInfo'),
+			wxLogging: false
 		};
 	},
 	computed: {
@@ -93,24 +97,19 @@ export default {
 	onShow() {},
 	methods: {
 		...mapActions(['getUserInfo', 'setTokenAndBack']),
-		getUserProfile() {
-			return new Promise((resolve, reject) => {
-				uni.getUserProfile({
-					desc: '用于完善会员资料',
-					success: resolve,
-					fail: err => reject(new Error(err?.errMsg || '用户取消授权'))
-				});
-			});
-		},
 		// #ifdef MP-WEIXIN
-		async getuserinfo(e) {
+		async onAuthTap() {
+			if (this.wxLogging) return;
+			this.wxLogging = true;
 			try {
 				const wechat = new Wechat();
-				const token = await wechat.loginWithUserProfile(() => this.getUserProfile());
+				const token = await wechat.loginOnUserTap();
 				store.commit('FORCE_OAUTH', false);
 				await this.setTokenAndBack(token);
 			} catch (error) {
 				await handleLoginFailure(error, msg => this.$tools.toast(msg));
+			} finally {
+				this.wxLogging = false;
 			}
 		},
 		// #endif

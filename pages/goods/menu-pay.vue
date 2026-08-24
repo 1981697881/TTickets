@@ -39,7 +39,13 @@
 					</view>
 					<view v-else class="x-f">
 						<text class="sel-coupon">无手机号码</text>
-						<button class="cu-btn round lines-red" open-type="getPhoneNumber" @getphonenumber="bindPhone">获取</button>
+						<app-wx-privacy-button
+							mode="phone"
+							inline
+							btn-class="cu-btn round lines-red"
+							action-text="获取"
+							@getphonenumber="bindPhone"
+						/>
 					</view>
 				</view>
 				<list-cell last>
@@ -172,6 +178,19 @@ export default {
 	},
 	methods: {
 		...mapActions(['getUserBalance','getUserDetails']),
+		bindPhone(e) {
+			if (!e.detail || !e.detail.encryptedData) return;
+			this.$api('user.getWxMiniPhoneNumber', {
+				sessionKey: uni.getStorageSync('session_key'),
+				openid: uni.getStorageSync('openid'),
+				encryptedData: e.detail.encryptedData,
+				iv: e.detail.iv
+			}).then(res => {
+				if (res.flag) {
+					this.getUserDetails();
+				}
+			});
+		},
 		onLoginRefresh() {
 			this.getCoupons();
 			return this.getUserBalance().catch(() => null);

@@ -22,7 +22,15 @@
 						v-model="bankInfo.phone"
 						type="text"
 					></u-input>
-					<button class="cu-btn code-btn" open-type="getPhoneNumber" @getphonenumber="bindPhone"><text class="cuIcon-mobile"></text></button>
+					<app-wx-privacy-button
+						mode="phone"
+						inline
+						btn-class="cu-btn code-btn"
+						action-text=""
+						@getphonenumber="bindPhone"
+					>
+						<text class="cuIcon-mobile"></text>
+					</app-wx-privacy-button>
 				</u-form-item>
 				<u-form-item class="flex justify-between" :labelStyle="labelStyle" label-width="130" label-position="left" label="密码:" prop="password">
 					<u-input class="pw-input" placeholder="请输入密码" :placeholderStyle="placeholderStyle" v-model="bankInfo.password" type="password"></u-input>

@@ -1,8 +1,48 @@
 import store from '@/common/store';
 import { normalizeAuthToken } from '@/common/mixins/login-refresh.js';
 import { isPrivacyDeniedError, promptPrivacyRetry } from '@/common/utils/privacy.js';
+import { showLoginDebugModal } from '@/common/utils/login-debug.js';
 
 let lastPromptAt = 0;
+
+/** tabBar 页面路径（与 pages.json 保持一致，不含前导 /） */
+const TAB_BAR_PATHS = [
+	'pages/index/circuit',
+	'pages/index/recharge',
+	'pages/index/index',
+	'pages/menu/menu',
+	'pages/index/user'
+];
+
+function normalizeRoutePath(route) {
+	return String(route || '').replace(/^\//, '');
+}
+
+/** 当前是否为 tabBar 页（非 tab 页调 hide/showTabBar 会报错） */
+export function isTabBarPage() {
+	try {
+		const pages = getCurrentPages();
+		const cur = pages && pages.length ? pages[pages.length - 1] : null;
+		const route = normalizeRoutePath(cur && (cur.route || cur.$page?.fullPath));
+		return TAB_BAR_PATHS.includes(route.split('?')[0]);
+	} catch (e) {
+		return false;
+	}
+}
+
+export function safeHideTabBar(options = {}) {
+	if (!isTabBarPage()) return;
+	try {
+		uni.hideTabBar({ animation: false, ...options, fail() {} });
+	} catch (e) {}
+}
+
+export function safeShowTabBar(options = {}) {
+	if (!isTabBarPage()) return;
+	try {
+		uni.showTabBar({ animation: false, ...options, fail() {} });
+	} catch (e) {}
+}
 
 export function hasAuthToken() {
 	return Boolean(normalizeAuthToken(uni.getStorageSync('token')));
@@ -53,12 +93,13 @@ export function formatLoginError(error) {
 	return msg || '登录失败，请重试';
 }
 
-/** 登录失败时：隐私拒绝走引导弹窗，其它走 toast */
+/** 登录失败时：隐私拒绝走引导弹窗，其它展示调试弹窗（含请求与 openid） */
 export async function handleLoginFailure(error, toastFn) {
 	if (isPrivacyDeniedError(error)) {
 		await promptPrivacyRetry();
 		return;
 	}
+	showLoginDebugModal(error);
 	const title = formatLoginError(error);
 	if (typeof toastFn === 'function') {
 		toastFn(title);

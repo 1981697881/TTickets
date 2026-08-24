@@ -4,7 +4,7 @@ import store from '@/common/store'
 import router from '@/common/router.js'
 import tools from '@/common/utils/tools'
 import { normalizeAuthToken } from '@/common/mixins/login-refresh.js'
-import { isAuthDeniedPayload, promptLogin } from '@/common/utils/auth.js'
+import { isAuthDeniedPayload, promptLogin, safeHideTabBar, safeShowTabBar } from '@/common/utils/auth.js'
 
 import {
 	USER_INFO,
@@ -45,7 +45,7 @@ const actions = {
 		commit('LOGIN_TIP', false);
 		// #ifdef MP-WEIXIN
 		commit('FORCE_OAUTH', false);
-		uni.showTabBar();
+		safeShowTabBar();
 		// #endif
 		try {
 			await store.dispatch('getUserDetails');
@@ -269,7 +269,7 @@ const mutations = {
 	// #ifdef MP-WEIXIN
 	[FORCE_OAUTH](state, data) {
 		state.forceOauth = data
-		data ? uni.hideTabBar() : uni.showTabBar();
+		data ? safeHideTabBar() : safeShowTabBar();
 	},
 	// #endif
 

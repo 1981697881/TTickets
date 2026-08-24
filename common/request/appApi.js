@@ -545,7 +545,14 @@ export default {
 			url: 'user/profile',
 			auth: true,
 			method: 'POST',
-			// desc: '修改用户信息',
+			// desc: '修改用户信息（旧）',
+		},
+
+		editMember: {
+			url: 'member/editMember',
+			auth: true,
+			method: 'POST',
+			// desc: '修改会员信息',
 		},
 
 		changemobile: {

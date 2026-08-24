@@ -2,15 +2,37 @@
 	<view class="container user-subpage user-profile-page">
 		<view class="user-list x-bc">
 			<text class="list-name">头像</text>
-			<view class="x-f">
-				<image class="avatar" :src="userData.avatarUrl" mode=""></image>
+			<!-- #ifdef MP-WEIXIN -->
+			<button class="avatar-btn x-f" open-type="chooseAvatar" @chooseavatar="onChooseAvatar">
+				<image class="avatar" :src="displayAvatar" mode="aspectFill"></image>
+				<text class="cuIcon-right"></text>
+			</button>
+			<!-- #endif -->
+			<!-- #ifndef MP-WEIXIN -->
+			<view class="x-f" @tap="onChooseImg">
+				<image class="avatar" :src="displayAvatar" mode="aspectFill"></image>
 				<text class="cuIcon-right"></text>
 			</view>
+			<!-- #endif -->
 		</view>
 		<view class="user-list x-bc">
 			<text class="list-name">昵称</text>
-			<view class="x-f">
-				<input class="list-val" v-model="userData.username" />
+			<view class="x-f nick-wrap">
+				<!-- #ifdef MP-WEIXIN -->
+				<input
+					class="list-val"
+					type="nickname"
+					:value="userData.username"
+					placeholder="点击填写昵称"
+					placeholder-class="nick-ph"
+					@blur="onNickBlur"
+					@change="onNickChange"
+					@nicknamereview="onNicknameReview"
+				/>
+				<!-- #endif -->
+				<!-- #ifndef MP-WEIXIN -->
+				<input class="list-val" v-model="userData.username" placeholder="请输入昵称" placeholder-class="nick-ph" />
+				<!-- #endif -->
 				<text class="cuIcon-right"></text>
 			</view>
 		</view>
@@ -22,45 +44,47 @@
 					<text class="cuIcon-right"></text>
 				</view>
 			</view>
-		</picker><!-- @tap="jump('/pages/user/edit-phone')" -->
-		<view class="user-list x-bc" >
+		</picker>
+		<view class="user-list x-bc">
 			<text class="list-name">修改手机号</text>
 			<view class="x-f">
-				<text class="list-val">{{ userData.phoneNumber }}</text>
+				<text class="list-val">{{ userData.phoneNumber || '未绑定' }}</text>
 				<text class="cuIcon-right"></text>
 			</view>
 		</view>
-		<view class="btn-box flex align-center justify-center"><button class="cu-btn confirem-btn" @tap="editUserInfo">保存</button></view>
-		<!-- 自定义底部导航 -->
+		<view class="btn-box flex align-center justify-center">
+			<button class="cu-btn confirem-btn" :loading="saving" :disabled="saving" @tap="editUserInfo">保存</button>
+		</view>
 		<app-tabbar></app-tabbar>
-		<!-- 关注弹窗 -->
 		<app-float-btn></app-float-btn>
-		<!-- 连续弹窗提醒 -->
 		<app-notice-modal></app-notice-modal>
-		<!-- 登录提示 -->
 		<app-login-modal></app-login-modal>
 	</view>
 </template>
 
 <script>
-import appModal from '@/components/app-modal/app-modal.vue';
-import { mapMutations, mapActions, mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 export default {
-	components: {
-		appModal
-	},
 	data() {
-		const currentDate = this.getDate({
-			format: true
-		});
 		return {
-			userData: {}
+			userData: {
+				username: '',
+				avatarUrl: '',
+				avatar: '',
+				birthday: '',
+				phoneNumber: ''
+			},
+			saving: false,
+			uploading: false
 		};
 	},
 	computed: {
 		...mapState({
 			userInfo: state => state.user.userInfo
 		}),
+		displayAvatar() {
+			return this.userData.avatarUrl || this.userData.avatar || '/static/imgs/base_avatar.png';
+		},
 		startDate() {
 			return this.getDate('start');
 		},
@@ -69,59 +93,127 @@ export default {
 		}
 	},
 	onLoad() {
-		let userData = JSON.stringify(this.userInfo);
-		this.userData = JSON.parse(userData);
+		this.syncFromStore();
+	},
+	onShow() {
+		this.syncFromStore();
 	},
 	methods: {
-		...mapActions(['getUserInfo']),
+		...mapActions(['getUserInfo', 'getUserDetails']),
+		syncFromStore() {
+			const info = this.userInfo || {};
+			this.userData = {
+				username: info.username || info.nickname || '',
+				avatarUrl: info.avatarUrl || info.avatar || '',
+				avatar: info.avatar || info.avatarUrl || '',
+				birthday: info.birthday || '',
+				phoneNumber: info.phoneNumber || ''
+			};
+		},
 		getDate(type) {
 			const date = new Date();
 			let year = date.getFullYear();
 			let month = date.getMonth() + 1;
 			let day = date.getDate();
-
-			if (type === 'start') {
-				year = year - 60;
-			} else if (type === 'end') {
-				year = year;
-			}
+			if (type === 'start') year = year - 60;
 			month = month > 9 ? month : '0' + month;
 			day = day > 9 ? day : '0' + day;
 			return `${year}-${month}-${day}`;
 		},
-		// 选择日期
 		onDateChange(e) {
 			this.userData.birthday = e.detail.value;
 		},
-		jump(path, parmas) {
-			this.$Router.push({
-				path: path,
-				query: parmas
-			});
+		onNickBlur(e) {
+			const val = (e?.detail?.value ?? this.userData.username ?? '').trim();
+			this.userData.username = val;
 		},
-		editUserInfo() {
-			let that = this;
-			that.$api('user.profile', {
-				nickname: that.userData.nickname,
-				birthday: that.userData.birthday,
-				avatar: that.userData.avatar
-			}).then(res => {
-				if (res.code === 1) {
-					that.$tools.toast('修改信息成功');
-					that.getUserInfo();
-					setTimeout(() => {
-						that.$Router.back();
-					}, 1000);
+		onNickChange(e) {
+			const val = (e?.detail?.value ?? '').trim();
+			if (val) this.userData.username = val;
+		},
+		onNicknameReview() {
+			// 微信昵称审核回调，通过后再保存即可
+		},
+		/** 微信头像：临时路径 → 上传 → 永久 URL */
+		async onChooseAvatar(e) {
+			const tempPath = e?.detail?.avatarUrl;
+			if (!tempPath) return;
+			this.userData.avatarUrl = tempPath;
+			if (this.uploading) return;
+			this.uploading = true;
+			try {
+				const res = await this.$tools.uploadImage('index/upload', tempPath);
+				const url = res?.full_url || res?.url || '';
+				if (url) {
+					this.userData.avatar = url;
+					this.userData.avatarUrl = url;
 				}
-			});
+			} catch (err) {
+				uni.showToast({ icon: 'none', title: '头像上传失败，请重试' });
+			} finally {
+				this.uploading = false;
+			}
 		},
 		onChooseImg() {
-			let that = this;
-			that.$tools.chooseImage(1).then(res => {
-				that.$tools.uploadImage('index/upload', res[0]).then(res => {
-					that.userData.avatar = res.full_url;
-				});
+			this.$tools.chooseImage(1).then(paths => {
+				return this.$tools.uploadImage('index/upload', paths[0]);
+			}).then(res => {
+				const url = res?.full_url || res?.url || '';
+				if (url) {
+					this.userData.avatar = url;
+					this.userData.avatarUrl = url;
+				}
+			}).catch(() => {
+				uni.showToast({ icon: 'none', title: '头像上传失败，请重试' });
 			});
+		},
+		async editUserInfo() {
+			if (this.saving || this.uploading) {
+				uni.showToast({ icon: 'none', title: this.uploading ? '头像上传中…' : '保存中…' });
+				return;
+			}
+			const nickname = (this.userData.username || '').trim();
+			const avatarUrl = (this.userData.avatar || this.userData.avatarUrl || '').trim();
+			const openid = uni.getStorageSync('openid') || '';
+			const isDefaultAvatar = !avatarUrl || avatarUrl.includes('/static/imgs/base_avatar');
+			if (!nickname) {
+				uni.showToast({ icon: 'none', title: '请填写昵称' });
+				return;
+			}
+			if (!openid) {
+				uni.showToast({ icon: 'none', title: '未获取到 openid，请重新登录' });
+				return;
+			}
+			this.saving = true;
+			try {
+				const payload = {
+					nickname,
+					username: nickname,
+					birthday: this.userData.birthday || '',
+					openid,
+					openId: openid
+				};
+				if (!isDefaultAvatar) {
+					payload.avatar = avatarUrl;
+					payload.avatarUrl = avatarUrl;
+				}
+				const res = await this.$api('user.editMember', payload);
+				const ok = res?.flag === true || res?.code === 1;
+				if (!ok) {
+					uni.showToast({ icon: 'none', title: res?.msg || '保存失败' });
+					return;
+				}
+				this.$tools.toast('修改信息成功');
+				await Promise.all([
+					this.getUserInfo?.().catch?.(() => null),
+					this.getUserDetails?.().catch?.(() => null)
+				]);
+				setTimeout(() => this.$Router.back(), 800);
+			} catch (e) {
+				uni.showToast({ icon: 'none', title: '保存失败，请重试' });
+			} finally {
+				this.saving = false;
+			}
 		}
 	}
 };
@@ -139,21 +231,44 @@ export default {
 		font-size: 28rpx;
 	}
 
+	.avatar-btn {
+		margin: 0;
+		padding: 0;
+		background: transparent;
+		border: none;
+		line-height: 1;
+		&::after {
+			border: none;
+		}
+	}
+
 	.avatar {
 		width: 67rpx;
 		height: 67rpx;
 		border-radius: 50%;
-		// background: #ccc;
+		background: #f2f2f2;
 	}
 
 	.cuIcon-right {
 		margin-left: 25rpx;
 	}
 
+	.nick-wrap {
+		flex: 1;
+		justify-content: flex-end;
+		min-width: 0;
+	}
+
 	.list-val {
 		color: #999;
-		font-size: 28rpxc;
+		font-size: 28rpx;
 		text-align: right;
+		flex: 1;
+		min-width: 0;
+	}
+
+	.nick-ph {
+		color: #ccc;
 	}
 }
 

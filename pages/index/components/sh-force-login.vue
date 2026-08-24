@@ -5,24 +5,23 @@
 		<view class="force-login__content y-f">
 			<open-data class="user-avatar" type="userAvatarUrl"></open-data>
 			<open-data class="user-name" type="userNickName"></open-data>
-			<view class="login-notice">为了提供更优质的服务，需要获取您的头像昵称</view>
-			<button
-				id="force-login-agree-btn"
-				class="cu-btn author-btn"
-				open-type="agreePrivacyAuthorization"
-				@agreeprivacyauthorization="getuserinfo"
-			>授权并查看</button>
+			<view class="login-notice">登录后即可选座购票、查看订单与会员权益</view>
+			<button class="cu-btn author-btn" :loading="logging" :disabled="logging" @tap="onAuthTap">授权并查看</button>
 			<button class="cu-btn close-btn" @tap="closeAuth">暂不授权</button>
 		</view>
+		<app-login-debug-modal />
 	</view>
 	<!-- #endif -->
 </template>
 <script>
 import Wechat from '@/common/wechat/wechat';
 import store from '@/common/store';
-import { mapMutations, mapActions, mapState } from 'vuex';
+import { mapActions, mapState } from 'vuex';
 import { handleLoginFailure } from '@/common/utils/auth.js';
 export default {
+	data() {
+		return { logging: false };
+	},
 	computed: {
 		...mapState({
 			forceOauth: state => state.user.forceOauth
@@ -30,24 +29,19 @@ export default {
 	},
 	methods: {
 		...mapActions(['setTokenAndBack']),
-		getUserProfile(){
-			return new Promise((resolve, reject) => {
-				uni.getUserProfile({
-					desc: '用于完善会员资料',
-					success: resolve,
-					fail: err => reject(new Error(err?.errMsg || '用户取消授权'))
-				});
-			});
-		},
-		async getuserinfo(e) {
+		async onAuthTap() {
+			if (this.logging) return;
+			this.logging = true;
 			try {
 				var wechat = new Wechat();
-				let token = await wechat.loginWithUserProfile(() => this.getUserProfile());
+				let token = await wechat.loginOnUserTap();
 				store.commit('FORCE_OAUTH', false);
 				store.commit('LOGIN_TIP', false);
 				await this.setTokenAndBack(token);
 			} catch (error) {
 				await handleLoginFailure(error);
+			} finally {
+				this.logging = false;
 			}
 		},
 		closeAuth() {
@@ -75,6 +69,7 @@ export default {
 		left: 50%;
 		top: 50%;
 		transform: translate(-50%, -50%);
+		width: 630rpx;
 		.user-avatar {
 			width: 160rpx;
 			height: 160rpx;
@@ -99,28 +94,32 @@ export default {
 			text-align: center;
 			margin-bottom: 80rpx;
 		}
-		.author-btn {
-			width: 630rpx;
-			height: 80rpx;
-			background: linear-gradient(90deg, rgba(233, 180, 97, 1), rgba(238, 204, 137, 1));
-			box-shadow: 0px 7rpx 6rpx 0px rgba(229, 138, 0, 0.22);
-			border-radius: 40rpx;
-			font-size: 30rpx;
-			font-family: PingFang SC;
-			font-weight: 500;
-			color: rgba(255, 255, 255, 1);
-		}
+		.author-btn,
 		.close-btn {
 			width: 630rpx;
 			height: 80rpx;
-			margin-top: 30rpx;
 			border-radius: 40rpx;
-			border: 2rpx solid rgba(233, 180, 97, 1);
-			background: none;
 			font-size: 30rpx;
 			font-family: PingFang SC;
 			font-weight: 500;
+			box-sizing: border-box;
+		}
+		.author-btn {
+			background: linear-gradient(90deg, rgba(233, 180, 97, 1), rgba(238, 204, 137, 1));
+			box-shadow: 0px 7rpx 6rpx 0px rgba(229, 138, 0, 0.22);
+			color: rgba(255, 255, 255, 1);
+		}
+		.author-btn::after {
+			border: none;
+		}
+		.close-btn {
+			margin-top: 30rpx;
+			border: 2rpx solid rgba(233, 180, 97, 1);
+			background: none;
 			color: rgba(233, 180, 97, 1);
+		}
+		.close-btn::after {
+			border: none;
 		}
 	}
 }

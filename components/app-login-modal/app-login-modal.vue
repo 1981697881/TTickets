@@ -19,18 +19,16 @@
 		<view class="force-login-wrap">
 			<view class="force-login__content">
 				<view class="user-avatar"><text class="cuIcon-profile"></text></view>
-				<view class="login-notice">为了提供更优质的服务，需要获取您的头像昵称</view>
-				<button
-					id="login-agree-btn"
-					class="cu-btn author-btn"
-					open-type="agreePrivacyAuthorization"
-					@agreeprivacyauthorization="getuserinfo"
-				>授权并查看</button>
+				<view class="login-notice">登录后即可选座购票、查看订单与会员权益</view>
+				<button class="cu-btn author-btn" :loading="logging" :disabled="logging" @tap="onAuthTap">授权并查看</button>
 				<button class="cu-btn close-btn" @tap="closeAuth">暂不授权</button>
 			</view>
 		</view>
 	</app-safe-popup>
 	<!-- #endif  -->
+	<!-- #ifdef MP-WEIXIN -->
+	<app-login-debug-modal />
+	<!-- #endif -->
 </template>
 
 <script>
@@ -42,7 +40,8 @@ export default {
 	components: {},
 	data() {
 		return {
-			screenShot: uni.getStorageSync('screenShot')
+			screenShot: uni.getStorageSync('screenShot'),
+			logging: false
 		};
 	},
 	props: {
@@ -52,7 +51,6 @@ export default {
 			default: ''
 		}
 	},
-	created() {},
 	computed: {
 		...mapState({
 			showLoginTip: state => state.user.showLoginTip,
@@ -81,24 +79,19 @@ export default {
 				path: '/pages/public/login'
 			});
 		},
-		getUserProfile() {
-			return new Promise((resolve, reject) => {
-				uni.getUserProfile({
-					desc: '用于完善会员资料',
-					success: resolve,
-					fail: err => reject(new Error(err?.errMsg || '用户取消授权'))
-				});
-			});
-		},
-		async getuserinfo(e) {
+		async onAuthTap() {
+			if (this.logging) return;
+			this.logging = true;
 			try {
 				const wechat = new Wechat();
-				const token = await wechat.loginWithUserProfile(() => this.getUserProfile());
+				const token = await wechat.loginOnUserTap();
 				this.$store.commit('FORCE_OAUTH', false);
 				this.$store.commit('LOGIN_TIP', false);
 				await this.setTokenAndBack(token);
 			} catch (error) {
 				await handleLoginFailure(error, msg => this.$tools.toast(msg));
+			} finally {
+				this.logging = false;
 			}
 		},
 		// 小程序，取消登录
@@ -187,6 +180,7 @@ export default {
 	flex-direction: column;
 	align-items: center;
 	width: 100%;
+	box-sizing: border-box;
 }
 
 .user-avatar {
@@ -213,29 +207,36 @@ export default {
 	color: rgba(200, 150, 61, 1);
 }
 
-.author-btn {
-	width: 100%;
-	max-width: 560rpx;
-	height: 80rpx;
-	background: linear-gradient(90deg, rgba(233, 180, 97, 1), rgba(238, 204, 137, 1));
-	box-shadow: 0px 7rpx 6rpx 0px rgba(229, 138, 0, 0.22);
-	border-radius: 40rpx;
-	font-size: 30rpx;
-	font-weight: 500;
-	color: #fff;
-}
-
+.author-btn,
 .close-btn {
 	width: 100%;
 	max-width: 560rpx;
 	height: 80rpx;
-	margin-top: 24rpx;
 	border-radius: 40rpx;
-	border: 2rpx solid rgba(233, 180, 97, 1);
-	background: none;
 	font-size: 30rpx;
 	font-weight: 500;
+	box-sizing: border-box;
+}
+
+.author-btn {
+	background: linear-gradient(90deg, rgba(233, 180, 97, 1), rgba(238, 204, 137, 1));
+	box-shadow: 0px 7rpx 6rpx 0px rgba(229, 138, 0, 0.22);
+	color: #fff;
+}
+
+.author-btn::after {
+	border: none;
+}
+
+.close-btn {
+	margin-top: 24rpx;
+	border: 2rpx solid rgba(233, 180, 97, 1);
+	background: none;
 	color: rgba(233, 180, 97, 1);
+}
+
+.close-btn::after {
+	border: none;
 }
 /* #endif */
 </style>
