@@ -117,11 +117,11 @@ export default {
 					WechatId: that.WechatId,
 					PublicOpenID: that.PublicOpenID,
 					phone: that.userInfo.phoneNumber,
-					photo: that.userInfo.avatarUrl,
-					name: that.userInfo.username,
+					photo: that.userInfo.avatarUrl || '',
+					name: that.userInfo.username || '',
 					placeId: that.storeInfo.v8PlaceId,
 					V8Url: that.storeInfo.v8Url,
-					sex: that.userInfo.sex
+					sex: that.userInfo.sex == null || that.userInfo.sex === '' ? '1' : String(that.userInfo.sex)
 				}).then(res => {
 					if (res.flag) {
 						let msgData = JSON.parse(res.data);

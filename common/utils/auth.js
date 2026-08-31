@@ -48,6 +48,13 @@ export function hasAuthToken() {
 	return Boolean(normalizeAuthToken(uni.getStorageSync('token')));
 }
 
+/** 是否已有可用登录态（与界面「请登录」一致：必须有用户名或手机号） */
+export function isLoggedIn() {
+	if (!hasAuthToken()) return false;
+	const info = (store.state && store.state.user && store.state.user.userInfo) || {};
+	return Boolean(info.username || info.phoneNumber);
+}
+
 /** 清掉微信会话与登录态。门店缓存保留。 */
 export function clearAuthSession() {
 	uni.removeStorageSync('token');
@@ -64,21 +71,40 @@ export function isAuthDeniedPayload(payload) {
 	return payload.flag === false && /未登录|权限不足|登录失效|登录过期/.test(msg);
 }
 
-/** 弹出授权窗（可重复调用，短时间去重） */
-export function promptLogin() {
-	const now = Date.now();
-	if (now - lastPromptAt < 1200) return false;
-	lastPromptAt = now;
+function openLoginModal() {
+	lastPromptAt = Date.now();
 	store.commit('LOGIN_TIP', true);
-	// #ifdef MP-WEIXIN
 	store.commit('FORCE_OAUTH', true);
-	// #endif
+}
+
+/** 弹出授权窗（可重复调用；已展示时去重，关闭后允许再次弹出） */
+export function promptLogin() {
+	const state = store.state && store.state.user ? store.state.user : {};
+	if (state.forceOauth || state.showLoginTip) return false;
+	const now = Date.now();
+	if (now - lastPromptAt < 600) return false;
+	openLoginModal();
+	return false;
+}
+
+/** 用户主动点击「请登录」等：强制弹出，不受去重/残留状态影响 */
+export function forcePromptLogin() {
+	const state = store.state && store.state.user ? store.state.user : {};
+	if (state.forceOauth || state.showLoginTip) {
+		store.commit('FORCE_OAUTH', false);
+		store.commit('LOGIN_TIP', false);
+		setTimeout(() => openLoginModal(), 30);
+		return false;
+	}
+	openLoginModal();
 	return false;
 }
 
 /** 已登录返回 true；否则弹授权并返回 false */
 export function ensureLoggedIn() {
-	if (hasAuthToken()) return true;
+	if (isLoggedIn()) return true;
+	// 有 token 但无用户信息：清掉无效会话再弹窗
+	if (hasAuthToken()) clearAuthSession();
 	return promptLogin();
 }
 

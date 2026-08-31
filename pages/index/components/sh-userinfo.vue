@@ -1,20 +1,30 @@
 <template>
 	<view class="user-profile">
 		<view class="user-head x-bc">
-			<view class="user-identity x-f" @tap="jump('/pages/user/info')">
+			<view
+				class="user-identity x-f"
+				hover-class="user-identity--hover"
+				:hover-stay-time="80"
+				@tap.stop="onProfileTap"
+			>
 				<view class="head-img-wrap">
 					<image class="head-img" :src="userInfo.avatarUrl || '/static/imgs/base_avatar.png'" mode="aspectFill"></image>
 				</view>
 				<view class="identity-copy">
-					<text class="user-name one-t">{{ userInfo.username || '请登录' }}</text>
-					<text class="user-hint" v-if="!userInfo.username">登录后查看账户与订单</text>
+					<text class="user-name one-t">{{ displayName }}</text>
+					<text class="user-hint" v-if="!isProfileLoggedIn">登录后查看账户与订单</text>
 				</view>
 			</view>
-			<button class="code-btn x-c" v-if="balInfo && balInfo.custId" @tap.stop="jump('/pages/user/personal')" aria-label="打开我的二维码">
+			<button
+				class="code-btn x-c"
+				v-if="balInfo && balInfo.custId"
+				@tap.stop="jumpPersonal"
+				aria-label="打开我的二维码"
+			>
 				<text class="cuIcon-qr_code"></text>
 			</button>
 		</view>
-		<view class="notice-box x-bc" v-if="!userInfo.phoneNumber && userInfo.username">
+		<view class="notice-box x-bc" v-if="!userInfo.phoneNumber && isProfileLoggedIn">
 			<view class="notice-copy x-f">
 				<text class="cuIcon-safe notice-icon"></text>
 				<text class="notice-detail one-t">绑定手机号，保障账户安全</text>
@@ -32,13 +42,20 @@
 
 <script>
 import { mapActions, mapState } from 'vuex';
+
 export default {
-	components: {},
+	name: 'ShUserinfo',
 	computed: {
 		...mapState({
-			userInfo: state => state.user.userInfo,
+			userInfo: state => state.user.userInfo || {},
 			balInfo: state => state.user.balInfo || {}
-		})
+		}),
+		isProfileLoggedIn() {
+			return Boolean(this.userInfo.username);
+		},
+		displayName() {
+			return this.userInfo.username || '请登录';
+		}
 	},
 	props: {
 		detail: {
@@ -48,11 +65,19 @@ export default {
 	},
 	methods: {
 		...mapActions(['getUserDetails']),
-		jump(path, query) {
-			this.$Router.push({
-				path: path,
-				query: query
-			});
+		onProfileTap() {
+			// 未登录：直接提交 vuex，与菜单鉴权弹窗同一状态源，不绕路由
+			if (!this.isProfileLoggedIn) {
+				this.$store.commit('LOGIN_TIP', true);
+				// #ifdef MP-WEIXIN
+				this.$store.commit('FORCE_OAUTH', true);
+				// #endif
+				return;
+			}
+			this.$tools.routerTo('/pages/user/info');
+		},
+		jumpPersonal() {
+			this.$tools.routerTo('/pages/user/personal');
 		},
 		bindPhone(e) {
 			if (!e.detail || !e.detail.encryptedData) return;
@@ -77,7 +102,14 @@ export default {
 .user-head {
 	min-height: 176rpx;
 	padding: 20rpx 38rpx 30rpx;
-	.user-identity { min-width: 0; flex: 1; }
+	.user-identity {
+		min-width: 0;
+		flex: 1;
+		padding: 8rpx 0;
+	}
+	.user-identity--hover {
+		opacity: 0.72;
+	}
 	.head-img-wrap {
 		width: 112rpx;
 		height: 112rpx;
@@ -87,14 +119,19 @@ export default {
 		border-radius: 50%;
 		background: #fff;
 		margin-right: 26rpx;
+		pointer-events: none;
 	}
 	.head-img {
 		width: 100%;
 		height: 100%;
 		border-radius: 50%;
 		background: var(--tt-primary-soft);
+		pointer-events: none;
 	}
-	.identity-copy { min-width: 0; }
+	.identity-copy {
+		min-width: 0;
+		pointer-events: none;
+	}
 	.user-name {
 		display: block;
 		max-width: 360rpx;

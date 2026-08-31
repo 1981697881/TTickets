@@ -4,7 +4,7 @@ import store from '@/common/store'
 import router from '@/common/router.js'
 import tools from '@/common/utils/tools'
 import { normalizeAuthToken } from '@/common/mixins/login-refresh.js'
-import { isAuthDeniedPayload, promptLogin, safeHideTabBar, safeShowTabBar } from '@/common/utils/auth.js'
+import { promptLogin, safeShowTabBar, hasAuthToken, clearAuthSession } from '@/common/utils/auth.js'
 
 import {
 	USER_INFO,
@@ -14,9 +14,7 @@ import {
 	MESSAGE_IDS,
 	STORE_INFO,
 	OUT_LOGIN,
-	// #ifdef MP-WEIXIN
 	FORCE_OAUTH,
-	// #endif
 } from '../types.js'
 const state = {
 	userInfo: uni.getStorageSync('userInfo') ? uni.getStorageSync('userInfo') : {},
@@ -24,9 +22,7 @@ const state = {
 	orderNum: {},
 	balInfo: uni.getStorageSync('balInfo') || {},
 	storeInfo: uni.getStorageSync('storeInfo') || {},
-	// #ifdef MP-WEIXIN
 	forceOauth: false,
-	// #endif
 	messageIds: {}, //小程序订阅消息模板ids
 
 }
@@ -120,15 +116,24 @@ const actions = {
 		commit
 	}) {
 		return new Promise((resolve, reject) => {
+			if (!hasAuthToken()) {
+				promptLogin();
+				resolve({ flag: false, message: 'no token' });
+				return;
+			}
 			api('user.member',{openId: uni.getStorageSync('openid')}).then(res => {
 				if(res.flag){
 					commit('LOGIN_TIP', false);
+					// #ifdef MP-WEIXIN
+					commit('FORCE_OAUTH', false);
+					// #endif
 					commit('USER_INFO', res.data);
 					uni.setStorageSync('userInfo', res.data);
 				}else{
-					if (isAuthDeniedPayload(res) || !uni.getStorageSync('token')) {
-						promptLogin();
-					}
+					// 真机常见：本地仍有过期 token，接口失败却不匹配「未登录」文案 → 之前不弹窗
+					clearAuthSession();
+					commit('USER_INFO', {});
+					promptLogin();
 				}
 				resolve(res)
 			}).catch(e => {
@@ -266,12 +271,18 @@ const mutations = {
 	[ORDER_NUMBER](state, data) {
 		state.orderNum = data
 	},
-	// #ifdef MP-WEIXIN
 	[FORCE_OAUTH](state, data) {
-		state.forceOauth = data
-		data ? safeHideTabBar() : safeShowTabBar();
+		state.forceOauth = !!data
+		// #ifdef MP-WEIXIN
+		try {
+			if (state.forceOauth) {
+				uni.hideTabBar({ animation: false, fail() {} });
+			} else {
+				uni.showTabBar({ animation: false, fail() {} });
+			}
+		} catch (e) {}
+		// #endif
 	},
-	// #endif
 
 	[OUT_LOGIN](state, data) {
 		uni.removeStorageSync('token');

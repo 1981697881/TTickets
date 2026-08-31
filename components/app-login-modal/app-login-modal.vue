@@ -15,7 +15,7 @@
 	</app-safe-popup>
 	<!-- #endif  -->
 	<!-- #ifdef MP-WEIXIN  -->
-	<app-safe-popup :model-value="forceOauth || showLogin" :mask-closable="false" max-width="680rpx" aria-label="微信授权登录">
+	<app-safe-popup :model-value="forceOauth || showLogin" :mask-closable="false" :prefer-portal="false" :z-index="99999" max-width="680rpx" aria-label="微信授权登录">
 		<view class="force-login-wrap">
 			<view class="force-login__content">
 				<view class="user-avatar"><text class="cuIcon-profile"></text></view>

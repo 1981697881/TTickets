@@ -241,6 +241,13 @@ function patchVendorDeprecatedSystemInfo(outputDir) {
     /typeof ([A-Za-z_$][\w$]*)\.getAppBaseInfo\)\{const ([A-Za-z_$][\w$]*)=\1\.getAppBaseInfo\(\)\|\|\{\};\2\.theme&&\(([A-Za-z_$][\w$]*)=\2\.theme\)\}if\(void 0!==\1&&"function"==typeof \1\.getSystemInfoSync\)\{const ([A-Za-z_$][\w$]*)=\1\.getSystemInfoSync\(\)\|\|\{\};\4\.theme&&\(\3=\4\.theme\)\}/g,
     'typeof $1.getAppBaseInfo){const $2=$1.getAppBaseInfo()||{};$2.theme&&($3=$2.theme)}else if(void 0!==$1&&"function"==typeof $1.getSystemInfoSync){const $4=$1.getSystemInfoSync()||{};$4.theme&&($3=$4.theme)}'
   );
+  // 兜底：小程序运行时无 process，避免 uni-console 残留 process.env.* 直接崩溃
+  code = code
+    .replace(/process\.env\.UNI_CONSOLE_KEEP_ORIGINAL/g, 'true')
+    .replace(/process\.env\.UNI_SOCKET_HOSTS/g, '""')
+    .replace(/process\.env\.UNI_SOCKET_PORT/g, '""')
+    .replace(/process\.env\.UNI_SOCKET_ID/g, '""')
+    .replace(/process\.env\.UNI_DEBUG/g, 'false');
   if (code === before) return false;
   fs.writeFileSync(vendorPath, code);
   return true;
@@ -360,6 +367,19 @@ export default defineConfig({
     copyStaticAssets(),
     fixMpHashedAssets()
   ],
+  // 小程序无 Node process。uni-console 依赖这些宏；未注入或 define 失效时会报
+  // ReferenceError: process is not defined
+  define: {
+    'process.env.UNI_SOCKET_HOSTS': JSON.stringify(process.env.UNI_SOCKET_HOSTS || ''),
+    'process.env.UNI_SOCKET_PORT': JSON.stringify(process.env.UNI_SOCKET_PORT || ''),
+    'process.env.UNI_SOCKET_ID': JSON.stringify(process.env.UNI_SOCKET_ID || ''),
+    'process.env.UNI_DEBUG': JSON.stringify(process.env.UNI_DEBUG || ''),
+    'process.env.UNI_CONSOLE_KEEP_ORIGINAL': JSON.stringify(
+      process.env.UNI_CONSOLE_KEEP_ORIGINAL
+        ? process.env.UNI_CONSOLE_KEEP_ORIGINAL === 'true'
+        : true
+    )
+  },
   css: {
     preprocessorOptions: {
       scss: {
